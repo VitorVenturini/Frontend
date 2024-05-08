@@ -1,14 +1,37 @@
-import { ThemeProvider } from "@/components/theme-provider"
-import { ModeToggle } from "@/components/mode-toggle"
+
+import HeaderApp from "./components/HeaderApp"
+import Home from "./pages/Home"
+import Login from "./pages/Login"
+import Conta from "./pages/Conta"
+import NoPage from "./pages/NoPage"
+import Themes from "./pages/Themes"
+
 
 function App() {
+  let page
+  switch (window.location.pathname) {
+    case "/Home":
+      page = <Home/>
+      break
+    case "/Login":
+      page = <Login/>
+      break
+    case "/Conta":
+      page = <Conta/>
+      break
+    case "/Themes":
+      page = <Themes/>
+      break
+    default:
+      page = <NoPage/>
+      break
+  }
 
   return (
     <>
       <div>
-        <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-          <ModeToggle />
-        </ThemeProvider>
+        <HeaderApp />
+        {page}
       </div>
     
     </>
