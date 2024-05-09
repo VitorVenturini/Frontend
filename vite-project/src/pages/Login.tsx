@@ -14,7 +14,7 @@ export default function Login() {
     return (
         <Card className="mx-[200px]">
   <CardHeader>
-    <CardTitle>Fça seu Login</CardTitle>
+    <CardTitle>Faça seu Login</CardTitle>
     <CardDescription>Digite seu Email e Senha</CardDescription>
   </CardHeader>
   <CardContent className="gap-x-1">
