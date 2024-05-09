@@ -6,6 +6,7 @@ import Conta from "./pages/Conta"
 import NoPage from "./pages/NoPage"
 import Themes from "./pages/Themes"
 
+import { Toaster } from "@/components/ui/toaster"
 
 function App() {
   let page
@@ -32,6 +33,7 @@ function App() {
       <div>
         <HeaderApp />
         {page}
+        <Toaster />
       </div>
     
     </>

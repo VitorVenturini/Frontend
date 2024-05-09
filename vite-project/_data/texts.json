@@ -1,0 +1,20 @@
+{
+    "en": {
+      "welcome": "Welcome",
+      "login": "Login",
+      "password": "Password",
+      "changePassword": "Change Password"
+    },
+    "pt": {
+      "welcome": "Bem-vindo",
+      "login": "Entrar",
+      "password": "Senha",
+      "changePassword": "Mudar Senha"
+    },
+    "es": {
+      "welcome": "Bienvenido",
+      "login": "Iniciar sesión",
+      "password": "Contraseña",
+      "changePassword": "Cambiar Contraseña"
+    }
+  }
