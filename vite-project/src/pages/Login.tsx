@@ -54,7 +54,7 @@ export default function Login() {
     try {
       // Envia os dados para o backend via método POST
       const response = await fetch(
-        "http://10.10.51.176:8000/api/updatePassword",
+        "https://meet.wecom.com.br/api/updatePassword",
         {
           method: "POST",
           headers: {
@@ -102,10 +102,11 @@ export default function Login() {
 
     try {
       //Envia os dados para o backend via método POST
-      const response = await fetch("http://10.10.51.176:8000/api/login", {
+      const response = await fetch("https://meet.wecom.com.br/api/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          
         },
         body: JSON.stringify(formData),
       });
@@ -125,7 +126,11 @@ export default function Login() {
         console.error(
           "Erro ao enviar dados para o backend:",
           response.statusText
+          
         );
+        toast({
+          description: "Erro ao fazer login.",
+        });
         window.alert(response.statusText);
       }
     } catch (error) {
@@ -139,23 +144,25 @@ export default function Login() {
           <CardTitle>Faça seu Login</CardTitle>
           <CardDescription>Digite seu Email e Senha</CardDescription>
         </CardHeader>
-        <CardContent className="gap-x-1">
+        <CardContent className="grid gap-4 py-4">
           <form>
             <div className="grid w-full items-center gap-4">
-              <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="email">Email</Label>
+              <div className="grid grid-cols-3 items-center gap-4">
+                <Label htmlFor="email" className="text-end">Digite seu Email</Label>
                 <Input
                   id="email"
+                  className="col-span-2"
                   placeholder="Email"
                   value={email}
                   onChange={handleEmailChange}
                 />
               </div>
               <div className="flex flex-col space-y-1.5">
-                <div className="flex flex-col space-y-1.5">
-                  <Label htmlFor="password">Senha</Label>
+                <div className="grid grid-cols-3 items-center gap-4">
+                  <Label htmlFor="password" className="text-end" >Digite sua Senha</Label>
                   <Input
                     id="password"
+                    className="col-span-2"
                     placeholder="Senha"
                     value={password}
                     onChange={handlePasswordChange}

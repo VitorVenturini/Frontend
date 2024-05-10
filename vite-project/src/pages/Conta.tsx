@@ -1,11 +1,13 @@
 import {
   Card,
   CardContent,
+  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -18,6 +20,9 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import React, { useState, ChangeEvent } from "react";
 import { Value } from "@radix-ui/react-select";
+import TableUser from "@/components/TableUser";
+
+//================================================
 
 export default function Conta() {
   const [email, setEmail] = useState("");
@@ -87,7 +92,7 @@ export default function Conta() {
     };
 
     try {
-      const response = await fetch("http://10.10.51.176:8000/api/create", {
+      const response = await fetch("https://meet.wecom.com.br/api/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -124,12 +129,11 @@ export default function Conta() {
       }
     } catch (error) {
       // Aqui você pode lidar com qualquer erro que possa ocorrer durante a criação da conta
-      console.error("Erro na criação da conta:", error);
     }
   };
   const listUsers = async () => {
     try {
-      const response = await fetch("http://10.10.51.176:8000/api/listUsers", {
+      const response = await fetch("https://meet.wecom.com.br/api/listUsers", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -138,12 +142,15 @@ export default function Conta() {
       });
       console.log(await response.json());
     } catch (error) {}
-  }
+  };
   return (
-    <div className="lg:px-[20rem] md:px-[15rem] sm:px-9 px-2 flex justify-center">
+    <div className="lg:px-[20rem] md:px-[15rem] sm:px-9 px-2 flex flex-col gap-5 justify-center">
       <Card className="xl:w-[500px]">
         <CardHeader>
           <CardTitle>Criação de conta</CardTitle>
+          <CardDescription>
+            Para cirar uma conta complete os campos abaixo
+          </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4 py-4">
           <div className="grid grid-cols-3 items-center gap-4">
@@ -211,7 +218,20 @@ export default function Conta() {
         </CardContent>
         <CardFooter className="flex justify-end">
           <Button onClick={handleCreateUser}>Criar conta</Button>
-          <Button onClick={listUsers}>Listar contas</Button>
+        </CardFooter>
+      </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle>Lista de Usuários</CardTitle>
+          <CardDescription>Lista de todos os usuários</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ScrollArea className="h-[200px] border-none ">
+            <TableUser/>
+          </ScrollArea>
+        </CardContent>
+        <CardFooter>
+          <Button onClick={listUsers}>Listar Usuários</Button>
         </CardFooter>
       </Card>
     </div>
