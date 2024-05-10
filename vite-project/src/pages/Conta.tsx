@@ -25,13 +25,17 @@ import TableUser from "@/components/TableUser";
 //================================================
 
 export default function Conta() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [sip, setSip] = useState("");
   const [type, setType] = useState<string>("");
-  const [name, setName] = useState("");
 
   const { toast } = useToast();
+
+  interface ContaProps {
+    onUserCreated: () => void;
+}
 
   const passwordValidation = (password: string) => {
     // Verifica se a senha tem pelo menos 6 caracteres
@@ -126,10 +130,12 @@ export default function Conta() {
         toast({
           description: "Conta criada com sucesso",
         });
+        //fazer com que atulize a lista de contas
       }
     } catch (error) {
       // Aqui você pode lidar com qualquer erro que possa ocorrer durante a criação da conta
     }
+    
   };
   const listUsers = async () => {
     try {
@@ -144,8 +150,8 @@ export default function Conta() {
     } catch (error) {}
   };
   return (
-    <div className="lg:px-[20rem] md:px-[15rem] sm:px-9 px-2 flex flex-col gap-5 justify-center">
-      <Card className="xl:w-[500px]">
+    <div className="px-2 flex flex-col md:flex-row gap-5 justify-center">
+      <Card className="md:w-fit lg:w-[600px]">
         <CardHeader>
           <CardTitle>Criação de conta</CardTitle>
           <CardDescription>
@@ -215,6 +221,8 @@ export default function Conta() {
               </SelectContent>
             </Select>
           </div>
+          
+          
         </CardContent>
         <CardFooter className="flex justify-end">
           <Button onClick={handleCreateUser}>Criar conta</Button>
@@ -226,12 +234,11 @@ export default function Conta() {
           <CardDescription>Lista de todos os usuários</CardDescription>
         </CardHeader>
         <CardContent>
-          <ScrollArea className="h-[200px] border-none ">
-            <TableUser/>
+          <ScrollArea className="h-[300px] border-none ">
+            <TableUser />
           </ScrollArea>
         </CardContent>
         <CardFooter>
-          <Button onClick={listUsers}>Listar Usuários</Button>
         </CardFooter>
       </Card>
     </div>

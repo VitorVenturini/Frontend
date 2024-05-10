@@ -25,6 +25,7 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 
 export default function Login() {
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -94,7 +95,6 @@ export default function Login() {
   const handleLogin = async () => {
     console.log(`Email: ${email}, Senha: ${password}`);
 
-    // Aqui você pode adicionar a lógica para fazer o fetch com o email e a senha
     const formData = {
       email: email,
       password: password,
@@ -216,7 +216,7 @@ export default function Login() {
                   <Input
                     value={newPassword}
                     onChange={handleNewPasswordChange}
-                    id="username"
+                    id="newPassword"
                     className="col-span-3"
                   />
                 </div>
@@ -230,8 +230,8 @@ export default function Login() {
               </DialogFooter>
             </DialogContent>
           </Dialog>
-          <Button asChild onClick={handleLogin}>
-            <a>Login</a>
+          <Button  onClick={handleLogin}>
+            Login
           </Button>
         </CardFooter>
       </Card>
