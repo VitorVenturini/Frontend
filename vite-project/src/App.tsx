@@ -11,17 +11,27 @@ import { Toaster } from "@/components/ui/toaster"
 function App() {
   let page
   switch (window.location.pathname) {
-    case "/Home":
-      page = <Home/>
-      break
+    case "/":
     case "/Login":
       page = <Login/>
       break
+    case "/Home":
+      page = <>
+        <HeaderApp />
+        <Home/>
+      </>
+      break
     case "/Conta":
-      page = <Conta/>
+      page = <>
+        <HeaderApp />
+        <Conta/>
+      </>
       break
     case "/Themes":
-      page = <Themes/>
+      page = <>
+        <HeaderApp />
+        <Themes/>
+      </>
       break
     default:
       page = <NoPage/>
@@ -31,11 +41,9 @@ function App() {
   return (
     <>
       <div>
-        <HeaderApp />
         {page}
         <Toaster />
       </div>
-    
     </>
   )
 }

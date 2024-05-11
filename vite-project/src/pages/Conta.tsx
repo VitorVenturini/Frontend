@@ -10,6 +10,40 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Trash2 } from "lucide-react";
+import { Pencil } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+} from "@/components/ui/dialog";
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import {
   Select,
   SelectContent,
@@ -18,26 +52,39 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
-import React, { useState, ChangeEvent } from "react";
+import React, { useEffect, useState, ChangeEvent } from "react";
 import { Value } from "@radix-ui/react-select";
 import TableUser from "@/components/TableUser";
+import { Loader2 } from "lucide-react";
 
 //================================================
 
+interface User {
+  id: string;
+  name: string;
+  guid: string;
+  email: string;
+  sip: string;
+  // Adicione aqui outros campos se necessário
+}
+
 export default function Conta() {
+  const [users, setUsers] = useState<User[]>([]);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [sip, setSip] = useState("");
   const [type, setType] = useState<string>("");
+  const [isCreating, setIsCreating] = useState(false);
 
   const { toast } = useToast();
 
   interface ContaProps {
     onUserCreated: () => void;
-}
+  }
 
   const passwordValidation = (password: string) => {
+    setIsCreating(true)
     // Verifica se a senha tem pelo menos 6 caracteres
     if (password.length < 6) {
       toast({
@@ -80,11 +127,15 @@ export default function Conta() {
     console.log(
       `Nome: ${name},Email: ${email}, Senha: ${password}, SIP: ${sip}, Tipo de conta: ${type}`
     );
+
+    setIsCreating(true);
+
     if (!passwordValidation(password)) {
       toast({
         variant: "destructive",
         description: "Senha inválida",
       });
+      setIsCreating(false)
       return;
     }
     const obj = {
@@ -130,12 +181,16 @@ export default function Conta() {
         toast({
           description: "Conta criada com sucesso",
         });
+        setTimeout(() => {
+          window.location.reload();
+        }, 3000);
+
         //fazer com que atulize a lista de contas
       }
     } catch (error) {
       // Aqui você pode lidar com qualquer erro que possa ocorrer durante a criação da conta
     }
-    
+    setIsCreating(false);
   };
   const listUsers = async () => {
     try {
@@ -149,9 +204,64 @@ export default function Conta() {
       console.log(await response.json());
     } catch (error) {}
   };
+  const deleteUsers = async (id: string) => {
+    console.log(`id: ${id}`);
+    const formData = {
+      id: id,
+    };
+    try {
+      const response = await fetch("https://meet.wecom.com.br/api/deleteUser", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-auth": localStorage.getItem("token") || "",
+        },
+        body: JSON.stringify(formData),
+      });
+      const data: User[] = await response.json();
+      setUsers(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  useEffect(() => {
+    listUsers();
+  }, []);
+  const updateUsers = async (id: string) => {
+    console.log(
+      `id: ${id}, name: ${name}, email: ${email}, sip: ${sip}, type: ${type}`
+    );
+    const formData = {
+      id: id,
+      name: name,
+      email: email,
+      sip: sip,
+      type: type,
+    };
+    try {
+      const response = await fetch("https://meet.wecom.com.br/api/updateUser", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-auth": localStorage.getItem("token") || "",
+        },
+        body: JSON.stringify(formData),
+      });
+      const data: User[] = await response.json();
+      setUsers(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  useEffect(() => {
+    listUsers();
+  }, []);
+
   return (
+    //div que contem os cards
     <div className="px-2 flex flex-col md:flex-row gap-5 justify-center">
-      <Card className="md:w-fit lg:w-[600px]">
+      {/* Card de criação de usuario */}
+      <Card className="min-w-[500px] h-fit ">
         <CardHeader>
           <CardTitle>Criação de conta</CardTitle>
           <CardDescription>
@@ -221,25 +331,24 @@ export default function Conta() {
               </SelectContent>
             </Select>
           </div>
-          
-          
         </CardContent>
         <CardFooter className="flex justify-end">
-          <Button onClick={handleCreateUser}>Criar conta</Button>
+          {!isCreating && (
+            <Button onClick={handleCreateUser}>Criar conta</Button>
+          )}
+          {isCreating && (
+            <Button disabled>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Please wait
+            </Button>
+          )}
         </CardFooter>
       </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle>Lista de Usuários</CardTitle>
-          <CardDescription>Lista de todos os usuários</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ScrollArea className="h-[300px] border-none ">
-            <TableUser />
-          </ScrollArea>
-        </CardContent>
-        <CardFooter>
-        </CardFooter>
+      {/* Card que contem a lista de usuarios */}
+      <Card className="w-full min-h-[700px]">
+        <ScrollArea className="h-[700px]">
+          <TableUser />
+        </ScrollArea>
       </Card>
     </div>
   );

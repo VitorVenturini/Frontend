@@ -3,11 +3,25 @@ import { ModeToggle } from "@/components/mode-toggle"
 import logo from '../assets/principal.svg'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+  } from "@/components/ui/alert-dialog";
 
 
 
 
 export default function HeaderApp(){
+
+    //fazer a logiga de sair aqui com o backend
+    
     return (
         <header className="flex justify-between items-center p-4">
             <img 
@@ -28,9 +42,28 @@ export default function HeaderApp(){
             <Button asChild variant="ghost">
                 <a href="/Themes">Temas</a>
                 </Button>
-            <Button asChild variant="ghost">
-                <a href="/Login">Login</a>
-                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger>
+                    <Button variant="ghost"> Sair
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Voce tem certeza?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Ao apertar em sair você será redirecionado para a página de login
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction asChild>
+                      <a href="/Login"
+                      //fazer a logiga de sair aqui
+                      >Sair</a>
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
             </div>
             <div className="flex items-center gap-1">
             <Input type="search" placeholder="Search" />

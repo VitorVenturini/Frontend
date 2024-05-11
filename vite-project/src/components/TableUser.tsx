@@ -1,4 +1,4 @@
-import React, { useEffect, useState, ChangeEvent } from "react";
+import React, { useEffect, useState, ChangeEvent,useContext} from "react";
 import { Trash2 } from "lucide-react";
 import { Pencil } from "lucide-react";
 import {
@@ -53,6 +53,10 @@ interface User {
   sip: string;
   // Adicione aqui outros campos se necessário
 }
+interface UserContextType {
+  users: User[];
+  // Adicione aqui outros campos se necessário
+}
 
 export default function TableUser() {
   const [users, setUsers] = useState<User[]>([]);
@@ -61,6 +65,8 @@ export default function TableUser() {
   const [sip, setSip] = useState("");
   const [type, setType] = useState<string>("");
 
+
+
   const handleEmailChange = (event: ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
   };
@@ -68,9 +74,11 @@ export default function TableUser() {
   const handleSipChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSip(event.target.value);
   };
+
   const handleTypeChange = (value: string) => {
     setType(value);
   };
+
   const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
   };
@@ -142,26 +150,11 @@ export default function TableUser() {
   };
   useEffect(() => {
     listUsers();
-  }, []);
-  const createUser = async (user: NewUser) => {
-    try {
-        await fetch("https://meet.wecom.com.br/api/create", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "x-auth": localStorage.getItem("token") || "",
-            },
-            body: JSON.stringify(user),
-        });
-        // Atualize a lista de usuários após a criação
-        listUsers();
-    } catch (error) {
-        console.error(error);
-    }
-};
+  }, [])
 
   return (
-    <Table>
+    <div>
+    <Table className="pr-4">
       <TableHeader>
         <TableRow>
           <TableHead>Id</TableHead>
@@ -293,5 +286,6 @@ export default function TableUser() {
           ))}
       </TableBody>
     </Table>
+    </div>
   );
 }
