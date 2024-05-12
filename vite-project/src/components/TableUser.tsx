@@ -153,8 +153,9 @@ export default function TableUser() {
   }, [])
 
   return (
-    <div>
+    <div className="pb-6">
     <Table className="pr-4">
+    <TableCaption>Lista de contas.</TableCaption>
       <TableHeader>
         <TableRow>
           <TableHead>Id</TableHead>
