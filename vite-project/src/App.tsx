@@ -1,51 +1,44 @@
+import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom';
+import AdminLayout from './pages/admin/AdminLayout';
+import UserLayout from './pages/user/UserLayout';
+import NoPage from './pages/NoPage';
+import Login from './pages/Login';
+import { useEffect, useState } from 'react';
 
-import HeaderApp from "./components/HeaderApp"
-import Home from "./pages/Home"
-import Login from "./pages/Login"
-import Conta from "./pages/Conta"
-import NoPage from "./pages/NoPage"
-import Themes from "./pages/Themes"
-
-import { Toaster } from "@/components/ui/toaster"
 
 function App() {
-  let page
-  switch (window.location.pathname) {
-    case "/":
-    case "/Login":
-      page = <Login/>
-      break
-    case "/Home":
-      page = <>
-        <HeaderApp />
-        <Home/>
-      </>
-      break
-    case "/Conta":
-      page = <>
-        <HeaderApp />
-        <Conta/>
-      </>
-      break
-    case "/Themes":
-      page = <>
-        <HeaderApp />
-        <Themes/>
-      </>
-      break
-    default:
-      page = <NoPage/>
-      break
+  const [userType, setUserType] = useState(localStorage.getItem("userType"));
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setUserType(localStorage.getItem("userType"));
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
+  let Layout;
+  if (userType === "admin") {
+    Layout = AdminLayout;
+  } else if (userType === "user") {
+    Layout = UserLayout;
+  } else {
+    Layout = Login;
   }
+  console.log(userType)
 
   return (
-    <>
-      <div>
-        {page}
-        <Toaster />
-      </div>
-    </>
-  )
+
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/admin/*" element={userType === "admin" ? <AdminLayout /> : null} />
+        <Route path="/user/*" element={userType === "user" ? <UserLayout /> : null} />
+        <Route path="*" element={<NoPage/>} />
+      </Routes>
+  );
 }
 
-export default App
+export default App;
