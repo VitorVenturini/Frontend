@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import bcrypt from 'bcryptjs';
+import bcrypt from "bcryptjs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import React, { useState, ChangeEvent } from "react";
@@ -18,6 +18,10 @@ import { useTheme } from "@/components/theme-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Loader2 } from "lucide-react";
+
+import { useAccount } from "@/components/AccountContext";
+
+import Generic from "@/components/Generic"
 
 import {
   Dialog,
@@ -34,13 +38,14 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 
 export default function Login() {
-
+  const { user } = useAccount();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [type, setType] = useState<string>("");
   const [newPassword, setNewPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { setUser } = useAccount();
 
   //================================================================================================
 
@@ -58,9 +63,7 @@ export default function Login() {
     setType(value);
   };
 
-
   //================================================================================================
-
 
   const handleUpdatePassword = async () => {
     console.log(
@@ -118,9 +121,7 @@ export default function Login() {
     handleLogin(); // Chama a função de login
   };
 
-
   const handleLogin = async () => {
-
     // Inicia o estado de carregamento
     setIsLoading(true);
 
@@ -137,7 +138,6 @@ export default function Login() {
       type: type,
     };
 
-
     // Tenta enviar os dados para o backend
     try {
       //Envia os dados para o backend via método POST
@@ -151,10 +151,14 @@ export default function Login() {
 
       // Verifica se a requisição foi bem-sucedida
       if (response.ok) {
-
         // Extrai e exibe a resposta do backend na console
         const data = await response.json();
         console.log("Resposta do backend:", data);
+        console.log("Setting user:", data.guid);
+        
+        console.log('User data from API:', data);
+        setUser(data);
+        console.log('User set in context:', data);
 
         // Armazena o token no localStorage
         localStorage.setItem("token", data.accessToken);
@@ -187,10 +191,10 @@ export default function Login() {
   };
 
   return (
-    <ThemeProvider>
+    
       <div className=" flex w-full h-full">
         <div className="p-9 basis-1/2 justify-end content-center">
-          <Card className="xl:w-[600px] lg:w-[500px] md:[400px] sm:w-[300px] w-full">
+          <Card className="xl:w-[600px] lg:w-[500px] md:[400px] sm:w-[300px] w-full ">
             <form onSubmit={handleFormSubmit}>
               <CardHeader>
                 <CardTitle>
@@ -296,12 +300,14 @@ export default function Login() {
 
                     <DialogFooter>
                       <DialogClose asChild>
-                        <Button type="submit" onClick={handleUpdatePassword}>Mudar senha</Button>
+                        <Button type="submit" onClick={handleUpdatePassword}>
+                          Mudar senha
+                        </Button>
                       </DialogClose>
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>
-                <Button type="submit"disabled={isLoading}>
+                <Button type="submit" disabled={isLoading}>
                   {isLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -311,13 +317,12 @@ export default function Login() {
                     "Login"
                   )}
                 </Button>
-
               </CardFooter>
             </form>
           </Card>
         </div>
-        <div className=" basis-1/2 bg-primary-foreground w-full h-[100vh]"></div>
+        <div className=" basis-1/2  w-full h-[100vh]"><Generic/>
+        </div>
       </div>
-    </ThemeProvider>
   );
 }

@@ -1,11 +1,17 @@
-import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom';
-import AdminLayout from './pages/admin/AdminLayout';
-import UserLayout from './pages/user/UserLayout';
-import NoPage from './pages/NoPage';
-import Login from './pages/Login';
-import { useEffect, useState } from 'react';
-import { Toaster } from './components/ui/toaster';
-import { ThemeProvider } from './components/theme-provider';
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  useNavigate,
+} from "react-router-dom";
+import AdminLayout from "./pages/admin/AdminLayout";
+import UserLayout from "./pages/user/UserLayout";
+import NoPage from "./pages/NoPage";
+import Login from "./pages/Login";
+import { useEffect, useState } from "react";
+import { Toaster } from "./components/ui/toaster";
+import { ThemeProvider } from "./components/theme-provider";
+import { AccountProvider } from "./components/AccountContext";
 
 
 function App() {
@@ -16,10 +22,10 @@ function App() {
       setUserType(localStorage.getItem("userType"));
     };
 
-    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener("storage", handleStorageChange);
 
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener("storage", handleStorageChange);
     };
   }, []);
   let Layout;
@@ -30,22 +36,28 @@ function App() {
   } else {
     Layout = Login;
   }
-  console.log(userType)
+  console.log(userType);
 
   return (
     <ThemeProvider>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/admin/*" element={userType === "admin" ? <AdminLayout /> : null} />
-        <Route path="/user/*" element={userType === "user" ? <UserLayout /> : null} />
-        <Route path="*" element={<NoPage/>} />
-      </Routes>
+      <AccountProvider>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/login" element={<Login />} />
+          <Route
+            path="/admin/*"
+            element={userType === "admin" ? <AdminLayout /> : null}
+          />
+          <Route
+            path="/user/*"
+            element={userType === "user" ? <UserLayout /> : null}
+          />
+          <Route path="*" element={<NoPage />} />
+        </Routes>
+      </AccountProvider>
       <Toaster />
-      </ThemeProvider>
-      
-    
-  )
+    </ThemeProvider>
+  );
 }
 
 export default App;
