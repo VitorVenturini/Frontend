@@ -4,6 +4,8 @@ import UserLayout from './pages/user/UserLayout';
 import NoPage from './pages/NoPage';
 import Login from './pages/Login';
 import { useEffect, useState } from 'react';
+import { Toaster } from './components/ui/toaster';
+import { ThemeProvider } from './components/theme-provider';
 
 
 function App() {
@@ -31,14 +33,19 @@ function App() {
   console.log(userType)
 
   return (
-
+    <ThemeProvider>
       <Routes>
+        <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
         <Route path="/admin/*" element={userType === "admin" ? <AdminLayout /> : null} />
         <Route path="/user/*" element={userType === "user" ? <UserLayout /> : null} />
         <Route path="*" element={<NoPage/>} />
       </Routes>
-  );
+      <Toaster />
+      </ThemeProvider>
+      
+    
+  )
 }
 
 export default App;

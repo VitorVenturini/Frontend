@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
+import bcrypt from 'bcryptjs';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import React, { useState, ChangeEvent } from "react";
@@ -34,13 +34,15 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 
 export default function Login() {
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [type, setType] = useState<string>("");
   const [newPassword, setNewPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
   const { toast } = useToast();
+
+  //================================================================================================
 
   const handleEmailChange = (event: ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
@@ -55,6 +57,11 @@ export default function Login() {
   const handleTypeChange = (value: string) => {
     setType(value);
   };
+
+
+  //================================================================================================
+
+
   const handleUpdatePassword = async () => {
     console.log(
       `Email: ${email}, Senha: ${password}, Nova Senha: ${newPassword}`
@@ -104,27 +111,34 @@ export default function Login() {
       console.error("Erro:", error);
     }
   };
-  const { setTheme } = useTheme();
 
   const handleFormSubmit = (event: React.FormEvent) => {
     event.preventDefault(); // Previne o comportamento padrão do formulário
     console.log("Form submitted"); // Debug log
     handleLogin(); // Chama a função de login
   };
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-  };
+
 
   const handleLogin = async () => {
-    console.log(`Email: ${email}, Senha: ${password}`);
+
+    // Inicia o estado de carregamento
     setIsLoading(true);
 
+    // Exibe os dados do formulário na console
+    console.log(`Email: ${email}, Senha: ${password}`);
+
+    // emcripta a senha
+    await bcrypt.hash(password, 15);
+
+    // cria um objeto com os dados do formulário
     const formData = {
       email: email,
       password: password,
       type: type,
     };
 
+
+    // Tenta enviar os dados para o backend
     try {
       //Envia os dados para o backend via método POST
       const response = await fetch("https://meet.wecom.com.br/api/login", {
@@ -137,6 +151,7 @@ export default function Login() {
 
       // Verifica se a requisição foi bem-sucedida
       if (response.ok) {
+
         // Extrai e exibe a resposta do backend na console
         const data = await response.json();
         console.log("Resposta do backend:", data);
@@ -148,7 +163,7 @@ export default function Login() {
 
         // Redirect based on user type
         if (data.type === "admin") {
-          window.location.href = "/admin/conta";
+          window.location.href = "/admin/buttons";
         } else if (data.type === "user") {
           window.location.href = "/user";
         } else {
@@ -170,6 +185,7 @@ export default function Login() {
 
     setIsLoading(false);
   };
+
   return (
     <ThemeProvider>
       <div className=" flex w-full h-full">
@@ -280,12 +296,12 @@ export default function Login() {
 
                     <DialogFooter>
                       <DialogClose asChild>
-                        <Button type="submit">Mudar senha</Button>
+                        <Button type="submit" onClick={handleUpdatePassword}>Mudar senha</Button>
                       </DialogClose>
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>
-                <Button type="submit" disabled={isLoading}>
+                <Button type="submit"disabled={isLoading}>
                   {isLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />

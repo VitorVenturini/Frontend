@@ -1,10 +1,8 @@
 import { Routes, Route } from "react-router-dom";
-import AdminHome from "./Home";
 import ValidadeToken from "@/components/ValidateToken";
-import Conta from "./Conta";
-import TableUser from "@/components/TableUser";
+import Account from "./Account";
+import Buttons from "./Buttons";
 import HeaderApp from "@/components/HeaderApp";
-import { Toast } from "@radix-ui/react-toast";
 
 function AdminLayout() {
   return (
@@ -14,11 +12,11 @@ function AdminLayout() {
       {/* Your admin layout here */}
       <Routes>
         
-        <Route path="conta" element={<Conta />} />
-        <Route path="tableuser" element={<TableUser />} />
+        <Route path="account" element={<Account />} />
+        <Route path="buttons" element={<Buttons/>} />
         {/* Add more admin routes as needed */}
       </Routes>
-      <Toast/>
+
     </div>
   );
 }

@@ -7,9 +7,8 @@ function UserLayout() {
   return (
     <div>
       layout do usuário
-      <ThemeProvider>
       <a></a>
-      </ThemeProvider>
+
       
       {/* Your admin layout here */}
     </div>

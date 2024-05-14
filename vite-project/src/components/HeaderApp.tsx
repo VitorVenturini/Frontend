@@ -33,10 +33,10 @@ export default function HeaderApp() {
       <div className="flex items-end ">
         <div className="flex items-center gap-1">
           <Button asChild variant="ghost">
-            <a href="/Home">Inicio</a>
+            <a href="/admin/buttons">Botões</a>
           </Button>
           <Button asChild variant="ghost">
-            <a href="/Conta">Conta</a>
+            <a href="/admin/account">Conta</a>
           </Button>
           <AlertDialog>
             <AlertDialogTrigger>

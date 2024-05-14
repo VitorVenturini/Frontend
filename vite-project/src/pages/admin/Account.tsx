@@ -34,7 +34,7 @@ interface User {
   // Adicione aqui outros campos se necessário
 }
 
-export default function Conta() {
+export default function Account() {
   const [users, setUsers] = useState<User[]>([]);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");

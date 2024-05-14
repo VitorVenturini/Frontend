@@ -70,7 +70,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-export default function Home() {
+export default function Buttons() {
   return (
     <div className="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2">
       <Card x-chunk="dashboard-04-chunk-1">
