@@ -16,33 +16,37 @@ interface AccountContextData {
   user: User | null;
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
 }
+
 interface AccountProviderProps {
-    children: React.ReactNode;
-  }
-  
+  children: React.ReactNode;
+}
 
 const AccountContext = createContext<AccountContextData | undefined>(undefined);
 
 export const AccountProvider: React.FC<AccountProviderProps> = ({ children }) => {
-    const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
-    useEffect(() => {
-        const storedUser = localStorage.getItem('user',);
-        if (storedUser) {
-          setUser(JSON.parse(storedUser));
-        }
-      }, []);
-    
-      useEffect(() => {
-        console.log('User updated:', user);
-      }, [user]);
-  
-    return (
-      <AccountContext.Provider value={{ user, setUser }}>
-        {children}
-      </AccountContext.Provider>
-    );
-  };
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem('user', JSON.stringify(user));
+    } else {
+      localStorage.removeItem('user');
+    }
+  }, [user]);
+
+  return (
+    <AccountContext.Provider value={{ user, setUser }}>
+      {children}
+    </AccountContext.Provider>
+  );
+};
 
 export const useAccount = (): AccountContextData => {
   const context = useContext(AccountContext);
