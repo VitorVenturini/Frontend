@@ -36,6 +36,9 @@ export default function HeaderApp() {
             <a href="/admin/buttons">Botões</a>
           </Button>
           <Button asChild variant="ghost">
+            <a href="/user">Visão de usuário</a>
+          </Button>
+          <Button asChild variant="ghost">
             <a href="/admin/account">Conta</a>
           </Button>
           <AlertDialog>
@@ -65,12 +68,7 @@ export default function HeaderApp() {
             </AlertDialogContent>
           </AlertDialog>
         </div>
-        <div className="flex items-center gap-1">
-          <Input type="search" placeholder="Search" />
-          <ThemeProvider>
-            <ModeToggle />
-          </ThemeProvider>
-        </div>
+
       </div>
     </header>
   );

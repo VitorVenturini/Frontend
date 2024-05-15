@@ -13,7 +13,6 @@ import { Toaster } from "./components/ui/toaster";
 import { ThemeProvider } from "./components/theme-provider";
 import { AccountProvider } from "./components/AccountContext";
 
-
 function App() {
   const [userType, setUserType] = useState(localStorage.getItem("userType"));
 
@@ -50,7 +49,11 @@ function App() {
           />
           <Route
             path="/user/*"
-            element={userType === "user" ? <UserLayout /> : null}
+            element={
+              userType === "user" || userType === "admin" ? (
+                <UserLayout />
+              ) : null
+            }
           />
           <Route path="*" element={<NoPage />} />
         </Routes>
