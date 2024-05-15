@@ -13,15 +13,11 @@ import { Label } from "@/components/ui/label";
 import React, { useState, ChangeEvent } from "react";
 import { Switch } from "@/components/ui/switch";
 
-import { useTheme } from "@/components/theme-provider";
-
-import { ThemeProvider } from "@/components/theme-provider";
-import { ModeToggle } from "@/components/mode-toggle";
 import { Loader2 } from "lucide-react";
 
 import { useAccount } from "@/components/AccountContext";
 
-import Generic from "@/components/Generic";
+import icone from "@/assets/icone.svg";
 
 import {
   Dialog,
@@ -210,9 +206,9 @@ export default function Login() {
   };
 
   return (
-    <div className=" flex w-full h-full">
-      <div className="p-9 basis-1/2 justify-end content-center">
-        <Card className="xl:w-[600px] lg:w-[500px] md:[400px] sm:w-[300px] w-full ">
+    <div className=" flex align-middle content-center justify-center">
+      <div className="flex basis-1/2 justify-end align-middle-700 py-60 px-12"> 
+        <Card className="xl:w-[600px] lg:w-[500px] md:[400px] sm:w-[300px] h-fit ">
           <form onSubmit={handleFormSubmit}>
             <CardHeader>
               <CardTitle>
@@ -342,8 +338,8 @@ export default function Login() {
           </form>
         </Card>
       </div>
-      <div className=" basis-1/2  w-full h-[100vh]">
-        <Generic />
+      <div className=" basis-1/2  w-full h-[100vh] bg-card flex justify-start align-middle py-60 px-12">
+      <img src={icone} alt="Logo"/>
       </div>
     </div>
   );

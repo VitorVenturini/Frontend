@@ -3,6 +3,7 @@ import ValidadeToken from "@/components/ValidateToken";
 import { ThemeProvider } from "@/components/theme-provider";
 import { useAccount } from "@/components/AccountContext";
 import { Button } from "@/components/ui/button";
+import Logout from "@/components/Logout";
 
 function UserLayout() {
   const { user } = useAccount();
@@ -27,6 +28,8 @@ function UserLayout() {
           <Button>Admin</Button>
         </a>
       )}
+
+      <Logout/>
     </div>
   );
 }

@@ -3,17 +3,7 @@ import { ModeToggle } from "@/components/mode-toggle";
 import logo from "../assets/principal.svg";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import Logout from "./Logout";
 
 
 const handleLogout = () => {
@@ -41,32 +31,8 @@ export default function HeaderApp() {
           <Button asChild variant="ghost">
             <a href="/admin/account">Conta</a>
           </Button>
-          <AlertDialog>
-            <AlertDialogTrigger>
-              <Button variant="ghost"> Sair</Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Voce tem certeza?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Ao apertar em sair você será redirecionado para a página de
-                  login
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                <AlertDialogAction asChild>
-                  <a
-                    onClick={handleLogout}
-                    href="/Login"
-                    //fazer a logiga de sair aqui
-                  >
-                    Sair
-                  </a>
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          <Logout/>
+          <ModeToggle />
         </div>
 
       </div>
