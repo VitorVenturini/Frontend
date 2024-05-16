@@ -7,13 +7,14 @@ import {
 import AdminLayout from "./pages/admin/AdminLayout";
 import UserLayout from "./pages/user/UserLayout";
 import NoPage from "./pages/NoPage";
-import Login from "./pages/Login";
+import Login from "./pages/LoginPage";
 import { useEffect, useState } from "react";
 import { Toaster } from "./components/ui/toaster";
 import { ThemeProvider } from "./components/theme-provider";
 import { AccountProvider } from "./components/AccountContext";
 import { WebSocketProvider } from "./components/WebSocketProvider";
 import { useAccount } from "@/components/AccountContext";
+import { AdminProvider } from "./components/AdminProvider";
 
 function App() {
   const [userType, setUserType] = useState(localStorage.getItem("userType"));
@@ -43,6 +44,9 @@ function App() {
 
   return (
     <ThemeProvider>
+      <AdminProvider>
+  
+    
       <AccountProvider>
         {token ? (
           <WebSocketProvider token={token}>
@@ -73,6 +77,7 @@ function App() {
         )}
       </AccountProvider>
       <Toaster />
+      </AdminProvider>
     </ThemeProvider>
   );
 }
