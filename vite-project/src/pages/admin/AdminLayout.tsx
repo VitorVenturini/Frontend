@@ -11,12 +11,8 @@ function AdminLayout() {
   console.log(user+" user");
   console.log(user?.guid +" guid");
   return (
-    <div >
-      <div className="flex gap-6">
-      {user && Object.entries(user).map(([key, value]) => (
-          <p key={key}>{key}: {value}</p>
-        ))}
-        </div>
+    <div className="p-3 bg-card">
+      <div className=" p-3 bg-background">
       
       <HeaderApp />
       {/* Your admin layout here */}
@@ -27,6 +23,7 @@ function AdminLayout() {
         {/* Add more admin routes as needed */}
       </Routes>
 
+    </div>
     </div>
   );
 }

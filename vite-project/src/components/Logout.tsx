@@ -12,14 +12,20 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
   } from "@/components/ui/alert-dialog";
+  import { useWebSocketData } from './WebSocketProvider';// Importe o useWebSocketData
+
 
 export default function Logout() {
     const { setUser } = useAccount(); // Use o setAccount do AccountContext
+    const ws = useWebSocketData();
 
-  const handleLogout = () => {
-    localStorage.clear(); // Limpe o localStorage
-    setUser(null); // Atualize o AccountContext para nenhuma conta
-  };
+    const handleLogout = () => {
+      localStorage.clear();
+      setUser(null);
+      if (ws) {
+        ws.closeConnection(); // Fecha a conexão WebSocket
+      }
+    };
 
   return (
     <AlertDialog>

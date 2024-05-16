@@ -12,9 +12,12 @@ import { useEffect, useState } from "react";
 import { Toaster } from "./components/ui/toaster";
 import { ThemeProvider } from "./components/theme-provider";
 import { AccountProvider } from "./components/AccountContext";
+import { WebSocketProvider } from "./components/WebSocketProvider";
+import { useAccount } from "@/components/AccountContext";
 
 function App() {
   const [userType, setUserType] = useState(localStorage.getItem("userType"));
+  const [token, setToken] = useState(localStorage.getItem("token"));
 
   useEffect(() => {
     const handleStorageChange = () => {
@@ -37,30 +40,40 @@ function App() {
   }
   console.log(userType);
 
+
   return (
     <ThemeProvider>
       <AccountProvider>
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/login" element={<Login />} />
-          <Route
-            path="/admin/*"
-            element={userType === "admin" ? <AdminLayout /> : null}
-          />
-          <Route
-            path="/user/*"
-            element={
-              userType === "user" || userType === "admin" ? (
-                <UserLayout />
-              ) : null
-            }
-          />
-          <Route path="*" element={<NoPage />} />
-        </Routes>
+        {token ? (
+          <WebSocketProvider token={token}>
+            <Routes>
+              <Route path="/" element={<Login />} />
+              <Route path="/login" element={<Login />} />
+              <Route
+                path="/admin/*"
+                element={userType === "admin" ? <AdminLayout /> : null}
+              />
+              <Route
+                path="/user/*"
+                element={
+                  userType === "user" || userType === "admin" ? (
+                    <UserLayout />
+                  ) : null
+                }
+              />
+              <Route path="*" element={<NoPage />} />
+            </Routes>
+          </WebSocketProvider>
+        ) : (
+          <Routes>
+            <Route path="/" element={<Login />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="*" element={<NoPage />} />
+          </Routes>
+        )}
       </AccountProvider>
       <Toaster />
     </ThemeProvider>
   );
 }
-
-export default App;
+  export default App;

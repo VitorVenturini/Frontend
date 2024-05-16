@@ -10,6 +10,7 @@ interface User {
   sip: string;
   type: string;
   updatedAt: string;
+  accessToken: string;
 }
 
 interface AccountContextData {
