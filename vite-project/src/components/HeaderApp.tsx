@@ -39,6 +39,9 @@ export default function HeaderApp() {
             <a href="/admin/buttons">Botões</a>
           </Button>
           <Button asChild variant="ghost">
+            <a href="/admin/actions">Ações</a>
+          </Button>
+          <Button asChild variant="ghost">
             <a href="/user">Visão de usuário</a>
           </Button>
           <Button asChild variant="ghost">
