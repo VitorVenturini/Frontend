@@ -10,7 +10,7 @@ import {
 import bcrypt from "bcryptjs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, ChangeEvent, useContext } from "react";
 import { Switch } from "@/components/ui/switch";
 
 import { Loader2 } from "lucide-react";
@@ -33,18 +33,19 @@ import {
 ("use client");
 
 import { useToast } from "@/components/ui/use-toast";
-import { IsAdminContext } from "@/components/IsAdmContext";
+import { AdminContext } from "@/components/AdminContex";
 
-export default function Login() {
+export default function LoginpPage() {
   const { user } = useAccount();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [type, setType] = useState<string>("");
+  const { isAdmin } = useContext(AdminContext);
   const [newPassword, setNewPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const { setUser } = useAccount();
-  const [isAdmin, setIsAdmin] = useState(false);
+  const { setIsAdmin } = useContext(AdminContext);
+  
 
   //================================================================================================
 
@@ -57,9 +58,6 @@ export default function Login() {
   };
   const handleNewPasswordChange = (event: ChangeEvent<HTMLInputElement>) => {
     setNewPassword(event.target.value);
-  };
-  const handleTypeChange = (value: string) => {
-    setType(value);
   };
   const handleAdminSwitchChange = (checked: boolean) => {
     setIsAdmin(checked);
@@ -208,7 +206,7 @@ export default function Login() {
   };
 
   return (
-    <IsAdminContext.Provider value={{ isAdmin, setIsAdmin }}>
+    <AdminContext.Provider value={{ isAdmin, setIsAdmin }}>
       <div className=" flex align-middle content-center justify-center">
         <div className="flex basis-1/2 justify-end align-middle-700 py-60 px-12">
           <Card className="xl:w-[600px] lg:w-[500px] md:[400px] sm:w-[300px] h-fit ">
@@ -345,6 +343,6 @@ export default function Login() {
           <img src={icone} alt="Logo" />
         </div>
       </div>
-    </IsAdminContext.Provider>
+    </AdminContext.Provider>
   );
 }
