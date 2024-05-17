@@ -1,6 +1,6 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect } from "react";
 
-interface User {
+interface Account {
   createdAt: string;
   email: string;
   guid: string;
@@ -12,11 +12,28 @@ interface User {
   updatedAt: string;
   accessToken: string;
   isAdmin: boolean;
+  isLogged: boolean;
 }
+const initialState: Account = {
+  createdAt: '',
+  email: '',
+  guid: '',
+  id: '',
+  name: '',
+  password: '',
+  sip: '',
+  type: '',
+  updatedAt: '',
+  accessToken: '',
+  isAdmin: false,
+  isLogged: false,
+};
 
 interface AccountContextData {
-  user: User | null;
-  setUser: React.Dispatch<React.SetStateAction<User | null>>;
+  Account: Account | null;
+  isAdmin: boolean;
+  setAccount: React.Dispatch<React.SetStateAction<Account | null>>;
+  updateUserContext: (user: Account) => void;
 }
 
 interface AccountProviderProps {
@@ -26,25 +43,43 @@ interface AccountProviderProps {
 const AccountContext = createContext<AccountContextData | undefined>(undefined);
 
 export const AccountProvider: React.FC<AccountProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [Account, setAccount] = useState<Account | null>(null);
+
+
+  // Defina isAdmin e isLogged com base no estado do usuário
+  const isAdmin = Account?.isAdmin ?? false;
+  const isLogged = Boolean(Account);
+
+  const updateAccountContext = (newAccount: Partial<Account>) => {
+    const mergedAccount = Account ? { ...Account, ...newAccount } : newAccount as Account;
+    setAccount(mergedAccount);
+    if (newAccount) {
+      localStorage.setItem('Account', JSON.stringify(mergedAccount));
+    } else {
+      localStorage.removeItem('Account');
+    }
+  };
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+    const storedAccount = localStorage.getItem("Account");
+    if (storedAccount) {
+      setAccount(JSON.parse(storedAccount));
     }
   }, []);
 
   useEffect(() => {
-    if (user) {
-      localStorage.setItem('user', JSON.stringify(user));
+    if (Account) {
+      localStorage.setItem("Account", JSON.stringify(Account));
     } else {
-      localStorage.removeItem('user');
+      localStorage.removeItem("Account");
     }
-  }, [user]);
+  }, [Account]);
+  useEffect(() => {
+    console.log("isAdmin accountContext:", isAdmin); // Imprima o valor de isAdmin sempre que ele mudar
+  }, [isAdmin]);
 
   return (
-    <AccountContext.Provider value={{ user, setUser }}>
+    <AccountContext.Provider value={{Account, setAccount, updateAccountContext }}>
       {children}
     </AccountContext.Provider>
   );
@@ -53,7 +88,7 @@ export const AccountProvider: React.FC<AccountProviderProps> = ({ children }) =>
 export const useAccount = (): AccountContextData => {
   const context = useContext(AccountContext);
   if (!context) {
-    throw new Error('useAccount must be used within an AccountProvider');
+    throw new Error("useAccount must be used within an AccountProvider");
   }
   return context;
 };

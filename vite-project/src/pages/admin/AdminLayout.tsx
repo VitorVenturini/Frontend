@@ -7,16 +7,14 @@ import { useAccount } from "@/components/AccountContext";
 import ButtonsGrid from "@/components/ButtonsGrid";
 import React, { useContext, useEffect } from 'react';
 import { useState } from 'react';
-import { AdminContext } from "@/components/AdminContex";
 
 function AdminLayout() {
   const { user } = useAccount();
-  const { isAdmin } = useContext(AdminContext);
   console.log(user+" user");
   console.log(user?.guid +" guid");
-  useEffect(() => {
-    console.log('Switch changed, é admin agora? ', isAdmin ? 'Sim' : 'Não');
-  }, [isAdmin]);
+  console.log(user?.isAdmin+" user?.isAdmin AdminLayout");
+  console.log(user?.isLogged +" user?.isLogged AdminLayout")
+
   return (
     <div className="p-3 bg-card">
       <div className=" p-3 bg-background">

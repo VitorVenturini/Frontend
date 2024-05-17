@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState, useCallback,useContext } from "react";
 import { useAccount } from "./AccountContext";
-import { AdminContext } from "./AdminContex";
 
 export interface WebSocketHook {
     data: string;
@@ -11,7 +10,7 @@ const useWebSocket = (token: string,) => {
   const [data, setData] = useState(null);
   const ws = useRef<WebSocket | null>(null);
   const timer = useRef<NodeJS.Timeout | null>(null);
-  const { isAdmin } = useContext(AdminContext);
+  const { isAdmin } = useAccount();
 
   useEffect(() => {
     const currentUrl = window.location.hostname;

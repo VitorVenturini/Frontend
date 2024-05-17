@@ -1,84 +1,39 @@
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  useNavigate,
-} from "react-router-dom";
-import AdminLayout from "./pages/admin/AdminLayout";
-import UserLayout from "./pages/user/UserLayout";
-import NoPage from "./pages/NoPage";
-import Login from "./pages/LoginPage";
-import { useEffect, useState } from "react";
 import { Toaster } from "./components/ui/toaster";
 import { ThemeProvider } from "./components/theme-provider";
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+
+import { lazy, Suspense } from 'react';
 import { AccountProvider } from "./components/AccountContext";
-import { WebSocketProvider } from "./components/WebSocketProvider";
-import { useAccount } from "@/components/AccountContext";
-import { AdminProvider } from "./components/AdminProvider";
+
+const AdminLayout = lazy(() => import("./pages/admin/AdminLayout"));
+const UserLayout = lazy(() => import("./pages/user/UserLayout"));
+const LoginPage = lazy(() => import("./pages/LoginPageN"));
 
 function App() {
-  const [userType, setUserType] = useState(localStorage.getItem("userType"));
-  const [token, setToken] = useState(localStorage.getItem("token"));
-
-  useEffect(() => {
-    const handleStorageChange = () => {
-      setUserType(localStorage.getItem("userType"));
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-    };
-  }, []);
-  let Layout;
-  if (userType === "admin") {
-    Layout = AdminLayout;
-  } else if (userType === "user") {
-    Layout = UserLayout;
-  } else {
-    Layout = Login;
-  }
-  console.log(userType);
-
+  localStorage.setItem("isLogged", "false");
+  localStorage.setItem("isAdmin", "false");
+  const isLogged = localStorage.getItem('isLogged') === 'true';
+  const isAdmin = localStorage.getItem('isAdmin') === 'true'|| false;
 
   return (
     <ThemeProvider>
-      <AdminProvider>
-  
-    
       <AccountProvider>
-        {token ? (
-          <WebSocketProvider token={token}>
-            <Routes>
-              <Route path="/" element={<Login />} />
-              <Route path="/login" element={<Login />} />
-              <Route
-                path="/admin/*"
-                element={userType === "admin" ? <AdminLayout /> : null}
-              />
-              <Route
-                path="/user/*"
-                element={
-                  userType === "user" || userType === "admin" ? (
-                    <UserLayout />
-                  ) : null
-                }
-              />
-              <Route path="*" element={<NoPage />} />
-            </Routes>
-          </WebSocketProvider>
-        ) : (
-          <Routes>
-            <Route path="/" element={<Login />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="*" element={<NoPage />} />
-          </Routes>
-        )}
-      </AccountProvider>
+      <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          {isLogged ? (
+            <>
+              <Route path="/user" element={<UserLayout />} />
+              {isAdmin && <Route path="/admin" element={<AdminLayout />} />}
+            </>
+          ) : (
+            <Route path="*" element={<Navigate to="/login" />} />
+          )}
+        </Routes>
       <Toaster />
-      </AdminProvider>
+      </AccountProvider>
     </ThemeProvider>
   );
 }
-  export default App;
+
+
+export default App;

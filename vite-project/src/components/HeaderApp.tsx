@@ -6,9 +6,7 @@ import { Input } from "@/components/ui/input";
 import Logout from "./Logout";
 import { useAccount } from "@/components/AccountContext";
 
-const handleLogout = () => {
-  localStorage.removeItem("token");
-};
+
 
 export default function HeaderApp() {
   const { user } = useAccount();

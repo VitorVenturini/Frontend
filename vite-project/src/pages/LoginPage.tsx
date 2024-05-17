@@ -18,7 +18,6 @@ import { Loader2 } from "lucide-react";
 import { useAccount } from "@/components/AccountContext";
 
 import icone from "@/assets/icone.svg";
-import useWebSocket from "@/components/useWebSocket";
 
 import {
   Dialog,
@@ -33,21 +32,26 @@ import {
 ("use client");
 
 import { useToast } from "@/components/ui/use-toast";
-import { AdminContext } from "@/components/AdminContex";
+import Logout from "@/components/Logout";
+interface LoginPageProps {
+  setIsLogged: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsAdmin: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
 
 export default function LoginpPage() {
-  const { user } = useAccount();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { isAdmin } = useContext(AdminContext);
   const [newPassword, setNewPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-  const { setUser } = useAccount();
-  const { setIsAdmin } = useContext(AdminContext);
-  
+  const isAdmin = useAccount()
+  const { updateUserContext } = useAccount();
 
-  //================================================================================================
+
+ 
+
+ 
 
   const handleEmailChange = (event: ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
@@ -59,13 +63,9 @@ export default function LoginpPage() {
   const handleNewPasswordChange = (event: ChangeEvent<HTMLInputElement>) => {
     setNewPassword(event.target.value);
   };
-  const handleAdminSwitchChange = (checked: boolean) => {
-    setIsAdmin(checked);
-    console.log('Switch changed, é admin agora? ', checked ? 'Sim' : 'Não')
-  };
 
-  //================================================================================================
-
+  
+ 
   const handleUpdatePassword = async () => {
     console.log(
       `Email: ${email}, Senha: ${password}, Nova Senha: ${newPassword}`
@@ -116,13 +116,7 @@ export default function LoginpPage() {
     }
   };
 
-  const handleFormSubmit = (event: React.FormEvent) => {
-    event.preventDefault(); // Previne o comportamento padrão do formulário
-    console.log("Form submitted"); // Debug log
-
-    handleLogin(); // Chama a função de login
-  };
-
+ 
   const handleLogin = async () => {
     // Inicia o estado de carregamento
     setIsLoading(true);
@@ -137,7 +131,6 @@ export default function LoginpPage() {
     const formData = {
       email: email,
       password: password,
-      type: isAdmin ? "admin" : "user",
     };
 
     // Tenta enviar os dados para o backend
@@ -154,13 +147,16 @@ export default function LoginpPage() {
       // Verifica se a requisição foi bem-sucedida
       if (response.ok) {
         // Extrai e exibe a resposta do backend na console
-        const data = await response.json();
-        console.log("Resposta do backend:", data);
-        console.log("Setting user:", data.guid);
 
-        console.log("User data from API:", data);
-        setUser(data);
-        console.log("User set in context:", data);
+        const data = await response.json();
+        data.isAdmin = isAdmin;
+        data.isLogged = true;
+        console.log(isAdmin + " LogginPage isAdmin");
+        console.log(data.isLogged + " LogginPage isLogged");
+
+        updateUserContext(data);
+
+        console.log("adicionado ao contexto Account no loginPage:", data);
 
         // Armazena o token e type no localStorage
         localStorage.setItem("token", data.accessToken);
@@ -204,9 +200,15 @@ export default function LoginpPage() {
 
     setIsLoading(false);
   };
+  
 
+  const handleFormSubmit = (event: React.FormEvent) => {
+    event.preventDefault(); // Previne o comportamento padrão do formulário
+    console.log("Form submitted"); // Debug log
+
+    handleLogin(); // Chama a função de login
+  };
   return (
-    <AdminContext.Provider value={{ isAdmin, setIsAdmin }}>
       <div className=" flex align-middle content-center justify-center">
         <div className="flex basis-1/2 justify-end align-middle-700 py-60 px-12">
           <Card className="xl:w-[600px] lg:w-[500px] md:[400px] sm:w-[300px] h-fit ">
@@ -220,7 +222,6 @@ export default function LoginpPage() {
                         <Label htmlFor="airplane-mode">Admin</Label>
                         <Switch
                           id="admin"
-                          onCheckedChange={handleAdminSwitchChange}
                         />
                       </div>
                     </div>
@@ -342,7 +343,7 @@ export default function LoginpPage() {
         <div className=" basis-1/2  w-full h-[100vh] bg-card flex justify-start align-middle py-60 px-12">
           <img src={icone} alt="Logo" />
         </div>
+        <Logout/>
       </div>
-    </AdminContext.Provider>
   );
 }
