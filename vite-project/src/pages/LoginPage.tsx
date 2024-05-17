@@ -10,16 +10,12 @@ import {
 import bcrypt from "bcryptjs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import React, { useState, ChangeEvent, useContext } from "react";
+import React, { useState, ChangeEvent, useContext, useEffect } from "react";
 import { Switch } from "@/components/ui/switch";
-
 import { Loader2 } from "lucide-react";
-
 import { useAccount } from "@/components/AccountContext";
-
 import icone from "@/assets/icone.svg";
 import useWebSocket from "@/components/useWebSocket";
-
 import {
   Dialog,
   DialogContent,
@@ -31,20 +27,17 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 ("use client");
-
 import { useToast } from "@/components/ui/use-toast";
-import { AdminContext } from "@/components/AdminContex";
 
 export default function LoginpPage() {
   const { user } = useAccount();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { isAdmin } = useContext(AdminContext);
   const [newPassword, setNewPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const { setUser } = useAccount();
-  const { setIsAdmin } = useContext(AdminContext);
+  const [isAdmin, setIsAdmin] = useState(false);
   
 
   //================================================================================================
@@ -61,8 +54,14 @@ export default function LoginpPage() {
   };
   const handleAdminSwitchChange = (checked: boolean) => {
     setIsAdmin(checked);
-    console.log('Switch changed, é admin agora? ', checked ? 'Sim' : 'Não')
+    if (user) {
+      setUser({ ...user, isAdmin: checked }); // Atualize o usuário com o valor do switch
+    }
+    console.log('Switch changed? ', checked ? 'Sim' : 'Não')
   };
+  useEffect(() => {
+    console.log('User changed:', user);
+  }, [user]);
 
   //================================================================================================
 
@@ -115,6 +114,7 @@ export default function LoginpPage() {
       console.error("Erro:", error);
     }
   };
+  
 
   const handleFormSubmit = (event: React.FormEvent) => {
     event.preventDefault(); // Previne o comportamento padrão do formulário
@@ -160,6 +160,9 @@ export default function LoginpPage() {
 
         console.log("User data from API:", data);
         setUser(data);
+        if (user) {
+          setUser({ ...user, isAdmin: true}); // Atualize o usuário com o valor do switch
+        }
         console.log("User set in context:", data);
 
         // Armazena o token e type no localStorage
@@ -176,6 +179,7 @@ export default function LoginpPage() {
           setIsLoading(false);
           return;
         }
+        
 
         if (!isAdmin && data.type === "admin") {
           window.location.href = "/user";
@@ -187,6 +191,7 @@ export default function LoginpPage() {
 
         if (isAdmin) {
           window.location.href = "/admin/buttons";
+
         }
       } else {
         console.error(
@@ -206,7 +211,7 @@ export default function LoginpPage() {
   };
 
   return (
-    <AdminContext.Provider value={{ isAdmin, setIsAdmin }}>
+  
       <div className=" flex align-middle content-center justify-center">
         <div className="flex basis-1/2 justify-end align-middle-700 py-60 px-12">
           <Card className="xl:w-[600px] lg:w-[500px] md:[400px] sm:w-[300px] h-fit ">
@@ -343,6 +348,5 @@ export default function LoginpPage() {
           <img src={icone} alt="Logo" />
         </div>
       </div>
-    </AdminContext.Provider>
-  );
+  );  
 }

@@ -22,12 +22,15 @@ export default function HeaderApp() {
           height={200}
         />
         <div>
-        <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
-      {user?.name || "Usuário"}
-    </h3>
-    <p className="text-sm text-muted-foreground">{user?.email}</p>
+          <div className="flex items-center gap-5">
+          <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
+            {user?.name || "Usuário"}
+          </h3>
+          <p className="text-sm text-muted-foreground">{user?.isAdmin || "não foi o is admin"}</p>
+          </div>
+          
+          <p className="text-sm text-muted-foreground">{user?.email}</p>
         </div>
-    
       </div>
 
       <div className="flex items-end ">
@@ -40,6 +43,9 @@ export default function HeaderApp() {
           </Button>
           <Button asChild variant="ghost">
             <a href="/admin/account">Conta</a>
+          </Button>
+          <Button asChild variant="ghost">
+            <a href="/admin/options">Opções</a>
           </Button>
           <Logout />
           <ModeToggle />

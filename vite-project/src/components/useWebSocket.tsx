@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState, useCallback,useContext } from "react";
 import { useAccount } from "./AccountContext";
-import { AdminContext } from "./AdminContex";
 
 export interface WebSocketHook {
     data: string;
@@ -8,10 +7,10 @@ export interface WebSocketHook {
   }
 
 const useWebSocket = (token: string,) => {
+  const { isAdmin } = useAccount(); // Use o isAdmin do AccountContext
   const [data, setData] = useState(null);
   const ws = useRef<WebSocket | null>(null);
   const timer = useRef<NodeJS.Timeout | null>(null);
-  const { isAdmin } = useContext(AdminContext);
 
   useEffect(() => {
     const currentUrl = window.location.hostname;
@@ -25,11 +24,12 @@ const useWebSocket = (token: string,) => {
 
     function connect() {
       ws.current = new WebSocket(wsUrl);
-
+    
       ws.current.onopen = () => {
+
         if (timer.current) clearTimeout(timer.current);
         console.log("WebSocket connection opened");
-        console.log("isAdmin", isAdmin);
+        console.log("isAdmin ws", isAdmin);
         ws.current?.send(JSON.stringify({ api: isAdmin ? "admin" : "user", mt: "UserSession" }));
     };
 

@@ -7,14 +7,14 @@ import {
 import AdminLayout from "./pages/admin/AdminLayout";
 import UserLayout from "./pages/user/UserLayout";
 import NoPage from "./pages/NoPage";
-import Login from "./pages/LoginPage";
+import LoginPage from "./pages/LoginPage";
 import { useEffect, useState } from "react";
 import { Toaster } from "./components/ui/toaster";
 import { ThemeProvider } from "./components/theme-provider";
 import { AccountProvider } from "./components/AccountContext";
 import { WebSocketProvider } from "./components/WebSocketProvider";
 import { useAccount } from "@/components/AccountContext";
-import { AdminProvider } from "./components/AdminProvider";
+
 
 function App() {
   const [userType, setUserType] = useState(localStorage.getItem("userType"));
@@ -37,22 +37,19 @@ function App() {
   } else if (userType === "user") {
     Layout = UserLayout;
   } else {
-    Layout = Login;
+    Layout = LoginPage;
   }
   console.log(userType);
 
 
   return (
     <ThemeProvider>
-      <AdminProvider>
-  
-    
       <AccountProvider>
         {token ? (
           <WebSocketProvider token={token}>
             <Routes>
-              <Route path="/" element={<Login />} />
-              <Route path="/login" element={<Login />} />
+              <Route path="/" element={<LoginPage />} />
+              <Route path="/login" element={<LoginPage />} />
               <Route
                 path="/admin/*"
                 element={userType === "admin" ? <AdminLayout /> : null}
@@ -70,14 +67,13 @@ function App() {
           </WebSocketProvider>
         ) : (
           <Routes>
-            <Route path="/" element={<Login />} />
-            <Route path="/login" element={<Login />} />
+            <Route path="/" element={<LoginPage />} />
+            <Route path="/login" element={<LoginPage />} />
             <Route path="*" element={<NoPage />} />
           </Routes>
         )}
       </AccountProvider>
       <Toaster />
-      </AdminProvider>
     </ThemeProvider>
   );
 }
