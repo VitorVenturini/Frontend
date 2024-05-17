@@ -10,7 +10,7 @@ import {
 import bcrypt from "bcryptjs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, ChangeEvent, useContext } from "react";
 import { Switch } from "@/components/ui/switch";
 
 import { Loader2 } from "lucide-react";
@@ -18,6 +18,7 @@ import { Loader2 } from "lucide-react";
 import { useAccount } from "@/components/AccountContext";
 
 import icone from "@/assets/icone.svg";
+import useWebSocket from "@/components/useWebSocket";
 
 import {
   Dialog,
@@ -32,17 +33,19 @@ import {
 ("use client");
 
 import { useToast } from "@/components/ui/use-toast";
+import { AdminContext } from "@/components/AdminContex";
 
-export default function Login() {
+export default function LoginpPage() {
   const { user } = useAccount();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [type, setType] = useState<string>("");
+  const { isAdmin } = useContext(AdminContext);
   const [newPassword, setNewPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const { setUser } = useAccount();
-  const [isAdmin, setIsAdmin] = useState(false);
+  const { setIsAdmin } = useContext(AdminContext);
+  
 
   //================================================================================================
 
@@ -56,11 +59,9 @@ export default function Login() {
   const handleNewPasswordChange = (event: ChangeEvent<HTMLInputElement>) => {
     setNewPassword(event.target.value);
   };
-  const handleTypeChange = (value: string) => {
-    setType(value);
-  };
   const handleAdminSwitchChange = (checked: boolean) => {
     setIsAdmin(checked);
+    console.log('Switch changed, é admin agora? ', checked ? 'Sim' : 'Não')
   };
 
   //================================================================================================
@@ -152,7 +153,6 @@ export default function Login() {
 
       // Verifica se a requisição foi bem-sucedida
       if (response.ok) {
-
         // Extrai e exibe a resposta do backend na console
         const data = await response.json();
         console.log("Resposta do backend:", data);
@@ -206,141 +206,143 @@ export default function Login() {
   };
 
   return (
-    <div className=" flex align-middle content-center justify-center">
-      <div className="flex basis-1/2 justify-end align-middle-700 py-60 px-12"> 
-        <Card className="xl:w-[600px] lg:w-[500px] md:[400px] sm:w-[300px] h-fit ">
-          <form onSubmit={handleFormSubmit}>
-            <CardHeader>
-              <CardTitle>
-                <div>
-                  <div className="flex justify-between">
-                    Faça seu Login
-                    <div className="flex items-center space-x-2">
-                      <Label htmlFor="airplane-mode">Admin</Label>
-                      <Switch
-                        id="admin"
-                        onCheckedChange={handleAdminSwitchChange}
-                      />
+    <AdminContext.Provider value={{ isAdmin, setIsAdmin }}>
+      <div className=" flex align-middle content-center justify-center">
+        <div className="flex basis-1/2 justify-end align-middle-700 py-60 px-12">
+          <Card className="xl:w-[600px] lg:w-[500px] md:[400px] sm:w-[300px] h-fit ">
+            <form onSubmit={handleFormSubmit}>
+              <CardHeader>
+                <CardTitle>
+                  <div>
+                    <div className="flex justify-between">
+                      Faça seu Login
+                      <div className="flex items-center space-x-2">
+                        <Label htmlFor="airplane-mode">Admin</Label>
+                        <Switch
+                          id="admin"
+                          onCheckedChange={handleAdminSwitchChange}
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
-              </CardTitle>
-              <CardDescription>Digite seu Email e Senha</CardDescription>
-            </CardHeader>
-            <CardContent className="grid gap-4 py-9">
-              <div className="grid w-full items-center gap-6">
-                <div className="grid grid-cols-3 items-center gap-4">
-                  <Label htmlFor="email" className="text-end">
-                    Digite seu Email
-                  </Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    className="col-span-2"
-                    placeholder="Email"
-                    value={email}
-                    required
-                    onChange={handleEmailChange}
-                  />
-                </div>
-                <div className="flex flex-col space-y-1.5">
+                </CardTitle>
+                <CardDescription>Digite seu Email e Senha</CardDescription>
+              </CardHeader>
+              <CardContent className="grid gap-4 py-9">
+                <div className="grid w-full items-center gap-6">
                   <div className="grid grid-cols-3 items-center gap-4">
-                    <Label htmlFor="password" className="text-end">
-                      Digite sua Senha
+                    <Label htmlFor="email" className="text-end">
+                      Digite seu Email
                     </Label>
                     <Input
-                      id="password"
-                      type="password"
-                      required
+                      id="email"
+                      type="email"
                       className="col-span-2"
-                      placeholder="Senha"
-                      value={password}
-                      onChange={handlePasswordChange}
+                      placeholder="Email"
+                      value={email}
+                      required
+                      onChange={handleEmailChange}
                     />
                   </div>
-                </div>
-              </div>
-            </CardContent>
-            <CardFooter className="flex justify-between my-4">
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button variant="outline">Mudar Senha</Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
-                  <DialogHeader>
-                    <DialogTitle>Mude sua Senha</DialogTitle>
-                    <DialogDescription>
-                      Digite seu email sua senha atual e a nova senha.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="grid gap-4 py-4">
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="email" className="text-right">
-                        Email
-                      </Label>
-                      <Input
-                        id="email"
-                        placeholder="Email"
-                        type="email"
-                        value={email}
-                        onChange={handleEmailChange}
-                        className="col-span-3"
-                      />
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="password" className="text-right">
-                        Senha
+                  <div className="flex flex-col space-y-1.5">
+                    <div className="grid grid-cols-3 items-center gap-4">
+                      <Label htmlFor="password" className="text-end">
+                        Digite sua Senha
                       </Label>
                       <Input
                         id="password"
-                        placeholder="Senha"
                         type="password"
+                        required
+                        className="col-span-2"
+                        placeholder="Senha"
                         value={password}
                         onChange={handlePasswordChange}
-                        className="col-span-3"
-                      />
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="newPassword" className="text-right">
-                        Nova Senha
-                      </Label>
-                      <Input
-                        id="newPassword"
-                        placeholder="Nova Senha"
-                        type="password"
-                        value={newPassword}
-                        onChange={handleNewPasswordChange}
-                        className="col-span-3"
                       />
                     </div>
                   </div>
+                </div>
+              </CardContent>
+              <CardFooter className="flex justify-between my-4">
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="outline">Mudar Senha</Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                      <DialogTitle>Mude sua Senha</DialogTitle>
+                      <DialogDescription>
+                        Digite seu email sua senha atual e a nova senha.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="email" className="text-right">
+                          Email
+                        </Label>
+                        <Input
+                          id="email"
+                          placeholder="Email"
+                          type="email"
+                          value={email}
+                          onChange={handleEmailChange}
+                          className="col-span-3"
+                        />
+                      </div>
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="password" className="text-right">
+                          Senha
+                        </Label>
+                        <Input
+                          id="password"
+                          placeholder="Senha"
+                          type="password"
+                          value={password}
+                          onChange={handlePasswordChange}
+                          className="col-span-3"
+                        />
+                      </div>
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="newPassword" className="text-right">
+                          Nova Senha
+                        </Label>
+                        <Input
+                          id="newPassword"
+                          placeholder="Nova Senha"
+                          type="password"
+                          value={newPassword}
+                          onChange={handleNewPasswordChange}
+                          className="col-span-3"
+                        />
+                      </div>
+                    </div>
 
-                  <DialogFooter>
-                    <DialogClose asChild>
-                      <Button type="submit" onClick={handleUpdatePassword}>
-                        Mudar senha
-                      </Button>
-                    </DialogClose>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
-              <Button type="submit" disabled={isLoading}>
-                {isLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Login
-                  </>
-                ) : (
-                  "Login"
-                )}
-              </Button>
-            </CardFooter>
-          </form>
-        </Card>
+                    <DialogFooter>
+                      <DialogClose asChild>
+                        <Button type="submit" onClick={handleUpdatePassword}>
+                          Mudar senha
+                        </Button>
+                      </DialogClose>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+                <Button type="submit" disabled={isLoading}>
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Login
+                    </>
+                  ) : (
+                    "Login"
+                  )}
+                </Button>
+              </CardFooter>
+            </form>
+          </Card>
+        </div>
+        <div className=" basis-1/2  w-full h-[100vh] bg-card flex justify-start align-middle py-60 px-12">
+          <img src={icone} alt="Logo" />
+        </div>
       </div>
-      <div className=" basis-1/2  w-full h-[100vh] bg-card flex justify-start align-middle py-60 px-12">
-      <img src={icone} alt="Logo"/>
-      </div>
-    </div>
+    </AdminContext.Provider>
   );
 }

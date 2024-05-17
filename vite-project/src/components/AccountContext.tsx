@@ -10,6 +10,8 @@ interface User {
   sip: string;
   type: string;
   updatedAt: string;
+  accessToken: string;
+  isAdmin: boolean;
 }
 
 interface AccountContextData {

@@ -5,18 +5,21 @@ import Buttons from "./ButtonsAdmin";
 import HeaderApp from "@/components/HeaderApp";
 import { useAccount } from "@/components/AccountContext";
 import ButtonsGrid from "@/components/ButtonsGrid";
+import React, { useContext, useEffect } from 'react';
+import { useState } from 'react';
+import { AdminContext } from "@/components/AdminContex";
 
 function AdminLayout() {
   const { user } = useAccount();
+  const { isAdmin } = useContext(AdminContext);
   console.log(user+" user");
   console.log(user?.guid +" guid");
+  useEffect(() => {
+    console.log('Switch changed, é admin agora? ', isAdmin ? 'Sim' : 'Não');
+  }, [isAdmin]);
   return (
-    <div >
-      <div className="flex gap-6">
-      {user && Object.entries(user).map(([key, value]) => (
-          <p key={key}>{key}: {value}</p>
-        ))}
-        </div>
+    <div className="p-3 bg-card">
+      <div className=" p-3 bg-background">
       
       <HeaderApp />
       {/* Your admin layout here */}
@@ -27,6 +30,7 @@ function AdminLayout() {
         {/* Add more admin routes as needed */}
       </Routes>
 
+    </div>
     </div>
   );
 }
