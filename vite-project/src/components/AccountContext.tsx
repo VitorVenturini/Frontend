@@ -74,9 +74,6 @@ export const AccountProvider: React.FC<AccountProviderProps> = ({ children }) =>
       localStorage.removeItem("Account");
     }
   }, [Account]);
-  useEffect(() => {
-    console.log("isAdmin accountContext:", isAdmin); // Imprima o valor de isAdmin sempre que ele mudar
-  }, [isAdmin]);
 
   return (
     <AccountContext.Provider value={{Account, setAccount, updateAccountContext }}>

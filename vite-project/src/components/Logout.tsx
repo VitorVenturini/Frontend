@@ -16,12 +16,12 @@ import {
 
 
 export default function Logout() {
-    const { setUser } = useAccount(); // Use o setAccount do AccountContext
+    const { setAccount } = useAccount(); // Use o setAccount do AccountContext
     const ws = useWebSocketData();
 
     const handleLogout = () => {
       localStorage.clear();
-      setUser(null);
+      setAccount(null);
       if (ws) {
         ws.closeConnection(); // Fecha a conexão WebSocket
       }
@@ -45,7 +45,7 @@ export default function Logout() {
                 <AlertDialogAction asChild>
                   <a
                     onClick={handleLogout}
-                    href="/Login"
+                   
                     //fazer a logiga de sair aqui
                   >
                     Sair

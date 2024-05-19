@@ -6,32 +6,13 @@ import { Button } from "@/components/ui/button";
 import Logout from "@/components/Logout";
 
 function UserLayout() {
-  const { user } = useAccount();
-  const isAdmin = user?.type === "admin";
-  console.log(user + " user");
-  console.log(user?.guid + " guid");
-  // const handleAdminRedirect = () => {
-  //   history.push('/admin');
-  // };
+  
   return (
     <div>
-      <div className="flex gap-6">
-        {user &&
-          Object.entries(user).map(([key, value]) => (
-            <p key={key}>
-              {key}: {value}
-            </p>
-          ))}
-      </div>
-      {isAdmin && (
-          <a href="/admin/buttons">
-          <Button>Admin</Button>
-        </a>
-      )}
-
+      <h1>Usuário layout</h1>
       <Logout/>
     </div>
   );
 }
 
-export default ValidadeToken(UserLayout);
+export default UserLayout;
