@@ -10,7 +10,7 @@ import NoPage from "./pages/NoPage";
 import LoginPage from "./pages/LoginPage";
 import AdminLayout from "./pages/admin/AdminLayout";
 import UserLayout from "./pages/user/UserLayout";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect,useState } from "react";
 import { AccountProvider, AccountContext } from "./components/AccountContext";
 import { WebSocketProvider } from "./components/WebSocketProvider";
 
@@ -24,6 +24,7 @@ function App() {
   return (
     <ThemeProvider>
       <AccountProvider>
+
           <Routes>
             <Route path="/" element={<LoginPage />} />
             <Route path="/login" element={<LoginPage />} />
@@ -32,6 +33,8 @@ function App() {
           </Routes>
           <Toaster />
       </AccountProvider>
+
+      <Toaster />
     </ThemeProvider>
   );
 }
