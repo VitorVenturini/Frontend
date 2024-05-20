@@ -14,7 +14,7 @@ interface Account {
   isAdmin: boolean;
   isLogged: boolean;
 }
-const initialState: Account = {
+export const initialState: Account = {
   createdAt: '',
   email: '',
   guid: '',
@@ -29,54 +29,28 @@ const initialState: Account = {
   isLogged: false,
 };
 
-interface AccountContextData {
-  Account: Account | null;
-  isAdmin: boolean;
-  setAccount: React.Dispatch<React.SetStateAction<Account | null>>;
-  updateUserContext: (user: Account) => void;
+type AccountContextData = Account & {
+  updateAccount: (newAccountData: Partial<Account>) => void;
 }
 
 interface AccountProviderProps {
   children: React.ReactNode;
 }
 
-const AccountContext = createContext<AccountContextData | undefined>(undefined);
+export const AccountContext = createContext<AccountContextData>({
+  ...initialState,
+  updateAccount: () => {},
+});
 
 export const AccountProvider: React.FC<AccountProviderProps> = ({ children }) => {
-  const [Account, setAccount] = useState<Account | null>(null);
+  const [Account, setAccount] = useState<Account>(initialState);
 
-
-  // Defina isAdmin e isLogged com base no estado do usuário
-  const isAdmin = Account?.isAdmin ?? false;
-  const isLogged = Boolean(Account);
-
-  const updateAccountContext = (newAccount: Partial<Account>) => {
-    const mergedAccount = Account ? { ...Account, ...newAccount } : newAccount as Account;
-    setAccount(mergedAccount);
-    if (newAccount) {
-      localStorage.setItem('Account', JSON.stringify(mergedAccount));
-    } else {
-      localStorage.removeItem('Account');
-    }
-  };
-
-  useEffect(() => {
-    const storedAccount = localStorage.getItem("Account");
-    if (storedAccount) {
-      setAccount(JSON.parse(storedAccount));
-    }
-  }, []);
-
-  useEffect(() => {
-    if (Account) {
-      localStorage.setItem("Account", JSON.stringify(Account));
-    } else {
-      localStorage.removeItem("Account");
-    }
-  }, [Account]);
-
+  // Função para atualizar a conta
+  const updateAccount = (newAccountData: Partial<Account>) => {
+    setAccount(prevAccount => ({ ...prevAccount, ...newAccountData }));
+  }
   return (
-    <AccountContext.Provider value={{Account, setAccount, updateAccountContext }}>
+    <AccountContext.Provider value={{ ...Account, updateAccount }}>
       {children}
     </AccountContext.Provider>
   );

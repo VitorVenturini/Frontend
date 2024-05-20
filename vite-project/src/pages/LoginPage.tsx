@@ -182,7 +182,7 @@ export default function LoginpPage() {
         }
 
         if (isAdmin) {
-          window.location.href = "/admin/buttons";
+          window.location.href = "/user";
         }
       } else {
         console.error(

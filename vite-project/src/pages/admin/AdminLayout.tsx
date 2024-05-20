@@ -7,27 +7,34 @@ import { useAccount } from "@/components/AccountContext";
 import ButtonsGrid from "@/components/ButtonsGrid";
 import React, { useContext, useEffect } from 'react';
 import { useState } from 'react';
-import Logout from "@/components/Logout";
+import { WebSocketProvider } from "@/components/WebSocketProvider";
+
+import Options from "./Options";
 
 function AdminLayout() {
-  // const { user } = useAccount();
-  // console.log(user+" user");
-  // console.log(user?.guid +" guid");
-  // console.log(user?.isAdmin+" user?.isAdmin AdminLayout");
-  // console.log(user?.isLogged +" user?.isLogged AdminLayout")
+  const  account  = useAccount();
+  console.log(account+" account");
+  console.log(account?.guid +" guid");
 
   return (
-    <div className="p-3 bg-card">
+    <WebSocketProvider token={account.accessToken}>
+    <div className="p-3 bg-card h-[100vh]">
       <div className=" p-3 bg-background">
-        layout admin
       
-      {/* <HeaderApp /> */}
+      <HeaderApp />
       {/* Your admin layout here */}
-      <Logout/>
+      <Routes>
+        
+        <Route path="account" element={<Account />} />
+        <Route path="buttons" element={<Buttons/>} />
+        <Route path="options" element={<Options/>} />
+        {/* Add more admin routes as needed */}
+      </Routes>
 
     </div>
     </div>
+    </WebSocketProvider>
   );
 }
 
-export default AdminLayout;
+export default ValidadeToken(AdminLayout);

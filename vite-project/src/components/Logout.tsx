@@ -1,5 +1,7 @@
 import React, { useContext } from 'react';
 import { useAccount } from "@/components/AccountContext";
+import { initialState } from "@/components/AccountContext";
+import { useNavigate } from "react-router-dom";
 import { Button } from './ui/button';
 import {
     AlertDialog,
@@ -16,15 +18,17 @@ import {
 
 
 export default function Logout() {
-    const { setAccount } = useAccount(); // Use o setAccount do AccountContext
+  const { updateAccount } = useAccount(); 
+  const navigate = useNavigate();
     const ws = useWebSocketData();
 
     const handleLogout = () => {
       localStorage.clear();
-      setAccount(null);
+      updateAccount(initialState);
       if (ws) {
         ws.closeConnection(); // Fecha a conexão WebSocket
       }
+      navigate("/login");
     };
 
   return (
