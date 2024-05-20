@@ -8,11 +8,11 @@ interface Account {
   name: string;
   password: string;
   sip: string;
-  type: string;
+  type: string; //saber se é admin ou user
   updatedAt: string;
   accessToken: string;
-  isAdmin: boolean;
-  isLogged: boolean;
+  isAdmin: boolean; // pra saber se vai logar como admin ou user
+  isLogged: boolean; // pra saber se está logado
 }
 export const initialState: Account = {
   createdAt: '',
@@ -43,14 +43,45 @@ export const AccountContext = createContext<AccountContextData>({
 });
 
 export const AccountProvider: React.FC<AccountProviderProps> = ({ children }) => {
+
   const [Account, setAccount] = useState<Account>(initialState);
+
+
+
+    // Defina isAdmin e isLogged com base no estado do usuário
+    const isAdmin = user?.isAdmin ?? false;
+    const isLogged = Boolean(user);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
+  useEffect(() => {
+    console.log('isAdmin AC:', isAdmin); // Imprima o valor de isAdmin sempre que ele mudar
+  }, [isAdmin]);
+
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem('user', JSON.stringify(user));
+    } else {
+      localStorage.removeItem('user');
+    }
+  }, [user]);
+
 
   // Função para atualizar a conta
   const updateAccount = (newAccountData: Partial<Account>) => {
     setAccount(prevAccount => ({ ...prevAccount, ...newAccountData }));
   }
   return (
+
     <AccountContext.Provider value={{ ...Account, updateAccount }}>
+
+  
+
       {children}
     </AccountContext.Provider>
   );
