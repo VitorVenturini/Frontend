@@ -1,4 +1,4 @@
-import LicenseCard from "@/components/LicenseCard";
+import LicenseCard from "@/components/CardLicense";
 import CardClearDB from "@/components/CardClearDB";
 export default function Options() {
     return (

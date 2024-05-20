@@ -8,6 +8,7 @@ import ButtonsGrid from "@/components/ButtonsGrid";
 import React, { useContext, useEffect } from 'react';
 import { useState } from 'react';
 import { WebSocketProvider } from "@/components/WebSocketProvider";
+import Actions from "./ActionsPage";
 
 import Options from "./Options";
 
@@ -18,9 +19,6 @@ function AdminLayout() {
 
   return (
     <WebSocketProvider token={account.accessToken}>
-    <div className="p-3 bg-card h-[100vh]">
-      <div className=" p-3 bg-background">
-      
       <HeaderApp />
       {/* Your admin layout here */}
       <Routes>
@@ -28,11 +26,9 @@ function AdminLayout() {
         <Route path="account" element={<Account />} />
         <Route path="buttons" element={<Buttons/>} />
         <Route path="options" element={<Options/>} />
+        <Route path="actions" element={<Actions/>} />
         {/* Add more admin routes as needed */}
       </Routes>
-
-    </div>
-    </div>
     </WebSocketProvider>
   );
 }

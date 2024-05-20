@@ -7,7 +7,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import NoPage from "./pages/NoPage";
-import LoginPage from "./pages/LoginPageN";
+import LoginPage from "./pages/LoginPage";
 import AdminLayout from "./pages/admin/AdminLayout";
 import UserLayout from "./pages/user/UserLayout";
 import { useContext, useEffect } from "react";
