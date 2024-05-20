@@ -49,13 +49,13 @@ export const AccountProvider: React.FC<AccountProviderProps> = ({ children }) =>
 
 
     // Defina isAdmin e isLogged com base no estado do usuário
-    const isAdmin = user?.isAdmin ?? false;
-    const isLogged = Boolean(user);
+    const isAdmin = Account?.isAdmin ?? false;
+    const isLogged = Boolean(Account);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+    const storedAccount = localStorage.getItem('Account');
+    if (storedAccount) {
+      setAccount(JSON.parse(storedAccount));
     }
   }, []);
 
@@ -64,12 +64,12 @@ export const AccountProvider: React.FC<AccountProviderProps> = ({ children }) =>
   }, [isAdmin]);
 
   useEffect(() => {
-    if (user) {
-      localStorage.setItem('user', JSON.stringify(user));
+    if (Account) {
+      localStorage.setItem('Account', JSON.stringify(Account));
     } else {
-      localStorage.removeItem('user');
+      localStorage.removeItem('Account');
     }
-  }, [user]);
+  }, [Account]);
 
 
   // Função para atualizar a conta

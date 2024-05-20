@@ -7,29 +7,26 @@ import Logout from "./Logout";
 import { useAccount } from "@/components/AccountContext";
 import { useNavigate } from "react-router-dom";
 
-
-
 export default function HeaderApp() {
-  const  account  = useAccount();
+  const account = useAccount();
   const navigate = useNavigate();
 
   const handleButtonsClick = () => {
-    navigate('/admin/buttons');
+    navigate("/admin/buttons");
   };
 
   const handleAccountClick = () => {
-    navigate('/admin/account');
+    navigate("/admin/account");
   };
 
   const handleActionsClick = () => {
-    navigate('/admin/actions');
+    navigate("/admin/actions");
   };
 
   const handleOptionsClick = () => {
-    navigate('/admin/options');
+    navigate("/admin/options");
   };
 
-  
   return (
     <header className="flex justify-between items-center p-4 ">
       <div className="flex items-center gap-5">
@@ -40,12 +37,11 @@ export default function HeaderApp() {
           height={200}
         />
         <div>
-        <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
-      {account?.name || "Usuário"}
-    </h3>
-    <p className="text-sm text-muted-foreground">{account?.email}</p>
+          <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
+            {account?.name || "Usuário"}
+          </h3>
+          <p className="text-sm text-muted-foreground">{account?.email}</p>
         </div>
-    
       </div>
 
       <div className="flex items-end ">

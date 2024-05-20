@@ -124,7 +124,7 @@ export default function CardLogin() {
 
         // verificar se vai para tela de admin ou user
         if (isAdmin) {
-          navigate("/admin");
+          navigate("/admin/buttons");
         } else {
           navigate("/user");
         }

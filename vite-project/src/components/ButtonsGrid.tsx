@@ -1,27 +1,29 @@
 import { useAccount } from "@/components/AccountContext";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
-interface User {
+interface accountSelect {
     id: string;
     name: string;
     // Adicione outras propriedades do usuário conforme necessário
   }
   
   interface ButtonsGridProps {
-    user: User | null;
+    user: accountSelect | null;
   }
 
-export default function ButtonsGrid({ user }: ButtonsGridProps) {
+export default function ButtonsGrid() {
   return (
-    <div className="gap-7">
+    <Card className="p-5 min-w-[644px]">
         <div className=" gap-6">
             buttonsGrid
-        {user &&
-          Object.entries(user).map(([key, value]) => (
-            <p key={key}>
-              {key}: {value}
-            </p>
-          ))}
       </div>
-    </div>
+    </Card>
   );
 }

@@ -1,4 +1,12 @@
 import { useAccount } from "@/components/AccountContext";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 interface User {
     id: string;
@@ -10,18 +18,12 @@ interface User {
     user: User | null;
   }
 
-export default function LesftGrid({ user }: ButtonsGridProps) {
+export default function LesftGrid() {
   return (
-    <div className="gap-7">
+    <Card className="p-5 min-w-[340px] h-[830px]">
         <div className=" gap-6">
-            Esquerda
-        {user &&
-          Object.entries(user).map(([key, value]) => (
-            <p key={key}>
-              {key}: {value}
-            </p>
-          ))}
+            Direita
       </div>
-    </div>
+    </Card>
   );
 }

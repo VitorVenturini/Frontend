@@ -1,8 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import ValidadeToken from "@/components/ValidateToken";
 import Account from "./Account";
-import Buttons from "./ButtonsAdmin";
-import Actions from "./Actions";
+import Buttons from "./ButtonsAdmin"
 import HeaderApp from "@/components/HeaderApp";
 import { useAccount } from "@/components/AccountContext";
 import ButtonsGrid from "@/components/ButtonsGrid";
@@ -26,10 +25,7 @@ function AdminLayout() {
         
         <Route path="account" element={<Account />} />
         <Route path="buttons" element={<Buttons/>} />
-
-
         <Route path="actions" element={<Actions/>} />
-
         <Route path="options" element={<Options/>} />
         <Route path="actions" element={<Actions/>} />
         {/* Add more admin routes as needed */}

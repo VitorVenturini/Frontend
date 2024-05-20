@@ -3,6 +3,14 @@ import * as React from "react";
 import ButtonsGrid from "@/components/ButtonsGrid";
 import LesftGrid from "@/components/LeftGrid";
 import RightGrid from "@/components/RightGrid";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 import {
   Select,
@@ -55,12 +63,12 @@ export default function Buttons() {
   };
 
   return (
-    <div className="flex gap-7">
-      <div className="w-[100vh] h-[100vh] bg-card">
+    <div className="flex justify-center gap-7">
+      <div>
       <LesftGrid user={selectedUser}/>
       </div>
       
-      <div className="w-[100vh] h-[100vh] bg-card">
+      <Card className="p-5 w-min-[684]">
         <Select onValueChange={handleUserSelect}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Selecione um usuário" />
@@ -86,8 +94,8 @@ export default function Buttons() {
           </div>
         )}
         
-      </div>
-      <div className="w-[100vh] h-[100vh] bg-card">
+      </Card>
+      <div>
         <RightGrid user={selectedUser}/>
       </div>
     </div>
