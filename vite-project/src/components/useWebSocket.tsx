@@ -7,10 +7,10 @@ export interface WebSocketHook {
   }
 
 const useWebSocket = (token: string,) => {
-  const { isAdmin } = useAccount(); // Use o isAdmin do AccountContext
   const [data, setData] = useState(null);
   const ws = useRef<WebSocket | null>(null);
   const timer = useRef<NodeJS.Timeout | null>(null);
+  const account  = useAccount();
 
   useEffect(() => {
     const currentUrl = window.location.hostname;
@@ -24,19 +24,22 @@ const useWebSocket = (token: string,) => {
 
     function connect() {
       ws.current = new WebSocket(wsUrl);
-    
-      ws.current.onopen = () => {
 
+      ws.current.onopen = () => {
         if (timer.current) clearTimeout(timer.current);
         console.log("WebSocket connection opened");
-        console.log("isAdmin ws", isAdmin);
-        ws.current?.send(JSON.stringify({ api: isAdmin ? "admin" : "user", mt: "UserSession" }));
+        console.log(account.isAdmin);
+        console.log(account);
+        ws.current?.send(JSON.stringify({ api: account.isAdmin ? "admin" : "user", mt: "UserSession" }));
     };
 
       ws.current.onclose = (event) => {
         console.log("WebSocket connection closed:", event.code, event.reason);
         if (timer.current) clearTimeout(timer.current as NodeJS.Timeout);
-        timer.current = setTimeout(connect, 10000); // Tenta reconectar após 10 segundos
+        timer.current = setTimeout(() => {
+          console.log("Reconnecting WebSocket...");
+          connect();
+        }, 5000);
       };
 
       ws.current.onerror = (event) => {
@@ -57,8 +60,9 @@ const useWebSocket = (token: string,) => {
     };
   }, [token,]);
   const closeConnection = useCallback(() => {
-    // Feche a conexão WebSocket aqui
-    // ...
+    if (timer.current) clearTimeout(timer.current);
+    if (ws.current) ws.current.close();
+    if(ws.current) ws.current.onclose
   }, []);
 
   return { data, closeConnection };

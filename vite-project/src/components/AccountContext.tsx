@@ -1,6 +1,6 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect } from "react";
 
-interface User {
+interface Account {
   createdAt: string;
   email: string;
   guid: string;
@@ -14,22 +14,38 @@ interface User {
   isAdmin: boolean; // pra saber se vai logar como admin ou user
   isLogged: boolean; // pra saber se está logado
 }
+export const initialState: Account = {
+  createdAt: '',
+  email: '',
+  guid: '',
+  id: '',
+  name: '',
+  password: '',
+  sip: '',
+  type: '',
+  updatedAt: '',
+  accessToken: '',
+  isAdmin: false,
+  isLogged: false,
+};
 
-interface AccountContextData {
-  user: User | null;
-  setUser: React.Dispatch<React.SetStateAction<User | null>>;
-  isAdmin: boolean; // Adicione o contexto isAdmin
-  isLogged: boolean; // Adicione o contexto isLogged
+type AccountContextData = Account & {
+  updateAccount: (newAccountData: Partial<Account>) => void;
 }
 
 interface AccountProviderProps {
   children: React.ReactNode;
 }
 
-const AccountContext = createContext<AccountContextData | undefined>(undefined);
+export const AccountContext = createContext<AccountContextData>({
+  ...initialState,
+  updateAccount: () => {},
+});
 
 export const AccountProvider: React.FC<AccountProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+
+  const [Account, setAccount] = useState<Account>(initialState);
+
 
 
     // Defina isAdmin e isLogged com base no estado do usuário
@@ -55,8 +71,17 @@ export const AccountProvider: React.FC<AccountProviderProps> = ({ children }) =>
     }
   }, [user]);
 
+
+  // Função para atualizar a conta
+  const updateAccount = (newAccountData: Partial<Account>) => {
+    setAccount(prevAccount => ({ ...prevAccount, ...newAccountData }));
+  }
   return (
-    <AccountContext.Provider value={{ user, setUser, isAdmin, isLogged  }}>
+
+    <AccountContext.Provider value={{ ...Account, updateAccount }}>
+
+  
+
       {children}
     </AccountContext.Provider>
   );
@@ -65,7 +90,7 @@ export const AccountProvider: React.FC<AccountProviderProps> = ({ children }) =>
 export const useAccount = (): AccountContextData => {
   const context = useContext(AccountContext);
   if (!context) {
-    throw new Error('useAccount must be used within an AccountProvider');
+    throw new Error("useAccount must be used within an AccountProvider");
   }
   return context;
 };

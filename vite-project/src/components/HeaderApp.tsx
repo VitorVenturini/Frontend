@@ -5,13 +5,31 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Logout from "./Logout";
 import { useAccount } from "@/components/AccountContext";
+import { useNavigate } from "react-router-dom";
 
-const handleLogout = () => {
-  localStorage.removeItem("token");
-};
+
 
 export default function HeaderApp() {
-  const { user } = useAccount();
+  const  account  = useAccount();
+  const navigate = useNavigate();
+
+  const handleButtonsClick = () => {
+    navigate('/admin/buttons');
+  };
+
+  const handleAccountClick = () => {
+    navigate('/admin/account');
+  };
+
+  const handleActionsClick = () => {
+    navigate('/admin/actions');
+  };
+
+  const handleOptionsClick = () => {
+    navigate('/admin/options');
+  };
+
+  
   return (
     <header className="flex justify-between items-center p-4 ">
       <div className="flex items-center gap-5">
@@ -22,33 +40,27 @@ export default function HeaderApp() {
           height={200}
         />
         <div>
-          <div className="flex items-center gap-5">
-          <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
-            {user?.name || "Usuário"}
-          </h3>
-          <p className="text-sm text-muted-foreground">{user?.isAdmin || "não foi o is admin"}</p>
-          </div>
-          
-          <p className="text-sm text-muted-foreground">{user?.email}</p>
+        <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
+      {account?.name || "Usuário"}
+    </h3>
+    <p className="text-sm text-muted-foreground">{account?.email}</p>
         </div>
+    
       </div>
 
       <div className="flex items-end ">
         <div className="flex items-center gap-1">
-          <Button asChild variant="ghost">
-            <a href="/admin/buttons">Botões</a>
+          <Button variant="ghost" onClick={handleButtonsClick}>
+            Botões
           </Button>
-          <Button asChild variant="ghost">
-            <a href="/admin/actions">Ações</a>
+          <Button variant="ghost" onClick={handleAccountClick}>
+            Conta
           </Button>
-          <Button asChild variant="ghost">
-            <a href="/user">Visão de usuário</a>
+          <Button variant="ghost" onClick={handleActionsClick}>
+            Ações
           </Button>
-          <Button asChild variant="ghost">
-            <a href="/admin/account">Conta</a>
-          </Button>
-          <Button asChild variant="ghost">
-            <a href="/admin/options">Opções</a>
+          <Button variant="ghost" onClick={handleOptionsClick}>
+            Opções
           </Button>
           <Logout />
           <ModeToggle />

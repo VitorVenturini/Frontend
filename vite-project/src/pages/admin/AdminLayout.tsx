@@ -8,15 +8,17 @@ import { useAccount } from "@/components/AccountContext";
 import ButtonsGrid from "@/components/ButtonsGrid";
 import React, { useContext, useEffect } from 'react';
 import { useState } from 'react';
+import { WebSocketProvider } from "@/components/WebSocketProvider";
 
 import Options from "./Options";
 
 function AdminLayout() {
-  const { user } = useAccount();
-  console.log(user+" user");
-  console.log(user?.guid +" guid");
+  const  account  = useAccount();
+  console.log(account+" account");
+  console.log(account?.guid +" guid");
 
   return (
+    <WebSocketProvider token={account.accessToken}>
     <div className="p-3 bg-card h-[100vh]">
       <div className=" p-3 bg-background">
       
@@ -26,13 +28,17 @@ function AdminLayout() {
         
         <Route path="account" element={<Account />} />
         <Route path="buttons" element={<Buttons/>} />
+
+
         <Route path="actions" element={<Actions/>} />
+
         <Route path="options" element={<Options/>} />
         {/* Add more admin routes as needed */}
       </Routes>
 
     </div>
     </div>
+    </WebSocketProvider>
   );
 }
 

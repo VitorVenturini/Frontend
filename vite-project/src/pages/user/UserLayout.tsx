@@ -4,34 +4,21 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { useAccount } from "@/components/AccountContext";
 import { Button } from "@/components/ui/button";
 import Logout from "@/components/Logout";
+import useWebSocket from "@/components/useWebSocket";
+import { WebSocketProvider } from "@/components/WebSocketProvider";
 
 function UserLayout() {
-  const { user } = useAccount();
-  const isAdmin = user?.type === "admin";
-  console.log(user + " user");
-  console.log(user?.guid + " guid");
-  // const handleAdminRedirect = () => {
-  //   history.push('/admin');
-  // };
+  const  account  = useAccount();
+  
   return (
-    <div>
-      <div className="flex gap-6">
-        {user &&
-          Object.entries(user).map(([key, value]) => (
-            <p key={key}>
-              {key}: {value}
-            </p>
-          ))}
-      </div>
-      {isAdmin && (
-          <a href="/admin/buttons">
-          <Button>Admin</Button>
-        </a>
-      )}
+    <WebSocketProvider token={account.accessToken}>
 
+    <div>
+      <h1>Usuário layout</h1>
       <Logout/>
     </div>
+    </WebSocketProvider>
   );
 }
 
-export default ValidadeToken(UserLayout);
+export default UserLayout;

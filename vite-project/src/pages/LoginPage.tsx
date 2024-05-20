@@ -10,12 +10,15 @@ import {
 import bcrypt from "bcryptjs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import React, { useState, ChangeEvent, useContext, useEffect } from "react";
+import React, { useState, ChangeEvent, useContext } from "react";
 import { Switch } from "@/components/ui/switch";
+
 import { Loader2 } from "lucide-react";
+
 import { useAccount } from "@/components/AccountContext";
+
 import icone from "@/assets/icone.svg";
-import useWebSocket from "@/components/useWebSocket";
+
 import {
   Dialog,
   DialogContent,
@@ -27,20 +30,28 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 ("use client");
+
 import { useToast } from "@/components/ui/use-toast";
+import Logout from "@/components/Logout";
+interface LoginPageProps {
+  setIsLogged: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsAdmin: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
 
 export default function LoginpPage() {
-  const { user } = useAccount();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-  const { setUser } = useAccount();
-  const [isAdmin, setIsAdmin] = useState(false);
-  
+  const isAdmin = useAccount()
+  const { updateUserContext } = useAccount();
 
-  //================================================================================================
+
+ 
+
+ 
 
   const handleEmailChange = (event: ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
@@ -52,19 +63,9 @@ export default function LoginpPage() {
   const handleNewPasswordChange = (event: ChangeEvent<HTMLInputElement>) => {
     setNewPassword(event.target.value);
   };
-  const handleAdminSwitchChange = (checked: boolean) => {
-    setIsAdmin(checked);
-    if (user) {
-      setUser({ ...user, isAdmin: checked }); // Atualize o usuário com o valor do switch
-    }
-    console.log('Switch changed? ', checked ? 'Sim' : 'Não')
-  };
-  useEffect(() => {
-    console.log('User changed:', user);
-  }, [user]);
 
-  //================================================================================================
-
+  
+ 
   const handleUpdatePassword = async () => {
     console.log(
       `Email: ${email}, Senha: ${password}, Nova Senha: ${newPassword}`
@@ -114,15 +115,8 @@ export default function LoginpPage() {
       console.error("Erro:", error);
     }
   };
-  
 
-  const handleFormSubmit = (event: React.FormEvent) => {
-    event.preventDefault(); // Previne o comportamento padrão do formulário
-    console.log("Form submitted"); // Debug log
-
-    handleLogin(); // Chama a função de login
-  };
-
+ 
   const handleLogin = async () => {
     // Inicia o estado de carregamento
     setIsLoading(true);
@@ -137,7 +131,6 @@ export default function LoginpPage() {
     const formData = {
       email: email,
       password: password,
-      type: isAdmin ? "admin" : "user",
     };
 
     // Tenta enviar os dados para o backend
@@ -154,16 +147,16 @@ export default function LoginpPage() {
       // Verifica se a requisição foi bem-sucedida
       if (response.ok) {
         // Extrai e exibe a resposta do backend na console
-        const data = await response.json();
-        console.log("Resposta do backend:", data);
-        console.log("Setting user:", data.guid);
 
-        console.log("User data from API:", data);
-        setUser(data);
-        if (user) {
-          setUser({ ...user, isAdmin: true}); // Atualize o usuário com o valor do switch
-        }
-        console.log("User set in context:", data);
+        const data = await response.json();
+        data.isAdmin = isAdmin;
+        data.isLogged = true;
+        console.log(isAdmin + " LogginPage isAdmin");
+        console.log(data.isLogged + " LogginPage isLogged");
+
+        updateUserContext(data);
+
+        console.log("adicionado ao contexto Account no loginPage:", data);
 
         // Armazena o token e type no localStorage
         localStorage.setItem("token", data.accessToken);
@@ -179,7 +172,6 @@ export default function LoginpPage() {
           setIsLoading(false);
           return;
         }
-        
 
         if (!isAdmin && data.type === "admin") {
           window.location.href = "/user";
@@ -190,8 +182,7 @@ export default function LoginpPage() {
         }
 
         if (isAdmin) {
-          window.location.href = "/admin/buttons";
-
+          window.location.href = "/user";
         }
       } else {
         console.error(
@@ -209,9 +200,15 @@ export default function LoginpPage() {
 
     setIsLoading(false);
   };
-
-  return (
   
+
+  const handleFormSubmit = (event: React.FormEvent) => {
+    event.preventDefault(); // Previne o comportamento padrão do formulário
+    console.log("Form submitted"); // Debug log
+
+    handleLogin(); // Chama a função de login
+  };
+  return (
       <div className=" flex align-middle content-center justify-center">
         <div className="flex basis-1/2 justify-end align-middle-700 py-60 px-12">
           <Card className="xl:w-[600px] lg:w-[500px] md:[400px] sm:w-[300px] h-fit ">
@@ -225,7 +222,6 @@ export default function LoginpPage() {
                         <Label htmlFor="airplane-mode">Admin</Label>
                         <Switch
                           id="admin"
-                          onCheckedChange={handleAdminSwitchChange}
                         />
                       </div>
                     </div>
@@ -347,6 +343,7 @@ export default function LoginpPage() {
         <div className=" basis-1/2  w-full h-[100vh] bg-card flex justify-start align-middle py-60 px-12">
           <img src={icone} alt="Logo" />
         </div>
+        <Logout/>
       </div>
-  );  
+  );
 }
