@@ -4,6 +4,7 @@ import Account from "./Account";
 import ButtonsPage from "./ButtonsPage"
 import HeaderApp from "@/components/HeaderApp";
 import { useAccount } from "@/components/AccountContext";
+import useWebSocket from "@/components/useWebSocket";
 import ButtonsGrid from "@/components/ButtonsGrid";
 import React, { useContext, useEffect } from 'react';
 import { useState } from 'react';
@@ -26,6 +27,9 @@ interface Button {
 
 function AdminLayout() {
   const  account  = useAccount();
+  const webSocket = useWebSocket(account.accessToken)
+  console.log("WEBSOCKETDATA" + webSocket.data)
+
   const[listButtons, setListUsers] = useState<[]>()
   console.log(account+" account");
   console.log(account?.guid +" guid");
@@ -48,7 +52,7 @@ function AdminLayout() {
       <HeaderApp />
       {/* Your admin layout here */}
       <Routes>
-        <Route path="account" element={<Account />} />
+        <Route path="account" element={<Account/>} />
         <Route path="buttons" element={<ButtonsPage/>} />
         <Route path="actions" element={<ActionsPage/>} />
         <Route path="options" element={<Options/>} />

@@ -12,19 +12,13 @@ import RightGrid from "@/components/RightGrid";
 
 function UserLayout() {
   const account = useAccount();
+  const webSocket = useWebSocket(account.accessToken)
+  console.log("MENSAGEM DO WEBSOCKET" + webSocket.data)
 
   return (
     <WebSocketProvider token={account.accessToken}>
-      <div>
-        <div>
-          <div>
-            <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
-              {account?.name || "Usuário"}
-            </h3>
-            <p className="text-sm text-muted-foreground">{account?.email}</p>
-          </div>
-          <Logout />
-        </div>
+       <Logout />
+      <div className="flex gap-3 p-2 justify-center">
         <LeftGrid/>
         <ButtonsGrid />
         <RightGrid />
@@ -33,4 +27,4 @@ function UserLayout() {
   );
 }
 
-export default UserLayout;
+export default ValidadeToken(UserLayout);
