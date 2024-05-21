@@ -20,7 +20,7 @@ interface User {
 
 export default function RightGrid() {
   return (
-    <Card className="p-5 min-w-[664px] h-[830px]">
+    <Card className="p-5 min-w-[364px] h-[500px]">
         <div className=" gap-6">
             Direita
       </div>

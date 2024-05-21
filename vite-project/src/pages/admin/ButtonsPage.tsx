@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
 import * as React from "react";
 import ButtonsGrid from "@/components/ButtonsGrid";
-import LesftGrid from "@/components/LeftGrid";
+import LeftGrid from "@/components/LeftGrid";
 import RightGrid from "@/components/RightGrid";
 import {
   Card,
@@ -29,7 +29,7 @@ interface User {
   // Adicione aqui outros campos se necessário
 }
 
-export default function Buttons() {
+export default function ButtonsPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
  
@@ -63,12 +63,12 @@ export default function Buttons() {
   };
 
   return (
-    <div className="flex justify-center gap-7">
+    <div className="flex justify-center gap-3">
       <div>
-      <LesftGrid user={selectedUser}/>
+      {<LeftGrid/> }
       </div>
       
-      <Card className="p-5 w-min-[684]">
+      <Card className="p-5 w-min-[204px]">
         <Select onValueChange={handleUserSelect}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Selecione um usuário" />
@@ -89,14 +89,14 @@ export default function Buttons() {
         {selectedUser && (
           <div>
             <h2>{selectedUser.name}</h2>
-            <ButtonsGrid user={selectedUser}/>
+            {<ButtonsGrid/>}
             
           </div>
         )}
         
       </Card>
       <div>
-        <RightGrid user={selectedUser}/>
+        <RightGrid/>
       </div>
     </div>
   );

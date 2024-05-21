@@ -19,7 +19,7 @@ import Logout from "@/components/Logout";
 import { Navigate } from "react-router-dom";
 
 import { Loader2 } from "lucide-react";
-import { useWebSocketData } from './WebSocketProvider';// Importe o useWebSocketData
+//import { useWebSocketData } from './WebSocketProvider';// Importe o useWebSocketData
 
 
 import {
@@ -45,7 +45,7 @@ export default function CardLogin() {
   const { updateAccount } = useAccount();
   const navigate = useNavigate();
   const account = useAccount();
-  const ws = useWebSocketData();
+  //const ws = useWebSocketData();
   const [isAdmin, setIsAdmin] = useState(
     localStorage.getItem("isAdmin") === "true"
   );

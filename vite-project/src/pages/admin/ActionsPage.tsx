@@ -30,7 +30,7 @@ import {
     name: string;
   }
 
-export default function Actions(){
+export default function ActionsPage(){
     const [users, setUsers] = useState<User[]>([]);
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
     

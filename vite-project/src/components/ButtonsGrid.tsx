@@ -22,7 +22,7 @@ export default function ButtonsGrid() {
   return (
     <Card className="p-5 min-w-[644px]">
         <div className=" gap-6">
-            buttonsGrid
+            Botões do usuario
       </div>
     </Card>
   );

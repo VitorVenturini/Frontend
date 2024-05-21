@@ -2,7 +2,7 @@ import icone from "@/assets/icone.svg";
 
 import CardLogin from "@/components/CardLogin";
 
-export default function LoginpPage() {
+export default function LoginPage() {
 
   return (
     <div className=" flex align-middle content-center justify-center">

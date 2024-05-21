@@ -18,11 +18,11 @@ interface User {
     user: User | null;
   }
 
-export default function LesftGrid() {
+export default function LeftGrid() {
   return (
-    <Card className="p-5 min-w-[340px] h-[830px]">
+    <Card className="p-5 min-w-[265px] h-[500px]">
         <div className=" gap-6">
-            Direita
+            Esquerda
       </div>
     </Card>
   );

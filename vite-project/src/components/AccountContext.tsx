@@ -30,7 +30,7 @@ export const initialState: Account = {
 };
 
 type AccountContextData = Account & {
-  updateAccount: (newAccountData: Partial<Account>) => void;
+  updateAccount: (newAccountData: Partial<Account> | Account) => void;
 }
 
 interface AccountProviderProps {
@@ -46,12 +46,6 @@ export const AccountProvider: React.FC<AccountProviderProps> = ({ children }) =>
 
   const [Account, setAccount] = useState<Account>(initialState);
 
-
-
-    // Defina isAdmin e isLogged com base no estado do usuário
-    const isAdmin = Account?.isAdmin ?? false;
-    const isLogged = Boolean(Account);
-
   useEffect(() => {
     const storedAccount = localStorage.getItem('Account');
     if (storedAccount) {
@@ -60,28 +54,16 @@ export const AccountProvider: React.FC<AccountProviderProps> = ({ children }) =>
   }, []);
 
   useEffect(() => {
-    console.log('isAdmin AC:', isAdmin); // Imprima o valor de isAdmin sempre que ele mudar
-  }, [isAdmin]);
-
-  useEffect(() => {
-    if (Account) {
-      localStorage.setItem('Account', JSON.stringify(Account));
-    } else {
-      localStorage.removeItem('Account');
-    }
+    localStorage.setItem('Account', JSON.stringify(Account));
   }, [Account]);
 
-
   // Função para atualizar a conta
-  const updateAccount = (newAccountData: Partial<Account>) => {
+  const updateAccount = (newAccountData: Partial<Account> | Account) => {
     setAccount(prevAccount => ({ ...prevAccount, ...newAccountData }));
   }
   return (
 
     <AccountContext.Provider value={{ ...Account, updateAccount }}>
-
-  
-
       {children}
     </AccountContext.Provider>
   );
