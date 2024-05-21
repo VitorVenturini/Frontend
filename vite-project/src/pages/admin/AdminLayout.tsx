@@ -31,9 +31,10 @@ function AdminLayout() {
   console.log(account?.guid +" guid");
 
   // vamos trtar todas as mensagens recebidas pelo wss aqui
-  const handleWebSocketMessage = (message: WebSocketMessage) => {
+ const handleWebSocketMessage = (message: WebSocketMessage) => {
     switch (message.mt) {
       case 'SelectMessage':
+       setListUsers(message.result)
         // console.log('UserSessionResult received Msg:', message.session);
         break;
       default:
