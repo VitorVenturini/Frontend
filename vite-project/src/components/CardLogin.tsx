@@ -226,7 +226,7 @@ export default function CardLogin() {
         <CardFooter className="flex justify-between my-4">
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outline">Mudar Senha</Button>
+              <Button variant="ghost">Mudar Senha</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
@@ -279,7 +279,7 @@ export default function CardLogin() {
 
               <DialogFooter>
                 <DialogClose asChild>
-                  <Button type="submit">Mudar senha</Button>
+                  <Button  type="submit">Mudar senha</Button>
                 </DialogClose>
               </DialogFooter>
             </DialogContent>
@@ -294,7 +294,6 @@ export default function CardLogin() {
               "Login"
             )}
           </Button>
-          <Logout />
         </CardFooter>
       </form>
     </Card>

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import Logout from "@/components/Logout";
 import useWebSocket from "@/components/useWebSocket";
 import { WebSocketProvider } from "@/components/WebSocketProvider";
-import ButtonsGrid from "@/components/ButtonsGrid";
+import ButtonsGrid from "@/components/ButtonsGridPages";
 import {
   ButtonProvider,
   useButtons,

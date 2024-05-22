@@ -1,10 +1,10 @@
 import { Input } from "@/components/ui/input";
 import * as React from "react";
-import ButtonsGrid from "@/components/ButtonsGrid";
+import ButtonsGridPages from "@/components/ButtonsGridPages";
 import LeftGrid from "@/components/LeftGrid";
 import RightGrid from "@/components/RightGrid";
 import { ButtonInterface, useButtons } from "@/components/ButtonsContext";
-
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/select";
 import { useState, useEffect } from "react";
 
+
 interface User {
   id: string;
   name: string;
@@ -34,7 +35,7 @@ interface User {
 
 export default function ButtonsPage() {
   const [users, setUsers] = useState<User[]>([]);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null); // Inicialmente, o primeiro usuário é selecionado
   const { buttons } = useButtons();
 
   useEffect(() => {
@@ -73,31 +74,37 @@ export default function ButtonsPage() {
     <div className="flex justify-center gap-3">
       <div>{<LeftGrid />}</div>
 
-      <Card className="p-5 w-min-[204px]">
-        <Select onValueChange={handleUserSelect}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Selecione um usuário" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>Usuários</SelectLabel>
-              {users.map((user) => (
-                <SelectItem key={user.id} value={user.id}>
-                  {user.name}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+      <div className=" flex flex-col min-w-[644px] gap-2">
+        <div className="flex justify-between gap-3 items-center">
+          <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
+            Usuário:
+          </h3>
+
+          <Select onValueChange={handleUserSelect}>
+            <SelectTrigger className="">
+              <SelectValue placeholder="Selecione um usuário" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Usuários</SelectLabel>
+                {users.map((user) => (
+                  <SelectItem key={user.id} value={user.id}>
+                    {user.name}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          <Button>Tabela</Button>
+        </div>
 
         {/* Renderize as informações do usuário selecionado aqui */}
         {selectedUser && (
           <div>
-            <h2>{selectedUser.name}</h2>
-            {<ButtonsGrid buttons={filteredButtons} />}
+            {<ButtonsGridPages buttons={filteredButtons} />}
           </div>
         )}
-      </Card>
+      </div>
       <div>
         <RightGrid />
       </div>

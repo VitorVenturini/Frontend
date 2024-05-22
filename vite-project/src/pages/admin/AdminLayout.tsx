@@ -10,7 +10,7 @@ import {
   useButtons,
   ButtonInterface,
 } from "@/components/ButtonsContext";
-import ButtonsGrid from "@/components/ButtonsGrid";
+import ButtonsGrid from "@/components/ButtonsGridPages";
 import React, { useContext, useEffect } from "react";
 import { useState } from "react";
 import { WebSocketProvider } from "@/components/WebSocketProvider";
