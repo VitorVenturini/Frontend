@@ -3,6 +3,8 @@ import * as React from "react";
 import ButtonsGrid from "@/components/ButtonsGrid";
 import LeftGrid from "@/components/LeftGrid";
 import RightGrid from "@/components/RightGrid";
+import { ButtonInterface, useButtons } from "@/components/ButtonsContext";
+
 import {
   Card,
   CardContent,
@@ -26,13 +28,14 @@ import { useState, useEffect } from "react";
 interface User {
   id: string;
   name: string;
+  guid: string;
   // Adicione aqui outros campos se necessário
 }
 
 export default function ButtonsPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
- 
+  const { buttons } = useButtons();
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -62,12 +65,14 @@ export default function ButtonsPage() {
     setSelectedUser(user || null);
   };
 
+  const filteredButtons = selectedUser
+    ? buttons.filter((button) => button.button_user === selectedUser.guid)
+    : [];
+
   return (
     <div className="flex justify-center gap-3">
-      <div>
-      {<LeftGrid/> }
-      </div>
-      
+      <div>{<LeftGrid />}</div>
+
       <Card className="p-5 w-min-[204px]">
         <Select onValueChange={handleUserSelect}>
           <SelectTrigger className="w-[180px]">
@@ -89,14 +94,12 @@ export default function ButtonsPage() {
         {selectedUser && (
           <div>
             <h2>{selectedUser.name}</h2>
-            {<ButtonsGrid/>}
-            
+            {<ButtonsGrid buttons={filteredButtons} />}
           </div>
         )}
-        
       </Card>
       <div>
-        <RightGrid/>
+        <RightGrid />
       </div>
     </div>
   );
