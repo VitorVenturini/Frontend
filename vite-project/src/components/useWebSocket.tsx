@@ -5,7 +5,7 @@ import { WebSocketMessage } from "./WebSocketProvider";
 export interface WebSocketHook {
   data: string;
   closeConnection: () => void;
-  sendMessage: (api: string , messageType: string) => void;
+  sendMessage: (message: WebSocketMessage) => void;
 }
 
 const useWebSocket = (
@@ -37,7 +37,7 @@ const useWebSocket = (
         console.log(account);
         //ws.current?.send(JSON.stringify({ api: account.isAdmin ? "admin" : "user", mt: "AdminMessage" }));
         //ws.current?.send(JSON.stringify({ api: account.isAdmin ? "admin" : "user", mt: "SelectSensorName" }));
-        ws.current?.send(JSON.stringify({ api: account.isAdmin ? "admin" : "user", mt: "SelectMessage" }));
+        //ws.current?.send(JSON.stringify({ api: account.isAdmin ? "admin" : "user", mt: "SelectMessage" }));
       };
 
       ws.current.onclose = (event) => {
@@ -85,14 +85,10 @@ const useWebSocket = (
   }, []);
 
   const sendMessage = useCallback(
-    (api: string, messageType: string) => {
-      const message: WebSocketMessage = {
-        api,
-        mt: messageType,
-      };
+    (message: WebSocketMessage) => {
       if (ws.current && ws.current.readyState === WebSocket.OPEN) {
         ws.current.send(JSON.stringify(message));
-        console.log("WebSocketSend" + JSON.stringify(message));
+        console.log("WebSocketSend " + JSON.stringify(message));
       }
     },
     []
