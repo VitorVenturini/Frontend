@@ -6,7 +6,7 @@ export default function OtpRow() {
   const [isSelected, setIsSelected] = useState(false);
 
   return (
-    <div className="flex">
+    <div className="flex justify-between gap-2">
        <div className="min-w-[100px] h-[55px] rounded-lg border bg-card text-card-foreground shadow-sm p-1 items-center">
       <div className="flex justify-center">
         <Map />
