@@ -19,12 +19,18 @@ import React, { useState, useContext } from "react";
 //     name: string;
 //     // Adicione outras propriedades do usuário conforme necessário
 //   }
-
+interface User {
+  id: string;
+  name: string;
+  guid: string;
+  // Adicione aqui outros campos se necessário
+}
 interface ButtonsGridPagesProps {
   buttons: ButtonInterface[];
+  selectedUser : User
 }
 
-export default function ButtonsGridPages({ buttons }: ButtonsGridPagesProps) {
+export default function ButtonsGridPages({ buttons, selectedUser }: ButtonsGridPagesProps) {
   const [selectedPage, setSelectedPage] = useState("1"); // Inicialmente, a página 1 é selecionada. Note que agora é uma string.
 
   const buttonsInSelectedPage = buttons.filter(
@@ -38,7 +44,7 @@ export default function ButtonsGridPages({ buttons }: ButtonsGridPagesProps) {
   return (
     <Card className="p-3 min-w-[644px] flex flex-col max-w-[800px] gap-3 items-center">
       <div className="flex-grow w-full">
-        <ButtonsGrid buttons={buttonsInSelectedPage} />
+        <ButtonsGrid buttons={buttonsInSelectedPage} selectedUser = {selectedUser} selectedPage = {selectedPage} />
       </div>
       <OtpRow />
       <Tabs

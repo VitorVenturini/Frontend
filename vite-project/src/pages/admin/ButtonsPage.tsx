@@ -111,7 +111,7 @@ export default function ButtonsPage() {
         {/* Renderize as informações do usuário selecionado aqui */}
         {selectedUser && (
           <div>
-            {<ButtonsGridPages buttons={filteredButtons} />}
+            {<ButtonsGridPages buttons={filteredButtons} selectedUser ={selectedUser} />}
           </div>
         )}
       </div>

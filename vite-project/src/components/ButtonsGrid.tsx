@@ -5,9 +5,18 @@ import { useState } from 'react';
 
 interface ButtonsGridProps {
   buttons: ButtonInterface[];
+  selectedUser: User;
+  selectedPage : string
 }
 
-export default function ButtonsGrid({ buttons }: ButtonsGridProps) {
+interface User {
+  id: string;
+  name: string;
+  guid: string;
+  // Adicione aqui outros campos se necessário
+}
+
+export default function ButtonsGrid({ buttons, selectedUser, selectedPage }: ButtonsGridProps) {
   const [clickedPosition, setClickedPosition] = useState<{i: number, j: number} | null>(null);
   // Crie uma matriz 8x5 preenchida com botões padrão
   const grid = Array(8)
@@ -31,6 +40,8 @@ export default function ButtonsGrid({ buttons }: ButtonsGridProps) {
           <div key={`${i}-${j}`}>
             <ButtonsComponent
               button={button}
+              selectedUser ={selectedUser}
+              selectedPage = {selectedPage}
               clickedPosition={clickedPosition}
               onClick={() => {
                 console.log(`X: ${button.position_x}, Y: ${button.position_y}`);
