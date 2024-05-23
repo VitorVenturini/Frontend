@@ -13,6 +13,7 @@ type WebSocketContextType = WebSocketHook | null;
 const WebSocketContext = createContext<WebSocketContextType>(null);
 
 export interface WebSocketMessage {
+  api: string // Api
   mt: string; // Message type
   [key: string]: any; // Additional dynamic properties
 }
