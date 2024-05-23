@@ -10,7 +10,7 @@ import {
 import OtpRow from "@/components/OptRow";
 
 import { ButtonInterface } from "./ButtonsContext";
-import  ButtonsGrid  from "./ButtonsGrid";
+import ButtonsGrid from "./ButtonsGrid";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React, { useState, useContext } from "react";
 
@@ -36,29 +36,27 @@ export default function ButtonsGridPages({ buttons }: ButtonsGridPagesProps) {
   };
 
   return (
-    <Card className="p-5 min-w-[644px]">
-      <div className=" place-content-around">
-        <div>
-          <ButtonsGrid buttons={buttonsInSelectedPage} />
-        </div>
-        <OtpRow />
-        <Tabs
-          defaultValue="1"
-          onValueChange={handlePageChange}
-          className="w-[400px]"
-        >
-          <TabsList>
-            {["1", "2", "3", "4", "5"].map((pageNumber) => (
-              <TabsTrigger key={pageNumber} value={pageNumber}>
-                Página {pageNumber}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-          {["1", "2", "3", "4", "5"].map((pageNumber) => (
-            <TabsContent key={pageNumber} value={pageNumber}></TabsContent>
-          ))}
-        </Tabs>
+    <Card className="p-3 min-w-[644px] flex flex-col max-w-[800px] gap-3 items-center">
+      <div className="flex-grow w-full">
+        <ButtonsGrid buttons={buttonsInSelectedPage} />
       </div>
+      <OtpRow />
+      <Tabs
+        defaultValue="1"
+        onValueChange={handlePageChange}
+        className="w-full flex-grow"
+      >
+        <TabsList className="w-full flex justify-center">
+          {["1", "2", "3", "4", "5"].map((pageNumber) => (
+            <TabsTrigger key={pageNumber} value={pageNumber}>
+              Página {pageNumber}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+        {["1", "2", "3", "4", "5"].map((pageNumber) => (
+          <TabsContent className="w-full flex-gow" key={pageNumber} value={pageNumber}></TabsContent>
+        ))}
+      </Tabs>
     </Card>
   );
 }

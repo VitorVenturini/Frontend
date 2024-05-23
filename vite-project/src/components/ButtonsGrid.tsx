@@ -1,33 +1,46 @@
-import ButtonsRow from './ButtonsRow';
-import { Separator } from "@/components/ui/separator"
+import { Separator } from "@/components/ui/separator";
 import { ButtonInterface, useButtons } from "@/components/ButtonsContext";
-import ButtonsComponent from './ButtonsComponent';
-
+import ButtonsComponent from "./ButtonsComponent";
+import { useState } from 'react';
 
 interface ButtonsGridProps {
   buttons: ButtonInterface[];
 }
 
-export default function ButtonsGrid({buttons} : ButtonsGridProps) {
-//  const {buttons} = useButtons()
-//  console.log("Todos botões do usuario" + JSON.stringify(buttons))
+export default function ButtonsGrid({ buttons }: ButtonsGridProps) {
+  const [clickedPosition, setClickedPosition] = useState<{i: number, j: number} | null>(null);
+  // Crie uma matriz 8x5 preenchida com botões padrão
+  const grid = Array(8)
+    .fill(null)
+    .map(() => Array(5).fill({ variant: "default" }));
+
+  // Substitua os botões padrão pelos botões reais
+  buttons.forEach((button) => {
+    const x = Number(button.position_x);
+    const y = Number(button.position_y);
+
+    if (!isNaN(x) && !isNaN(y)) {
+      grid[y - 1][x - 1] = button;
+    }
+  });
 
   return (
-    <div className="flex flex-col gap-2 justify-center">
-      <div className=" gap-6">
-        {buttons.map((button) => (
-          <div key={button.id}>
-            {/* <h3>Nome do botão: {button.button_name}</h3>
-            <h3>Posição X: {button.position_x}</h3>
-            <h3>Posição Y: {button.position_y}</h3>
-            <h3>Página {button.page}</h3>
-            <h3>================================</h3> */}
-            <ButtonsComponent button ={button}/>
-            {/* Renderize outras informações do botão conforme necessário */}
+    <div className="grid grid-rows-8 grid-cols-5 gap-4">
+      {grid.map((row, i) =>
+        row.map((button, j) => (
+          <div key={`${i}-${j}`}>
+            <ButtonsComponent
+              button={button}
+              clickedPosition={clickedPosition}
+              onClick={() => {
+                console.log(`X: ${button.position_x}, Y: ${button.position_y}`);
+                setClickedPosition({i: i+1, j: j+1});
+                console.log(`Clicked position state:`, clickedPosition);
+              }}
+            />
           </div>
-        ))}
-      </div>
-      
+        ))
+      )}
     </div>
   );
 }
