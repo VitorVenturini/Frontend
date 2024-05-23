@@ -34,12 +34,18 @@ interface User {
   // Adicione aqui outros campos se necessário
 }
 
-export default function ButtonsPage() {
+interface ButtonsPageProp {
+  buttons: ButtonInterface[];
+}
+
+export default function ButtonsPage({buttons} : ButtonsPageProp) {
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null); // Inicialmente, o primeiro usuário é selecionado
-  const account = useAccount()
-  //const { data: websocketData, sendMessage } = useWebSocket(account.accessToken);
-  const { buttons } = useButtons();
+  const account = useAccount();
+  // const { data: websocketData, sendMessage } = useWebSocket(
+  //   account.accessToken
+  // );
+  //const { buttons } = useButtons();
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -55,9 +61,11 @@ export default function ButtonsPage() {
           }
         );
         const data = await response.json();
-        setUsers(data);        
-        //sendMessage(account.isAdmin ? "admin" : "user", "SelectMessage");
-        
+        setUsers(data);
+        // sendMessage({
+        //   api: account.isAdmin ? "admin" : "user",
+        //   mt: "SelectMessage",
+        // });
       } catch (error) {
         console.error(error);
       }
@@ -67,15 +75,13 @@ export default function ButtonsPage() {
   }, []);
 
   // Exemplo de uso do sendMessage para enviar uma mensagem ao carregar a página
-   
-
 
   const handleUserSelect = (value: string) => {
     const user = users.find((user) => user.id === value);
     setSelectedUser(user || null);
   };
 
-  console.log("Botões" + buttons)
+  //console.log("Botões recebidos em ButtonsPage:" + JSON.stringify(buttons));
   const filteredButtons = selectedUser
     ? buttons.filter((button) => button.button_user === selectedUser.guid)
     : [];

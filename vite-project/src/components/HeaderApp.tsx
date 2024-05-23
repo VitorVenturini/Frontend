@@ -6,12 +6,17 @@ import { Input } from "@/components/ui/input";
 import Logout from "./Logout";
 import { useAccount } from "@/components/AccountContext";
 import { useNavigate } from "react-router-dom";
+import useWebSocket from "@/components/useWebSocket";
+import { WebSocketProvider, useWebSocketData } from "@/components/WebSocketProvider";
 
 export default function HeaderApp() {
   const account = useAccount();
   const navigate = useNavigate();
-
+  const wss = useWebSocketData()
+  
   const handleButtonsClick = () => {
+    wss?.sendMessage({ api: account.isAdmin ? "admin" : "user", mt: "SelectMessage" });
+    //ws.sendMessage({ api: account.isAdmin ? "admin" : "user", mt: "SelectMessage" });
     navigate("/admin/buttons");
   };
 

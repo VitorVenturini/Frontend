@@ -4,7 +4,6 @@ import Account from "./Account";
 import ButtonsPage from "./ButtonsPage";
 import HeaderApp from "@/components/HeaderApp";
 import { useAccount } from "@/components/AccountContext";
-import useWebSocket from "@/components/useWebSocket";
 import {
   ButtonProvider,
   useButtons,
@@ -17,17 +16,13 @@ import { WebSocketProvider } from "@/components/WebSocketProvider";
 import { WebSocketMessage } from "@/components/WebSocketProvider";
 import ActionsPage from "./ActionsPage";
 import Options from "./Options";
+import Loader from "@/components/Loader";
+import useWebSocket from "@/components/useWebSocket";
 
 function AdminLayout() {
   const account = useAccount();
-  const { setButtons } = useButtons();
-
-  // const webSocket = useWebSocket(account.accessToken)
-  // console.log("WEBSOCKETDATA" + webSocket.data)
-
-  // const[listButtons, setListUsers] = useState<[]>()
-  // console.log(account+" account");
-  // console.log(account?.guid +" guid");
+  const { buttons, setButtons } = useButtons();
+  //const [isLoading, setIsLoading] = useState(true);
 
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
@@ -35,6 +30,8 @@ function AdminLayout() {
       case "SelectMessageSuccess":
         const buttons: ButtonInterface[] = JSON.parse(message.result);
         setButtons(buttons);
+        // setIsLoading(false); // Definindo que os dados foram carregado
+        //console.log("isLoading atualizado para false");
         break;
       default:
         console.log("Unknown message type:", message);
@@ -51,11 +48,12 @@ function AdminLayout() {
       {/* Your admin layout here */}
       <Routes>
         <Route path="account" element={<Account />} />
-        <Route path="buttons" element={<ButtonsPage  />} />
+        <Route path="buttons" element={<ButtonsPage buttons={buttons}/>} />
           <Route path="actions" element={<ActionsPage />} />
         <Route path="options" element={<Options />} />
         {/* Add more admin routes as needed */}
       </Routes>
+
     </WebSocketProvider>
   );
 }
