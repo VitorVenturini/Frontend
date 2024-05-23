@@ -26,11 +26,11 @@ interface ButtonProps {
   button: ButtonInterface;
   onClick: () => void; // Adicione esta linha
   clickedPosition: { i: number; j: number } | null;
-  selectedUser : User,
-  selectedPage: string
+  selectedUser: User;
+  selectedPage: string;
 }
 
-// ws.current?.send(JSON.stringify({ 
+// ws.current?.send(JSON.stringify({
 //   api: account.isAdmin ? "admin" : "user",
 //    mt: "InsertMessage",
 //    name: "Botão Teste page",
@@ -49,7 +49,7 @@ export default function ButtonsComponent({
   onClick,
   clickedPosition,
   selectedUser,
-  selectedPage
+  selectedPage,
 }: ButtonProps) {
   const { isAdmin } = useContext(AccountContext);
 
@@ -58,15 +58,15 @@ export default function ButtonsComponent({
   };
 
   const commonClasses =
-    "min-w-[120px] h-[55px] rounded-lg border bg-border text-card-foreground shadow-sm p-1";
+    "w-[120px] h-[55px] rounded-lg border bg-border text-card-foreground shadow-sm p-1";
 
   switch (button.button_type) {
     case "alarm":
       return (
         <div className={`${commonClasses} flex flex-col`}>
-          <div className="flex items-center">
+          <div className="flex items-center gap-1">
             <OctagonAlert />
-            <p className="ml-2">{button.button_name} </p>
+            <p className="text-sm font-medium leading-none">{button.button_name} </p>
           </div>
           <div>
             <p>{button.button_prt}</p>
@@ -76,9 +76,9 @@ export default function ButtonsComponent({
     case "user":
       return (
         <div className={`${commonClasses} flex flex-col`} onClick={onClick}>
-          <div className="flex items-center">
+          <div className="flex items-center gap-1">
             <User />
-            <p className="ml-2">{button.button_name} </p>
+            <p className="text-sm font-medium leading-none">{button.button_name} </p>
           </div>
           <div>
             <p>{button.button_prt}</p>
@@ -88,9 +88,9 @@ export default function ButtonsComponent({
     case "number":
       return (
         <div className={`${commonClasses} flex flex-col`} onClick={onClick}>
-          <div className="flex items-center">
+          <div className="flex items-center gap-1">
             <Phone />
-            <p className="ml-2">{button.button_name} </p>
+            <p className="text-sm font-medium leading-none">{button.button_name} </p>
           </div>
           <div>
             <p>{button.button_prt}</p>
@@ -100,18 +100,18 @@ export default function ButtonsComponent({
     case "combo":
       return (
         <div className={`${commonClasses} flex`} onClick={onClick}>
-          <div className="flex items-center">
+          <div className="flex items-center gap-1">
             <Layers3 />
-            <p className="ml-2">Nome </p>
+            <p className="text-sm font-medium leading-none">Nome </p>
           </div>
         </div>
       );
     case "sensor":
       return (
         <div className={`${commonClasses} flex flex-col`} onClick={onClick}>
-          <div className="flex items-center">
+          <div className="flex items-center gap-1">
             <Rss />
-            <p className="ml-2">Nome </p>
+            <p className="text-sm font-medium leading-none">Nome </p>
           </div>
           <div>
             <p>Parâmetro</p>
@@ -137,28 +137,22 @@ export default function ButtonsComponent({
                   <p>
                     Clicked position: X: {clickedPosition.i}, Y:{" "}
                     {clickedPosition.j}
-
                   </p>
                 )}
-                <p>
-                  Usuário: {selectedUser.name}
-                </p>
-                <p>
-                  Página: {selectedPage}
-                </p>
-
+                <p>Usuário: {selectedUser.name}</p>
+                <p>Página: {selectedPage}</p>
               </DialogHeader>
+              <DialogFooter>
+                <Button>Criar</Button>
+              </DialogFooter>
             </DialogContent>
-            <DialogFooter>
-              <Button>Criar</Button>
-            </DialogFooter>
           </Dialog>
         );
       } else {
         return (
-          <div className={`${commonClasses} flex items-center justify-center`}>
-            
-          </div>
+          <div
+            className={`${commonClasses} flex items-center justify-center`}
+          ></div>
         );
       }
   }
