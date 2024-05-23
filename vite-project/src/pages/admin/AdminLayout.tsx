@@ -39,7 +39,7 @@ function AdminLayout() {
       default:
         console.log("Unknown message type:", message);
         break;
-    }
+    } 
   };
 
   return (
@@ -51,8 +51,8 @@ function AdminLayout() {
       {/* Your admin layout here */}
       <Routes>
         <Route path="account" element={<Account />} />
-        <Route path="buttons" element={<ButtonsPage />} />
-        <Route path="actions" element={<ActionsPage />} />
+        <Route path="buttons" element={<ButtonsPage />} /> USAR PROP POS ALMOÇO
+          <Route path="actions" element={<ActionsPage />} />
         <Route path="options" element={<Options />} />
         {/* Add more admin routes as needed */}
       </Routes>

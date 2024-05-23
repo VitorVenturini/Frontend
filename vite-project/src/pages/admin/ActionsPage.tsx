@@ -24,6 +24,8 @@ import {
   import { ChangeEvent, useState, useEffect } from "react";
   import { useToast } from "@/components/ui/use-toast";
   import TableActions from "@/components/TableActions";
+  import useWebSocket from "@/components/useWebSocket";
+import { useAccount } from "@/components/AccountContext";
 
  interface User {
     id: string;
@@ -33,6 +35,7 @@ import {
 export default function ActionsPage(){
     const [users, setUsers] = useState<User[]>([]);
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
+    const account = useAccount()
     
     useEffect(() => {
         const fetchUsers = async () => {

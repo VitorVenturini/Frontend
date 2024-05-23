@@ -8,10 +8,7 @@ import React, {
 } from "react";
 import useWebSocket, { WebSocketHook } from "./useWebSocket";
 
-type WebSocketContextType = {
-  data: string | null;
-  closeConnection: () => void;
-} | null;
+type WebSocketContextType = WebSocketHook | null;
 
 const WebSocketContext = createContext<WebSocketContextType>(null);
 

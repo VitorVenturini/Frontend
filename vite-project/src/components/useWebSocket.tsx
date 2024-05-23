@@ -1,17 +1,21 @@
-import { useEffect, useRef, useState, useCallback,useContext } from "react";
+import { useEffect, useRef, useState, useCallback, useContext } from "react";
 import { useAccount } from "./AccountContext";
 import { WebSocketMessage } from "./WebSocketProvider";
 
 export interface WebSocketHook {
-    data: string;
-    closeConnection: () => void;
-  }
+  data: string;
+  closeConnection: () => void;
+  sendMessage: (api: string , messageType: string) => void;
+}
 
-const useWebSocket = (token: string, onMessage?: (message: WebSocketMessage) => void): WebSocketHook => {
+const useWebSocket = (
+  token: string,
+  onMessage?: (message: WebSocketMessage) => void
+): WebSocketHook => {
   const [data, setData] = useState("");
   const ws = useRef<WebSocket | null>(null);
   const timer = useRef<NodeJS.Timeout | null>(null);
-  const account  = useAccount();
+  const account = useAccount();
 
   useEffect(() => {
     const currentUrl = window.location.hostname;
@@ -34,18 +38,17 @@ const useWebSocket = (token: string, onMessage?: (message: WebSocketMessage) => 
         //ws.current?.send(JSON.stringify({ api: account.isAdmin ? "admin" : "user", mt: "AdminMessage" }));
         //ws.current?.send(JSON.stringify({ api: account.isAdmin ? "admin" : "user", mt: "SelectSensorName" }));
         ws.current?.send(JSON.stringify({ api: account.isAdmin ? "admin" : "user", mt: "SelectMessage" }));
- 
-    };
+      };
 
-    ws.current.onclose = (event) => {
-      console.log("WebSocket connection closed:", event.code, event.reason);
-      if (!account.isLogged) {
-        timer.current = setTimeout(() => {
-          console.log("Reconnecting WebSocket...");
-          connect();
-        }, 5000);
-      }
-    };
+      ws.current.onclose = (event) => {
+        console.log("WebSocket connection closed:", event.code, event.reason);
+        if (!account.isLogged) {
+          timer.current = setTimeout(() => {
+            console.log("Reconnecting WebSocket...");
+            connect();
+          }, 5000);
+        }
+      };
 
       ws.current.onerror = (event) => {
         console.error("WebSocket error:", event);
@@ -59,8 +62,8 @@ const useWebSocket = (token: string, onMessage?: (message: WebSocketMessage) => 
 
       ws.current.onmessage = (message) => {
         console.log("WebSocket message received:", message.data);
-        const parsedMessage = JSON.parse(message.data)
-         if (onMessage) {
+        const parsedMessage = JSON.parse(message.data);
+        if (onMessage) {
           onMessage(parsedMessage);
         }
         setData(message.data);
@@ -73,14 +76,29 @@ const useWebSocket = (token: string, onMessage?: (message: WebSocketMessage) => 
       if (timer.current) clearTimeout(timer.current);
       if (ws.current) ws.current.close();
     };
-  }, [token,]);
+  }, [token]);
+
   const closeConnection = useCallback(() => {
     if (timer.current) clearTimeout(timer.current);
     if (ws.current) ws.current.close();
-    if(ws.current) ws.current.onclose
+    //if(ws.current) ws.current.onclose
   }, []);
 
-  return { data, closeConnection };
+  const sendMessage = useCallback(
+    (api: string, messageType: string) => {
+      const message: WebSocketMessage = {
+        api,
+        mt: messageType,
+      };
+      if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+        ws.current.send(JSON.stringify(message));
+        console.log("WebSocketSend" + JSON.stringify(message));
+      }
+    },
+    []
+  );
+
+  return { data, closeConnection, sendMessage };
 };
 
 export default useWebSocket;

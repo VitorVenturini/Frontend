@@ -24,7 +24,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useState, useEffect } from "react";
-
+import useWebSocket from "@/components/useWebSocket";
+import { useAccount } from "@/components/AccountContext";
 
 interface User {
   id: string;
@@ -36,6 +37,8 @@ interface User {
 export default function ButtonsPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null); // Inicialmente, o primeiro usuário é selecionado
+  const account = useAccount()
+  //const { data: websocketData, sendMessage } = useWebSocket(account.accessToken);
   const { buttons } = useButtons();
 
   useEffect(() => {
@@ -52,7 +55,9 @@ export default function ButtonsPage() {
           }
         );
         const data = await response.json();
-        setUsers(data);
+        setUsers(data);        
+        //sendMessage(account.isAdmin ? "admin" : "user", "SelectMessage");
+        
       } catch (error) {
         console.error(error);
       }
@@ -61,11 +66,16 @@ export default function ButtonsPage() {
     fetchUsers();
   }, []);
 
+  // Exemplo de uso do sendMessage para enviar uma mensagem ao carregar a página
+   
+
+
   const handleUserSelect = (value: string) => {
     const user = users.find((user) => user.id === value);
     setSelectedUser(user || null);
   };
 
+  console.log("Botões" + buttons)
   const filteredButtons = selectedUser
     ? buttons.filter((button) => button.button_user === selectedUser.guid)
     : [];

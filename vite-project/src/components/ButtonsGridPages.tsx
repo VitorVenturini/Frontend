@@ -39,7 +39,7 @@ export default function ButtonsGridPages({ buttons }: ButtonsGridPagesProps) {
     <Card className="p-5 min-w-[644px]">
       <div className=" place-content-around">
         <div>
-          <ButtonsGrid />
+          <ButtonsGrid buttons={buttonsInSelectedPage} />
         </div>
         <OtpRow />
         <Tabs

@@ -4,13 +4,13 @@ import { ButtonInterface, useButtons } from "@/components/ButtonsContext";
 import ButtonsComponent from './ButtonsComponent';
 
 
-// interface ButtonsGridProps {
-//   buttons: ButtonInterface[];
-// }
+interface ButtonsGridProps {
+  buttons: ButtonInterface[];
+}
 
-export default function ButtonsGrid() {
- const {buttons} = useButtons()
- console.log("Todos botões do usuario" + JSON.stringify(buttons))
+export default function ButtonsGrid({buttons} : ButtonsGridProps) {
+//  const {buttons} = useButtons()
+//  console.log("Todos botões do usuario" + JSON.stringify(buttons))
 
   return (
     <div className="flex flex-col gap-2 justify-center">
