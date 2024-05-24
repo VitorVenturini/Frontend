@@ -4,6 +4,7 @@ import { AccountContext } from "./AccountContext";
 import { ButtonInterface, useButtons } from "@/components/ButtonsContext";
 import { useState } from "react";
 import { Button } from "./ui/button";
+import CreateSensorModal from "./CreateSensorModal";
 
 import {
   Dialog,
@@ -25,7 +26,7 @@ interface User {
 interface ButtonProps {
   button: ButtonInterface;
   onClick: () => void; // Adicione esta linha
-  clickedPosition: { i: number; j: number } | null;
+  clickedPosition: { x: number; y: number } | null;
   selectedUser: User;
   selectedPage: string;
 }
@@ -57,6 +58,48 @@ export default function ButtonsComponent({
     onClick();
   };
 
+
+  const getDialogContent = () => {
+    if (!clickedPosition) return null;
+
+    switch (clickedPosition.x) {
+      case 1:
+        return (
+          <>
+            <DialogTitle>Criar Combo</DialogTitle>
+            <DialogDescription>
+              Detalhes específicos para a criação de Combos.
+            </DialogDescription>
+          </>
+        );
+      case 2:
+        return (
+          <CreateSensorModal selectedPage={selectedPage} selectedUser={selectedUser} clickedPosition={clickedPosition}/>
+          // <>
+          //    <DialogTitle>Criar Sensor</DialogTitle>
+          //   <DialogDescription>
+          //     Detalhes específicos para a criação de Sensores.
+          //   </DialogDescription> 
+          // </>
+        );
+      default:
+        if (clickedPosition.x >= 3 && clickedPosition.x <= 8) {
+          return (
+            <>
+              <DialogTitle>Criar Outro Tipo de Botão</DialogTitle>
+              <DialogDescription>
+                Detalhes específicos para a criação de outro tipo de botão.
+              </DialogDescription>
+            </>
+          );
+        }
+        return (
+          <>
+            <DialogTitle>Criar um botão</DialogTitle>
+          </>
+        );
+    }
+  };
   const commonClasses =
     "w-[120px] h-[55px] rounded-lg border bg-border text-card-foreground shadow-sm p-1";
 
@@ -121,6 +164,9 @@ export default function ButtonsComponent({
     default:
       if (isAdmin) {
         return (
+          // <div>
+          // {getDialogContent()}
+          // </div>
           <Dialog>
             <DialogTrigger>
               <div
@@ -130,10 +176,10 @@ export default function ButtonsComponent({
                 <Plus />
               </div>
             </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Criar um botão</DialogTitle>
-                {clickedPosition && (
+            { <DialogContent>
+              {getDialogContent()}
+              {/* <DialogHeader>
+               {clickedPosition && (
                   <p>
                     Clicked position: X: {clickedPosition.i}, Y:{" "}
                     {clickedPosition.j}
@@ -141,13 +187,13 @@ export default function ButtonsComponent({
                 )}
                 <p>Usuário: {selectedUser.name}</p>
                 <p>Página: {selectedPage}</p>
-              </DialogHeader>
+              </DialogHeader> */}
               <DialogFooter>
-                <Button>Criar</Button>
+                {/* <Button>Criar</Button> */}
               </DialogFooter>
-            </DialogContent>
+            </DialogContent> }
           </Dialog>
-        );
+       );
       } else {
         return (
           <div

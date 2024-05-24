@@ -37,7 +37,7 @@ const useWebSocket = (
         console.log(account);
         //ws.current?.send(JSON.stringify({ api: account.isAdmin ? "admin" : "user", mt: "AdminMessage" }));
         //ws.current?.send(JSON.stringify({ api: account.isAdmin ? "admin" : "user", mt: "SelectSensorName" }));
-        //ws.current?.send(JSON.stringify({ api: account.isAdmin ? "admin" : "user", mt: "SelectMessage" }));
+        ws.current?.send(JSON.stringify({ api: account.isAdmin ? "admin" : "user", mt: "SelectMessage" }));
       };
 
       ws.current.onclose = (event) => {
@@ -49,7 +49,6 @@ const useWebSocket = (
           }, 5000);
         }
       };
-
       ws.current.onerror = (event) => {
         console.error("WebSocket error:", event);
         if (!account.isLogged) {

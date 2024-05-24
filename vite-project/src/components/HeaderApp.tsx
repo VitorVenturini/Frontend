@@ -15,8 +15,7 @@ export default function HeaderApp() {
   const wss = useWebSocketData()
   
   const handleButtonsClick = () => {
-    wss?.sendMessage({ api: account.isAdmin ? "admin" : "user", mt: "SelectMessage" });
-    //ws.sendMessage({ api: account.isAdmin ? "admin" : "user", mt: "SelectMessage" });
+    //wss?.sendMessage({ api: account.isAdmin ? "admin" : "user", mt: "SelectMessage" });
     navigate("/admin/buttons");
   };
 
