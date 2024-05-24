@@ -1,61 +1,66 @@
-import React, { useState } from "react";
-import { Map, MapPin, Rss, Radio, Video, MessageSquare } from "lucide-react";
+"use client"
+
+import * as React from "react"
+import * as TabsPrimitive from "@radix-ui/react-tabs"
+import { ComponentPropsWithoutRef, ElementType, forwardRef, ReactElement, RefAttributes } from 'react';
 
 
-export default function OtpRow() {
-  const [isSelected, setIsSelected] = useState(false);
+import { CalendarDays } from "lucide-react"
 
-  return (
-    <div className="flex justify-between gap-2">
-       <div className="min-w-[100px] h-[55px] rounded-lg border bg-card text-card-foreground shadow-sm p-1 items-center">
-      <div className="flex justify-center">
-        <Map />
-      </div>
-      <div className="flex justify-center">Planta Baixa</div>
-    </div>
 
-    <div className="min-w-[100px] h-[55px] rounded-lg border bg-card text-card-foreground shadow-sm p-1 items-center">
-      <div className="flex justify-center">
-      <MapPin />
-      </div>
-      <div className="flex justify-center">Mapa</div>
-    </div>
+import { cn } from "@/lib/utils"
+type TabsTriggerProps = ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger> & {
+  icon?: ElementType; // Adicione a propriedade 'icon' aqui
+};
 
-    <div className="min-w-[100px] h-[55px] rounded-lg border bg-card text-card-foreground shadow-sm p-1 items-center">
-      <div className="flex justify-center">
-      <Rss />
-      </div>
-      <div className="flex justify-center">Sensor</div>
-    </div>
+const TabsOpt = TabsPrimitive.Root
 
-    <div className="min-w-[100px] h-[55px] rounded-lg border bg-card text-card-foreground shadow-sm p-1 items-center">
-      <div className="flex justify-center">
-      <Radio />
-      </div>
-      <div className="flex justify-center">Radio</div>
-    </div>
+const TabsList = React.forwardRef<
+  React.ElementRef<typeof TabsPrimitive.List>,
+  React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>
+>(({ className, ...props }, ref) => (
+  <TabsPrimitive.List
+    ref={ref}
+    className={cn(
+      "inline-flex w-full items-center justify-center rounded-md bg-muted p-1 text-muted-foreground flex-wrap-nowrap ",
+      className
+    )}
+    {...props}
+  />
+))
+TabsList.displayName = TabsPrimitive.List.displayName
 
-    <div className="min-w-[100px] h-[55px] rounded-lg border bg-card text-card-foreground shadow-sm p-1 items-center">
-      <div className="flex justify-center">
-      <Video />
-      </div>
-      <div className="flex justify-center">Video</div>
-    </div>
+const TabsTrigger = forwardRef<HTMLButtonElement, TabsTriggerProps>(
+  ({ className, icon: Icon, ...props }, ref) => (
+    <TabsPrimitive.Trigger
+      ref={ref}
+      className={cn(
+        'inline-flex flex-col flex-grow items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm min-w-[110px]',
+        className
+      )}
+      {...props}
+    >
+      {Icon && <Icon />} {/* Renderize o ícone se ele for passado como propriedade */}
+      {props.children}
+    </TabsPrimitive.Trigger>
+  )
+);
 
-    <div className="min-w-[100px] h-[55px] rounded-lg border bg-card text-card-foreground shadow-sm p-1 items-center">
-      <div className="flex justify-center">
-      <MessageSquare />
-      </div>
-      <div className="flex justify-center">Chat</div>
-    </div>
+TabsTrigger.displayName = TabsPrimitive.Trigger.displayName;
 
-      </div>
-   
-    // <div
-    //   className={`min-w-[120px] h-[55px] rounded-lg border bg-card text-card-foreground shadow-sm p-1 items-center ${isSelected ? 'bg-blue-500' : ''}`}
-    //   onClick={() => setIsSelected(!isSelected)}
-    // >
+const TabsContent = React.forwardRef<
+  React.ElementRef<typeof TabsPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
+>(({ className, ...props }, ref) => (
+  <TabsPrimitive.Content
+    ref={ref}
+    className={cn(
+      "mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+      className
+    )}
+    {...props}
+  />
+))
+TabsContent.displayName = TabsPrimitive.Content.displayName
 
-    // </div>
-  );
-}
+export { TabsOpt, TabsList, TabsTrigger, TabsContent }
