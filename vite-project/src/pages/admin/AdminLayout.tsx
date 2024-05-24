@@ -21,22 +21,27 @@ import useWebSocket from "@/components/useWebSocket";
 
 function AdminLayout() {
   const account = useAccount();
-  const { buttons, setButtons } = useButtons();
+  const { buttons, setButtons, updateButton } = useButtons();
   //const [isLoading, setIsLoading] = useState(true);
 
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
     switch (message.mt) {
       case "SelectMessageSuccess":
+         //atualizar para SelectButtonsSuccess
         const buttons: ButtonInterface[] = JSON.parse(message.result);
         setButtons(buttons);
         // setIsLoading(false); // Definindo que os dados foram carregado
         //console.log("isLoading atualizado para false");
         break;
+      case "InsertMessageSuccess":
+        const newButton: ButtonInterface = JSON.parse(message.result);
+        updateButton(newButton);
+        break;
       default:
         console.log("Unknown message type:", message);
         break;
-    } 
+    }
   };
 
   return (
@@ -48,12 +53,11 @@ function AdminLayout() {
       {/* Your admin layout here */}
       <Routes>
         <Route path="account" element={<Account />} />
-        <Route path="buttons" element={<ButtonsPage buttons={buttons}/>} />
-          <Route path="actions" element={<ActionsPage />} />
+        <Route path="buttons" element={<ButtonsPage />} />
+        <Route path="actions" element={<ActionsPage />} />
         <Route path="options" element={<Options />} />
         {/* Add more admin routes as needed */}
       </Routes>
-
     </WebSocketProvider>
   );
 }

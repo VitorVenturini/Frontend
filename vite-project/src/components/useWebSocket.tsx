@@ -38,6 +38,7 @@ const useWebSocket = (
         //ws.current?.send(JSON.stringify({ api: account.isAdmin ? "admin" : "user", mt: "AdminMessage" }));
         //ws.current?.send(JSON.stringify({ api: account.isAdmin ? "admin" : "user", mt: "SelectSensorName" }));
         ws.current?.send(JSON.stringify({ api: account.isAdmin ? "admin" : "user", mt: "SelectMessage" }));
+        //atualizar para SelectButtons
       };
 
       ws.current.onclose = (event) => {

@@ -38,14 +38,14 @@ interface ButtonsPageProp {
   buttons: ButtonInterface[];
 }
 
-export default function ButtonsPage({buttons} : ButtonsPageProp) {
+export default function ButtonsPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null); // Inicialmente, o primeiro usuário é selecionado
   const account = useAccount();
   // const { data: websocketData, sendMessage } = useWebSocket(
   //   account.accessToken
   // );
-  //const { buttons } = useButtons();
+  const { buttons } = useButtons();
 
   useEffect(() => {
     const fetchUsers = async () => {

@@ -26,7 +26,7 @@ interface User {
 interface ButtonProps {
   button: ButtonInterface;
   onClick: () => void; // Adicione esta linha
-  clickedPosition: { x: number; y: number } | null;
+  clickedPosition: { i: number; j: number } | null;
   selectedUser: User;
   selectedPage: string;
 }
@@ -62,13 +62,17 @@ export default function ButtonsComponent({
   const getDialogContent = () => {
     if (!clickedPosition) return null;
 
-    switch (clickedPosition.x) {
+    switch (clickedPosition.i) {
       case 1:
         return (
           <>
             <DialogTitle>Criar Combo</DialogTitle>
             <DialogDescription>
               Detalhes específicos para a criação de Combos.
+              <p>
+            Posição Y {clickedPosition?.j}
+            Posição X {clickedPosition?.i}
+              </p>
             </DialogDescription>
           </>
         );
@@ -83,11 +87,16 @@ export default function ButtonsComponent({
           // </>
         );
       default:
-        if (clickedPosition.x >= 3 && clickedPosition.x <= 8) {
+        if (clickedPosition.i >= 3 && clickedPosition.i <= 8) {
           return (
             <>
               <DialogTitle>Criar Outro Tipo de Botão</DialogTitle>
               <DialogDescription>
+              <p>
+            Posição X {clickedPosition?.i}
+            Posição Y {clickedPosition?.j}
+              </p>
+
                 Detalhes específicos para a criação de outro tipo de botão.
               </DialogDescription>
             </>
@@ -154,10 +163,10 @@ export default function ButtonsComponent({
         <div className={`${commonClasses} flex flex-col`} onClick={onClick}>
           <div className="flex items-center gap-1">
             <Rss />
-            <p className="text-sm font-medium leading-none">Nome </p>
+            <p className="text-sm font-medium leading-none">{button.button_name} </p>
           </div>
           <div>
-            <p>Parâmetro</p>
+            <p>{button.button_prt}</p>
           </div>
         </div>
       );

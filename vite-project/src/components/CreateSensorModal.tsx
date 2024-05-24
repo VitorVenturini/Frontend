@@ -41,7 +41,7 @@ interface User {
   }
 
 interface ButtonProps {
-    clickedPosition: { x: number; y: number } | null;
+    clickedPosition: { i: number; j: number } | null;
     selectedUser: User;
     selectedPage: string;
   }
@@ -88,8 +88,8 @@ export default function CreateSensorModal({selectedUser, selectedPage , clickedP
             max: maxValue,
             sensorType: typeMeasure,
             page: selectedPage,
-            x: clickedPosition?.x,
-            y: clickedPosition?.y
+            x: clickedPosition?.j,
+            y: clickedPosition?.i
         })
         setIsCreating(false)
       } else {
@@ -109,6 +109,10 @@ export default function CreateSensorModal({selectedUser, selectedPage , clickedP
           <CardTitle>Criação de Sensores</CardTitle>
           <CardDescription>
             Para cirar um sensor complete os campos abaixo
+            <p>
+            Posição X {clickedPosition?.i}
+            Posição Y {clickedPosition?.j}
+              </p>
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4 py-4">
