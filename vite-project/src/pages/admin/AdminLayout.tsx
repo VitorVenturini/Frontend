@@ -35,7 +35,8 @@ function AdminLayout() {
         //console.log("isLoading atualizado para false");
         break;
       case "InsertMessageSuccess":
-        const newButton: ButtonInterface = JSON.parse(message.result);
+        console.log("Resultado" + JSON.stringify(message.result))
+        const newButton: ButtonInterface = message.result
         updateButton(newButton);
         break;
       default:
