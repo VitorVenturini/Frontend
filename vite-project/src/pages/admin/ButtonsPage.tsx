@@ -4,6 +4,9 @@ import ButtonsGridPages from "@/components/ButtonsGridPages";
 import LeftGrid from "@/components/LeftGrid";
 import RightGrid from "@/components/RightGrid";
 import { ButtonInterface, useButtons } from "@/components/ButtonsContext";
+import { PlusSquare, SquarePlus } from 'lucide-react';
+import { ArrowBigUpDash } from 'lucide-react';
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -113,6 +116,18 @@ export default function ButtonsPage() {
           </Select>
           <Button>Tabela</Button>
         </div>
+        {!selectedUser ? (
+    <div className="flex flex-col justify-center items-center gap-5 mt-5">
+      <div className="flex align-middle items-center gap-8">
+      <ArrowBigUpDash size={30} className="animate-bounce"/>
+        Escolha um usuário 
+      <ArrowBigUpDash size={30} className="animate-bounce"/>
+      </div>
+    </div>
+  ) : (
+    <div>
+    </div>
+  )}
 
         {/* Renderize as informações do usuário selecionado aqui */}
         {selectedUser && (
