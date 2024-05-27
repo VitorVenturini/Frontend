@@ -38,7 +38,16 @@ const useWebSocket = (
         //ws.current?.send(JSON.stringify({ api: account.isAdmin ? "admin" : "user", mt: "AdminMessage" }));
         //ws.current?.send(JSON.stringify({ api: account.isAdmin ? "admin" : "user", mt: "SelectSensorName" }));
         ws.current?.send(JSON.stringify({ api: account.isAdmin ? "admin" : "user", mt: "SelectMessage" }));
-        //atualizar para SelectButtons
+        // ws.current?.send(JSON.stringify({  api: "admin",
+        // mt: "InsertDestMessage",
+        // name: "DestTeste",
+        // value: "1001",
+        // guid: "4537493012864503132",
+        // type: "dest",
+        // device: "Softphone",
+        // page: "0",
+        // x: "1",
+        // y: "1"}))
       };
 
       ws.current.onclose = (event) => {

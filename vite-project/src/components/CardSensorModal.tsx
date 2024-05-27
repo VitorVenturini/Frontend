@@ -42,11 +42,11 @@ interface User {
 
 interface ButtonProps {
     clickedPosition: { i: number; j: number } | null;
-    selectedUser: User;
+    selectedUser: User | null;
     selectedPage: string;
   }
 
-export default function CreateSensorModal({selectedUser, selectedPage , clickedPosition} : ButtonProps) {
+export default function CardSensorModal({selectedUser, selectedPage , clickedPosition} : ButtonProps) {
   const [nameSensor, setNameSensor] = useState("");
   const [nameButton, setNameButton] = useState("");
   const [typeMeasure, setTypeMeasure] = useState("");
@@ -82,7 +82,7 @@ export default function CreateSensorModal({selectedUser, selectedPage , clickedP
             mt: "InsertSensorMessage",
             name: nameButton,
             value: nameSensor,
-            guid: selectedUser.guid,
+            guid: selectedUser?.guid,
             type: "sensor",
             min: minValue,
             max: maxValue,

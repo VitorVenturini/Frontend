@@ -1,4 +1,5 @@
 import { useAccount } from "@/components/AccountContext";
+import { useState } from "react";
 import {
   Card,
   CardContent,
@@ -7,22 +8,23 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { ButtonInterface } from "./ButtonsContext"
 
 interface User {
-    id: string;
-    name: string;
-    // Adicione outras propriedades do usuário conforme necessário
-  }
-  
-  interface ButtonsGridProps {
-    user: User | null;
-  }
+  id: string;
+  name: string;
+  guid: string;
+  // Adicione aqui outros campos se necessário
+}
+interface RightGridProps {
+  buttons: ButtonInterface[];
+  selectedUser : User | null
+}
 
-export default function RightGrid() {
+  export default function RightGrid() {
   return (
-    <Card className="p-5 min-w-[364px] h-[500px]">
+    <Card className="p-5 min-w-[324px] h-[500px]">
         <div className=" gap-6">
-            Direita
       </div>
     </Card>
   );

@@ -1,10 +1,10 @@
 import React, { useContext } from "react";
-import { Plus, OctagonAlert, User, Phone, Layers3, Rss } from "lucide-react";
+import { Plus, OctagonAlert, User, Phone, Layers3, Rss, Siren } from "lucide-react";
 import { AccountContext } from "./AccountContext";
 import { ButtonInterface, useButtons } from "@/components/ButtonsContext";
 import { useState } from "react";
 import { Button } from "./ui/button";
-import CreateSensorModal from "./CreateSensorModal";
+import CardSensorModal from "./CardSensorModal";
 
 import {
   Dialog,
@@ -27,7 +27,7 @@ interface ButtonProps {
   button: ButtonInterface;
   onClick: () => void; // Adicione esta linha
   clickedPosition: { i: number; j: number } | null;
-  selectedUser: User;
+  selectedUser: User | null;
   selectedPage: string;
 }
 
@@ -60,48 +60,53 @@ export default function ButtonsComponent({
 
 
   const getDialogContent = () => {
-    if (!clickedPosition) return null;
+    //if (!clickedPosition) return null;
 
-    switch (clickedPosition.i) {
-      case 1:
+    switch (true) {
+      case clickedPosition?.i === 1 && selectedPage !== "0":
         return (
           <>
             <DialogTitle>Criar Combo</DialogTitle>
             <DialogDescription>
               Detalhes específicos para a criação de Combos.
               <p>
-            Posição Y {clickedPosition?.j}
-            Posição X {clickedPosition?.i}
+                Posição Y {clickedPosition?.j}
+                Posição X {clickedPosition?.i}
               </p>
             </DialogDescription>
           </>
         );
-      case 2:
+      case clickedPosition?.i === 2 && selectedPage !== "0":
         return (
-          <CreateSensorModal selectedPage={selectedPage} selectedUser={selectedUser} clickedPosition={clickedPosition}/>
-          // <>
-          //    <DialogTitle>Criar Sensor</DialogTitle>
-          //   <DialogDescription>
-          //     Detalhes específicos para a criação de Sensores.
-          //   </DialogDescription> 
-          // </>
+          <CardSensorModal selectedPage={selectedPage} selectedUser={selectedUser} clickedPosition={clickedPosition} />
+        );
+      case clickedPosition?.i && selectedPage === "0":
+        return (
+          <>
+            <DialogTitle>Criar Dest</DialogTitle>
+            <DialogDescription>
+              Detalhes específicos para a criação de Dests.
+              <p>
+                Posição Y {clickedPosition?.j}
+                Posição X {clickedPosition?.i}
+              </p>
+            </DialogDescription>
+          </>
+        );
+      case (clickedPosition?.i ?? 0) >= 3 && (clickedPosition?.i ?? 0) <= 8:
+        return (
+          <>
+            <DialogTitle>Criar Outro Tipo de Botão</DialogTitle>
+            <DialogDescription>
+              <p>
+                Posição X {clickedPosition?.i}
+                Posição Y {clickedPosition?.j}
+              </p>
+              Detalhes específicos para a criação de outro tipo de botão.
+            </DialogDescription>
+          </>
         );
       default:
-        if (clickedPosition.i >= 3 && clickedPosition.i <= 8) {
-          return (
-            <>
-              <DialogTitle>Criar Outro Tipo de Botão</DialogTitle>
-              <DialogDescription>
-              <p>
-            Posição X {clickedPosition?.i}
-            Posição Y {clickedPosition?.j}
-              </p>
-
-                Detalhes específicos para a criação de outro tipo de botão.
-              </DialogDescription>
-            </>
-          );
-        }
         return (
           <>
             <DialogTitle>Criar um botão</DialogTitle>
@@ -109,8 +114,12 @@ export default function ButtonsComponent({
         );
     }
   };
+
   const commonClasses =
     "w-[120px] h-[55px] rounded-lg border bg-border text-card-foreground shadow-sm p-1";
+
+  const destClasses =
+    "w-[100px] h-[55px] rounded-lg border bg-border text-card-foreground shadow-sm p-1";
 
   switch (button.button_type) {
     case "alarm":
@@ -170,6 +179,18 @@ export default function ButtonsComponent({
           </div>
         </div>
       );
+    case "dest":
+      return (
+        <div className={`${destClasses} flex flex-col`} onClick={onClick}>
+          <div className="flex items-center gap-1">
+            <Siren />
+            <p className="text-sm font-medium leading-none">{button.button_name} </p>
+          </div>
+          <div>
+            <p>{button.button_prt}</p>
+          </div>
+        </div>
+      );
     default:
       if (isAdmin) {
         return (
@@ -178,14 +199,25 @@ export default function ButtonsComponent({
           // </div>
           <Dialog>
             <DialogTrigger>
-              <div
-                className={`${commonClasses} flex items-center justify-center`}
-                onClick={handleClick}
-              >
-                <Plus />
-              </div>
+              {selectedPage === "0" ? ( // quando for dests (pagina 0) entao adicinamos a classe destClasses
+                <div
+                  className={`${destClasses} flex items-center justify-center`}
+                  onClick={handleClick}
+                >
+                  <Plus />
+                </div>
+              ) : ( // quando for botões normais adicionamos commonClasses
+                <div
+                  className={`${commonClasses} flex items-center justify-center`}
+                  onClick={handleClick}
+                >
+                  <Plus />
+                </div>
+              )}
+
+
             </DialogTrigger>
-            { <DialogContent>
+            {<DialogContent>
               {getDialogContent()}
               {/* <DialogHeader>
                {clickedPosition && (
@@ -200,9 +232,9 @@ export default function ButtonsComponent({
               <DialogFooter>
                 {/* <Button>Criar</Button> */}
               </DialogFooter>
-            </DialogContent> }
+            </DialogContent>}
           </Dialog>
-       );
+        );
       } else {
         return (
           <div

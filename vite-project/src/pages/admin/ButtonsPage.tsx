@@ -91,8 +91,9 @@ export default function ButtonsPage() {
 
   return (
     <div className="flex justify-center gap-3">
-      <div>{<LeftGrid />}</div>
-
+        <div>
+        {<LeftGrid buttons = {filteredButtons} selectedUser={selectedUser} />}
+        </div>
       <div className=" flex flex-col min-w-[644px] gap-2">
         <div className="flex justify-between gap-3 items-center">
           <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
@@ -137,7 +138,7 @@ export default function ButtonsPage() {
         )}
       </div>
       <div>
-        <RightGrid />
+        <RightGrid/>
       </div>
     </div>
   );

@@ -18,10 +18,12 @@ import ActionsPage from "./ActionsPage";
 import Options from "./Options";
 import Loader from "@/components/Loader";
 import useWebSocket from "@/components/useWebSocket";
+import { useToast } from "@/components/ui/use-toast";
 
 function AdminLayout() {
   const account = useAccount();
   const { buttons, setButtons, updateButton } = useButtons();
+  const { toast } = useToast()
   //const [isLoading, setIsLoading] = useState(true);
 
   // vamos trtar todas as mensagens recebidas pelo wss aqui
@@ -38,6 +40,9 @@ function AdminLayout() {
         console.log("Resultado" + JSON.stringify(message.result))
         const newButton: ButtonInterface = message.result
         updateButton(newButton);
+        toast({
+          description: "Botão Criado com sucesso",
+        });
         break;
       default:
         console.log("Unknown message type:", message);

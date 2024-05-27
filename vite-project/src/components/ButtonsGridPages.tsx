@@ -14,11 +14,7 @@ import ButtonsGrid from "./ButtonsGrid";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React, { useState, useContext } from "react";
 
-// interface accountSelect {
-//     id: string;
-//     name: string;
-//     // Adicione outras propriedades do usuário conforme necessário
-//   }
+
 interface User {
   id: string;
   name: string;

@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import ValidadeToken from "@/components/ValidateToken";
 import { ThemeProvider } from "@/components/theme-provider";
-import { useAccount } from "@/components/AccountContext";
+import { AccountContext, useAccount } from "@/components/AccountContext";
 import { Button } from "@/components/ui/button";
 import Logout from "@/components/Logout";
 import useWebSocket from "@/components/useWebSocket";
@@ -15,6 +15,13 @@ import {
 
 import LeftGrid from "@/components/LeftGrid";
 import RightGrid from "@/components/RightGrid";
+
+interface User {
+  id: string;
+  name: string;
+  guid: string;
+  // Adicione aqui outros campos se necessário
+}
 
 function UserLayout() {
   const account = useAccount();
@@ -41,8 +48,8 @@ function UserLayout() {
     >
       <Logout />
       <div className="flex gap-3 p-2 justify-center">
-        <LeftGrid />
-        <ButtonsGrid buttons={buttons} />
+        <LeftGrid buttons={buttons} selectedUser={account}/>
+        <ButtonsGrid buttons={buttons} selectedUser={account} />
         <RightGrid />
       </div>
     </WebSocketProvider>

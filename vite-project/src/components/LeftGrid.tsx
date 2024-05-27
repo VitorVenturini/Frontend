@@ -7,23 +7,34 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { ButtonInterface } from "./ButtonsContext";
+import DestGrid from "./DestGrid";
 
 interface User {
-    id: string;
-    name: string;
-    // Adicione outras propriedades do usuário conforme necessário
-  }
-  
-  interface ButtonsGridProps {
-    user: User | null;
-  }
+  id: string;
+  name: string;
+  guid: string;
+  // Adicione aqui outros campos se necessário
+}
 
-export default function LeftGrid() {
+interface LeftGridProps{
+  buttons: ButtonInterface[];
+  selectedUser: User | null;
+}
+
+export default function LeftGrid({buttons, selectedUser} : LeftGridProps) {
+
+  const filteredDestsButton = selectedUser
+  ? buttons.filter((button) => button.button_type === "dest")
+  : [];
+
   return (
-    <Card className="p-5 min-w-[265px] h-[500px]">
-        <div className=" gap-6">
-            Esquerda
-      </div>
+    <Card className= "p-3 min-w-[324px] h-[500px] flex flex-col max-w-[500px] gap-3 items-center">
+       {selectedUser && (
+          <div className="flex-grow w-full">
+            {<DestGrid buttons={filteredDestsButton} selectedUser={selectedUser}/>}
+          </div>
+        )}
     </Card>
   );
 }
