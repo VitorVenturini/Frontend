@@ -79,20 +79,7 @@ export default function ButtonsComponent({
       case clickedPosition?.i === 2 && selectedPage !== "0":
         return (
           <CardSensorModal selectedPage={selectedPage} selectedUser={selectedUser} clickedPosition={clickedPosition} />
-        );
-      case clickedPosition?.i && selectedPage === "0":
-        return (
-          <>
-            <DialogTitle>Criar Dest</DialogTitle>
-            <DialogDescription>
-              Detalhes específicos para a criação de Dests.
-              <p>
-                Posição Y {clickedPosition?.j}
-                Posição X {clickedPosition?.i}
-              </p>
-            </DialogDescription>
-          </>
-        );
+        )
       case (clickedPosition?.i ?? 0) >= 3 && (clickedPosition?.i ?? 0) <= 8:
         return (
           <>
@@ -118,8 +105,6 @@ export default function ButtonsComponent({
   const commonClasses =
     "w-[120px] h-[55px] rounded-lg border bg-border text-card-foreground shadow-sm p-1";
 
-  const destClasses =
-    "w-[100px] h-[55px] rounded-lg border bg-border text-card-foreground shadow-sm p-1";
 
   switch (button.button_type) {
     case "alarm":
@@ -179,18 +164,18 @@ export default function ButtonsComponent({
           </div>
         </div>
       );
-    case "dest":
-      return (
-        <div className={`${destClasses} flex flex-col`} onClick={onClick}>
-          <div className="flex items-center gap-1">
-            <Siren />
-            <p className="text-sm font-medium leading-none">{button.button_name} </p>
-          </div>
-          <div>
-            <p>{button.button_prt}</p>
-          </div>
-        </div>
-      );
+    // case "dest":
+    //   return (
+    //     <div className={`${destClasses} flex flex-col w-[55px] h-[55px]`} onClick={onClick}>
+    //       <div className="flex items-center gap-1">
+    //         <Siren />
+    //         <p className="text-sm font-medium leading-none">{button.button_name} </p>
+    //       </div>
+    //       <div>
+    //         <p>{button.button_prt}</p>
+    //       </div>
+    //     </div>
+    //   );
     default:
       if (isAdmin) {
         return (
@@ -199,23 +184,12 @@ export default function ButtonsComponent({
           // </div>
           <Dialog>
             <DialogTrigger>
-              {selectedPage === "0" ? ( // quando for dests (pagina 0) entao adicinamos a classe destClasses
-                <div
-                  className={`${destClasses} flex items-center justify-center`}
-                  onClick={handleClick}
-                >
-                  <Plus />
-                </div>
-              ) : ( // quando for botões normais adicionamos commonClasses
                 <div
                   className={`${commonClasses} flex items-center justify-center`}
                   onClick={handleClick}
                 >
                   <Plus />
                 </div>
-              )}
-
-
             </DialogTrigger>
             {<DialogContent>
               {getDialogContent()}

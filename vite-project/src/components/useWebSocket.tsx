@@ -35,9 +35,11 @@ const useWebSocket = (
         console.log("WebSocket connection opened");
         console.log(account.isAdmin);
         console.log(account);
-        //ws.current?.send(JSON.stringify({ api: account.isAdmin ? "admin" : "user", mt: "AdminMessage" }));
-        //ws.current?.send(JSON.stringify({ api: account.isAdmin ? "admin" : "user", mt: "SelectSensorName" }));
+        
         ws.current?.send(JSON.stringify({ api: account.isAdmin ? "admin" : "user", mt: "SelectMessage" }));
+        // ws.current?.send(JSON.stringify({ api: account.isAdmin ? "admin" : "user", mt: "SelectMessage" }));
+
+        
         // ws.current?.send(JSON.stringify({  api: "admin",
         // mt: "InsertDestMessage",
         // name: "DestTeste",

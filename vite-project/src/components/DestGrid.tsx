@@ -1,6 +1,6 @@
 import { ButtonInterface } from "./ButtonsContext";
 import { useState } from "react";
-import ButtonsComponent from "./ButtonsComponent";
+import DestComponent from "./DestComponent";
 
 interface User {
     id: string;
@@ -37,7 +37,7 @@ interface User {
         {grid.map((row, i) =>
           row.map((button, j) => (
             <div key={`${i}-${j}`}>
-              <ButtonsComponent
+              <DestComponent
                 button={button}
                 selectedUser ={selectedUser}
                 clickedPosition={clickedPosition}
