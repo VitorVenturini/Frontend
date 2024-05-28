@@ -24,19 +24,16 @@ function AdminLayout() {
   const account = useAccount();
   const { buttons, setButtons, updateButton } = useButtons();
   const { toast } = useToast()
-  //const [isLoading, setIsLoading] = useState(true);
 
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
     switch (message.mt) {
-      case "SelectMessageSuccess":
+      case "SelectButtonsSuccess":
          //atualizar para SelectButtonsSuccess
         const buttons: ButtonInterface[] = JSON.parse(message.result);
         setButtons(buttons);
-        // setIsLoading(false); // Definindo que os dados foram carregado
-        //console.log("isLoading atualizado para false");
         break;
-      case "InsertMessageSuccess":
+      case "InsertButtonSuccess":
         console.log("Resultado" + JSON.stringify(message.result))
         const newButton: ButtonInterface = message.result
         updateButton(newButton);

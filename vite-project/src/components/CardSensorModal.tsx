@@ -116,12 +116,12 @@ export default function CardSensorModal({selectedUser, selectedPage , clickedPos
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4 py-4">
-          <div className="grid grid-cols-3 items-center gap-4">
+          <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-end" htmlFor="sensorName">
               Nome do Sensor
             </Label>
             <Input
-              className="col-span-2"
+              className="col-span-3"
               id="sensorName"
               placeholder="Nome do Sensor"
               value={nameSensor}
@@ -129,12 +129,12 @@ export default function CardSensorModal({selectedUser, selectedPage , clickedPos
               required
             />
           </div>
-          <div className="grid grid-cols-3 items-center gap-4">
+          <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-end" htmlFor="buttonName">
               Nome do botão
             </Label>
             <Input
-              className="col-span-2"
+              className="col-span-3"
               id="buttonName"
               placeholder="Nome do botão"
               value={nameButton}
@@ -142,7 +142,7 @@ export default function CardSensorModal({selectedUser, selectedPage , clickedPos
               required
             />
           </div>
-          <div className="grid grid-cols-3 items-center gap-4">
+          <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-end" htmlFor="framework" id="typeMeasure">
               Tipo de medida
             </Label>
@@ -161,12 +161,12 @@ export default function CardSensorModal({selectedUser, selectedPage , clickedPos
               </SelectContent>
             </Select>
           </div>
-          <div className="grid grid-cols-3 items-center gap-4">
+          <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-end" htmlFor="buttonName">
               Valor Mínimo
             </Label>
             <Input
-              className="col-span-2"
+              className="col-span-3"
               id="minValue"
               placeholder="00"
               type="number"
@@ -175,12 +175,12 @@ export default function CardSensorModal({selectedUser, selectedPage , clickedPos
               required
             />
           </div>
-          <div className="grid grid-cols-3 items-center gap-4">
+          <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-end" htmlFor="buttonName">
               Valor Máximo
             </Label>
             <Input
-              className="col-span-2"
+              className="col-span-3"
               id="maxValue"
               placeholder="00"
               type="number"

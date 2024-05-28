@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback, useContext } from "react";
+import { useEffect, useRef, useState, useCallback} from "react";
 import { useAccount } from "./AccountContext";
 import { WebSocketMessage } from "./WebSocketProvider";
 
@@ -18,6 +18,9 @@ const useWebSocket = (
   const account = useAccount();
 
   useEffect(() => {
+    
+    if (!account.isLogged) return;
+
     const currentUrl = window.location.hostname;
     let wsUrl = "";
     if (window.location.protocol === "http:") {
@@ -35,21 +38,7 @@ const useWebSocket = (
         console.log("WebSocket connection opened");
         console.log(account.isAdmin);
         console.log(account);
-        
-        ws.current?.send(JSON.stringify({ api: account.isAdmin ? "admin" : "user", mt: "SelectMessage" }));
-        // ws.current?.send(JSON.stringify({ api: account.isAdmin ? "admin" : "user", mt: "SelectMessage" }));
-
-        
-        // ws.current?.send(JSON.stringify({  api: "admin",
-        // mt: "InsertDestMessage",
-        // name: "DestTeste",
-        // value: "1001",
-        // guid: "4537493012864503132",
-        // type: "dest",
-        // device: "Softphone",
-        // page: "0",
-        // x: "1",
-        // y: "1"}))
+        ws.current?.send(JSON.stringify({ api: account.isAdmin ? "admin" : "user", mt: "SelectButtons" }));
       };
 
       ws.current.onclose = (event) => {

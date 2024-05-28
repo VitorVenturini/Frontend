@@ -92,7 +92,7 @@ export default function DestComponent({
   };
 
   const handleCreateDest = () => {
-    if (nameDest && paramDest && iconDest && deviceDest) {
+    if (nameDest && paramDest && deviceDest) {
         setIsCreating(true); 
         wss?.sendMessage({  api: "admin",
         mt: "InsertDestMessage",
@@ -101,7 +101,7 @@ export default function DestComponent({
         guid:  selectedUser?.guid,
         type: "dest",
         device: deviceDest,
-        img: "Adicionar aqui",
+        img: "megaphone", // consultar com danilo
         page: "0",
         x: clickedPosition?.j,
         y: clickedPosition?.i})
@@ -109,22 +109,22 @@ export default function DestComponent({
       } else {
         toast({
             variant: "destructive",
-            description: "Por favor, preencha todos os campos antes de criar o sensor.",
+            description: "Por favor, preencha todos os campos antes de criar o botão.",
           });
       }
   }
 
   const commonClasses =
-    "w-[80px] h-[80px] rounded-lg border bg-border text-card-foreground shadow-sm p-1";
+    "w-[60px] h-[60px] rounded-lg border bg-border text-card-foreground shadow-sm p-1";
 
   switch (button.button_type) {
     case "dest":
       return (
         <div className={`${commonClasses} flex flex-col`} onClick={onClick}>
           <div className="flex items-center gap-1">
-            <Siren />
+            {/* <Siren /> */}
             <p className="text-sm font-medium leading-none">
-              {button.button_name}{" "}
+              {button.button_name}
             </p>
           </div>
           <div>
@@ -160,12 +160,12 @@ export default function DestComponent({
                   <p>Página: {selectedPage}</p>
                 </DialogHeader>
                 nome do sensor parametro dispositivo icone
-                <div className="grid grid-cols-3 items-center gap-4">
+                <div className="grid grid-cols-4 items-center gap-4">
                   <Label className="text-end" htmlFor="destName">
                     Nome do Atalho
                   </Label>
                   <Input
-                    className="col-span-2"
+                    className="col-span-3"
                     id="destName"
                     placeholder="Nome do Atalho"
                     value={nameDest}
@@ -173,12 +173,12 @@ export default function DestComponent({
                     required
                   />
                 </div>
-                <div className="grid grid-cols-3 items-center gap-4">
+                <div className="grid grid-cols-4 items-center gap-4">
                   <Label className="text-end" htmlFor="paramDest">
                     Parâmetro
                   </Label>
                   <Input
-                    className="col-span-2"
+                    className="col-span-3"
                     id="paramDest"
                     placeholder="Paramêtro"
                     value={paramDest}
@@ -186,7 +186,7 @@ export default function DestComponent({
                     required
                   />
                 </div>
-                <div className="grid grid-cols-3 items-center gap-4">
+                <div className="grid grid-cols-4 items-center gap-4">
                   <Label className="text-end" htmlFor="paramDest">
                     Dispositivo
                   </Label>
@@ -199,7 +199,7 @@ export default function DestComponent({
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="grid grid-cols-3 items-center gap-4">
+                <div className="grid grid-cols-4 items-center gap-4">
                   <Label className="text-end" htmlFor="paramDest">
                     Icone
                   </Label>

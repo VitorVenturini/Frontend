@@ -109,7 +109,7 @@ export default function ButtonsComponent({
   switch (button.button_type) {
     case "alarm":
       return (
-        <div className={`${commonClasses} flex flex-col`}>
+        <div className={`${commonClasses} flex flex-col`} onClick={onClick}>
           <div className="flex items-center gap-1">
             <OctagonAlert />
             <p className="text-sm font-medium leading-none">{button.button_name} </p>

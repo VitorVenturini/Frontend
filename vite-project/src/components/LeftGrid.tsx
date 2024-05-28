@@ -29,7 +29,7 @@ export default function LeftGrid({buttons, selectedUser} : LeftGridProps) {
   : [];
 
   return (
-    <Card className= "p-3 min-w-[324px] h-[500px] flex flex-col max-w-[500px] gap-3 items-center">
+    <Card className= "p-3 min-w-[250px] h-[500px] flex flex-col max-w-[250px] gap-3 items-center">
        {selectedUser && (
           <div className="flex-grow w-full">
             {<DestGrid buttons={filteredDestsButton} selectedUser={selectedUser}/>}

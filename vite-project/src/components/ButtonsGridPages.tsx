@@ -7,13 +7,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import OtpRow from "@/components/OptRow";
-
 import { ButtonInterface } from "./ButtonsContext";
 import ButtonsGrid from "./ButtonsGrid";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React, { useState, useContext } from "react";
-
+import OptBar from "./OptBar";
 
 interface User {
   id: string;
@@ -23,10 +21,11 @@ interface User {
 }
 interface ButtonsGridPagesProps {
   buttons: ButtonInterface[];
-  selectedUser : User
+  selectedUser : User;
+  onOptChange: (newOpt: string) => void;
 }
 
-export default function ButtonsGridPages({ buttons, selectedUser }: ButtonsGridPagesProps) {
+export default function ButtonsGridPages({ buttons, selectedUser , onOptChange  }: ButtonsGridPagesProps) {
   const [selectedPage, setSelectedPage] = useState("1"); // Inicialmente, a página 1 é selecionada. Note que agora é uma string.
 
   const buttonsInSelectedPage = buttons.filter(
@@ -37,12 +36,17 @@ export default function ButtonsGridPages({ buttons, selectedUser }: ButtonsGridP
     setSelectedPage(newPage); // Atualizar a página selecionada quando o usuário seleciona uma nova página. Note que agora é uma string.
   };
 
+  const handleOptChange = (newOpt: string) => {
+    onOptChange(newOpt);
+  };
+
   return (
     <Card className="p-3 min-w-[644px] flex flex-col max-w-[800px] gap-3 items-center">
       <div className="flex-grow w-full">
         <ButtonsGrid buttons={buttonsInSelectedPage} selectedUser = {selectedUser} selectedPage = {selectedPage} />
+        <br/>
+        <OptBar onOptChange={handleOptChange} />
       </div>
-      <OtpRow />
       <Tabs
         defaultValue="1"
         onValueChange={handlePageChange}
