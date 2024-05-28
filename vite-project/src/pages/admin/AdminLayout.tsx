@@ -23,24 +23,32 @@ import { useToast } from "@/components/ui/use-toast";
 function AdminLayout() {
   const account = useAccount();
   const { buttons, setButtons, updateButton } = useButtons();
-  const { toast } = useToast()
+  const { toast } = useToast();
 
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
     switch (message.mt) {
       case "SelectButtonsSuccess":
-         //atualizar para SelectButtonsSuccess
-        const buttons: ButtonInterface[] = JSON.parse(message.result);
-        setButtons(buttons);
+        //atualizar para SelectButtonsSuccess
+        const fristButtons: ButtonInterface[] = JSON.parse(message.result);
+        setButtons(fristButtons);
         break;
       case "InsertButtonSuccess":
-        console.log("Resultado" + JSON.stringify(message.result))
-        const newButton: ButtonInterface = message.result
+        console.log("Resultado" + JSON.stringify(message.result));
+        const newButton: ButtonInterface = message.result;
         updateButton(newButton);
         toast({
           description: "Botão Criado com sucesso",
         });
         break;
+        case "DeleteMessageSuccess":
+          const deletedButton: ButtonInterface = message.result;
+          const updatedButtons = buttons.filter(button => button.id !== deletedButton.id);
+          setButtons(updatedButtons);
+          toast({
+            description: "Botão excluído com sucesso",
+          });
+          break;
       default:
         console.log("Unknown message type:", message);
         break;

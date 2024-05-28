@@ -50,12 +50,12 @@ export default function ButtonsGrid({
               selectedUser={selectedUser}
               selectedPage={selectedPage}
               clickedPosition={clickedPosition}
-              onClick={() => {
+              onClickPosition={() => {
                 setClickedPosition({ i: i + 1, j: j + 1 });
-                console.log(
-                  `Clicked position state:`,
-                  "i: " + clickedPosition?.i + " j: " + clickedPosition?.j
-                );
+                // console.log(
+                //   `Clicked position state:`,
+                //   "i: " + clickedPosition?.i + " j: " + clickedPosition?.j
+                // );
               }}
             />
           </div>

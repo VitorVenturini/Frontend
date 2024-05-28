@@ -17,7 +17,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -29,32 +28,49 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
 import React, { useEffect, useState, ChangeEvent } from "react";
-import { Value } from "@radix-ui/react-select";
-import { Cookie, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useWebSocketData } from "./WebSocketProvider";
+import { ButtonInterface } from "./ButtonsContext";
 
 interface User {
-    id: string;
-    name: string;
-    guid: string;
-    // Adicione aqui outros campos se necessário
-  }
+  id: string;
+  name: string;
+  guid: string;
+}
 
 interface ButtonProps {
-    clickedPosition: { i: number; j: number } | null;
-    selectedUser: User | null;
-    selectedPage: string;
-  }
+  clickedPosition: { i: number; j: number } | null;
+  selectedUser: User | null;
+  selectedPage: string;
+  existingButton?: ButtonInterface;
+  isUpdate?: boolean;
+}
 
-export default function CardSensorModal({selectedUser, selectedPage , clickedPosition} : ButtonProps) {
-  const [nameSensor, setNameSensor] = useState("");
-  const [nameButton, setNameButton] = useState("");
-  const [typeMeasure, setTypeMeasure] = useState("");
-  const [maxValue, setMaxValue] = useState("");
-  const [minValue, setMinValue] = useState("");
+export default function CardSensorModal({
+  selectedUser,
+  selectedPage,
+  clickedPosition,
+  existingButton,
+  isUpdate = false,
+}: ButtonProps) {
+  const [nameSensor, setNameSensor] = useState(
+    existingButton?.button_name || ""
+  );
+  const [nameButton, setNameButton] = useState(
+    existingButton?.button_prt || ""
+  );
+  const [typeMeasure, setTypeMeasure] = useState(
+    existingButton?.sensor_type || ""
+  );
+  const [maxValue, setMaxValue] = useState(
+    existingButton?.sensor_max_threshold || ""
+  );
+  const [minValue, setMinValue] = useState(
+    existingButton?.sensor_min_threshold || ""
+  );
   const [isCreating, setIsCreating] = useState(false);
   const { toast } = useToast();
-  const wss = useWebSocketData()
+  const wss = useWebSocketData();
 
   const handleNameSensor = (event: ChangeEvent<HTMLInputElement>) => {
     setNameSensor(event.target.value);
@@ -73,46 +89,66 @@ export default function CardSensorModal({selectedUser, selectedPage , clickedPos
     setMinValue(event.target.value);
   };
 
-  const handleCreateSensor = () => {
+  const handleCreateButton = () => {
     try {
       if (nameButton && typeMeasure && maxValue && minValue) {
-        setIsCreating(true); 
-        wss?.sendMessage({
-            api: "admin",
-            mt: "InsertSensorMessage",
-            name: nameButton,
-            value: nameSensor,
-            guid: selectedUser?.guid,
-            type: "sensor",
-            min: minValue,
-            max: maxValue,
-            sensorType: typeMeasure,
-            page: selectedPage,
-            x: clickedPosition?.j,
-            y: clickedPosition?.i
-        })
-        setIsCreating(false)
+        setIsCreating(true);
+        const message = {
+          api: "admin",
+          mt: isUpdate ? "UpdateSensorMessage" : "InsertSensorMessage",
+          name: nameButton,
+          value: nameSensor,
+          guid: selectedUser?.guid,
+          type: "sensor",
+          min: minValue,
+          max: maxValue,
+          sensorType: typeMeasure,
+          page: selectedPage,
+          x: clickedPosition?.j,
+          y: clickedPosition?.i,
+        };
+        wss?.sendMessage(message);
+        setIsCreating(false);
       } else {
         toast({
-            variant: "destructive",
-            description: "Por favor, preencha todos os campos antes de criar o sensor.",
-          });
+          variant: "destructive",
+          description:
+            "Por favor, preencha todos os campos antes de criar o sensor.",
+        });
       }
     } catch (e) {
-        console.error(e)
+      console.error(e);
     }
   };
+  
+  const handleDeleteButton = () =>{
+    try{
+      wss?.sendMessage({
+        api: "admin",
+        mt : "DeleteMessage",
+        id: existingButton?.id
+        // verificar com danilo possivel erro no backend 
+        //parseInt(existingButton?.id ?? "")
+        
+      })
+    }catch(e){
+      console.error(e)
+    }
+  }
   return (
     <>
       <Card className="border-none bg-transparent">
         <CardHeader>
-          <CardTitle>Criação de Sensores</CardTitle>
+          <CardTitle>
+            {isUpdate ? "Atualização" : "Criação"} de Sensores
+          </CardTitle>
           <CardDescription>
-            Para cirar um sensor complete os campos abaixo
+            Para {isUpdate ? "atualizar" : "criar"} um sensor complete os campos
+            abaixo
             <p>
-            Posição X {clickedPosition?.i}
-            Posição Y {clickedPosition?.j}
-              </p>
+              Posição X {clickedPosition?.i}
+              Posição Y {clickedPosition?.j}
+            </p>
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4 py-4">
@@ -190,22 +226,21 @@ export default function CardSensorModal({selectedUser, selectedPage , clickedPos
             />
           </div>
         </CardContent>
-        <CardFooter className="flex justify-end">
+        <CardFooter className="flex justify-between">
+          {isUpdate && <Button variant="destructive" onClick={handleDeleteButton}>Excluir Botão</Button>}
           {!isCreating && (
-            <Button onClick={handleCreateSensor}>Criar Sensor</Button>
+            <Button onClick={handleCreateButton}>
+              {isUpdate ? "Atualizar" : "Criar"} Sensor
+            </Button>
           )}
           {isCreating && (
             <Button disabled>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Criar Sensor
-            </Button> 
+              {isUpdate ? "Atualizar" : "Criar"} Sensor
+            </Button>
           )}
         </CardFooter>
       </Card>
-      {/* <DialogTitle>Criar Sensor</DialogTitle>
-          <DialogDescription>
-            Detalhes específicos para a criação de Sensores.
-          </DialogDescription>  */}
     </>
   );
 }

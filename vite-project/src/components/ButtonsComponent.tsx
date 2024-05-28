@@ -1,5 +1,13 @@
 import React, { useContext } from "react";
-import { Plus, OctagonAlert, User, Phone, Layers3, Rss, Siren } from "lucide-react";
+import {
+  Plus,
+  OctagonAlert,
+  User,
+  Phone,
+  Layers3,
+  Rss,
+  Siren,
+} from "lucide-react";
 import { AccountContext } from "./AccountContext";
 import { ButtonInterface, useButtons } from "@/components/ButtonsContext";
 import { useState } from "react";
@@ -25,7 +33,7 @@ interface User {
 
 interface ButtonProps {
   button: ButtonInterface;
-  onClick: () => void; // Adicione esta linha
+  onClickPosition: () => void; // Adicione esta linha
   clickedPosition: { i: number; j: number } | null;
   selectedUser: User | null;
   selectedPage: string;
@@ -47,7 +55,7 @@ interface ButtonProps {
 
 export default function ButtonsComponent({
   button,
-  onClick,
+  onClickPosition,
   clickedPosition,
   selectedUser,
   selectedPage,
@@ -55,9 +63,10 @@ export default function ButtonsComponent({
   const { isAdmin } = useContext(AccountContext);
 
   const handleClick = () => {
-    onClick();
+    if (isAdmin) {
+      onClickPosition()
+    }
   };
-
 
   const getDialogContent = () => {
     //if (!clickedPosition) return null;
@@ -78,8 +87,12 @@ export default function ButtonsComponent({
         );
       case clickedPosition?.i === 2 && selectedPage !== "0":
         return (
-          <CardSensorModal selectedPage={selectedPage} selectedUser={selectedUser} clickedPosition={clickedPosition} />
-        )
+          <CardSensorModal
+            selectedPage={selectedPage}
+            selectedUser={selectedUser}
+            clickedPosition={clickedPosition}
+          />
+        );
       case (clickedPosition?.i ?? 0) >= 3 && (clickedPosition?.i ?? 0) <= 8:
         return (
           <>
@@ -105,14 +118,15 @@ export default function ButtonsComponent({
   const commonClasses =
     "w-[120px] h-[55px] rounded-lg border bg-border text-card-foreground shadow-sm p-1";
 
-
   switch (button.button_type) {
     case "alarm":
       return (
-        <div className={`${commonClasses} flex flex-col`} onClick={onClick}>
+        <div className={`${commonClasses} flex flex-col`} onClick={handleClick}>
           <div className="flex items-center gap-1">
             <OctagonAlert />
-            <p className="text-sm font-medium leading-none">{button.button_name} </p>
+            <p className="text-sm font-medium leading-none">
+              {button.button_name}{" "}
+            </p>
           </div>
           <div>
             <p>{button.button_prt}</p>
@@ -121,10 +135,12 @@ export default function ButtonsComponent({
       );
     case "user":
       return (
-        <div className={`${commonClasses} flex flex-col`} onClick={onClick}>
+        <div className={`${commonClasses} flex flex-col`} onClick={handleClick}>
           <div className="flex items-center gap-1">
             <User />
-            <p className="text-sm font-medium leading-none">{button.button_name} </p>
+            <p className="text-sm font-medium leading-none">
+              {button.button_name}{" "}
+            </p>
           </div>
           <div>
             <p>{button.button_prt}</p>
@@ -133,10 +149,12 @@ export default function ButtonsComponent({
       );
     case "number":
       return (
-        <div className={`${commonClasses} flex flex-col`} onClick={onClick}>
+        <div className={`${commonClasses} flex flex-col`} onClick={handleClick}>
           <div className="flex items-center gap-1">
             <Phone />
-            <p className="text-sm font-medium leading-none">{button.button_name} </p>
+            <p className="text-sm font-medium leading-none">
+              {button.button_name}{" "}
+            </p>
           </div>
           <div>
             <p>{button.button_prt}</p>
@@ -145,7 +163,7 @@ export default function ButtonsComponent({
       );
     case "combo":
       return (
-        <div className={`${commonClasses} flex`} onClick={onClick}>
+        <div className={`${commonClasses} flex`} onClick={handleClick}>
           <div className="flex items-center gap-1">
             <Layers3 />
             <p className="text-sm font-medium leading-none">Nome </p>
@@ -154,28 +172,35 @@ export default function ButtonsComponent({
       );
     case "sensor":
       return (
-        <div className={`${commonClasses} flex flex-col`} onClick={onClick}>
-          <div className="flex items-center gap-1">
-            <Rss />
-            <p className="text-sm font-medium leading-none">{button.button_name} </p>
-          </div>
-          <div>
-            <p>{button.button_prt}</p>
-          </div>
-        </div>
+        <Dialog>
+          <DialogTrigger asChild>
+            <div
+              className={`${commonClasses} flex flex-col cursor-pointer`}
+              onClick={handleClick}
+            >
+              <div className="flex items-center gap-1 cursor-pointer">
+                <Rss />
+                <p className="text-sm font-medium leading-none">
+                  {button.button_name}
+                </p>
+              </div>
+              <div>
+                <p>{button.button_prt}</p>
+              </div>
+            </div>
+          </DialogTrigger>
+          <DialogContent>
+            <CardSensorModal
+              selectedPage={selectedPage}
+              selectedUser={selectedUser}
+              clickedPosition={clickedPosition}
+              existingButton={button}
+              isUpdate={true}
+            />
+          </DialogContent>
+        </Dialog>
       );
-    // case "dest":
-    //   return (
-    //     <div className={`${destClasses} flex flex-col w-[55px] h-[55px]`} onClick={onClick}>
-    //       <div className="flex items-center gap-1">
-    //         <Siren />
-    //         <p className="text-sm font-medium leading-none">{button.button_name} </p>
-    //       </div>
-    //       <div>
-    //         <p>{button.button_prt}</p>
-    //       </div>
-    //     </div>
-    //   );
+
     default:
       if (isAdmin) {
         return (
@@ -184,29 +209,14 @@ export default function ButtonsComponent({
           // </div>
           <Dialog>
             <DialogTrigger>
-                <div
-                  className={`${commonClasses} flex items-center justify-center`}
-                  onClick={handleClick}
-                >
-                  <Plus />
-                </div>
+              <div
+                className={`${commonClasses} flex items-center justify-center`}
+                onClick={handleClick}
+              >
+                <Plus />
+              </div>
             </DialogTrigger>
-            {<DialogContent>
-              {getDialogContent()}
-              {/* <DialogHeader>
-               {clickedPosition && (
-                  <p>
-                    Clicked position: X: {clickedPosition.i}, Y:{" "}
-                    {clickedPosition.j}
-                  </p>
-                )}
-                <p>Usuário: {selectedUser.name}</p>
-                <p>Página: {selectedPage}</p>
-              </DialogHeader> */}
-              <DialogFooter>
-                {/* <Button>Criar</Button> */}
-              </DialogFooter>
-            </DialogContent>}
+            {<DialogContent>{getDialogContent()}</DialogContent>}
           </Dialog>
         );
       } else {
