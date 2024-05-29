@@ -142,7 +142,11 @@ export default function OptComponent({
               </div>
             </DialogTrigger>
             <DialogContent>
-              <DialogHeader>Criar Botão</DialogHeader>
+              <DialogHeader>Criar Botão
+                <DialogDescription>
+                  Descrição
+                </DialogDescription>
+              </DialogHeader>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label className="text-end" htmlFor="nameButton">
                   Nome do botão

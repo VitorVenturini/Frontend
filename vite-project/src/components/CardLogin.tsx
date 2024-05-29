@@ -173,7 +173,7 @@ export default function CardLogin() {
   };
 
   return (
-    <Card className="xl:w-[600px] lg:w-[500px] md:[400px] sm:w-[300px] h-fit ">
+    <Card className="xl:w-[600px] lg:w-[500px] md:[400px] sm:w-[300px] h-fit">
       <form onSubmit={handleFormSubmit}>
         <CardHeader>
           <CardTitle>

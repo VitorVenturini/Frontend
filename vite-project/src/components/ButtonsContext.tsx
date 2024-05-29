@@ -1,7 +1,7 @@
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 
 export interface ButtonInterface {
-    id: string;
+    id: number;
     button_name: string;
     button_prt: string;
     button_prt_user: string;

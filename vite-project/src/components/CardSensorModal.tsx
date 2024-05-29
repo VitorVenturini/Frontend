@@ -125,8 +125,8 @@ export default function CardSensorModal({
     try{
       wss?.sendMessage({
         api: "admin",
-        mt : "DeleteMessage",
-        id: existingButton?.id
+        mt : "DeleteButtons",
+        id:  existingButton?.id
         // verificar com danilo possivel erro no backend 
         //parseInt(existingButton?.id ?? "")
         

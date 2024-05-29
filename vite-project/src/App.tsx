@@ -27,7 +27,10 @@ function App() {
       <AccountProvider>
         <ButtonProvider>
           <Routes>
-            <Route path="/" element={<LoginPage />} />
+            <Route
+              path="/"
+              element={account.isLogged ? <AdminLayout /> : <LoginPage />}
+            />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/admin/*" element={<AdminLayout />} />
             <Route path="/user/*" element={<UserLayout />} />

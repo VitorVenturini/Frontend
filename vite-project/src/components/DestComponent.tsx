@@ -95,7 +95,7 @@ export default function DestComponent({
     if (nameDest && paramDest && deviceDest) {
         setIsCreating(true); 
         wss?.sendMessage({  api: "admin",
-        mt: "InsertDestMessage",
+        mt: "InsertButton",
         name: nameDest,
         value: paramDest,
         guid:  selectedUser?.guid,

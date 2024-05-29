@@ -29,22 +29,19 @@ function AdminLayout() {
   const handleWebSocketMessage = (message: any) => {
     switch (message.mt) {
       case "SelectButtonsSuccess":
-        //atualizar para SelectButtonsSuccess
         const fristButtons: ButtonInterface[] = JSON.parse(message.result);
         setButtons(fristButtons);
         break;
-      case "InsertButtonSuccess":
-        console.log("Resultado" + JSON.stringify(message.result));
+      case "InsertMessageSuccess":
         const newButton: ButtonInterface = message.result;
         updateButton(newButton);
         toast({
           description: "Botão Criado com sucesso",
         });
         break;
-        case "DeleteMessageSuccess":
-          const deletedButton: ButtonInterface = message.result;
-          const updatedButtons = buttons.filter(button => button.id !== deletedButton.id);
-          setButtons(updatedButtons);
+        case "DeleteButtonsSuccess":
+          const buttonsAfterDelete: ButtonInterface[] = message.btns;
+          setButtons(buttonsAfterDelete);
           toast({
             description: "Botão excluído com sucesso",
           });

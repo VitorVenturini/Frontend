@@ -1,4 +1,3 @@
-import { useAccount } from "@/components/AccountContext";
 import {
   Card,
   CardContent,
@@ -21,11 +20,15 @@ interface User {
 }
 interface ButtonsGridPagesProps {
   buttons: ButtonInterface[];
-  selectedUser : User;
+  selectedUser: User;
   onOptChange: (newOpt: string) => void;
 }
 
-export default function ButtonsGridPages({ buttons, selectedUser , onOptChange  }: ButtonsGridPagesProps) {
+export default function ButtonsGridPages({
+  buttons,
+  selectedUser,
+  onOptChange,
+}: ButtonsGridPagesProps) {
   const [selectedPage, setSelectedPage] = useState("1"); // Inicialmente, a página 1 é selecionada. Note que agora é uma string.
 
   const buttonsInSelectedPage = buttons.filter(
@@ -43,8 +46,12 @@ export default function ButtonsGridPages({ buttons, selectedUser , onOptChange  
   return (
     <Card className="p-3 min-w-[644px] flex flex-col max-w-[800px] gap-3 items-center">
       <div className="flex-grow w-full">
-        <ButtonsGrid buttons={buttonsInSelectedPage} selectedUser = {selectedUser} selectedPage = {selectedPage} />
-        <br/>
+        <ButtonsGrid
+          buttons={buttonsInSelectedPage}
+          selectedUser={selectedUser}
+          selectedPage={selectedPage}
+        />
+        <br />
         <OptBar onOptChange={handleOptChange} />
       </div>
       <Tabs
@@ -60,7 +67,11 @@ export default function ButtonsGridPages({ buttons, selectedUser , onOptChange  
           ))}
         </TabsList>
         {["1", "2", "3", "4", "5"].map((pageNumber) => (
-          <TabsContent className="w-full flex-gow" key={pageNumber} value={pageNumber}></TabsContent>
+          <TabsContent
+            className="w-full flex-gow"
+            key={pageNumber}
+            value={pageNumber}
+          ></TabsContent>
         ))}
       </Tabs>
     </Card>

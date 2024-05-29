@@ -12,6 +12,24 @@ import { AccountContext } from "./AccountContext";
 import { ButtonInterface, useButtons } from "@/components/ButtonsContext";
 import { useState } from "react";
 import { Button } from "./ui/button";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+
 import CardSensorModal from "./CardSensorModal";
 
 import {
@@ -64,7 +82,7 @@ export default function ButtonsComponent({
 
   const handleClick = () => {
     if (isAdmin) {
-      onClickPosition()
+      onClickPosition();
     }
   };
 
@@ -96,14 +114,36 @@ export default function ButtonsComponent({
       case (clickedPosition?.i ?? 0) >= 3 && (clickedPosition?.i ?? 0) <= 8:
         return (
           <>
-            <DialogTitle>Criar Outro Tipo de Botão</DialogTitle>
-            <DialogDescription>
-              <p>
-                Posição X {clickedPosition?.i}
-                Posição Y {clickedPosition?.j}
-              </p>
-              Detalhes específicos para a criação de outro tipo de botão.
-            </DialogDescription>
+            <Card className="border-none bg-transparent">
+              <CardHeader>
+                <CardTitle>Criar Botão</CardTitle>
+                <CardDescription>Selecione um tipo de botão</CardDescription>
+              </CardHeader>
+              <CardContent className="gap-4 py-4">
+                <div className="flex gap-4 items-center">
+                  <Label
+                    className="text-end"
+                    htmlFor="framework"
+                    id="typeButton"
+                  >
+                    Tipo de botão
+                  </Label>
+                  <Select>
+                    <SelectTrigger
+                      className="col-span-1"
+                      id="SelectTypeButton"
+                    >
+                      <SelectValue placeholder="Selecione o tipo de Botão" />
+                    </SelectTrigger>
+                    <SelectContent position="popper">
+                      <SelectItem value="alarm">Alarme</SelectItem>
+                      <SelectItem value="number">Número</SelectItem>
+                      <SelectItem value="user">Usuário</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </CardContent>
+            </Card>
           </>
         );
       default:
@@ -121,16 +161,36 @@ export default function ButtonsComponent({
   switch (button.button_type) {
     case "alarm":
       return (
-        <div className={`${commonClasses} flex flex-col`} onClick={handleClick}>
-          <div className="flex items-center gap-1">
-            <OctagonAlert />
-            <p className="text-sm font-medium leading-none">
-              {button.button_name}{" "}
-            </p>
-          </div>
-          <div>
-            <p>{button.button_prt}</p>
-          </div>
+        <div>
+          <Dialog>
+            <DialogTrigger asChild>
+              <div
+                className={`${commonClasses} flex flex-col cursor-pointer`}
+                onClick={handleClick}
+              >
+                <div className="flex items-center gap-1 cursor-pointer">
+                  <OctagonAlert />
+                  <p className="text-sm font-medium leading-none">
+                    {button.button_name}
+                  </p>
+                </div>
+                <div>
+                  <p>{button.button_prt}</p>
+                </div>
+              </div>
+            </DialogTrigger>
+            {isAdmin && (
+              <DialogContent>
+                {/* <CardSensorModal
+              selectedPage={selectedPage}
+              selectedUser={selectedUser}
+              clickedPosition={clickedPosition}
+              existingButton={button}
+              isUpdate={true}
+            /> */}
+              </DialogContent>
+            )}
+          </Dialog>
         </div>
       );
     case "user":
@@ -172,33 +232,37 @@ export default function ButtonsComponent({
       );
     case "sensor":
       return (
-        <Dialog>
-          <DialogTrigger asChild>
-            <div
-              className={`${commonClasses} flex flex-col cursor-pointer`}
-              onClick={handleClick}
-            >
-              <div className="flex items-center gap-1 cursor-pointer">
-                <Rss />
-                <p className="text-sm font-medium leading-none">
-                  {button.button_name}
-                </p>
+        <div>
+          <Dialog>
+            <DialogTrigger asChild>
+              <div
+                className={`${commonClasses} flex flex-col cursor-pointer`}
+                onClick={handleClick}
+              >
+                <div className="flex items-center gap-1 cursor-pointer">
+                  <Rss />
+                  <p className="text-sm font-medium leading-none">
+                    {button.button_name}
+                  </p>
+                </div>
+                <div>
+                  <p>{button.button_prt}</p>
+                </div>
               </div>
-              <div>
-                <p>{button.button_prt}</p>
-              </div>
-            </div>
-          </DialogTrigger>
-          <DialogContent>
-            <CardSensorModal
-              selectedPage={selectedPage}
-              selectedUser={selectedUser}
-              clickedPosition={clickedPosition}
-              existingButton={button}
-              isUpdate={true}
-            />
-          </DialogContent>
-        </Dialog>
+            </DialogTrigger>
+            {isAdmin && (
+              <DialogContent>
+                <CardSensorModal
+                  selectedPage={selectedPage}
+                  selectedUser={selectedUser}
+                  clickedPosition={clickedPosition}
+                  existingButton={button}
+                  isUpdate={true}
+                />
+              </DialogContent>
+            )}
+          </Dialog>
+        </div>
       );
 
     default:
