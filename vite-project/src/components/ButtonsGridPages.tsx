@@ -12,6 +12,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React, { useState, useContext } from "react";
 import OptBar from "./OptBar";
 
+import { useLanguage } from "./LanguageContext";
+import texts from "../_data/texts.json";
+
 interface User {
   id: string;
   name: string;
@@ -30,6 +33,8 @@ export default function ButtonsGridPages({
   onOptChange,
 }: ButtonsGridPagesProps) {
   const [selectedPage, setSelectedPage] = useState("1"); // Inicialmente, a página 1 é selecionada. Note que agora é uma string.
+  const { language } = useLanguage();
+
 
   const buttonsInSelectedPage = buttons.filter(
     (button) => button.page.toString() === selectedPage
@@ -62,7 +67,7 @@ export default function ButtonsGridPages({
         <TabsList className="w-full flex justify-center">
           {["1", "2", "3", "4", "5"].map((pageNumber) => (
             <TabsTrigger key={pageNumber} value={pageNumber}>
-              Página {pageNumber}
+              {texts[language].page} {pageNumber}
             </TabsTrigger>
           ))}
         </TabsList>

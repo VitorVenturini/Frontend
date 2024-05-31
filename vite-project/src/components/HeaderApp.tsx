@@ -7,13 +7,21 @@ import Logout from "./Logout";
 import { useAccount } from "@/components/AccountContext";
 import { useNavigate } from "react-router-dom";
 import useWebSocket from "@/components/useWebSocket";
-import { WebSocketProvider, useWebSocketData } from "@/components/WebSocketProvider";
+import {
+  WebSocketProvider,
+  useWebSocketData,
+} from "@/components/WebSocketProvider";
+import { LanguageToggle } from "./LanguageToggle";
+import texts from "../_data/texts.json";
+import { useLanguage } from "./LanguageContext";
 
 export default function HeaderApp() {
   const account = useAccount();
+  const { updateAccount } = useAccount();
   const navigate = useNavigate();
-  const wss = useWebSocketData()
-  
+  const wss = useWebSocketData();
+  const { language } = useLanguage();
+
   const handleButtonsClick = () => {
     //wss?.sendMessage({ api: account.isAdmin ? "admin" : "user", mt: "SelectMessage" });
     navigate("/admin/buttons");
@@ -29,6 +37,10 @@ export default function HeaderApp() {
 
   const handleOptionsClick = () => {
     navigate("/admin/options");
+  };
+  const handleUserViewClick = () => {
+    updateAccount({ isAdmin: false });
+    navigate("/user/buttons");
   };
 
   return (
@@ -50,20 +62,24 @@ export default function HeaderApp() {
 
       <div className="flex items-end ">
         <div className="flex items-center gap-1">
+          <Button variant="ghost" onClick={handleUserViewClick}>
+            {texts[language].headerUser}
+          </Button>
           <Button variant="ghost" onClick={handleButtonsClick}>
-            Botões
+            {texts[language].headerButtons}
           </Button>
           <Button variant="ghost" onClick={handleAccountClick}>
-            Conta
+            {texts[language].headerAccount}
           </Button>
           <Button variant="ghost" onClick={handleActionsClick}>
-            Ações
+            {texts[language].headerActions}
           </Button>
           <Button variant="ghost" onClick={handleOptionsClick}>
-            Opções
+            {texts[language].headerOptions}
           </Button>
           <Logout />
           <ModeToggle />
+          <LanguageToggle />
         </div>
       </div>
     </header>

@@ -14,6 +14,7 @@ import { useContext, useEffect, useState } from "react";
 import { AccountProvider, AccountContext } from "./components/AccountContext";
 import { WebSocketProvider } from "./components/WebSocketProvider";
 import { ButtonProvider } from "./components/ButtonsContext";
+import  LanguageProvider  from "./components/LanguageContext";
 
 function App() {
   const account = useContext(AccountContext);
@@ -24,22 +25,23 @@ function App() {
 
   return (
     <ThemeProvider>
-      <AccountProvider>
-        <ButtonProvider>
-          <Routes>
-            <Route
-              path="/"
-              element={account.isLogged ? <AdminLayout /> : <LoginPage />}
-            />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/admin/*" element={<AdminLayout />} />
-            <Route path="/user/*" element={<UserLayout />} />
-          </Routes>
-          <Toaster />
-        </ButtonProvider>
-      </AccountProvider>
-
-      <Toaster />
+      <LanguageProvider>
+        <AccountProvider>
+          <ButtonProvider>
+            <Routes>
+              <Route
+                path="/"
+                element={account.isLogged ? <UserLayout /> : <LoginPage />}
+              />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/admin/*" element={<AdminLayout />} />
+              <Route path="/user/*" element={<UserLayout />} />
+            </Routes>
+            <Toaster />
+          </ButtonProvider>
+        </AccountProvider>
+        <Toaster />
+      </LanguageProvider>
     </ThemeProvider>
   );
 }

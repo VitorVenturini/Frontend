@@ -2,7 +2,8 @@ import { Table } from "lucide-react";
 import { useState } from "react";
 import { TabsOpt, TabsList, TabsTrigger, TabsContent } from "./Opt";
 import { Map, MapPin, Rss, Radio, Video, MessageSquare } from "lucide-react";
-
+import texts from "../_data/texts.json";
+import { useLanguage } from "./LanguageContext";
 type OnOptChange = (opt: string) => void;
 
 interface OtpRowProps {
@@ -10,9 +11,10 @@ interface OtpRowProps {
 }
 
 export default function OptBar({ onOptChange }: OtpRowProps) {
+  const { language } = useLanguage();
 
   const handleOptChange = (newOpt: string) => {
-    onOptChange(newOpt); 
+    onOptChange(newOpt);
   };
 
   return (
@@ -20,22 +22,22 @@ export default function OptBar({ onOptChange }: OtpRowProps) {
       <TabsOpt defaultValue="floor" onValueChange={handleOptChange}>
         <TabsList>
           <TabsTrigger value="floor" icon={Map}>
-            Planta Baixa
+            {texts[language].floorPlan}
           </TabsTrigger>
           <TabsTrigger value="maps" icon={MapPin}>
-            Mapa
+            {texts[language].map}
           </TabsTrigger>
           <TabsTrigger value="sensor" icon={Rss}>
-            Sensor
+            {texts[language].sensor}
           </TabsTrigger>
           <TabsTrigger value="radio" icon={Radio}>
-            Radio
+            {texts[language].radio}
           </TabsTrigger>
           <TabsTrigger value="video" icon={Video}>
-            Video
+            {texts[language].video}
           </TabsTrigger>
           <TabsTrigger value="chat" icon={MessageSquare}>
-            Chat
+            {texts[language].chat}
           </TabsTrigger>
         </TabsList>
         {/* <TabsContent value="account"></TabsContent>

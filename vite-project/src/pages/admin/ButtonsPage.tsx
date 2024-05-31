@@ -30,6 +30,8 @@ import { useState, useEffect } from "react";
 import useWebSocket from "@/components/useWebSocket";
 import { useAccount } from "@/components/AccountContext";
 import OptBar from "@/components/OptBar";
+import texts from "@/_data/texts.json";
+import { useLanguage } from "@/components/LanguageContext";
 
 interface User {
   id: string;
@@ -47,6 +49,7 @@ export default function ButtonsPage() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null); // Inicialmente, o primeiro usuário é selecionado
   const [selectedOpt, setSelectedOpt] = useState<string>("floor");
   const account = useAccount();
+  const { language } = useLanguage();
   // const { data: websocketData, sendMessage } = useWebSocket(
   //   account.accessToken
   // );
@@ -96,40 +99,40 @@ export default function ButtonsPage() {
     : [];
 
   return (
-    <div className="flex justify-center gap-3">
-      <div>
-        {<LeftGrid buttons={filteredButtons} selectedUser={selectedUser} />}
-      </div>
-      <div className=" flex flex-col min-w-[644px] gap-2">
-        <div className="flex justify-between gap-3 items-center">
-          <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
-            Usuário:
-          </h3>
+<div className="flex justify-center gap-3">
+  <div>
+    {<LeftGrid buttons={filteredButtons} selectedUser={selectedUser} />}
+  </div>
+  <div className=" flex flex-col min-w-[644px] gap-2">
+    <div className="flex justify-between gap-3 items-center">
+      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
+        {texts[language].headerUser}:
+      </h3>
 
-          <Select onValueChange={handleUserSelect}>
-            <SelectTrigger className="">
-              <SelectValue placeholder="Selecione um usuário" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Usuários</SelectLabel>
-                {users.map((user) => (
-                  <SelectItem key={user.id} value={user.id}>
-                    {user.name}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-          <Button>Tabela</Button>
+      <Select onValueChange={handleUserSelect}>
+        <SelectTrigger className="">
+          <SelectValue placeholder={texts[language].selectUserPlaceholder} />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectLabel>{texts[language].users}</SelectLabel>
+            {users.map((user) => (
+              <SelectItem key={user.id} value={user.id}>
+                {user.name}
+              </SelectItem>
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+      <Button>{texts[language].table}</Button>
+    </div>
+    {!selectedUser ? (
+      <div className="flex flex-col justify-center items-center gap-5 mt-5">
+        <div className="flex align-middle items-center gap-8">
+          <ArrowBigUpDash size={30} className="animate-bounce" />
+          {texts[language].chooseUser}
+          <ArrowBigUpDash size={30} className="animate-bounce" />
         </div>
-        {!selectedUser ? (
-          <div className="flex flex-col justify-center items-center gap-5 mt-5">
-            <div className="flex align-middle items-center gap-8">
-              <ArrowBigUpDash size={30} className="animate-bounce" />
-              Escolha um usuário
-              <ArrowBigUpDash size={30} className="animate-bounce" />
-            </div>
           </div>
         ) : (
           <div></div>
