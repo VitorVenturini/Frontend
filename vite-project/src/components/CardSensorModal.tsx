@@ -143,8 +143,6 @@ export default function CardSensorModal({
         api: "admin",
         mt: "DeleteButtons",
         id: existingButton?.id,
-        // verificar com danilo possivel erro no backend
-        //parseInt(existingButton?.id ?? "")
       });
     } catch (e) {
       console.error(e);

@@ -2,8 +2,8 @@ import { AccountContext } from "./AccountContext";
 import { ButtonInterface, useButtons } from "@/components/ButtonsContext";
 import React, { useEffect, useState, ChangeEvent, useContext } from "react";
 import { useWebSocketData } from "./WebSocketProvider";
-import { Button } from "./ui/button";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useToast } from "./ui/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -15,7 +15,18 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  SelectGroup,
+  SelectLabel,
 } from "@/components/ui/select";
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 import {
   Dialog,
@@ -41,6 +52,8 @@ import {
   Rss,
   Siren,
 } from "lucide-react";
+import { useSensors } from "./SensorContext";
+import CardOptSensor from "./CardOptSensor";
 
 interface User {
   id: string;
@@ -66,70 +79,51 @@ export default function OptComponent({
   const { isAdmin } = useContext(AccountContext);
   const [nameOpt, setNameOpt] = useState("");
   const [paramOpt, setParamOpt] = useState("");
+  const [nameSensor, setNameSensor] = useState("");
   const [isCreating, setIsCreating] = useState(false);
   const { toast } = useToast();
+  const { sensors } = useSensors();
   const wss = useWebSocketData();
 
   const handleClick = () => {
     onClick();
   };
+  const commonClasses =
+    "w-[60px] h-[60px] rounded-lg border bg-border text-card-foreground shadow-sm p-1 flex items-center justify-center";
 
-  const handleNameOpt = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNameOpt(event.target.value);
-  };
-  const handleParamOpt = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setParamOpt(event.target.value);
-  };
-
-  const handleCreateOpt = () => {
-    if (nameOpt && paramOpt) {
-      setIsCreating(true);
-      wss?.sendMessage({
-        api: "admin",
-        mt: "InsertButton",
-        name: nameOpt,
-        value: paramOpt,
-        guid: selectedUser?.guid,
-        type: selectedOpt,
-        page: "0",
-        x: clickedPosition?.j,
-        y: clickedPosition?.i,
-      });
-      setIsCreating(false);
-    } else {
-      toast({
-        variant: "destructive",
-        description:
-          "Por favor, preencha todos os campos antes de criar o botão.",
-      });
+  const getDialogContent = () => {
+    console.log(selectedOpt);
+    switch (selectedOpt) {
+      case "floor":
+        break;
+      case "maps":
+        break;
+      case "sensor":
+        return (
+          <CardOptSensor
+            selectedUser={selectedUser}
+            selectedOpt={selectedOpt}
+            clickedPosition={clickedPosition}
+          />
+        );
+      case "radio":
+        break;
+      case "video":
+        break;
+      case "chat":
+        break;
+      default:
+        return (
+          <>
+            <DialogTitle>Criar um botão</DialogTitle>
+          </>
+        );
     }
   };
 
-  const commonClasses =
-    "w-[60px] h-[60px] rounded-lg border bg-border text-card-foreground shadow-sm p-1";
-
-  switch (button.button_type) {
-    case "floor":
-    case "maps":
-    case "sensor":
-    case "radio":
-    case "video":
-    case "chat":
-      // no de usuario vamos adicionar alguns listeners para abrir a planta baixa , mapa , grafico de sensores etc
-      // usar a flag IsAdmin
-      return (
-        <div className={`${commonClasses} flex flex-col`}>
-          <div className="flex items-center gap-1">
-            <p className="text-sm font-medium leading-none">
-              {button.button_name}
-            </p>
-          </div>
-          <div>
-            <p>{button.button_prt}</p>
-          </div>
-        </div>
-      );
-    default:
+  const renderButtonContent = () => {
+    if (!button.button_type) {
+      // Caso default quando não há botões ou outro caso genérico
       if (isAdmin) {
         return (
           <Dialog>
@@ -141,50 +135,7 @@ export default function OptComponent({
                 <Plus />
               </div>
             </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>Criar Botão
-                <DialogDescription>
-                  Descrição
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label className="text-end" htmlFor="nameButton">
-                  Nome do botão
-                </Label>
-                <Input
-                  className="col-span-3"
-                  id="nameButton"
-                  placeholder="Nome do Botão"
-                  // value={nameOpt}
-                  onChange={handleNameOpt}
-                  required
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label className="text-end" htmlFor="paramOpt">
-                  Parâmetro
-                </Label>
-                <Input
-                  className="col-span-3"
-                  id="paramOpt"
-                  placeholder="Paramêtro"
-                  // value={paramOpt}
-                  onChange={handleParamOpt}
-                  required
-                />
-              </div>
-              <DialogFooter>
-                {!isCreating && (
-                  <Button onClick={handleCreateOpt}>Criar Botão</Button>
-                )}
-                {isCreating && (
-                  <Button disabled>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Criar Botão
-                  </Button>
-                )}
-              </DialogFooter>
-            </DialogContent>
+            <DialogContent>{getDialogContent()}</DialogContent>
           </Dialog>
         );
       } else {
@@ -194,5 +145,167 @@ export default function OptComponent({
           ></div>
         );
       }
-  }
+    } else if (button.button_type === "sensor") {
+      // Caso específico para o tipo "sensor"
+      return (
+        <div>
+          <Dialog>
+            <DialogTrigger asChild>
+              <div
+                className={`${commonClasses} flex flex-col cursor-pointer`}
+                onClick={handleClick}
+              >
+                <div className="flex items-center gap-1 cursor-pointer">
+                  <p className="text-sm font-medium leading-none">
+                    {button.button_name}
+                  </p>
+                </div>
+                {/* <div>
+                    <p>{button.button_prt}</p>
+                  </div> */}
+              </div>
+            </DialogTrigger>
+            {isAdmin && (
+              <DialogContent>
+                <CardOptSensor
+                  selectedUser={selectedUser}
+                  selectedOpt={selectedOpt}
+                  clickedPosition={clickedPosition}
+                  existingButton={button}
+                  isUpdate={true}
+                />
+              </DialogContent>
+            )}
+          </Dialog>
+        </div>
+      );
+    } else {
+      // Componentes genéricos para outros tipos
+      return (
+        <div className={`${commonClasses} flex flex-col`}>
+          <div className="flex items-center gap-1">
+            <p className="text-sm font-medium leading-none">
+              {button.button_name}
+            </p>
+          </div>
+          {/* <div>
+              <p>{button.button_prt}</p>
+            </div> */}
+        </div>
+      );
+    }
+  };
+
+  return renderButtonContent();
+
+  // const handleNameOpt = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   setNameOpt(event.target.value);
+  // };
+  // const handleParamOpt = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   setParamOpt(event.target.value);
+  // };
+
+  // const handleNameSensor = (value: string) => {
+  //   setNameSensor(value)
+  // }
+
+  // const handleCreateOpt = () => {
+  //   if (nameOpt && paramOpt || nameSensor) {
+  //     setIsCreating(true);
+  //     wss?.sendMessage({
+  //       api: "admin",
+  //       mt: "InsertButton",
+  //       name: nameOpt,
+  //       value: paramOpt,
+  //       guid: selectedUser?.guid,
+  //       type: selectedOpt,
+  //       page: "0",
+  //       x: clickedPosition?.j,
+  //       y: clickedPosition?.i,
+  //     });
+  //     setIsCreating(false);
+  //   } else {
+  //     toast({
+  //       variant: "destructive",
+  //       description:
+  //         "Por favor, preencha todos os campos antes de criar o botão.",
+  //     });
+  //   }
+  // };
+  // switch (button.button_type) {
+  //   case "floor":
+  //   case "maps":
+  //   case "sensor":
+  //     return (
+  //       <div>
+  //         <Dialog>
+  //           <DialogTrigger asChild>
+  //             <div
+  //               className={`${commonClasses} flex flex-col cursor-pointer`}
+  //               onClick={handleClick}
+  //             >
+  //               <div className="flex items-center gap-1 cursor-pointer">
+  //                 <p className="text-sm font-medium leading-none">
+  //                   {button.button_name}
+  //                 </p>
+  //               </div>
+  //               {/* <div>
+  //                 <p>{button.button_prt}</p>
+  //               </div> */}
+  //             </div>
+  //           </DialogTrigger>
+  //           {isAdmin && (
+  //             <DialogContent>
+  //               <CardOptSensor
+  //                 selectedUser={selectedUser}
+  //                 selectedOpt={selectedOpt}
+  //                 clickedPosition={clickedPosition}
+  //                 existingButton={button}
+  //                 isUpdate={true}
+  //               />
+  //             </DialogContent>
+  //           )}
+  //         </Dialog>
+  //       </div>
+  //     );
+  //   case "radio":
+  //   case "video":
+  //   case "chat":
+  //     // no de usuario vamos adicionar alguns listeners para abrir a planta baixa , mapa , grafico de sensores etc
+  //     // usar a flag IsAdmin
+  //     return (
+  //       <div className={`${commonClasses} flex flex-col`}>
+  //         <div className="flex items-center gap-1">
+  //           <p className="text-sm font-medium leading-none">
+  //             {button.button_name}
+  //           </p>
+  //         </div>
+  //         {/* <div>
+  //           <p>{button.button_prt}</p>
+  //         </div> */}
+  //       </div>
+  //     );
+  //   default:
+  //     if (isAdmin) {
+  //       return (
+  //         <Dialog>
+  //           <DialogTrigger>
+  //             <div
+  //               className={`${commonClasses} flex items-center justify-center`}
+  //               onClick={handleClick}
+  //             >
+  //               <Plus />
+  //             </div>
+  //           </DialogTrigger>
+  //           {<DialogContent>{getDialogContent()}</DialogContent>}
+  //         </Dialog>
+  //       );
+  //     } else {
+  //       return (
+  //         <div
+  //           className={`${commonClasses} flex items-center justify-center`}
+  //         ></div>
+  //       );
+  //     }
+  // }
 }
