@@ -25,12 +25,27 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  SelectGroup,
+  SelectLabel,
 } from "@/components/ui/select";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
 import { useToast } from "@/components/ui/use-toast";
 import React, { useEffect, useState, ChangeEvent } from "react";
 import { Loader2 } from "lucide-react";
 import { useWebSocketData } from "./WebSocketProvider";
 import { ButtonInterface } from "./ButtonsContext";
+import { useSensors } from "./SensorContext";
 
 interface User {
   id: string;
@@ -54,10 +69,10 @@ export default function CardSensorModal({
   isUpdate = false,
 }: ButtonProps) {
   const [nameSensor, setNameSensor] = useState(
-    existingButton?.button_name || ""
+    existingButton?.button_prt || ""
   );
   const [nameButton, setNameButton] = useState(
-    existingButton?.button_prt || ""
+    existingButton?.button_name || ""
   );
   const [typeMeasure, setTypeMeasure] = useState(
     existingButton?.sensor_type || ""
@@ -70,10 +85,11 @@ export default function CardSensorModal({
   );
   const [isCreating, setIsCreating] = useState(false);
   const { toast } = useToast();
+  const { sensors } = useSensors();
   const wss = useWebSocketData();
 
-  const handleNameSensor = (event: ChangeEvent<HTMLInputElement>) => {
-    setNameSensor(event.target.value);
+  const handleNameSensor = (value: string) => {
+    setNameSensor(value);
   };
 
   const handleNameButton = (event: ChangeEvent<HTMLInputElement>) => {
@@ -120,21 +136,20 @@ export default function CardSensorModal({
       console.error(e);
     }
   };
-  
-  const handleDeleteButton = () =>{
-    try{
+
+  const handleDeleteButton = () => {
+    try {
       wss?.sendMessage({
         api: "admin",
-        mt : "DeleteButtons",
-        id:  existingButton?.id
-        // verificar com danilo possivel erro no backend 
+        mt: "DeleteButtons",
+        id: existingButton?.id,
+        // verificar com danilo possivel erro no backend
         //parseInt(existingButton?.id ?? "")
-        
-      })
-    }catch(e){
-      console.error(e)
+      });
+    } catch (e) {
+      console.error(e);
     }
-  }
+  };
   return (
     <>
       <Card className="border-none bg-transparent">
@@ -153,17 +168,27 @@ export default function CardSensorModal({
         </CardHeader>
         <CardContent className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-end" htmlFor="sensorName">
-              Nome do Sensor
+            <Label className="text-end" htmlFor="buttonName">
+              Selecione o Sensor
             </Label>
-            <Input
-              className="col-span-3"
-              id="sensorName"
-              placeholder="Nome do Sensor"
-              value={nameSensor}
-              onChange={handleNameSensor}
-              required
-            />
+            <Select value={nameSensor} onValueChange={handleNameSensor}>
+              <SelectTrigger className="col-span-3">
+                <SelectValue placeholder="Selecione um Sensor" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Sensores</SelectLabel>
+                  {sensors.map((sensor) => (
+                    <SelectItem
+                      key={sensor.sensor_name}
+                      value={sensor.sensor_name}
+                    >
+                      {sensor.sensor_name}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-end" htmlFor="buttonName">
@@ -183,7 +208,7 @@ export default function CardSensorModal({
               Tipo de medida
             </Label>
             <Select value={typeMeasure} onValueChange={handleTypeMeasure}>
-              <SelectTrigger className="col-span-2" id="SelectTypeMeasure">
+              <SelectTrigger className="col-span-3" id="SelectTypeMeasure">
                 <SelectValue placeholder="Selecione o tipo de medida" />
               </SelectTrigger>
               <SelectContent position="popper">
@@ -227,7 +252,28 @@ export default function CardSensorModal({
           </div>
         </CardContent>
         <CardFooter className="flex justify-between">
-          {isUpdate && <Button variant="destructive" onClick={handleDeleteButton}>Excluir Botão</Button>}
+          {isUpdate && (
+            <Button variant="secondary">
+              <AlertDialog>
+                <AlertDialogTrigger>Excluir</AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Essa ação nao pode ser desfeita. Isso irá deletar
+                      permanentemente o botão Sensor.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDeleteButton}>
+                      Excluir
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </Button>
+          )}
           {!isCreating && (
             <Button onClick={handleCreateButton}>
               {isUpdate ? "Atualizar" : "Criar"} Sensor

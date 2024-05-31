@@ -19,18 +19,20 @@ import Options from "./Options";
 import Loader from "@/components/Loader";
 import useWebSocket from "@/components/useWebSocket";
 import { useToast } from "@/components/ui/use-toast";
+import { SensorInterface, useSensors } from "@/components/SensorContext";
 
 function AdminLayout() {
   const account = useAccount();
   const { buttons, setButtons, updateButton } = useButtons();
+  const { sensors, setSensors, updateSensor } = useSensors();
   const { toast } = useToast();
 
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
     switch (message.mt) {
       case "SelectButtonsSuccess":
-        const fristButtons: ButtonInterface[] = JSON.parse(message.result);
-        setButtons(fristButtons);
+        const firstButtons: ButtonInterface[] = JSON.parse(message.result);
+        setButtons(firstButtons);
         break;
       case "InsertMessageSuccess":
         const newButton: ButtonInterface = message.result;
@@ -39,13 +41,18 @@ function AdminLayout() {
           description: "Botão Criado com sucesso",
         });
         break;
-        case "DeleteButtonsSuccess":
-          const buttonsAfterDelete: ButtonInterface[] = message.btns;
-          setButtons(buttonsAfterDelete);
-          toast({
-            description: "Botão excluído com sucesso",
-          });
-          break;
+      case "DeleteButtonsSuccess":
+        const buttonsAfterDelete: ButtonInterface[] = message.btns;
+        setButtons(buttonsAfterDelete);
+        toast({
+          description: "Botão excluído com sucesso",
+        });
+        break;
+      case "SelectSensorNameResult":
+        const firstSensors: SensorInterface[] = JSON.parse(message.result)
+        setSensors(firstSensors);
+        console.log(message.result);
+        break;
       default:
         console.log("Unknown message type:", message);
         break;

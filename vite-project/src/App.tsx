@@ -14,6 +14,7 @@ import { useContext, useEffect, useState } from "react";
 import { AccountProvider, AccountContext } from "./components/AccountContext";
 import { WebSocketProvider } from "./components/WebSocketProvider";
 import { ButtonProvider } from "./components/ButtonsContext";
+import { SensorProvider } from "./components/SensorContext";
 
 function App() {
   const account = useContext(AccountContext);
@@ -26,6 +27,7 @@ function App() {
     <ThemeProvider>
       <AccountProvider>
         <ButtonProvider>
+          <SensorProvider>
           <Routes>
             <Route
               path="/"
@@ -36,6 +38,7 @@ function App() {
             <Route path="/user/*" element={<UserLayout />} />
           </Routes>
           <Toaster />
+          </SensorProvider>
         </ButtonProvider>
       </AccountProvider>
 
