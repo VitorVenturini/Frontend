@@ -6,6 +6,7 @@ import {
   Phone,
   Layers3,
   Rss,
+  CircleArrowUp,
   Siren,
 } from "lucide-react";
 import { AccountContext } from "./AccountContext";
@@ -209,15 +210,16 @@ export default function ButtonsComponent({
       );
     case "number":
       return (
-        <div className={`${commonClasses} flex flex-col`} onClick={handleClick}>
-          <div className="flex items-center gap-1">
+        <div className={`${commonClasses} flex flex-col bg-green-900`} onClick={handleClick}>
+          <div className="flex items-center bg gap-1 bg">
             <Phone />
-            <p className="text-sm font-medium leading-none">
+            <p className="text-xs font-medium leading-none">
               {button.button_name}{" "}
             </p>
           </div>
           <div>
-            <p>{button.button_prt}</p>
+            <p className="align-middle text-center">
+              {button.button_prt}</p>
           </div>
         </div>
       );
@@ -236,17 +238,21 @@ export default function ButtonsComponent({
           <Dialog>
             <DialogTrigger asChild>
               <div
-                className={`${commonClasses} flex flex-col cursor-pointer`}
+                className={`${commonClasses} flex flex-col cursor-pointer bg-neutral-900`}
                 onClick={handleClick}
               >
                 <div className="flex items-center gap-1 cursor-pointer">
-                  <Rss />
-                  <p className="text-sm font-medium leading-none">
+                  <Rss size={20}/>
+                  <p className="text-s font-medium leading-none">
                     {button.button_name}
                   </p>
                 </div>
-                <div>
-                  <p>{button.button_prt}</p>
+                <div className="flex justify-between items-center">
+                  <p className="text-xs">{button.button_prt}</p>
+                  <div className="flex gap-1 items-center">
+                    <p className="text-xs">0000</p>
+                    <CircleArrowUp size={20} color="red"/>
+                  </div>
                 </div>
               </div>
             </DialogTrigger>

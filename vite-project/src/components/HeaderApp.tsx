@@ -44,7 +44,7 @@ export default function HeaderApp() {
   };
 
   return (
-    <header className="flex justify-between items-center p-4 ">
+    <header className="flex justify-between items-center p-2 mb-3">
       <div className="flex items-center gap-5">
         <img
           src={logo} // Use o logo importado aqui
