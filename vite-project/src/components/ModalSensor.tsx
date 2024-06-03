@@ -61,7 +61,7 @@ interface ButtonProps {
   isUpdate?: boolean;
 }
 
-export default function CardSensorModal({
+export default function ModalSensor({
   selectedUser,
   selectedPage,
   clickedPosition,

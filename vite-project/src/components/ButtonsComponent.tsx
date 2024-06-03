@@ -30,8 +30,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
-import CardSensorModal from "./CardSensorModal";
+import ModalSensor from "./ModalSensor";
 
 import {
   Dialog,
@@ -42,6 +41,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useLanguage } from "./LanguageContext";
+import ModalCombo from "./ModalCombo";
 
 interface User {
   id: string;
@@ -80,6 +81,7 @@ export default function ButtonsComponent({
   selectedPage,
 }: ButtonProps) {
   const { isAdmin } = useContext(AccountContext);
+  const language = useLanguage();
 
   const handleClick = () => {
     if (isAdmin) {
@@ -93,20 +95,15 @@ export default function ButtonsComponent({
     switch (true) {
       case clickedPosition?.i === 1 && selectedPage !== "0":
         return (
-          <>
-            <DialogTitle>Criar Combo</DialogTitle>
-            <DialogDescription>
-              Detalhes específicos para a criação de Combos.
-              <p>
-                Posição Y {clickedPosition?.j}
-                Posição X {clickedPosition?.i}
-              </p>
-            </DialogDescription>
-          </>
+          <ModalCombo
+            selectedPage={selectedPage}
+            selectedUser={selectedUser}
+            clickedPosition={clickedPosition}
+          />
         );
       case clickedPosition?.i === 2 && selectedPage !== "0":
         return (
-          <CardSensorModal
+          <ModalSensor
             selectedPage={selectedPage}
             selectedUser={selectedUser}
             clickedPosition={clickedPosition}
@@ -130,10 +127,7 @@ export default function ButtonsComponent({
                     Tipo de botão
                   </Label>
                   <Select>
-                    <SelectTrigger
-                      className="col-span-1"
-                      id="SelectTypeButton"
-                    >
+                    <SelectTrigger className="col-span-1" id="SelectTypeButton">
                       <SelectValue placeholder="Selecione o tipo de Botão" />
                     </SelectTrigger>
                     <SelectContent position="popper">
@@ -157,7 +151,7 @@ export default function ButtonsComponent({
   };
 
   const commonClasses =
-    "w-[120px] h-[55px] rounded-lg border bg-border text-card-foreground shadow-sm p-1";
+    "w-[120px] h-[55px] rounded-lg border bg-border text-white shadow-sm p-1";
 
   switch (button.button_type) {
     case "alarm":
@@ -166,7 +160,7 @@ export default function ButtonsComponent({
           <Dialog>
             <DialogTrigger asChild>
               <div
-                className={`${commonClasses} flex flex-col cursor-pointer`}
+                className={`${commonClasses} flex flex-col cursor-pointer bg-buttonNumber`}
                 onClick={handleClick}
               >
                 <div className="flex items-center gap-1 cursor-pointer">
@@ -196,7 +190,7 @@ export default function ButtonsComponent({
       );
     case "user":
       return (
-        <div className={`${commonClasses} flex flex-col`} onClick={handleClick}>
+        <div className={`${commonClasses} flex flex-col bg-buttonNumber`} onClick={handleClick}>
           <div className="flex items-center gap-1">
             <User />
             <p className="text-sm font-medium leading-none">
@@ -210,7 +204,10 @@ export default function ButtonsComponent({
       );
     case "number":
       return (
-        <div className={`${commonClasses} flex flex-col bg-green-900`} onClick={handleClick}>
+        <div
+          className={`${commonClasses} flex flex-col bg-buttonNumber`}
+          onClick={handleClick}
+        >
           <div className="flex items-center bg gap-1 bg">
             <Phone />
             <p className="text-xs font-medium leading-none">
@@ -218,8 +215,7 @@ export default function ButtonsComponent({
             </p>
           </div>
           <div>
-            <p className="align-middle text-center">
-              {button.button_prt}</p>
+            <p className="align-middle text-center">{button.button_prt}</p>
           </div>
         </div>
       );
@@ -238,11 +234,11 @@ export default function ButtonsComponent({
           <Dialog>
             <DialogTrigger asChild>
               <div
-                className={`${commonClasses} flex flex-col cursor-pointer bg-neutral-900`}
+                className={`${commonClasses} flex flex-col cursor-pointer bg-buttonSensor`}
                 onClick={handleClick}
               >
                 <div className="flex items-center gap-1 cursor-pointer">
-                  <Rss size={20}/>
+                  <Rss size={20} />
                   <p className="text-s font-medium leading-none">
                     {button.button_name}
                   </p>
@@ -251,14 +247,14 @@ export default function ButtonsComponent({
                   <p className="text-xs">{button.button_prt}</p>
                   <div className="flex gap-1 items-center">
                     <p className="text-xs">0000</p>
-                    <CircleArrowUp size={20} color="red"/>
+                    <CircleArrowUp size={20} color="red" />
                   </div>
                 </div>
               </div>
             </DialogTrigger>
             {isAdmin && (
               <DialogContent>
-                <CardSensorModal
+                <ModalSensor
                   selectedPage={selectedPage}
                   selectedUser={selectedUser}
                   clickedPosition={clickedPosition}

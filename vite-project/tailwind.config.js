@@ -49,6 +49,14 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        buttonSensor: {
+          DEFAULT:"hsl(var(--sensor))",
+          foreground:"hsl(var(--sensor-foreground))"
+        },
+        buttonNumber: {
+          DEFAULT:"hsl(var(--buttonG))",
+          foreground:"hsl(var(--buttonG-foreground))"
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

@@ -184,7 +184,7 @@ export default function CardLogin() {
             </div>
           </div>
         </CardContent>
-        <CardFooter className="flex justify-between my-4">
+        <CardFooter className="flex justify-end my-4">
           <Button type="submit" disabled={isLoading}>
             {isLoading ? (
               <>

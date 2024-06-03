@@ -77,14 +77,6 @@ export default function OptComponent({
   selectedOpt,
 }: OptProps) {
   const { isAdmin } = useContext(AccountContext);
-  const [nameOpt, setNameOpt] = useState("");
-  const [paramOpt, setParamOpt] = useState("");
-  const [nameSensor, setNameSensor] = useState("");
-  const [isCreating, setIsCreating] = useState(false);
-  const { toast } = useToast();
-  const { sensors } = useSensors();
-  const wss = useWebSocketData();
-
   const handleClick = () => {
     onClick();
   };
