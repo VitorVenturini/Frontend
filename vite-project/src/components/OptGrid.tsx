@@ -57,7 +57,7 @@ export default function OptGrid({ buttons, selectedUser, selectedOpt}: OptGridPr
       )}
     </div>
     <div>
-      aa
+      Criar div aqui
     </div>
     </div>
 

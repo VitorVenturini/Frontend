@@ -1,11 +1,9 @@
-import { Routes, Route,useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import ValidadeToken from "@/components/ValidateToken";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AccountContext, useAccount } from "@/components/AccountContext";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-
-
 
 import Logout from "@/components/Logout";
 import useWebSocket from "@/components/useWebSocket";
@@ -36,9 +34,7 @@ function UserLayout() {
   const { setButtons, buttons } = useButtons();
   const [selectedOpt, setSelectedOpt] = useState<string>("floor");
   const navigate = useNavigate();
-  const [isAdmin, setIsAdmin] = useState(
-    localStorage.getItem("isAdmin") === "true"
-  );
+  const [isAdmin, setIsAdmin] = useState("");
 
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
@@ -53,10 +49,8 @@ function UserLayout() {
     }
   };
   const handleAdminToggle = () => {
-    const newIsAdmin = !isAdmin;
-    setIsAdmin(newIsAdmin);
-    updateAccount({ isAdmin: newIsAdmin });
-    navigate('/admin/buttons'); // Redireciona para a rota admin/buttons
+    updateAccount({ isAdmin: true });
+    navigate("/admin/buttons"); // Redireciona para a rota admin/buttons
   };
 
   const handleOptChange = (newOpt: string) => {
@@ -68,14 +62,27 @@ function UserLayout() {
       token={account.accessToken}
       onMessage={handleWebSocketMessage}
     >
-      {account.type === 'admin' && <Button variant="ghost" onClick={handleAdminToggle}> Visão de admin</Button>}
+      {account.type === "admin" && (
+        <Button variant="ghost" onClick={handleAdminToggle}>
+          {" "}
+          Visão de admin
+        </Button>
+      )}
       <Logout />
       <div className="flex gap-3 p-2 justify-center">
-        <LeftGrid buttons={buttons} selectedUser={account}/>
+        <LeftGrid buttons={buttons} selectedUser={account} />
         <div>
-        <ButtonsGridPage buttons={buttons} selectedUser={account} onOptChange={handleOptChange}/>
+          <ButtonsGridPage
+            buttons={buttons}
+            selectedUser={account}
+            onOptChange={handleOptChange}
+          />
         </div>
-        <RightGrid buttons={buttons} selectedUser={account} selectedOpt={selectedOpt}/>
+        <RightGrid
+          buttons={buttons}
+          selectedUser={account}
+          selectedOpt={selectedOpt}
+        />
       </div>
     </WebSocketProvider>
   );
