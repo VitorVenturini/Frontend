@@ -38,8 +38,15 @@ const useWebSocket = (
         console.log("WebSocket connection opened");
         console.log(account.isAdmin);
         console.log(account);
-        ws.current?.send(JSON.stringify({ api: account.isAdmin ? "admin" : "user", mt: "SelectButtons" }));
-        ws.current?.send(JSON.stringify({ api: account.isAdmin ? "admin" : "user", mt: "SelectSensorName" }));
+        if(account.isAdmin){
+          ws.current?.send(JSON.stringify({ api: "admin" , mt: "SelectButtons" }));
+          ws.current?.send(JSON.stringify({ api: "admin", mt: "SelectSensorName" }));
+          //ws.current?.send(JSON.stringify({ api: "admin", mt: "DeleteAllButtons" }));
+        }else{
+          ws.current?.send(JSON.stringify({ api: "user" , mt: "SelectButtons" }));
+          ws.current?.send(JSON.stringify({ api: "user", mt: "SelectSensorName" }));
+        }
+
       };
 
       ws.current.onclose = (event) => {

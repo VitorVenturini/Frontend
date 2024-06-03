@@ -50,6 +50,7 @@ function UserLayout() {
   };
   const handleAdminToggle = () => {
     updateAccount({ isAdmin: true });
+    console.log("IsAdmin tem que ir para true " + account.isAdmin)
     navigate("/admin/buttons"); // Redireciona para a rota admin/buttons
   };
 

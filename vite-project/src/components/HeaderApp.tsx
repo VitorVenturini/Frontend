@@ -40,6 +40,7 @@ export default function HeaderApp() {
   };
   const handleUserViewClick = () => {
     updateAccount({ isAdmin: false });
+    console.log("IsAdmin tem que ir para false " + account.isAdmin)
     navigate("/user/buttons");
   };
 
