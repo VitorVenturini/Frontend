@@ -67,6 +67,7 @@ interface OptProps {
   clickedPosition: { i: number; j: number } | null;
   selectedUser: User | null;
   selectedOpt: string;
+  isClicked: boolean
 }
 
 export default function OptComponent({
@@ -75,6 +76,7 @@ export default function OptComponent({
   clickedPosition,
   selectedUser,
   selectedOpt,
+  isClicked
 }: OptProps) {
   const { isAdmin } = useContext(AccountContext);
   const handleClick = () => {
@@ -133,7 +135,7 @@ export default function OptComponent({
       } else {
         return (
           <div
-            className={`${commonClasses} flex items-center justify-center`}
+            className={`${commonClasses} flex items-center justify-center `}
           ></div>
         );
       }
@@ -144,7 +146,9 @@ export default function OptComponent({
           <Dialog>
             <DialogTrigger asChild>
               <div
-                className={`${commonClasses} flex flex-col cursor-pointer`}
+                className={`${commonClasses} flex flex-col cursor-pointer ${
+                  isClicked ? "bg-blue-600" : ""
+                }`}
                 onClick={handleClick}
               >
                 <div className="flex items-center gap-1 cursor-pointer">
