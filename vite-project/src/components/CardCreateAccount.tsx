@@ -22,8 +22,17 @@ import React, { useEffect, useState, ChangeEvent } from "react";
 import { Value } from "@radix-ui/react-select";
 import TableUser from "@/components/TableUser";
 import { Loader2 } from "lucide-react";
-import CardCreateAccount from "@/components/CardCreateAccount";
-//================================================
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogClose,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import texts from "../_data/texts.json";
+import { useLanguage } from "./LanguageContext";
 
 interface User {
   id: string;
@@ -33,8 +42,7 @@ interface User {
   sip: string;
   // Adicione aqui outros campos se necessário
 }
-
-export default function Account() {
+export default function CardCreateAccount() {
   const [users, setUsers] = useState<User[]>([]);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -42,6 +50,7 @@ export default function Account() {
   const [sip, setSip] = useState("");
   const [type, setType] = useState<string>("");
   const [isCreating, setIsCreating] = useState(false);
+  const { language } = useLanguage();
 
   const { toast } = useToast();
 
@@ -50,7 +59,7 @@ export default function Account() {
   }
 
   const passwordValidation = (password: string) => {
-    setIsCreating(true)
+    setIsCreating(true);
     // Verifica se a senha tem pelo menos 6 caracteres
     if (password.length < 6) {
       toast({
@@ -101,7 +110,7 @@ export default function Account() {
         variant: "destructive",
         description: "Senha inválida",
       });
-      setIsCreating(false)
+      setIsCreating(false);
       return;
     }
     const obj = {
@@ -158,81 +167,98 @@ export default function Account() {
     }
     setIsCreating(false);
   };
-  const listUsers = async () => {
-    try {
-      const response = await fetch("https://meet.wecom.com.br/api/listUsers", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "x-auth": localStorage.getItem("token") || "",
-        },
-      });
-      console.log(await response.json());
-    } catch (error) {}
-  };
-  const deleteUsers = async (id: string) => {
-    console.log(`id: ${id}`);
-    const formData = {
-      id: id,
-    };
-    try {
-      const response = await fetch("https://meet.wecom.com.br/api/deleteUser", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-auth": localStorage.getItem("token") || "",
-        },
-        body: JSON.stringify(formData),
-      });
-      const data: User[] = await response.json();
-      setUsers(data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  useEffect(() => {
-    listUsers();
-  }, []);
-  const updateUsers = async (id: string) => {
-    console.log(
-      `id: ${id}, name: ${name}, email: ${email}, sip: ${sip}, type: ${type}`
-    );
-    const formData = {
-      id: id,
-      name: name,
-      email: email,
-      sip: sip,
-      type: type,
-    };
-    try {
-      const response = await fetch("https://meet.wecom.com.br/api/updateUser", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-auth": localStorage.getItem("token") || "",
-        },
-        body: JSON.stringify(formData),
-      });
-      const data: User[] = await response.json();
-      setUsers(data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  useEffect(() => {
-    listUsers();
-  }, []);
-
   return (
     //div que contem os cards
     <div className="px-2 flex flex-col md:flex-row gap-5 justify-center">
-      <CardCreateAccount />
-      {/* Card que contem a lista de usuarios */}
-      <Card className="w-full min-h-[700px]">
-        <ScrollArea className="h-[700px]">
-          <TableUser />
-        </ScrollArea>
-      </Card>
+      <Dialog>
+        <DialogTrigger>
+          <Button>{texts[language].cardCreateAccountTrigger}</Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{texts[language].cardCreateAccountTittle}</DialogTitle>
+            <DialogDescription>
+              {texts[language].cardCreateAccountDescription}
+            </DialogDescription>
+          </DialogHeader>
+          {/* Card de criação de usuario */}
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-3 items-center gap-4">
+              <Label className="text-end" htmlFor="name">
+                Nome
+              </Label>
+              <Input
+                className="col-span-2"
+                id="name"
+                placeholder="Nome"
+                value={name}
+                onChange={handleNameChange}
+              />
+            </div>
+            <div className="grid grid-cols-3 items-center gap-4">
+              <Label className="text-end" htmlFor="name">
+                Email
+              </Label>
+              <Input
+                className="col-span-2"
+                id="email"
+                placeholder="Email"
+                value={email}
+                onChange={handleEmailChange}
+              />
+            </div>
+            <div className="grid grid-cols-3 items-center gap-4">
+              <Label className="text-end" htmlFor="name">
+                Senha
+              </Label>
+              <Input
+                className="col-span-2"
+                id="password"
+                placeholder="Senha"
+                value={password}
+                onChange={handlePasswordChange}
+              />
+            </div>
+            <div className="grid grid-cols-3 items-center gap-4">
+              <Label className="text-end" htmlFor="name">
+                SIP
+              </Label>
+              <Input
+                className="col-span-2"
+                id="sip"
+                placeholder="SIP"
+                value={sip}
+                onChange={handleSipChange}
+              />
+            </div>
+            <div className="grid grid-cols-3 items-center gap-4">
+              <Label className="text-end" htmlFor="framework" id="type">
+                Tipo de conta
+              </Label>
+              <Select value={type} onValueChange={handleTypeChange}>
+                <SelectTrigger className="col-span-2" id="type">
+                  <SelectValue placeholder="Selecione o tipo de conta" />
+                </SelectTrigger>
+                <SelectContent position="popper">
+                  <SelectItem value="admin">Admin</SelectItem>
+                  <SelectItem value="user">Usuario</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <DialogClose className="flex justify-end">
+              {!isCreating && (
+                <Button onClick={handleCreateUser}>Criar conta</Button>
+              )}
+              {isCreating && (
+                <Button disabled>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Criar conta
+                </Button>
+              )}
+            </DialogClose>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

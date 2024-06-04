@@ -1,5 +1,8 @@
 {
   "en": {
+    "cardCreateAccountTittle": "Create Accout",
+    "cardCreateAccountDescription": "Create Accout Description",
+    "cardCreateAccountTrigger": "Create Accout",
     "login": "Login",
     "enterEmail": "Enter your Email",
     "enterPassword": "Enter your Password",
@@ -41,6 +44,9 @@
     
   },
   "pt": {
+    "cardCreateAccountTittle": "Create Accout",
+    "cardCreateAccountDescription": "Create Accout Description",
+    "cardCreateAccountTrigger": "Create Accout",
     "login": "Faça seu Login",
     "enterEmail": "Digite seu Email",
     "enterPassword": "Digite sua Senha",
@@ -83,6 +89,9 @@
 
   },
   "es": {
+    "cardCreateAccountTittle": "Create Accout",
+    "cardCreateAccountDescription": "Create Accout Description",
+    "cardCreateAccountTrigger": "Create Accout",
     "login": "Iniciar sesión",
     "enterEmail": "Introduce tu correo electrónico",
     "enterPassword": "Introduce tu contraseña",
