@@ -169,7 +169,7 @@ export default function CardCreateAccount() {
   };
   return (
     //div que contem os cards
-    <div className="px-2 flex flex-col md:flex-row gap-5 justify-center">
+    <div className="flex flex-col md:flex-row gap-5 justify-center">
       <Dialog>
         <DialogTrigger>
           <Button>{texts[language].cardCreateAccountTrigger}</Button>
