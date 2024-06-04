@@ -24,6 +24,7 @@ import {
   import { ChangeEvent, useState, useEffect } from "react";
   import { useToast } from "@/components/ui/use-toast";
   import TableActions from "@/components/TableActions";
+  import page  from "@/Reports/page"
 
  interface User {
     id: string;
