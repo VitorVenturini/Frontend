@@ -21,12 +21,14 @@ interface RightGridProps {
   buttons: ButtonInterface[];
   selectedUser: User | null;
   selectedOpt: string;
+  onKeyChange: (key: string) => void;
 }
 
 export default function RightGrid({
   buttons,
   selectedUser,
   selectedOpt,
+  onKeyChange
 }: RightGridProps) {
   const [clickedButtonId, setClickedButtonId] = useState<number | null>(null);
 
@@ -35,7 +37,7 @@ export default function RightGrid({
   );
 
   return (
-    <Card className="min-w-[400px] h-[500px] flex flex-col max-w-[500px] gap-1 items-center">
+    <Card className="  flex flex-col  gap-1 items-center">
       {selectedUser && (
         <div className="w-full">
           <div className="flex-grow w-full p-1">
@@ -51,7 +53,7 @@ export default function RightGrid({
           </div>
           <div>
             {clickedButtonId && (
-              <OptRightBottom clickedButtonId={clickedButtonId} />
+              <OptRightBottom clickedButtonId={clickedButtonId} onKeyChange={onKeyChange}/>
             )}
           </div>
         </div>

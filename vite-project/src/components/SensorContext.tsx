@@ -12,6 +12,7 @@ export interface SensorInterface {
     tvoc?: string;
     pressure?: string;
     date?: string;
+    
 
   }
 

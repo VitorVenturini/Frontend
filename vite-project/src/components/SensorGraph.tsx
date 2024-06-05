@@ -13,11 +13,12 @@ import { SensorInterface } from "./SensorContext";
 
 interface SensorGraphProps {
   sensorInfo: SensorInterface[];
+  sensorKey : string;
 }
-export default function SensorGraph({ sensorInfo }: SensorGraphProps) {
+export default function SensorGraph({ sensorInfo, sensorKey }: SensorGraphProps) {
   const data = sensorInfo;
   return (
-    <ResponsiveContainer width={"100%"} aspect={1.2}>
+    <ResponsiveContainer width={"100%"} aspect={1.2} className="">
         <LineChart
         width={500}
         height={300}
@@ -34,14 +35,8 @@ export default function SensorGraph({ sensorInfo }: SensorGraphProps) {
           <YAxis />
           <Tooltip />
           <Legend />
-          <Line type="monotone" dataKey="co2" stroke="#8884d8" activeDot={{ r: 8 }} />
-          <Line type="monotone" dataKey="battery" stroke="#82ca9d" />
-          <Line type="monotone" dataKey="temperature" stroke="#82ca9d" />
-          <Line type="monotone" dataKey="humidity" stroke="#82ca9d" />
-          <Line type="monotone" dataKey="leak" stroke="#82ca9d" />
-          <Line type="monotone" dataKey="pir" stroke="#82ca9d" />
-          <Line type="monotone" dataKey="light" stroke="#82ca9d" />
-          <Line type="monotone" dataKey="tvoc" stroke="#82ca9d" />
+          <Line type="monotone" dataKey= {sensorKey} stroke="#8884d8" activeDot={{ r: 8 }} />
+        
         </LineChart>
         </ResponsiveContainer>
   );

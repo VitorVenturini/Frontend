@@ -147,7 +147,7 @@ export default function OptComponent({
             <DialogTrigger asChild>
               <div
                 className={`${commonClasses} flex flex-col cursor-pointer ${
-                  isClicked ? "bg-blue-600" : ""
+                  isClicked ? "bg-zinc-950" : ""
                 }`}
                 onClick={handleClick}
               >

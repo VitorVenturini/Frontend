@@ -1,8 +1,13 @@
 import { useButtons } from "./ButtonsContext";
 import { useSensors } from "./SensorContext";
 import SensorGraph from "./SensorGraph";
+import SensorGrid from "./SensorGrid"
+import { useState } from "react";
+import BatteryGauge from 'react-battery-gauge'
+
 interface OptRightBottomProps {
   clickedButtonId: number | null;
+  onKeyChange: (key: string) => void;
 }
 
 export default function OptRightBottom({
@@ -10,8 +15,15 @@ export default function OptRightBottom({
 }: OptRightBottomProps) {
   const { buttons } = useButtons();
   const { sensors } = useSensors();
+  const [sensorKey, setSensorKey] = useState<string>("");
+  const [clickedKey, setClickedKey] = useState<string | null>(null);
+
 
   const clickedButton = buttons.find((button) => button.id === clickedButtonId);
+
+  const handleKeyChange = (key: string) => {
+    setSensorKey(key); 
+  };
 
   const renderButtonInfo = () => {
     if (!clickedButton) return null;
@@ -24,10 +36,10 @@ export default function OptRightBottom({
         console.log("FilteredSensor" + JSON.stringify(filteredSensorInfo));
         return (
           <div className="w-full">
-            <div className="bg-gray-500 w-full">
-              <h3>Sensor Device</h3>
-            </div>
-            <SensorGraph sensorInfo={filteredSensorInfo} />
+
+            <SensorGrid sensorInfo = {filteredSensorInfo} onKeyChange={handleKeyChange } clickedKey={clickedKey} setClickedKey={setClickedKey} />
+            <SensorGraph sensorInfo={filteredSensorInfo} sensorKey = {sensorKey}  />
+            {/* <SensorGraph sensorInfo={filteredSensorInfo} /> */}
             {/* {filteredSensorInfo.map((sensor) => (
               <div>
                 <div>Nome do Sensor: {sensor?.sensor_name}</div>
