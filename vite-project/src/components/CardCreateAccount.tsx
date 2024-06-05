@@ -191,6 +191,7 @@ export default function CardCreateAccount() {
                 className="col-span-2"
                 id="name"
                 placeholder="Nome"
+                type="text"
                 value={name}
                 onChange={handleNameChange}
               />
@@ -203,6 +204,7 @@ export default function CardCreateAccount() {
                 className="col-span-2"
                 id="email"
                 placeholder="Email"
+                type="email"
                 value={email}
                 onChange={handleEmailChange}
               />
@@ -214,6 +216,7 @@ export default function CardCreateAccount() {
               <Input
                 className="col-span-2"
                 id="password"
+                type="password"
                 placeholder="Senha"
                 value={password}
                 onChange={handlePasswordChange}

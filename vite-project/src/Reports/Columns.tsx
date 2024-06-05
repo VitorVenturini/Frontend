@@ -51,8 +51,8 @@ export const columns: ColumnDef<User>[] = [
 
       return (
         <div>
-          <UpdateUsers />
-          <DeleteUsers />
+          <UpdateUsers user={user}/>
+          <DeleteUsers id={user.id}/>
         </div>
       );
     },

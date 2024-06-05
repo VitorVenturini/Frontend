@@ -53,9 +53,17 @@ export function DataTable<TData, TValue>({
       <div className="flex items-center justify-between p-4">
         <Input
           placeholder="Filter Name..."
-          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+          value={(table.getColumn("name")?.getFilterValue() as string) || ""}
           onChange={(event) =>
             table.getColumn("name")?.setFilterValue(event.target.value)
+          }
+          className="max-w-sm"
+        />
+          <Input
+          placeholder="Filter GUID..."
+          value={(table.getColumn("guid")?.getFilterValue() as string) || ""}
+          onChange={(event) =>
+            table.getColumn("guid")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />

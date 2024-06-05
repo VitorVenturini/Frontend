@@ -31,6 +31,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
   } from "@/components/ui/alert-dialog";
+import { useToast } from "./ui/use-toast";
   interface User {
     id: string;
     name: string;
@@ -39,23 +40,13 @@ import {
     sip: string;
     // Adicione aqui outros campos se necessário
   }
-  export default function DeleteUsers (){
+  interface DeleteUsersProps {
+    id: string;
+  }
+  export default function DeleteUsers({ id }: DeleteUsersProps){
     const [users, setUsers] = useState<User[]>([]);
-    const listUsers = async () => {
-        try {
-          const response = await fetch("https://meet.wecom.com.br/api/listUsers", {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              "x-auth": localStorage.getItem("token") || "",
-            },
-          });
-          const data: User[] = await response.json();
-          setUsers(data);
-        } catch (error) {
-          console.error(error);
-        }
-      };
+    const {toast} = useToast()
+  
       const deleteUsers = async (id: string) => {
         console.log(`id: ${id}`);
         const formData = {
@@ -76,6 +67,13 @@ import {
           console.error(error);
         }
       };
+
+      const handleDelete = () => {
+        deleteUsers(id);
+        toast({
+          description: "Conta deletada com sucesso",
+        });
+      };
     return(
         <AlertDialog>
             <AlertDialogTrigger>
@@ -92,7 +90,7 @@ import {
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                <AlertDialogAction>Confirmar</AlertDialogAction>
+                <AlertDialogAction onClick={handleDelete}>Confirmar</AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>

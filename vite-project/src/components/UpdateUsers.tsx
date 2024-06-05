@@ -29,7 +29,10 @@ interface User {
   sip: string;
   // Adicione aqui outros campos se necessário
 }
-export default function UpdateUsers() {
+interface UpdateUsersProps {
+  user: User;
+}
+export default function UpdateUsers({ user }: UpdateUsersProps) {
   const [users, setUsers] = useState<User[]>([]);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -51,21 +54,7 @@ export default function UpdateUsers() {
   const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
   };
-  const listUsers = async () => {
-    try {
-      const response = await fetch("https://meet.wecom.com.br/api/listUsers", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "x-auth": localStorage.getItem("token") || "",
-        },
-      });
-      const data: User[] = await response.json();
-      setUsers(data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+
   const updateUsers = async (id: string) => {
     console.log(
       `id: ${id}, name: ${name}, email: ${email}, sip: ${sip}, type: ${type}`
@@ -92,6 +81,10 @@ export default function UpdateUsers() {
       console.error(error);
     }
   };
+  const handleUpdate = () => {
+    updateUsers(user.id);
+  };
+
   return (
     <Dialog>
       <DialogTrigger>
@@ -159,7 +152,7 @@ export default function UpdateUsers() {
         </div>
         <DialogFooter>
           <DialogClose asChild>
-            <Button>Atualizar</Button>
+            <Button onClick={handleUpdate}>Atualizar</Button>
           </DialogClose>
         </DialogFooter>
       </DialogContent>
