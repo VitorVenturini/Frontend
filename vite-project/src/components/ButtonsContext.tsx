@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
+import React, { createContext, useState, useContext,ReactNode } from 'react';
 
 export interface ButtonInterface {
     id: number;
@@ -28,6 +28,7 @@ interface ButtonContextType {
     buttons: ButtonInterface[];
     setButtons: React.Dispatch<React.SetStateAction<ButtonInterface[]>>;
     updateButton: (button: ButtonInterface) => void;
+    clearButtons: () => void; 
   }
   
   const ButtonContext = createContext<ButtonContextType | undefined>(undefined);
@@ -39,8 +40,12 @@ interface ButtonContextType {
       setButtons(prevButtons => [...prevButtons, button]);
     };
 
+    const clearButtons = () => {
+      setButtons([]);
+  };
+
     return (
-      <ButtonContext.Provider value={{ buttons, setButtons, updateButton }}>
+      <ButtonContext.Provider value={{ buttons, setButtons, updateButton, clearButtons }}>
         {children}
       </ButtonContext.Provider>
     );

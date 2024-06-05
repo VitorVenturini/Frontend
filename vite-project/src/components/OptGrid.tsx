@@ -3,11 +3,15 @@ import { ButtonInterface, useButtons } from "@/components/ButtonsContext";
 import ButtonsComponent from "./ButtonsComponent";
 import { useState } from 'react';
 import OptComponent from "./OptComponent";
+import { useAccount } from "./AccountContext";
+import { useWebSocketData } from "./WebSocketProvider";
 
 interface OptGridProps {
   buttons: ButtonInterface[];
   selectedUser: User | null;
   selectedOpt: string;
+  setClickedButtonId: (id: number | null) => void; 
+  clickedButtonId: number | null;
 //   selectedPage : string
 }
 
@@ -17,8 +21,12 @@ interface User {
   guid: string;
 }
 
-export default function OptGrid({ buttons, selectedUser, selectedOpt}: OptGridProps) {
+export default function OptGrid({ buttons, selectedUser, selectedOpt, setClickedButtonId, clickedButtonId}: OptGridProps) {
   const [clickedPosition, setClickedPosition] = useState<{i: number, j: number} | null>(null);
+  const [isClicked, setIsClicked] = useState(false)
+  const wss = useWebSocketData()
+
+  const account = useAccount()
   console.log("Option Selecionada : " + selectedOpt)
   console.log("Buttons" + JSON.stringify(buttons))
   const grid = Array(2)
@@ -34,6 +42,8 @@ export default function OptGrid({ buttons, selectedUser, selectedOpt}: OptGridPr
     }
   });
 
+  // const clickedButton = buttons.filter(button => button.id === clickedButtonId)[0];
+
   return (
     <div>
     <div className="grid grid-rows-2 grid-cols-6 gap-2">
@@ -45,19 +55,24 @@ export default function OptGrid({ buttons, selectedUser, selectedOpt}: OptGridPr
               selectedUser ={selectedUser}
               clickedPosition={clickedPosition}
               selectedOpt = {selectedOpt}
+              isClicked={clickedButtonId === button.id} // true or false 
               onClick={() => {
-                //console.log(`X: ${button.position_x}, Y: ${button.position_y}`);
-                console.log(`Clicked position state:`, "i: "+clickedPosition?.i + " j: " + clickedPosition?.j)
-                setClickedPosition({i: i+1, j: j+1});
-                console.log(`Clicked position state:`, "i: "+clickedPosition?.i + " j: " + clickedPosition?.j);
+                if(account.isAdmin){
+                  setClickedPosition({i: i+1, j: j+1});
+                  console.log(`Clicked position state:`, "i: "+clickedPosition?.i + " j: " + clickedPosition?.j);
+                }else{ // usuario
+                  if (clickedButtonId !== button.id && button.button_type === "sensor") {
+                    wss?.sendMessage({ api: "user", mt: "SelectSensorHistory", sensor: button.button_prt  });
+                  }
+                    //setIsClicked(clickedButtonId === button.id ? false : true);
+                    setClickedButtonId(clickedButtonId === button.id ? null : button.id);
+
+                }
               }}
             />
           </div>
         ))
       )}
-    </div>
-    <div>
-      Criar div aqui
     </div>
     </div>
 

@@ -2,6 +2,18 @@ import React, { createContext, useState, useContext, ReactNode } from 'react';
 
 export interface SensorInterface {
     sensor_name: string;
+    battery?: string;
+    co2?: string;
+    humidity?: string;
+    temperature?: string;
+    leak?: string;
+    pir?: string;
+    light?: string;
+    tvoc?: string;
+    pressure?: string;
+    date?: string;
+    
+
   }
 
 interface SensorContextType {

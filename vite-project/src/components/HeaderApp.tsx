@@ -14,9 +14,12 @@ import {
 import { LanguageToggle } from "./LanguageToggle";
 import texts from "../_data/texts.json";
 import { useLanguage } from "./LanguageContext";
+import { useButtons } from "./ButtonsContext";
 
 export default function HeaderApp() {
   const account = useAccount();
+  const {clearButtons} = useButtons()
+
   const { updateAccount } = useAccount();
   const navigate = useNavigate();
   const wss = useWebSocketData();
@@ -39,8 +42,8 @@ export default function HeaderApp() {
     navigate("/admin/options");
   };
   const handleUserViewClick = () => {
+    //clearButtons()
     updateAccount({ isAdmin: false });
-    console.log("IsAdmin tem que ir para false " + account.isAdmin)
     navigate("/user/buttons");
   };
 

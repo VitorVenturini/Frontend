@@ -18,6 +18,7 @@ import {
 import LeftGrid from "@/components/LeftGrid";
 import RightGrid from "@/components/RightGrid";
 import { Ghost } from "lucide-react";
+import { SensorInterface, useSensors } from "@/components/SensorContext";
 
 interface User {
   id: string;
@@ -32,6 +33,7 @@ function UserLayout() {
   // const webSocket = useWebSocket(account.accessToken)
   // console.log("MENSAGEM DO WEBSOCKET" + webSocket.data)
   const { setButtons, buttons } = useButtons();
+  const { setSensors } = useSensors();
   const [selectedOpt, setSelectedOpt] = useState<string>("floor");
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState("");
@@ -43,6 +45,10 @@ function UserLayout() {
         const buttons: ButtonInterface[] = JSON.parse(message.result);
         setButtons(buttons);
         break;
+      case "SelectSensorHistoryResult":
+        const sensors: SensorInterface[] = JSON.parse(message.result);
+        setSensors(sensors);
+        break;
       default:
         console.log("Unknown message type:", message);
         break;
@@ -50,7 +56,7 @@ function UserLayout() {
   };
   const handleAdminToggle = () => {
     updateAccount({ isAdmin: true });
-    console.log("IsAdmin tem que ir para true " + account.isAdmin)
+    console.log("IsAdmin tem que ir para true " + account.isAdmin);
     navigate("/admin/buttons"); // Redireciona para a rota admin/buttons
   };
 
