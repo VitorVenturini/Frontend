@@ -22,7 +22,7 @@ export default function SensorGrid({
 
   return (
     <div>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 p-2">
+      <div className="grid grid-cols-1 gap-1 md:grid-cols-2 lg:grid-cols-3 p-2">
         {firstSensor &&
           Object.entries(firstSensor).map(
             ([key, value]) =>

@@ -35,19 +35,9 @@ export default function OptRightBottom({
         );
         console.log("FilteredSensor" + JSON.stringify(filteredSensorInfo));
         return (
-          <div className="w-full">
-
+          <div className="">
             <SensorGrid sensorInfo = {filteredSensorInfo} onKeyChange={handleKeyChange } clickedKey={clickedKey} setClickedKey={setClickedKey} />
             <SensorGraph sensorInfo={filteredSensorInfo} sensorKey = {sensorKey}  />
-            {/* <SensorGraph sensorInfo={filteredSensorInfo} /> */}
-            {/* {filteredSensorInfo.map((sensor) => (
-              <div>
-                <div>Nome do Sensor: {sensor?.sensor_name}</div>
-                <div>Bateria: {sensor?.battery}</div>
-                <div>Temperatura: {sensor?.temperature}</div>
-                <div>CO²: {sensor?.co2}</div>
-              </div>
-            ))} */}
           </div>
         );
       case "floor":

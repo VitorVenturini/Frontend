@@ -18,7 +18,7 @@ interface SensorGraphProps {
 export default function SensorGraph({ sensorInfo, sensorKey }: SensorGraphProps) {
   const data = sensorInfo;
   return (
-    <ResponsiveContainer width={"100%"} aspect={1.2} className="">
+    <ResponsiveContainer width={"100%"} aspect={2.5} className="">
         <LineChart
         width={500}
         height={300}

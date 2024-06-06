@@ -35,7 +35,6 @@ export default function ButtonsGridPages({
   const [selectedPage, setSelectedPage] = useState("1"); // Inicialmente, a página 1 é selecionada. Note que agora é uma string.
   const { language } = useLanguage();
 
-
   const buttonsInSelectedPage = buttons.filter(
     (button) => button.page.toString() === selectedPage
   ); // Filtrar botões com base na página selecionada. Converta a página para string.
@@ -49,21 +48,16 @@ export default function ButtonsGridPages({
   };
 
   return (
-    <Card className="p-1  flex flex-col gap-1 items-center">
-      <div className="flex-grow w-full">
-        <ButtonsGrid
-          buttons={buttonsInSelectedPage}
-          selectedUser={selectedUser}
-          selectedPage={selectedPage}
-        />
-        <br />
-        <OptBar onOptChange={handleOptChange} />
-      </div>
-      <Tabs
-        defaultValue="1"
-        onValueChange={handlePageChange}
-        className="w-full flex-grow"
-      >
+    <Card className="p-1 flex flex-col gap-1 items-center">
+      <ButtonsGrid
+        buttons={buttonsInSelectedPage}
+        selectedUser={selectedUser}
+        selectedPage={selectedPage}
+      />
+
+      <OptBar onOptChange={handleOptChange} />
+
+      <Tabs defaultValue="1" onValueChange={handlePageChange}>
         <TabsList className="w-full flex justify-center">
           {["1", "2", "3", "4", "5"].map((pageNumber) => (
             <TabsTrigger key={pageNumber} value={pageNumber}>
@@ -72,11 +66,7 @@ export default function ButtonsGridPages({
           ))}
         </TabsList>
         {["1", "2", "3", "4", "5"].map((pageNumber) => (
-          <TabsContent
-            className="w-full flex-gow"
-            key={pageNumber}
-            value={pageNumber}
-          ></TabsContent>
+          <TabsContent key={pageNumber} value={pageNumber}></TabsContent>
         ))}
       </Tabs>
     </Card>
