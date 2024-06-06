@@ -46,7 +46,7 @@ export default function OptGrid({ buttons, selectedUser, selectedOpt, setClicked
 
   return (
     <div>
-    <div className="grid grid-rows-2 grid-cols-6 gap-2">
+    <div className="grid grid-rows-2 grid-cols-6 gap-1">
       {grid.map((row, i) =>
         row.map((button, j) => (
           <div key={`${i}-${j}`}>
