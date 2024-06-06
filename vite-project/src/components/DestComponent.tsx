@@ -93,7 +93,13 @@ export default function DestComponent({
   };
 
   const handleNameDest = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNameDest(event.target.value);
+    if (event.target.value.length > 10) {
+      toast({
+        description: "deve ter menos de 10 caracteres",
+      });
+    } else {
+      setNameDest(event.target.value);
+    }
   };
   const handleParamDest = (event: React.ChangeEvent<HTMLInputElement>) => {
     setParamDest(event.target.value);

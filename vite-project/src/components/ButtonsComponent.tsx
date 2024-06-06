@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useSensors } from "./SensorContext";
 
 import {
   Card,
@@ -82,6 +83,7 @@ export default function ButtonsComponent({
 }: ButtonProps) {
   const { isAdmin } = useContext(AccountContext);
   const language = useLanguage();
+  const { sensors } = useSensors();
 
   const handleClick = () => {
     if (isAdmin) {
@@ -151,7 +153,7 @@ export default function ButtonsComponent({
   };
 
   const commonClasses =
-    "w-[128px] h-[46px] rounded-lg border bg-border text-white shadow-sm p-1";
+    "w-[128px] h-[55px] rounded-lg border bg-border text-white shadow-sm p-1";
 
   switch (button.button_type) {
     case "alarm":
@@ -190,7 +192,10 @@ export default function ButtonsComponent({
       );
     case "user":
       return (
-        <div className={`${commonClasses} flex flex-col bg-buttonNumber`} onClick={handleClick}>
+        <div
+          className={`${commonClasses} flex flex-col bg-buttonNumber`}
+          onClick={handleClick}
+        >
           <div className="flex items-center gap-1">
             <User />
             <p className="text-sm font-medium leading-none">
@@ -232,26 +237,39 @@ export default function ButtonsComponent({
       return (
         <div>
           <Dialog>
-            <DialogTrigger asChild>
-              <div
-                className={`${commonClasses} flex flex-col cursor-pointer bg-buttonSensor`}
-                onClick={handleClick}
-              >
-                <div className="flex items-center gap-1 cursor-pointer">
-                  <Rss size={20} />
-                  <p className="text-s font-medium leading-none">
-                    {button.button_name}
-                  </p>
-                </div>
-                <div className="flex justify-between items-center">
-                  <p className="text-xs">{button.button_prt}</p>
-                  <div className="flex gap-1 items-center">
-                    <p className="text-xs">0000</p>
-                    <CircleArrowUp size={20} color="red" />
+                <DialogTrigger asChild>
+                  <div
+                    className={`${commonClasses} flex flex-col cursor-pointer bg-buttonSensor`}
+                    onClick={handleClick}
+                  >
+                    <div className="flex items-center gap-1 cursor-pointer">
+                      <Rss size={20} />
+                      <div>
+                        <p className="text-md font-medium leading-none">
+                          {button.button_name}
+                        </p>
+                        <p className="text-[10px] font-medium leading-none text-muted-foreground">
+                          {button.button_prt}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <p className="text-xs">{button.sensor_type}</p>
+                      <div className="flex gap-1 items-center">
+                      {sensors
+                      .filter(sensor => sensor.sensor_name === button.button_prt)
+                      .slice(0, 1) // Pega apenas o primeiro sensor filtrado
+                      .map((sensor, index) => (
+                        <div key={index} className="flex items-center gap-1">
+                          <p className="text-xs">{button.sensor_type && sensor[`${button.sensor_type}`]}</p>
+                          <CircleArrowUp size={20} color="red" />
+                        </div>
+                      ))}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            </DialogTrigger>
+                </DialogTrigger>
+           
             {isAdmin && (
               <DialogContent>
                 <ModalSensor
@@ -261,7 +279,7 @@ export default function ButtonsComponent({
                   existingButton={button}
                   isUpdate={true}
                 />
-              </DialogContent>
+              </DialogContent> 
             )}
           </Dialog>
         </div>
