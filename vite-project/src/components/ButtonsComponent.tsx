@@ -86,6 +86,7 @@ export default function ButtonsComponent({
   const language = useLanguage();
   const { sensors } = useSensors();
   const wss = useWebSocketData();
+
   const [isClicked, setIsClicked] = useState(false);
 
   const handleClick = () => {
@@ -237,64 +238,62 @@ export default function ButtonsComponent({
           </div>
         </div>
       );
-    case "sensor":
-     wss?.sendMessage({api: "user", mt: "SelectSensorInfoSrc", type: button.sensor_type, sensor: button.button_prt})
-      return (
-        <div>
-          <Dialog>
-            <DialogTrigger asChild>
-              <div
-                className={`${commonClasses} flex flex-col cursor-pointer active:bg-red-900 bg-buttonSensor`}
-                onClick={handleClick}
-              >
-                <div className="flex items-center gap-1 cursor-pointer">
-                  <Rss size={20} />
-                  <div>
-                    <p className="text-md font-medium leading-none">
-                      {button.button_name}
-                    </p>
-                    <p className="text-[10px] font-medium leading-none text-muted-foreground">
-                      {button.button_prt}
-                    </p>
+      case "sensor":
+        return (
+          <div>
+            <Dialog>
+              <DialogTrigger asChild>
+                <div
+                  className={`${commonClasses} flex flex-col cursor-pointer active:bg-red-900 bg-buttonSensor`}
+                  onClick={handleClick}
+                >
+                  <div className="flex items-center gap-1 cursor-pointer">
+                    <Rss size={20} />
+                    <div>
+                      <p className="text-md font-medium leading-none">
+                        {button.button_name}
+                      </p>
+                      <p className="text-[10px] font-medium leading-none text-muted-foreground">
+                        {button.button_prt}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <p className="text-xs">{button.sensor_type}</p>
+                    <div className="flex gap-1 items-center">
+                      {sensors
+                        .filter(
+                          (sensor) => sensor.sensor_name === button.button_prt
+                        )
+                        .slice(0, 1) // Pega apenas o primeiro sensor filtrado
+                        .map((sensor, index) => (
+                          <div key={index} className="flex items-center gap-1">
+                            <p className="text-xs">
+                              {button.sensor_type &&
+                                sensor[`${button.sensor_type}`]}
+                            </p>
+                            <CircleArrowUp size={20} color="red" />
+                          </div>
+                        ))}
+                    </div>
                   </div>
                 </div>
-                <div className="flex justify-between items-center">
-                  <p className="text-xs">{button.sensor_type}</p>
-                  <div className="flex gap-1 items-center">
-                    {sensors
-                      .filter(
-                        (sensor) => sensor.sensor_name === button.button_prt
-                      )
-                      .slice(0, 1) // Pega apenas o primeiro sensor filtrado
-                      .map((sensor, index) => (
-                        <div key={index} className="flex items-center gap-1">
-                          <p className="text-xs">
-                            {button.sensor_type &&
-                              sensor[`${button.sensor_type}`]}
-                          </p>
-                          <CircleArrowUp size={20} color="red" />
-                        </div>
-                      ))}
-                  </div>
-                </div>
-              </div>
-            </DialogTrigger>
-
-            {isAdmin && (
-              <DialogContent>
-                <ModalSensor
-                  selectedPage={selectedPage}
-                  selectedUser={selectedUser}
-                  clickedPosition={clickedPosition}
-                  existingButton={button}
-                  isUpdate={true}
-                />
-              </DialogContent>
-            )}
-          </Dialog>
-        </div>
-      );
-
+              </DialogTrigger>
+  
+              {isAdmin && (
+                <DialogContent>
+                  <ModalSensor
+                    selectedPage={selectedPage}
+                    selectedUser={selectedUser}
+                    clickedPosition={clickedPosition}
+                    existingButton={button}
+                    isUpdate={true}
+                  />
+                </DialogContent>
+              )}
+            </Dialog>
+          </div>
+        );
     default:
       if (isAdmin) {
         return (
