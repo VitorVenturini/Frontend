@@ -69,14 +69,8 @@ function UserLayout() {
       token={account.accessToken}
       onMessage={handleWebSocketMessage}
     >
-      {account.type === "admin" && (
-        <Button variant="ghost" onClick={handleAdminToggle}>
-          {" "}
-          Visão de admin
-        </Button>
-      )}
-      <Logout />
-      <div className="flex gap-1 p-1 justify-center">
+ 
+      <div className="flex gap-1 p-1">
         <LeftGrid buttons={buttons} selectedUser={account} />
         <div>
           <ButtonsGridPage
@@ -92,6 +86,13 @@ function UserLayout() {
           selectedOpt={selectedOpt}
         />
       </div>
+      {account.type === "admin" && (
+        <Button variant="ghost" onClick={handleAdminToggle}>
+          {" "}
+          Visão de admin
+        </Button>
+      )}
+      <Logout />
     </WebSocketProvider>
   );
 }
