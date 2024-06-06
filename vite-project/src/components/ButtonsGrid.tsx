@@ -41,7 +41,7 @@ export default function ButtonsGrid({
   });
 
   return (
-    <div className="grid grid-rows-8 grid-cols-5 gap-4">
+    <div className="grid grid-rows-8 grid-cols-5 gap-1">
       {grid.map((row, i) =>
         row.map((button, j) => (
           <div key={`${i}-${j}`}>

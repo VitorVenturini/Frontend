@@ -76,7 +76,7 @@ function UserLayout() {
         </Button>
       )}
       <Logout />
-      <div className="flex gap-3 p-2 justify-center">
+      <div className="flex gap-1 p-1 justify-center">
         <LeftGrid buttons={buttons} selectedUser={account} />
         <div>
           <ButtonsGridPage
@@ -86,6 +86,7 @@ function UserLayout() {
           />
         </div>
         <RightGrid
+        onKeyChange={handleOptChange}
           buttons={buttons}
           selectedUser={account}
           selectedOpt={selectedOpt}

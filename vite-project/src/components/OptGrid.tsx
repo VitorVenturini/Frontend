@@ -25,8 +25,8 @@ export default function OptGrid({ buttons, selectedUser, selectedOpt, setClicked
   const [clickedPosition, setClickedPosition] = useState<{i: number, j: number} | null>(null);
   const [isClicked, setIsClicked] = useState(false)
   const wss = useWebSocketData()
-
   const account = useAccount()
+
   console.log("Option Selecionada : " + selectedOpt)
   console.log("Buttons" + JSON.stringify(buttons))
   const grid = Array(2)

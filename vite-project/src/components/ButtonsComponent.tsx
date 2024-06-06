@@ -151,7 +151,7 @@ export default function ButtonsComponent({
   };
 
   const commonClasses =
-    "w-[120px] h-[55px] rounded-lg border bg-border text-white shadow-sm p-1";
+    "w-[95px] h-[46px] rounded-lg border bg-border text-white shadow-sm p-1";
 
   switch (button.button_type) {
     case "alarm":

@@ -1,6 +1,7 @@
 import { ButtonInterface } from "./ButtonsContext";
-import { useState } from "react";
+import { useState,  } from "react";
 import DestComponent from "./DestComponent";
+import { useAccount } from "./AccountContext";
 
 interface User {
     id: string;
@@ -12,10 +13,14 @@ interface User {
   interface DestGridProps{
     buttons: ButtonInterface[]
     selectedUser: User | null
+    setClickedButtonId: (id: number | null) => void; 
+    clickedButtonId: number | null;
   }
 
-  export default function DestGrid({ buttons, selectedUser }: DestGridProps) {
+  export default function DestGrid({ buttons, selectedUser,setClickedButtonId, clickedButtonId }: DestGridProps) {
     const [clickedPosition, setClickedPosition] = useState<{i: number, j: number} | null>(null);
+    const account = useAccount()
+    const [isClicked, setIsClicked] = useState(false)
     // Crie uma matriz 8x5 preenchida com botões padrão
 
     const grid = Array(3)
@@ -33,7 +38,7 @@ interface User {
     });
   
     return (
-      <div className="grid grid-rows-3 grid-cols-3 gap-3">
+      <div className="grid grid-rows-3 grid-cols-3 gap-1">
         {grid.map((row, i) =>
           row.map((button, j) => (
             <div key={`${i}-${j}`}>
@@ -41,12 +46,15 @@ interface User {
                 button={button}
                 selectedUser ={selectedUser}
                 clickedPosition={clickedPosition}
+                isClicked={clickedButtonId === button.id} // true or false 
                 selectedPage="0"
                 onClick={() => {
-                  //console.log(`X: ${button.position_x}, Y: ${button.position_y}`);
-                  console.log(`Clicked position state:`, "i: "+clickedPosition?.i + " j: " + clickedPosition?.j)
-                  setClickedPosition({i: i+1, j: j+1});
-                  console.log(`Clicked position state:`, "i: "+clickedPosition?.i + " j: " + clickedPosition?.j);
+                  if(account.isAdmin){
+                    setClickedPosition({i: i+1, j: j+1});
+                  }else
+                  {
+                    setClickedButtonId(clickedButtonId === button.id ? null : button.id);
+                  }
                 }}
               />
             </div>

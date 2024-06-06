@@ -153,6 +153,7 @@ export default function ButtonsPage() {
       </div>
       <div>
         <RightGrid
+        onKeyChange={handleOptChange}
           buttons={filteredButtons}
           selectedUser={selectedUser}
           selectedOpt={selectedOpt}

@@ -54,6 +54,7 @@ interface DestProps {
   clickedPosition: { i: number; j: number } | null;
   selectedUser: User | null;
   selectedPage: string;
+  isClicked: boolean
 }
 
 export default function DestComponent({
@@ -62,6 +63,7 @@ export default function DestComponent({
   clickedPosition,
   selectedUser,
   selectedPage,
+  isClicked
 }: DestProps) {
   const { isAdmin } = useContext(AccountContext);
   const [nameDest, setNameDest] = useState("");
@@ -115,12 +117,12 @@ export default function DestComponent({
   }
 
   const commonClasses =
-    "w-[60px] h-[60px] rounded-lg border bg-border text-card-foreground shadow-sm p-1";
+    "w-[60px] h-[60px] rounded-lg border bg-muted text-card-foreground shadow-sm p-1";
 
   switch (button.button_type) {
     case "dest":
       return (
-        <div className={`${commonClasses} flex flex-col`} onClick={onClick}>
+        <div className={`${commonClasses} flex flex-col ${isClicked ? "bg-zinc-950" : ""}`} onClick={onClick}>
           <div className="flex items-center gap-1">
             {/* <Siren /> */}
             <p className="text-sm font-medium leading-none">
@@ -141,7 +143,7 @@ export default function DestComponent({
           <Dialog>
             <DialogTrigger>
               <div
-                className={`${commonClasses} flex items-center justify-center`}
+                className={`${commonClasses} flex items-center justify-center `}
                 onClick={handleClick}
               >
                 <Plus />
