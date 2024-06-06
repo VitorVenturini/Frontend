@@ -49,7 +49,7 @@ export default function ButtonsGridPages({
   };
 
   return (
-    <Card className="p-1 w-[500px] flex flex-col gap-1 items-center">
+    <Card className="p-1  flex flex-col gap-1 items-center">
       <div className="flex-grow w-full">
         <ButtonsGrid
           buttons={buttonsInSelectedPage}

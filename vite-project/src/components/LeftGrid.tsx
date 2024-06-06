@@ -10,6 +10,7 @@ import {
 import { ButtonInterface } from "./ButtonsContext";
 import DestGrid from "./DestGrid";
 import React, { useState } from "react";
+import HistoryGrid from "./HistoryGrid";
 
 interface User {
   id: string;
@@ -31,7 +32,8 @@ export default function LeftGrid({buttons, selectedUser} : LeftGridProps) {
   : [];
 
   return (
-    <Card className= "p-1  h-[500px] flex flex-col  gap-1 items-center">
+    <Card className= "p-1 flex flex-col  gap-1 items-center ">
+      <HistoryGrid />
        {selectedUser && (
           <div className="flex-grow w-full">
             {<DestGrid 
@@ -41,6 +43,7 @@ export default function LeftGrid({buttons, selectedUser} : LeftGridProps) {
             selectedUser={selectedUser}/>}
           </div>
         )}
+        
     </Card>
   );
 }
