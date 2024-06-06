@@ -80,9 +80,9 @@ export default function DestComponent({
 }: DestProps) {
   const { isAdmin } = useContext(AccountContext);
   const [nameDest, setNameDest] = useState(button?.button_name || "");
-  const [paramDest, setParamDest] = useState("");
+  const [paramDest, setParamDest] = useState(button?.button_prt || "");
   const [iconDest, setIconDest] = useState("");
-  const [deviceDest, setDeviceDest] = useState("");
+  const [deviceDest, setDeviceDest] = useState(button?.button_device || "")
   const [isCreating, setIsCreating] = useState(false);
   const [isUpdate, setIsUpdate] = useState(false);
   const { toast } = useToast();
@@ -93,13 +93,7 @@ export default function DestComponent({
   };
 
   const handleNameDest = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.value.length > 10) {
-      toast({
-        description: "deve ter menos de 10 caracteres",
-      });
-    } else {
-      setNameDest(event.target.value);
-    }
+    setNameDest(event.target.value);
   };
   const handleParamDest = (event: React.ChangeEvent<HTMLInputElement>) => {
     setParamDest(event.target.value);
@@ -413,7 +407,7 @@ export default function DestComponent({
           <Dialog>
             <DialogTrigger>
               <div
-                className={`${commonClasses} flex items-center justify-center  `}
+                className={`${commonClasses} flex items-center justify-center `}
                 onClick={handleClick}
               >
                 <Plus />
@@ -425,8 +419,7 @@ export default function DestComponent({
       } else {
         return (
           <div
-            className={`${commonClasses} flex items-center justify-center  ${isClicked ? "bg-zinc-950" : ""}`}
-            onClick={handleClick}
+            className={`${commonClasses} flex items-center justify-center`}
           ></div>
         );
       }
@@ -438,19 +431,35 @@ export default function DestComponent({
       return (
         <div>
           <Dialog>
-            <DialogTrigger asChild>
-              <div
-                className={`${commonClasses} flex flex-col items-center align-middle justify-center gap-1 cursor-pointer  ${
-                  isClicked ? "bg-zinc-950" : ""
-                }`}
-                onClick={handleClick}
-              >
-                {IconComponent && <IconComponent />}
-                <p className="text-sm font-medium leading-none">
-                  {button.button_name}
-                </p>
-              </div>
-            </DialogTrigger>
+          <DialogTrigger asChild>
+        {isAdmin ? (
+          // Renderiza a div com onClick apenas se o usuário for admin
+          <div
+            className={`${commonClasses} flex flex-col items-center align-middle justify-center gap-1  ${
+              isClicked ? "bg-zinc-950" : ""
+            }`}
+            onClick={handleClickUpdate}
+          >
+            {IconComponent && <IconComponent />}
+            <p className="text-sm font-medium leading-none">
+              {button.button_name}
+            </p>
+          </div>
+        ) : (
+          // Renderiza a div sem onClick se o usuário não for admin
+          <div
+            className={`${commonClasses} flex flex-col items-center align-middle justify-center gap-1  ${
+              isClicked ? "bg-zinc-950" : ""
+            }`}
+            onClick={handleClick}
+          >
+            {IconComponent && <IconComponent />}
+            <p className="text-sm font-medium leading-none">
+              {button.button_name}
+            </p>
+          </div>
+        )}
+      </DialogTrigger>
             {isAdmin && (
               <div>
                 <DialogContent>{getDialogContent()}</DialogContent>
@@ -460,62 +469,7 @@ export default function DestComponent({
         </div>
       );
     }
-    // switch (button.button_type) {
-    //   case "dest":
-    //     let IconComponent = null;
-    //     if (button.img && Icons[button.img as keyof typeof Icons]) {
-    //       IconComponent = Icons[button.img as keyof typeof Icons];
-    //     }
-    //     return (
-    //       <div>
-    //       <Dialog>
-    //         <DialogTrigger asChild>
-    //           <div
-    //             className={`${commonClasses} flex flex-col items-center align-middle justify-center gap-1  ${
-    //               isClicked ? "bg-zinc-950" : ""
-    //             }`}
-    //             onClick={handleClickUpdate}
-    //           >
-    //             {IconComponent && <IconComponent />}
-    //             <p className="text-sm font-medium leading-none">
-    //               {button.button_name}
-    //             </p>
-    //           </div>
-    //         </DialogTrigger>
-    //         {isAdmin && (
-    //           <div>
-    //             <DialogContent>{getDialogContent()}</DialogContent>
-    //           </div>
-    //         )}
-    //       </Dialog>
-    //       </div>
-    //     );
-    //   default:
-    //     if (isAdmin) {
-    //       return (
-    //         // <div>
-    //         // {getDialogContent()}
-    //         // </div>
-    //         <Dialog>
-    //           <DialogTrigger>
-    //             <div
-    //               className={`${commonClasses} flex items-center justify-center `}
-    //               onClick={handleClick}
-    //             >
-    //               <Plus />
-    //             </div>
-    //           </DialogTrigger>
-    //           <DialogContent>{getDialogContent()}</DialogContent>
-    //         </Dialog>
-    //       );
-    //     } else {
-    //       return (
-    //         <div
-    //           className={`${commonClasses} flex items-center justify-center`}
-    //         ></div>
-    //       );
-    //     }
-    // }
+
   };
 
   return renderButtonContent();
