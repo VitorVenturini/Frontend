@@ -44,6 +44,7 @@ import {
 } from "@/components/ui/dialog";
 import { useLanguage } from "./LanguageContext";
 import ModalCombo from "./ModalCombo";
+import { useWebSocketData } from "./WebSocketProvider";
 
 interface User {
   id: string;
@@ -84,6 +85,7 @@ export default function ButtonsComponent({
   const { isAdmin } = useContext(AccountContext);
   const language = useLanguage();
   const { sensors } = useSensors();
+  const wss = useWebSocketData();
 
   const handleClick = () => {
     if (isAdmin) {
@@ -234,6 +236,7 @@ export default function ButtonsComponent({
         </div>
       );
     case "sensor":
+     wss?.sendMessage({api: "user", mt: "SelectSensorInfoSrc", type: button.sensor_type, sensor: button.button_prt})
       return (
         <div>
           <Dialog>

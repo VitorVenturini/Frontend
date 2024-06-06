@@ -413,7 +413,7 @@ export default function DestComponent({
           <Dialog>
             <DialogTrigger>
               <div
-                className={`${commonClasses} flex items-center justify-center `}
+                className={`${commonClasses} flex items-center justify-center  `}
                 onClick={handleClick}
               >
                 <Plus />
@@ -425,7 +425,8 @@ export default function DestComponent({
       } else {
         return (
           <div
-            className={`${commonClasses} flex items-center justify-center`}
+            className={`${commonClasses} flex items-center justify-center  ${isClicked ? "bg-zinc-950" : ""}`}
+            onClick={handleClick}
           ></div>
         );
       }
@@ -439,10 +440,10 @@ export default function DestComponent({
           <Dialog>
             <DialogTrigger asChild>
               <div
-                className={`${commonClasses} flex flex-col items-center align-middle justify-center gap-1  ${
+                className={`${commonClasses} flex flex-col items-center align-middle justify-center gap-1 cursor-pointer  ${
                   isClicked ? "bg-zinc-950" : ""
                 }`}
-                onClick={handleClickUpdate}
+                onClick={handleClick}
               >
                 {IconComponent && <IconComponent />}
                 <p className="text-sm font-medium leading-none">

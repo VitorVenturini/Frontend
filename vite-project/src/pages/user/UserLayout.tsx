@@ -49,6 +49,9 @@ function UserLayout() {
         const sensors: SensorInterface[] = JSON.parse(message.result);
         setSensors(sensors);
         break;
+      case "SelectSensorInfoResultSrc":
+        console.log("SelectSensorInfoResultSrc + \n Result" + message.result + "Src" + message.src)
+        break
       default:
         console.log("Unknown message type:", message);
         break;

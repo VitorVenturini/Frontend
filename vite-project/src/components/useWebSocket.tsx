@@ -43,6 +43,7 @@ const useWebSocket = (
           ws.current?.send(JSON.stringify({ api: "admin", mt: "SelectSensorName" }));
           //ws.current?.send(JSON.stringify({ api: "admin", mt: "DeleteAllButtons" }));
         }else{
+          // ws.current?.send(JSON.stringify({ api: "user" , mt: "SelectSensorInfoSrc", type: "co2", sensor: "Sensor Técnica" }));
           ws.current?.send(JSON.stringify({ api: "user" , mt: "SelectButtons" }));
           ws.current?.send(JSON.stringify({ api: "user", mt: "SelectSensorName" }));
         }
