@@ -1,9 +1,10 @@
 import { useButtons } from "./ButtonsContext";
 import { useSensors } from "./SensorContext";
 import SensorGraph from "./SensorGraph";
-import SensorGrid from "./SensorGrid"
+import SensorGrid from "./SensorGrid";
 import { useState } from "react";
-import BatteryGauge from 'react-battery-gauge'
+import BatteryGauge from "react-battery-gauge";
+import VideoPlayer from "./VideoPlayer";
 
 interface OptRightBottomProps {
   clickedButtonId: number | null;
@@ -18,11 +19,10 @@ export default function OptRightBottom({
   const [sensorKey, setSensorKey] = useState<string>("");
   const [clickedKey, setClickedKey] = useState<string | null>(null);
 
-
   const clickedButton = buttons.find((button) => button.id === clickedButtonId);
 
   const handleKeyChange = (key: string) => {
-    setSensorKey(key); 
+    setSensorKey(key);
   };
 
   const renderButtonInfo = () => {
@@ -36,9 +36,16 @@ export default function OptRightBottom({
         console.log("FilteredSensor" + JSON.stringify(filteredSensorInfo));
         return (
           <div className="w-full">
-
-            <SensorGrid sensorInfo = {filteredSensorInfo} onKeyChange={handleKeyChange } clickedKey={clickedKey} setClickedKey={setClickedKey} />
-            <SensorGraph sensorInfo={filteredSensorInfo} sensorKey = {sensorKey}  />
+            <SensorGrid
+              sensorInfo={filteredSensorInfo}
+              onKeyChange={handleKeyChange}
+              clickedKey={clickedKey}
+              setClickedKey={setClickedKey}
+            />
+            <SensorGraph
+              sensorInfo={filteredSensorInfo}
+              sensorKey={sensorKey}
+            />
             {/* <SensorGraph sensorInfo={filteredSensorInfo} /> */}
             {/* {filteredSensorInfo.map((sensor) => (
               <div>
@@ -54,6 +61,11 @@ export default function OptRightBottom({
       case "map":
       case "radio":
       case "video":
+        return(
+          <div className="w-full">
+            <VideoPlayer url={clickedButton.button_prt} />
+            </div>
+        ) 
       case "chat":
 
       default:

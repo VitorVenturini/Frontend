@@ -239,7 +239,6 @@ export default function ButtonsComponent({
         </div>
       );
       case "sensor":
-        wss?.sendMessage({api: "user", mt: "SelectSensorInfoSrc", type: button.sensor_type, sensor: button.button_prt})
         return (
           <div>
             <Dialog>

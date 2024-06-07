@@ -81,8 +81,8 @@ export default function DestComponent({
   const { isAdmin } = useContext(AccountContext);
   const [nameDest, setNameDest] = useState(button?.button_name || "");
   const [paramDest, setParamDest] = useState(button?.button_prt || "");
-  const [iconDest, setIconDest] = useState("");
-  const [deviceDest, setDeviceDest] = useState(button?.button_device || "")
+  const [iconDest, setIconDest] = useState(button.img || "");
+  const [deviceDest, setDeviceDest] = useState(button?.button_device || "");
   const [isCreating, setIsCreating] = useState(false);
   const [isUpdate, setIsUpdate] = useState(false);
   const { toast } = useToast();
@@ -154,7 +154,6 @@ export default function DestComponent({
     setDeviceDest("");
     setIsCreating(false);
     setIsUpdate(false);
-
   };
 
   const commonClasses =
@@ -330,7 +329,11 @@ export default function DestComponent({
           <Label className="text-end" htmlFor="paramDest">
             Icone
           </Label>
-          <Tabs className="w-[400px]" onValueChange={handleIconDest}>
+          <Tabs
+            className="w-[400px]"
+            onValueChange={handleIconDest}
+            value={iconDest}
+          >
             <TabsList>
               <TabsTrigger value="Megaphone">
                 <Megaphone />
@@ -424,42 +427,44 @@ export default function DestComponent({
         );
       }
     } else if (button.button_type === "dest") {
-      let IconComponent = null;
+      let IconComponent: React.ElementType | null = null;
       if (button.img && Icons[button.img as keyof typeof Icons]) {
-        IconComponent = Icons[button.img as keyof typeof Icons];
+        IconComponent = Icons[
+          button.img as keyof typeof Icons
+        ] as React.ElementType;
       }
       return (
         <div>
           <Dialog>
-          <DialogTrigger asChild>
-        {isAdmin ? (
-          // Renderiza a div com onClick apenas se o usuário for admin
-          <div
-            className={`${commonClasses} flex flex-col items-center align-middle justify-center gap-1  ${
-              isClicked ? "bg-zinc-950" : ""
-            }`}
-            onClick={handleClickUpdate}
-          >
-            {IconComponent && <IconComponent />}
-            <p className="text-sm font-medium leading-none">
-              {button.button_name}
-            </p>
-          </div>
-        ) : (
-          // Renderiza a div sem onClick se o usuário não for admin
-          <div
-            className={`${commonClasses} flex flex-col items-center align-middle justify-center gap-1  ${
-              isClicked ? "bg-zinc-950" : ""
-            }`}
-            onClick={handleClick}
-          >
-            {IconComponent && <IconComponent />}
-            <p className="text-sm font-medium leading-none">
-              {button.button_name}
-            </p>
-          </div>
-        )}
-      </DialogTrigger>
+            <DialogTrigger asChild>
+              {isAdmin ? (
+                // Renderiza a div com onClick apenas se o usuário for admin
+                <div
+                  className={`${commonClasses} flex flex-col items-center align-middle justify-center gap-1  ${
+                    isClicked ? "bg-zinc-950" : ""
+                  }`}
+                  onClick={handleClickUpdate}
+                >
+                  {IconComponent && <IconComponent />}
+                  <p className="text-sm font-medium leading-none">
+                    {button.button_name}
+                  </p>
+                </div>
+              ) : (
+                // Renderiza a div sem onClick se o usuário não for admin
+                <div
+                  className={`${commonClasses} flex flex-col items-center align-middle justify-center gap-1  ${
+                    isClicked ? "bg-zinc-950" : ""
+                  }`}
+                  onClick={handleClick}
+                >
+                  {IconComponent && <IconComponent />}
+                  <p className="text-sm font-medium leading-none">
+                    {button.button_name}
+                  </p>
+                </div>
+              )}
+            </DialogTrigger>
             {isAdmin && (
               <div>
                 <DialogContent>{getDialogContent()}</DialogContent>
@@ -469,7 +474,6 @@ export default function DestComponent({
         </div>
       );
     }
-
   };
 
   return renderButtonContent();
