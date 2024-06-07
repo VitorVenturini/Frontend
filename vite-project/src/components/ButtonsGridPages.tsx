@@ -48,7 +48,7 @@ export default function ButtonsGridPages({
   };
 
   return (
-    <Card className="p-1 flex flex-col gap-1 items-center">
+    <Card className="p-1 flex flex-col gap-1 items-center justify-center ">
       <ButtonsGrid
         buttons={buttonsInSelectedPage}
         selectedUser={selectedUser}
@@ -57,16 +57,16 @@ export default function ButtonsGridPages({
 
       <OptBar onOptChange={handleOptChange} />
 
-      <Tabs defaultValue="1" onValueChange={handlePageChange}>
-        <TabsList className="w-full flex justify-center">
+      <Tabs className="w-full" defaultValue="1" onValueChange={handlePageChange}>
+        <TabsList className="w-full" >
           {["1", "2", "3", "4", "5"].map((pageNumber) => (
-            <TabsTrigger key={pageNumber} value={pageNumber}>
+            <TabsTrigger className="w-full"  key={pageNumber} value={pageNumber}>
               {texts[language].page} {pageNumber}
             </TabsTrigger>
           ))}
         </TabsList>
         {["1", "2", "3", "4", "5"].map((pageNumber) => (
-          <TabsContent key={pageNumber} value={pageNumber}></TabsContent>
+          <TabsContent className="w-full" key={pageNumber} value={pageNumber}></TabsContent>
         ))}
       </Tabs>
     </Card>
