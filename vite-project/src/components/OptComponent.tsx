@@ -54,6 +54,7 @@ import {
 } from "lucide-react";
 import { useSensors } from "./SensorContext";
 import CardOptSensor from "./CardOptSensor";
+import CardOptGeneric from "./CardOptGeneric";
 
 interface User {
   id: string;
@@ -67,7 +68,7 @@ interface OptProps {
   clickedPosition: { i: number; j: number } | null;
   selectedUser: User | null;
   selectedOpt: string;
-  isClicked: boolean
+  isClicked: boolean;
 }
 
 export default function OptComponent({
@@ -76,7 +77,7 @@ export default function OptComponent({
   clickedPosition,
   selectedUser,
   selectedOpt,
-  isClicked
+  isClicked,
 }: OptProps) {
   const { isAdmin } = useContext(AccountContext);
   const handleClick = () => {
@@ -89,9 +90,21 @@ export default function OptComponent({
     console.log(selectedOpt);
     switch (selectedOpt) {
       case "floor":
-        break;
+        return (
+          <CardOptGeneric
+            selectedUser={selectedUser}
+            selectedOpt={selectedOpt}
+            clickedPosition={clickedPosition}
+          />
+        );
       case "maps":
-        break;
+        return (
+          <CardOptGeneric
+            selectedUser={selectedUser}
+            selectedOpt={selectedOpt}
+            clickedPosition={clickedPosition}
+          />
+        );
       case "sensor":
         return (
           <CardOptSensor
@@ -101,10 +114,27 @@ export default function OptComponent({
           />
         );
       case "radio":
+        return (
+          <>
+            <DialogTitle>RADIO COMING SOON</DialogTitle>
+          </>
+        );
         break;
       case "video":
-        break;
+        return (
+          <CardOptGeneric
+            selectedUser={selectedUser}
+            selectedOpt={selectedOpt}
+            clickedPosition={clickedPosition}
+          />
+        );
       case "chat":
+        return (
+          <>
+            <DialogTitle>CHAT COMING SOON</DialogTitle>
+          </>
+        );
+
         break;
       default:
         return (
@@ -176,132 +206,39 @@ export default function OptComponent({
         </div>
       );
     } else {
-      // Componentes genéricos para outros tipos
       return (
-        <div className={`${commonClasses} flex flex-col`}>
-          <div className="flex items-center gap-1">
-            <p className="text-sm font-medium leading-none">
-              {button.button_name}
-            </p>
-          </div>
-          {/* <div>
-              <p>{button.button_prt}</p>
-            </div> */}
+        <div>
+          <Dialog>
+            <DialogTrigger asChild>
+              <div
+                className={`${commonClasses} flex flex-col cursor-pointer ${
+                  isClicked ? "bg-zinc-950" : ""
+                }`}
+                onClick={handleClick}
+              >
+                <div className="flex items-center gap-1 cursor-pointer">
+                  <p className="text-sm font-medium leading-none">
+                    {button.button_name}
+                  </p>
+                </div>
+              </div>
+            </DialogTrigger>
+            {isAdmin && (
+              <DialogContent>
+                <CardOptGeneric
+                  selectedUser={selectedUser}
+                  selectedOpt={selectedOpt}
+                  clickedPosition={clickedPosition}
+                  existingButton={button}
+                  isUpdate={true}
+                />
+              </DialogContent>
+            )}
+          </Dialog>
         </div>
       );
     }
   };
 
   return renderButtonContent();
-
-  // const handleNameOpt = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   setNameOpt(event.target.value);
-  // };
-  // const handleParamOpt = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   setParamOpt(event.target.value);
-  // };
-
-  // const handleNameSensor = (value: string) => {
-  //   setNameSensor(value)
-  // }
-
-  // const handleCreateOpt = () => {
-  //   if (nameOpt && paramOpt || nameSensor) {
-  //     setIsCreating(true);
-  //     wss?.sendMessage({
-  //       api: "admin",
-  //       mt: "InsertButton",
-  //       name: nameOpt,
-  //       value: paramOpt,
-  //       guid: selectedUser?.guid,
-  //       type: selectedOpt,
-  //       page: "0",
-  //       x: clickedPosition?.j,
-  //       y: clickedPosition?.i,
-  //     });
-  //     setIsCreating(false);
-  //   } else {
-  //     toast({
-  //       variant: "destructive",
-  //       description:
-  //         "Por favor, preencha todos os campos antes de criar o botão.",
-  //     });
-  //   }
-  // };
-  // switch (button.button_type) {
-  //   case "floor":
-  //   case "maps":
-  //   case "sensor":
-  //     return (
-  //       <div>
-  //         <Dialog>
-  //           <DialogTrigger asChild>
-  //             <div
-  //               className={`${commonClasses} flex flex-col cursor-pointer`}
-  //               onClick={handleClick}
-  //             >
-  //               <div className="flex items-center gap-1 cursor-pointer">
-  //                 <p className="text-sm font-medium leading-none">
-  //                   {button.button_name}
-  //                 </p>
-  //               </div>
-  //               {/* <div>
-  //                 <p>{button.button_prt}</p>
-  //               </div> */}
-  //             </div>
-  //           </DialogTrigger>
-  //           {isAdmin && (
-  //             <DialogContent>
-  //               <CardOptSensor
-  //                 selectedUser={selectedUser}
-  //                 selectedOpt={selectedOpt}
-  //                 clickedPosition={clickedPosition}
-  //                 existingButton={button}
-  //                 isUpdate={true}
-  //               />
-  //             </DialogContent>
-  //           )}
-  //         </Dialog>
-  //       </div>
-  //     );
-  //   case "radio":
-  //   case "video":
-  //   case "chat":
-  //     // no de usuario vamos adicionar alguns listeners para abrir a planta baixa , mapa , grafico de sensores etc
-  //     // usar a flag IsAdmin
-  //     return (
-  //       <div className={`${commonClasses} flex flex-col`}>
-  //         <div className="flex items-center gap-1">
-  //           <p className="text-sm font-medium leading-none">
-  //             {button.button_name}
-  //           </p>
-  //         </div>
-  //         {/* <div>
-  //           <p>{button.button_prt}</p>
-  //         </div> */}
-  //       </div>
-  //     );
-  //   default:
-  //     if (isAdmin) {
-  //       return (
-  //         <Dialog>
-  //           <DialogTrigger>
-  //             <div
-  //               className={`${commonClasses} flex items-center justify-center`}
-  //               onClick={handleClick}
-  //             >
-  //               <Plus />
-  //             </div>
-  //           </DialogTrigger>
-  //           {<DialogContent>{getDialogContent()}</DialogContent>}
-  //         </Dialog>
-  //       );
-  //     } else {
-  //       return (
-  //         <div
-  //           className={`${commonClasses} flex items-center justify-center`}
-  //         ></div>
-  //       );
-  //     }
-  // }
 }
