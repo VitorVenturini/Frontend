@@ -85,9 +85,11 @@ export default function CardOptGeneric({
       wss?.sendMessage({
         api: "admin",
         mt: isUpdate ? "UpdateButton" : "InsertButton",
+        ...(isUpdate && { id: existingButton?.id }),
         name: nameOpt,
         value: valueOpt,
         guid: selectedUser?.guid,
+        img: null,
         type: selectedOpt,
         page: "0",
         x: clickedPosition?.j,
@@ -165,12 +167,12 @@ export default function CardOptGeneric({
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-end" htmlFor="buttonName">
-            {labelButton}
+              {labelButton}
             </Label>
             <Input
               className="col-span-3"
               id="buttonName"
-              placeholder= {labelButton}
+              placeholder={labelButton}
               value={valueOpt}
               onChange={handleValueOpt}
               required

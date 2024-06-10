@@ -19,6 +19,7 @@ import LeftGrid from "@/components/LeftGrid";
 import RightGrid from "@/components/RightGrid";
 import { Ghost } from "lucide-react";
 import { SensorInterface, useSensors } from "@/components/SensorContext";
+import { useWebSocketData } from "@/components/WebSocketProvider";
 
 interface User {
   id: string;
@@ -33,10 +34,11 @@ function UserLayout() {
   // const webSocket = useWebSocket(account.accessToken)
   // console.log("MENSAGEM DO WEBSOCKET" + webSocket.data)
   const { setButtons, buttons } = useButtons();
-  const { setSensors } = useSensors();
+  const { setSensors, updateSensor, clearSensors } = useSensors();
   const [selectedOpt, setSelectedOpt] = useState<string>("floor");
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState("");
+  const wss = useWebSocketData();
 
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
@@ -44,14 +46,21 @@ function UserLayout() {
       case "SelectButtonsSuccess":
         const buttons: ButtonInterface[] = JSON.parse(message.result);
         setButtons(buttons);
+        //clearSensors();
+        // setSensors([])
         break;
       case "SelectSensorHistoryResult":
         const sensors: SensorInterface[] = JSON.parse(message.result);
-        setSensors(sensors);
+        sensors.forEach((sensor) => updateSensor(sensor)); // Atualizar sensores individualmente
         break;
       case "SelectSensorInfoResultSrc":
-        console.log("SelectSensorInfoResultSrc + \n Result" + message.result + "Src" + message.src)
-        break
+        console.log("SelectSensorInfoResultSrc + \n Result" + message.result + " Nome do Sensor " + message.sensor_name);
+        // const sensorData = JSON.parse(message.result);
+        // updateSensor({
+        //   sensor_name: message.sensor_name,
+        //   ...sensorData
+        // });
+        break;
       default:
         console.log("Unknown message type:", message);
         break;
@@ -72,7 +81,6 @@ function UserLayout() {
       token={account.accessToken}
       onMessage={handleWebSocketMessage}
     >
- 
       <div className="flex gap-1 p-1">
         <LeftGrid buttons={buttons} selectedUser={account} />
         <div>
@@ -83,7 +91,7 @@ function UserLayout() {
           />
         </div>
         <RightGrid
-        onKeyChange={handleOptChange}
+          onKeyChange={handleOptChange}
           buttons={buttons}
           selectedUser={account}
           selectedOpt={selectedOpt}

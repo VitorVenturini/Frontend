@@ -27,7 +27,8 @@ export interface ButtonInterface {
 interface ButtonContextType {
     buttons: ButtonInterface[];
     setButtons: React.Dispatch<React.SetStateAction<ButtonInterface[]>>;
-    updateButton: (button: ButtonInterface) => void;
+    addButton: (button: ButtonInterface) => void;
+    updateButton: (button: ButtonInterface) => void; 
     clearButtons: () => void; 
   }
   
@@ -36,8 +37,16 @@ interface ButtonContextType {
   export const ButtonProvider = ({ children }: { children: ReactNode }) => {
     const [buttons, setButtons] = useState<ButtonInterface[]>([]);
 
-    const updateButton = (button: ButtonInterface) => {
+    const addButton = (button: ButtonInterface) => {
       setButtons(prevButtons => [...prevButtons, button]);
+    };
+
+    const updateButton = (updatedButton: ButtonInterface) => {
+      setButtons(prevButtons =>
+        prevButtons.map(button =>
+          button.id === updatedButton.id ? { ...button, ...updatedButton } : button
+        )
+      );
     };
 
     const clearButtons = () => {
@@ -45,7 +54,7 @@ interface ButtonContextType {
   };
 
     return (
-      <ButtonContext.Provider value={{ buttons, setButtons, updateButton, clearButtons }}>
+      <ButtonContext.Provider value={{ buttons, setButtons, addButton, clearButtons, updateButton }}>
         {children}
       </ButtonContext.Provider>
     );

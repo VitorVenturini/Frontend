@@ -112,6 +112,7 @@ export default function ModalSensor({
         const message = {
           api: "admin",
           mt: isUpdate ? "UpdateSensorMessage" : "InsertSensorMessage",
+          ...(isUpdate && { id: existingButton?.id }),
           name: nameButton,
           value: nameSensor,
           guid: selectedUser?.guid,

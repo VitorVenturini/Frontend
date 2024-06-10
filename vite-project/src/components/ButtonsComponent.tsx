@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import {
   Plus,
   OctagonAlert,
@@ -61,20 +61,6 @@ interface ButtonProps {
   selectedPage: string;
 }
 
-// ws.current?.send(JSON.stringify({
-//   api: account.isAdmin ? "admin" : "user",
-//    mt: "InsertMessage",
-//    name: "Botão Teste page",
-//    user: String(""),
-//    value : "1005",
-//    guid : "487675116219135218",
-//    type : "number",
-//    page: "2",
-//    x: "2",
-//    y: "2"
-
-//   }));
-
 export default function ButtonsComponent({
   button,
   onClickPosition,
@@ -86,8 +72,23 @@ export default function ButtonsComponent({
   const language = useLanguage();
   const { sensors } = useSensors();
   const wss = useWebSocketData();
-
+  const [hasSentMessage, setHasSentMessage] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
+
+  console.log("HasSentMessage" + hasSentMessage);
+  if (!isAdmin) {
+    useEffect(() => {
+      if (button.button_type === "sensor" && !hasSentMessage) {
+        wss?.sendMessage({
+          api: "user",
+          mt: "SelectSensorInfoSrc",
+          sensor: button.button_prt,
+          type: button.sensor_type,
+        });
+        setHasSentMessage(true); // Atualiza o estado para evitar envios subsequentes
+      }
+    }, [button]);
+  }
 
   const handleClick = () => {
     if (isAdmin) {
@@ -160,164 +161,170 @@ export default function ButtonsComponent({
   const commonClasses =
     "w-[128px] h-[55px] rounded-lg border bg-border text-white shadow-sm p-1";
 
-  switch (button.button_type) {
-    case "alarm":
-      return (
-        <div>
-          <Dialog>
-            <DialogTrigger asChild>
-              <div
-                className={`${commonClasses} flex flex-col cursor-pointer bg-buttonNumber`}
-                onClick={handleClick}
-              >
-                <div className="flex items-center gap-1 cursor-pointer">
-                  <OctagonAlert />
-                  <p className="text-sm font-medium leading-none">
-                    {button.button_name}
-                  </p>
-                </div>
-                <div>
-                  <p>{button.button_prt}</p>
-                </div>
-              </div>
-            </DialogTrigger>
-            {isAdmin && (
-              <DialogContent>
-                {/* <CardSensorModal
-              selectedPage={selectedPage}
-              selectedUser={selectedUser}
-              clickedPosition={clickedPosition}
-              existingButton={button}
-              isUpdate={true}
-            /> */}
-              </DialogContent>
-            )}
-          </Dialog>
-        </div>
-      );
-    case "user":
-      return (
-        <div
-          className={`${commonClasses} flex flex-col bg-buttonNumber`}
-          onClick={handleClick}
-        >
-          <div className="flex items-center gap-1">
-            <User />
-            <p className="text-sm font-medium leading-none">
-              {button.button_name}{" "}
-            </p>
-          </div>
-          <div>
-            <p>{button.button_prt}</p>
-          </div>
-        </div>
-      );
-    case "number":
-      return (
-        <div
-          className={`${commonClasses} flex flex-col bg-buttonNumber`}
-          onClick={handleClick}
-        >
-          <div className="flex items-center bg gap-1 bg">
-            <Phone />
-            <p className="text-xs font-medium leading-none">
-              {button.button_name}{" "}
-            </p>
-          </div>
-          <div>
-            <p className="align-middle text-center">{button.button_prt}</p>
-          </div>
-        </div>
-      );
-    case "combo":
-      return (
-        <div className={`${commonClasses} flex`} onClick={handleClick}>
-          <div className="flex items-center gap-1">
-            <Layers3 />
-            <p className="text-sm font-medium leading-none">Nome </p>
-          </div>
-        </div>
-      );
-      case "sensor":
-        return (
-          <div>
-            <Dialog>
-              <DialogTrigger asChild>
-                <div
-                  className={`${commonClasses} flex flex-col cursor-pointer active:bg-red-900 bg-buttonSensor`}
-                  onClick={handleClick}
-                >
-                  <div className="flex items-center gap-1 cursor-pointer">
-                    <Rss size={20} />
-                    <div>
-                      <p className="text-md font-medium leading-none">
+    const renderButtonContent = () =>{
+      switch (button.button_type) {
+        case "alarm":
+          return (
+            <div>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <div
+                    className={`${commonClasses} flex flex-col cursor-pointer bg-buttonNumber`}
+                    onClick={handleClick}
+                  >
+                    <div className="flex items-center gap-1 cursor-pointer">
+                      <OctagonAlert />
+                      <p className="text-sm font-medium leading-none">
                         {button.button_name}
                       </p>
-                      <p className="text-[10px] font-medium leading-none text-muted-foreground">
-                        {button.button_prt}
-                      </p>
+                    </div>
+                    <div>
+                      <p>{button.button_prt}</p>
                     </div>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <p className="text-xs">{button.sensor_type}</p>
-                    <div className="flex gap-1 items-center">
-                      {sensors
-                        .filter(
-                          (sensor) => sensor.sensor_name === button.button_prt
-                        )
-                        .slice(0, 1) // Pega apenas o primeiro sensor filtrado
-                        .map((sensor, index) => (
-                          <div key={index} className="flex items-center gap-1">
-                            <p className="text-xs">
-                              {button.sensor_type &&
-                                sensor[`${button.sensor_type}`]}
-                            </p>
-                            <CircleArrowUp size={20} color="red" />
-                          </div>
-                        ))}
+                </DialogTrigger>
+                {isAdmin && (
+                  <DialogContent>
+                    {/* <CardSensorModal
+                  selectedPage={selectedPage}
+                  selectedUser={selectedUser}
+                  clickedPosition={clickedPosition}
+                  existingButton={button}
+                  isUpdate={true}
+                /> */}
+                  </DialogContent>
+                )}
+              </Dialog>
+            </div>
+          );
+        case "user":
+          return (
+            <div
+              className={`${commonClasses} flex flex-col bg-buttonNumber`}
+              onClick={handleClick}
+            >
+              <div className="flex items-center gap-1">
+                <User />
+                <p className="text-sm font-medium leading-none">
+                  {button.button_name}{" "}
+                </p>
+              </div>
+              <div>
+                <p>{button.button_prt}</p>
+              </div>
+            </div>
+          );
+        case "number":
+          return (
+            <div
+              className={`${commonClasses} flex flex-col bg-buttonNumber`}
+              onClick={handleClick}
+            >
+              <div className="flex items-center bg gap-1 bg">
+                <Phone />
+                <p className="text-xs font-medium leading-none">
+                  {button.button_name}{" "}
+                </p>
+              </div>
+              <div>
+                <p className="align-middle text-center">{button.button_prt}</p>
+              </div>
+            </div>
+          );
+        case "combo":
+          return (
+            <div className={`${commonClasses} flex`} onClick={handleClick}>
+              <div className="flex items-center gap-1">
+                <Layers3 />
+                <p className="text-sm font-medium leading-none">Nome </p>
+              </div>
+            </div>
+          );
+        case "sensor":
+          return (
+            <div>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <div
+                    className={`${commonClasses} flex flex-col cursor-pointer active:bg-red-900 bg-buttonSensor`}
+                    onClick={handleClick}
+                  >
+                    <div className="flex items-center gap-1 cursor-pointer">
+                      <Rss size={20} />
+                      <div>
+                        <p className="text-md font-medium leading-none">
+                          {button.button_name}
+                        </p>
+                        <p className="text-[10px] font-medium leading-none text-muted-foreground">
+                          {button.button_prt}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <p className="text-xs">{button.sensor_type}</p>
+                      <div className="flex gap-1 items-center">
+                        {sensors
+                          .filter(
+                            (sensor) => sensor.sensor_name === button.button_prt
+                          )
+                          .slice(0, 1) // Pega apenas o primeiro sensor filtrado
+                          .map((sensor, index) => (
+                            <div key={index} className="flex items-center gap-1">
+                              <p className="text-xs">
+                                {button.sensor_type &&
+                                  sensor[`${button.sensor_type}`]}
+                              </p>
+                              <CircleArrowUp size={20} color="red" />
+                            </div>
+                          ))}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </DialogTrigger>
-  
-              {isAdmin && (
-                <DialogContent>
-                  <ModalSensor
-                    selectedPage={selectedPage}
-                    selectedUser={selectedUser}
-                    clickedPosition={clickedPosition}
-                    existingButton={button}
-                    isUpdate={true}
-                  />
-                </DialogContent>
-              )}
-            </Dialog>
-          </div>
-        );
-    default:
-      if (isAdmin) {
-        return (
-          // <div>
-          // {getDialogContent()}
-          // </div>
-          <Dialog>
-            <DialogTrigger>
+                </DialogTrigger>
+    
+                {isAdmin && (
+                  <div>
+                    <DialogContent>
+                      <ModalSensor
+                        selectedPage={selectedPage}
+                        selectedUser={selectedUser}
+                        clickedPosition={clickedPosition}
+                        existingButton={button}
+                        isUpdate={true}
+                      />
+                    </DialogContent>
+                  </div>
+                )}
+              </Dialog>
+            </div>
+          );
+        default:
+          if (isAdmin) {
+            return (
+              // <div>
+              // {getDialogContent()}
+              // </div>
+              <Dialog>
+                <DialogTrigger>
+                  <div
+                    className={`${commonClasses} flex items-center justify-center`}
+                    onClick={handleClick}
+                  >
+                    <Plus />
+                  </div>
+                </DialogTrigger>
+                {<DialogContent>{getDialogContent()}</DialogContent>}
+              </Dialog>
+            );
+          } else {
+            return (
               <div
                 className={`${commonClasses} flex items-center justify-center`}
-                onClick={handleClick}
-              >
-                <Plus />
-              </div>
-            </DialogTrigger>
-            {<DialogContent>{getDialogContent()}</DialogContent>}
-          </Dialog>
-        );
-      } else {
-        return (
-          <div
-            className={`${commonClasses} flex items-center justify-center`}
-          ></div>
-        );
+              ></div>
+            );
+          }
       }
-  }
+    }
+    
+    return renderButtonContent()
 }
