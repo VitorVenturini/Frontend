@@ -34,7 +34,7 @@ function UserLayout() {
   // const webSocket = useWebSocket(account.accessToken)
   // console.log("MENSAGEM DO WEBSOCKET" + webSocket.data)
   const { setButtons, buttons } = useButtons();
-  const { setSensors, updateSensor, clearSensors } = useSensors();
+  const { setSensors, updateSensor, clearSensors, addSensors } = useSensors();
   const [selectedOpt, setSelectedOpt] = useState<string>("floor");
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState("");
@@ -46,20 +46,18 @@ function UserLayout() {
       case "SelectButtonsSuccess":
         const buttons: ButtonInterface[] = JSON.parse(message.result);
         setButtons(buttons);
-        //clearSensors();
-        // setSensors([])
+        setSensors([])
         break;
       case "SelectSensorHistoryResult":
         const sensors: SensorInterface[] = JSON.parse(message.result);
-        sensors.forEach((sensor) => updateSensor(sensor)); // Atualizar sensores individualmente
+        sensors.forEach((sensor) => updateSensor(sensor)); 
         break;
       case "SelectSensorInfoResultSrc":
-        console.log("SelectSensorInfoResultSrc + \n Result" + message.result + " Nome do Sensor " + message.sensor_name);
-        // const sensorData = JSON.parse(message.result);
-        // updateSensor({
-        //   sensor_name: message.sensor_name,
-        //   ...sensorData
-        // });
+        const sensorData = JSON.parse(message.result);
+        updateSensor({
+          sensor_name: message.sensor_name,
+          ...sensorData
+        });
         break;
       default:
         console.log("Unknown message type:", message);

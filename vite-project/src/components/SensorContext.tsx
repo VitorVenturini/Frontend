@@ -19,12 +19,17 @@ interface SensorContextType {
     setSensors: React.Dispatch<React.SetStateAction<SensorInterface[]>>;
     updateSensor: (sensor: SensorInterface) => void;
     clearSensors: () => void;
+    addSensors: (sensor: SensorInterface) => void;
 }
 
 const SensorContext = createContext<SensorContextType | undefined>(undefined);
 
 export const SensorProvider = ({ children }: { children: ReactNode }) => {
     const [sensors, setSensors] = useState<SensorInterface[]>([]);
+
+    const addSensors = (button: SensorInterface) => {
+        setSensors(prevButtons => [...prevButtons, button]);
+      };
 
     const updateSensor = (sensor: SensorInterface) => {
         setSensors(prevSensors => {
@@ -46,7 +51,7 @@ export const SensorProvider = ({ children }: { children: ReactNode }) => {
     };
 
     return (
-        <SensorContext.Provider value={{ sensors, setSensors, updateSensor, clearSensors }}>
+        <SensorContext.Provider value={{ sensors, setSensors, updateSensor, clearSensors, addSensors }}>
             {children}
         </SensorContext.Provider>
     );
