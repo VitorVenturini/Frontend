@@ -45,6 +45,7 @@ import {
 import { useLanguage } from "./LanguageContext";
 import ModalCombo from "./ModalCombo";
 import { useWebSocketData } from "./WebSocketProvider";
+import SensorResponsiveInfo from "./SensorResponsiveInfo";
 
 interface User {
   id: string;
@@ -256,25 +257,7 @@ export default function ButtonsComponent({
                       </p>
                     </div>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <p className="text-xs">{button.sensor_type}</p>
-                    <div className="flex gap-1 items-center">
-                      {sensors
-                        .filter(
-                          (sensor) => sensor.sensor_name === button.button_prt
-                        )
-                        .slice(0, 1) // Pega apenas o primeiro sensor filtrado
-                        .map((sensor, index) => (
-                          <div key={index} className="flex items-center gap-1">
-                            <p className="text-xs">
-                              {button.sensor_type &&
-                                sensor[`${button.sensor_type}`] }
-                            </p>
-                            <CircleArrowUp size={20} color="red" />
-                          </div>
-                        ))}
-                    </div>
-                  </div>
+                <SensorResponsiveInfo button={button}/>
                 </div>
               </DialogTrigger>
 
