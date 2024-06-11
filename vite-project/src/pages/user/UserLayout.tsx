@@ -48,10 +48,10 @@ function UserLayout() {
         setButtons(buttons);
         setSensors([])
         break;
-      case "SelectSensorHistoryResult":
-        const sensors: SensorInterface[] = JSON.parse(message.result);
-        sensors.forEach((sensor) => updateSensor(sensor)); 
-        break;
+        case "SelectSensorHistoryResult":
+          const sensorsArray: SensorInterface[] = JSON.parse(message.result);
+          addSensors(sensorsArray); // Passa o array inteiro de sensores
+          break;
       case "SelectSensorInfoResultSrc":
         const sensorData = JSON.parse(message.result);
         updateSensor({

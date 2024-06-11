@@ -33,6 +33,7 @@ export default function OptRightBottom({
         const filteredSensorInfo = sensors.filter(
           (sensor) => sensor.sensor_name === clickedButton.button_prt
         );
+        console.log("AllSensors " + JSON.stringify(sensors))
         console.log("FilteredSensor" + JSON.stringify(filteredSensorInfo));
         return (
           <div className="w-full">

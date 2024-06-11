@@ -268,7 +268,7 @@ export default function ButtonsComponent({
                           <div key={index} className="flex items-center gap-1">
                             <p className="text-xs">
                               {button.sensor_type &&
-                                sensor[`${button.sensor_type}`]}
+                                sensor[`${button.sensor_type}`] }
                             </p>
                             <CircleArrowUp size={20} color="red" />
                           </div>
