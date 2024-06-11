@@ -13,6 +13,7 @@ export interface SensorInterface {
   tvoc?: string;
   pressure?: string;
   date?: string;
+  isBoolean: boolean;
 }
 
 interface SensorContextType {
@@ -30,20 +31,15 @@ export const SensorProvider = ({ children }: { children: ReactNode }) => {
 
   const addSensors = (newSensors: SensorInterface[]) => {
     setSensors((prevSensors) => {
-      const updatedSensors = [...prevSensors];
+      // Criar um mapa de sensores existentes para facilitar a atualização
+      const sensorMap = new Map(prevSensors.map(sensor => [sensor.sensor_name, sensor]));
+
       newSensors.forEach((sensor) => {
-        const sensorIndex = updatedSensors.findIndex(
-          (s) => s.sensor_name === sensor.sensor_name
-        );
-        if (sensorIndex !== -1) {
-          // Substituir o sensor existente
-          updatedSensors[sensorIndex] = sensor;
-        } else {
-          // Adicionar novo sensor
-          updatedSensors.push(sensor);
-        }
+        sensorMap.set(sensor.sensor_name, sensor); // Atualiza ou adiciona o sensor
       });
-      return updatedSensors;
+
+      // Retorna um novo array a partir do mapa
+      return Array.from(sensorMap.values());
     });
   };
 
@@ -53,7 +49,6 @@ export const SensorProvider = ({ children }: { children: ReactNode }) => {
         (s) => s.sensor_name === sensor.sensor_name
       );
       if (sensorIndex !== -1) {
-        // Atualizar o sensor existente
         const updatedSensors = [...prevSensors];
         updatedSensors[sensorIndex] = {
           ...updatedSensors[sensorIndex],
@@ -61,7 +56,6 @@ export const SensorProvider = ({ children }: { children: ReactNode }) => {
         };
         return updatedSensors;
       } else {
-        // Adicionar novo sensor
         return [...prevSensors, sensor];
       }
     });

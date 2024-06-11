@@ -52,13 +52,13 @@ function UserLayout() {
           const sensorsArray: SensorInterface[] = JSON.parse(message.result);
           addSensors(sensorsArray); // Passa o array inteiro de sensores
           break;
-      case "SelectSensorInfoResultSrc":
-        const sensorData = JSON.parse(message.result);
-        updateSensor({
-          sensor_name: message.sensor_name,
-          ...sensorData
-        });
-        break;
+        case "SelectSensorInfoResultSrc":
+          const sensorData = JSON.parse(message.result);
+          updateSensor({
+            sensor_name: message.sensor_name,
+            ...sensorData
+          });
+          break;
       default:
         console.log("Unknown message type:", message);
         break;
