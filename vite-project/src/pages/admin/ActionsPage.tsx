@@ -1,95 +1,57 @@
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-  } from "@/components/ui/card";
-  
-  import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue,
-  } from "@/components/ui/select";
-  import { Label } from "@/components/ui/label";
-  import { Input } from "@/components/ui/input";
-  import { Button } from "@/components/ui/button";
-  import { Loader2 } from "lucide-react";
-  import { Ghost } from "lucide-react";
-  import { ChangeEvent, useState, useEffect } from "react";
-  import { useToast } from "@/components/ui/use-toast";
-  import TableActions from "@/components/TableActions";
-  import useWebSocket from "@/components/useWebSocket";
-import { useAccount } from "@/components/AccountContext";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { useEffect, useState } from "react";
+import { DataTable } from "@/Reports/data-table";
+import { ColumnsActions } from "@/Reports/ColumnsActions";
+import { WebSocketProvider } from "@/components/WebSocketProvider";
 
- interface User {
-    id: string;
-    name: string;
-  }
+interface Action {
+  id: string;
+  name: string;
+  start_type: string;
+  prt: string;
+  alarm_code: string;
+  user: string;
+  device: string;
+}
+interface WebSocketMessage {
+  api : string
+  mt: string; // Message type
+  [key: string]: any; // Additional dynamic properties
+}
 
-export default function ActionsPage(){
-    const [users, setUsers] = useState<User[]>([]);
-    const [selectedUser, setSelectedUser] = useState<User | null>(null);
-    const account = useAccount()
-    
-    useEffect(() => {
-        const fetchUsers = async () => {
-          try {
-            const response = await fetch(
-              "https://meet.wecom.com.br/api/listUsers",
-              {
-                method: "GET",
-                headers: {
-                  "Content-Type": "application/json",
-                  "x-auth": localStorage.getItem("token") || "",
-                },
-              }
-            );
-            const data = await response.json();
-            setUsers(data);
-          } catch (error) {
-            console.error(error);
-          }
-        };
-    
-        fetchUsers();
-      },[]);
-    
-      const handleUserSelect = (value: string) => {
-        const user = users.find((user) => user.id === value);
-        setSelectedUser(user || null);
-      };
+export default function ActionsPage() {
+  const [actions, setActions] = useState<Action[]>([]);
+  const columnsactions = ColumnsActions; // Certifique-se de que ColumnsActions esteja correto
 
-      // implementar lógica do backend para consultar ações do usuário
+  const listActions = async () => {
+    try {
+      const response = await fetch("https://meet.wecom.com.br/api/listUsers", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "x-auth": localStorage.getItem("token") || "",
+        },
+      });
+      if (response.ok) {
+        const data: Action[] = await response.json();
+        setActions(data); // Atualiza o estado com os dados recebidos
+      } else {
+        console.error('Erro na resposta:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Erro ao buscar dados:', error);
+    }
+  };
+
+  useEffect(() => {
+    listActions();
+  }, []);
+
   return (
-   <div className="bg-card">
-     <div className="flex items-center justify-center gap-6">
-          <h2>Ações</h2>
-          <Select onValueChange={handleUserSelect}>
-            <SelectTrigger className="w-[500px]">
-              <SelectValue placeholder="Selecione seu usuário" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Selecione seu usuário</SelectLabel>
-                {users.map((user) => (
-                    <SelectItem key={user.id} value={user.id}>
-                        {user.name}
-                    </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-          <Button>Criar Ação</Button>
-        </div>
-        <div>
-        <TableActions selectedUser={selectedUser}></TableActions>
-        </div>
-   </div>
+    <div className="px-2 flex flex-col gap-4 justify-center mx-[250px]">
+      <ScrollArea className="h-[500px]">
+        <DataTable columns={columnsactions} data={actions} />
+      </ScrollArea>
+    </div>
   );
 }

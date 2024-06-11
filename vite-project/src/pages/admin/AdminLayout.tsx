@@ -49,9 +49,15 @@ function AdminLayout() {
         });
         break;
       case "SelectSensorNameResult":
-        const firstSensors: SensorInterface[] = JSON.parse(message.result)
+        const firstSensors: SensorInterface[] = JSON.parse(message.result);
         setSensors(firstSensors);
         console.log(message.result);
+        break;
+      case "InsertActionMessage":
+        console.log(JSON.stringify(message.result));
+        break;
+      case "SelectActionMessageSuccess":
+        console.log(JSON.stringify(message.result));
         break;
       default:
         console.log("Unknown message type:", message);

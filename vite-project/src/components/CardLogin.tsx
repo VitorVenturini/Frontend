@@ -24,7 +24,6 @@ import { useLanguage } from "./LanguageContext";
 import { Loader2 } from "lucide-react";
 //import { useWebSocketData } from './WebSocketProvider';// Importe o useWebSocketData
 
-
 import {
   Dialog,
   DialogContent,
@@ -51,7 +50,6 @@ export default function CardLogin() {
   const account = useAccount();
   const { language } = useLanguage();
   //const ws = useWebSocketData();
-
 
   const handleEmailChange = (event: ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
@@ -92,44 +90,64 @@ export default function CardLogin() {
         const data = await response.json();
         localStorage.setItem("token", data.accessToken);
         console.log("Token de acesso para o local storage:", data.accessToken);
+        const accountData = { ...data };
+        updateAccount(accountData);
 
-        const accountData = {...data,};
-        updateAccount(accountData)
+        toast({ description: "Login efetuado com sucesso." });
+
+        localStorage.setItem("isLogged", "true");
+        updateAccount({ isLogged: true });
+        console.log({ ...account, updateAccount: undefined });
+
+        console.log(
+          "isLogged setado para true" + localStorage.getItem("isLogged")
+        );
+
+        console.log("Login efetuado com sucesso");
+
+        console.log(
+          `isLogged: ${localStorage.getItem(
+            "isLogged"
+          )},guid: ${localStorage.getItem(
+            "guid"
+          )}, token: ${localStorage.getItem("token")}  `
+        );
+        setIsLoading(false);
 
         // Sempre navega para a tela de usuário após o login bem-sucedido
         navigate("/user");
       } else {
-        console.error(
-          "Erro ao enviar dados para o backend:",
-          response.statusText
-        );
-        toast({
-          description: "Erro ao fazer login.",
-        });
+        const data = await response.json();
+        switch (data.error) {
+          case "emailNotFound":
+            console.log("ERRO E-MAIL");
+            toast({ description: "E-mail não localizado" });
+            break;
+          case "invalidPassword":
+            console.error("Erro: Senha inválida.");
+            toast({ description: "Senha inválida" });
+            break;
+          case "rejected":
+            console.error("Erro: Rejeitado.");
+            toast({ description: "Revise suas credenciais" });
+            break;
+          default:
+            console.error(
+              "Erro ao enviar dados para o backend:",
+              response.json(),
+              response.statusText
+            );
+            toast({
+              description: "Erro ao fazer login.",
+            });
+            break;
+        }
+        setIsLoading(false);
       }
     } catch (error) {
       console.error("Erro:", error);
     }
-
-    localStorage.setItem("isLogged", "true");
-    updateAccount({ isLogged: true });
-    console.log({ ...account, updateAccount: undefined });
-
-    console.log("isLogged setado para true" + localStorage.getItem("isLogged"));
-
-    console.log("Login efetuado com sucesso");
-
-    toast({ description: "Login efetuado com sucesso." });
-
-    console.log(
-      `isLogged: ${localStorage.getItem(
-        "isLogged"
-      )},guid: ${localStorage.getItem("guid")}, token: ${localStorage.getItem(
-        "token"
-      )}  `
-    );
-    setIsLoading(false);
-};
+  };
   const handleFormSubmit = (event: React.FormEvent) => {
     event.preventDefault(); // Previne o comportamento padrão do formulário
     console.log("Form submitted"); // Debug log
@@ -148,7 +166,9 @@ export default function CardLogin() {
               </div>
             </div>
           </CardTitle>
-          <CardDescription>{texts[language].enterEmail} e {texts[language].enterPassword}</CardDescription>
+          <CardDescription>
+            {texts[language].enterEmail} e {texts[language].enterPassword}
+          </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4 py-9">
           <div className="grid w-full items-center gap-6">

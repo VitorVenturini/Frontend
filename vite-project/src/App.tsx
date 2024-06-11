@@ -15,7 +15,8 @@ import { AccountProvider, AccountContext } from "./components/AccountContext";
 import { WebSocketProvider } from "./components/WebSocketProvider";
 import { ButtonProvider } from "./components/ButtonsContext";
 import { SensorProvider } from "./components/SensorContext";
-import  LanguageProvider  from "./components/LanguageContext";
+import { ActionProvider } from "./components/ActionsContext";
+import LanguageProvider from "./components/LanguageContext";
 
 function App() {
   const account = useContext(AccountContext);
@@ -27,22 +28,24 @@ function App() {
   return (
     <ThemeProvider>
       <LanguageProvider>
-        <AccountProvider>
-          <ButtonProvider>
-             <SensorProvider>
-            <Routes>
-              <Route
-                path="/"
-                element={account.isLogged ? <UserLayout /> : <LoginPage />}
-              />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/admin/*" element={<AdminLayout />} />
-              <Route path="/user/*" element={<UserLayout />} />
-            </Routes>
-            <Toaster />
-               </SensorProvider>
-          </ButtonProvider>
-        </AccountProvider>
+        <ActionProvider>
+          <AccountProvider>
+            <ButtonProvider>
+              <SensorProvider>
+                <Routes>
+                  <Route
+                    path="/"
+                    element={account.isLogged ? <UserLayout /> : <LoginPage />}
+                  />
+                  <Route path="/login" element={<LoginPage />} />
+                  <Route path="/admin/*" element={<AdminLayout />} />
+                  <Route path="/user/*" element={<UserLayout />} />
+                </Routes>
+                <Toaster />
+              </SensorProvider>
+            </ButtonProvider>
+          </AccountProvider>
+        </ActionProvider>
         <Toaster />
       </LanguageProvider>
     </ThemeProvider>
