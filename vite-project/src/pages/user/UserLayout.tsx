@@ -34,7 +34,13 @@ function UserLayout() {
   // const webSocket = useWebSocket(account.accessToken)
   // console.log("MENSAGEM DO WEBSOCKET" + webSocket.data)
   const { setButtons, buttons } = useButtons();
-  const { setSensors, updateSensor, clearSensors, addSensors } = useSensors();
+  const {
+    setSensors,
+    updateSensor,
+    replaceLatestSensor,
+    clearSensorsByName,
+    addSensors,
+  } = useSensors();
   const [selectedOpt, setSelectedOpt] = useState<string>("floor");
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState("");
@@ -46,17 +52,28 @@ function UserLayout() {
       case "SelectButtonsSuccess":
         const buttons: ButtonInterface[] = JSON.parse(message.result);
         setButtons(buttons);
-        setSensors([])
+        setSensors([]);
         break;
-        case "SelectSensorHistoryResult":
-          const sensorsArray: SensorInterface[] = JSON.parse(message.result);
-          addSensors(sensorsArray); // Passa o array inteiro de sensores
-          break;
-        case "SelectSensorInfoResultSrc":
-          const sensorData = JSON.parse(message.result);
+      case "SelectSensorHistoryResult":
+        const sensorsArray: SensorInterface[] = JSON.parse(message.result);
+        if (sensorsArray.length > 0) {
+          const sensorName = sensorsArray[0].sensor_name;
+          clearSensorsByName(sensorName); // Limpa os sensores com base no sensor_name
+          addSensors(sensorsArray);
+        }
+        break;
+      case "SelectSensorInfoResultSrc":
+        const sensorData = JSON.parse(message.result);
+        updateSensor({
+          sensor_name: message.sensor_name,
+          ...sensorData,
+        });
+        break;
+        case "SensorReceived":
+          const sensorDataReceived = JSON.parse(message.value);
           updateSensor({
-            sensor_name: message.sensor_name,
-            ...sensorData
+            sensor_name: sensorDataReceived.sensor_name,
+            ...sensorDataReceived,
           });
           break;
       default:

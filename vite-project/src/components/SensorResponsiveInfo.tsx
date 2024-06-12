@@ -8,6 +8,7 @@ interface ButtonProps {
 
 export default function SensorResponsiveInfo({ button }: ButtonProps) {
   const { sensors } = useSensors();
+  console.log("Novos Sensores" + JSON.stringify((sensors)))
 
   function isBoolean(value: string): boolean {
     return value === 'true' || value === 'false';
@@ -27,6 +28,7 @@ export default function SensorResponsiveInfo({ button }: ButtonProps) {
         return "";
     }
   };
+
 
   return (
     <div>

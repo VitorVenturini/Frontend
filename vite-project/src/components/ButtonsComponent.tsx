@@ -257,7 +257,7 @@ export default function ButtonsComponent({
                       </p>
                     </div>
                   </div>
-                <SensorResponsiveInfo button={button}/>
+                  <SensorResponsiveInfo button={button} />
                 </div>
               </DialogTrigger>
 
