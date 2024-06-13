@@ -12,8 +12,8 @@ export interface ButtonInterface {
     button_type_3?: string | null;
     button_type_4?: string | null;
     button_device?: string;
-    sensor_min_threshold?: string | null;
-    sensor_max_threshold?: string | null;
+    sensor_min_threshold?: string ;
+    sensor_max_threshold?: string ;
     sensor_type?: string | null;
     create_user: string;
     page: string;

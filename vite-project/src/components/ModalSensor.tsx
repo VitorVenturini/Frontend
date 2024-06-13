@@ -107,7 +107,15 @@ export default function ModalSensor({
 
   const handleCreateButton = () => {
     try {
-      if (nameButton && typeMeasure && maxValue && minValue) {
+      if (nameButton && typeMeasure) {
+        if (showMinMaxFields && (!maxValue || !minValue)) {
+          toast({
+            variant: "destructive",
+            description:
+              "Por favor, preencha os valores mínimo e máximo antes de criar o sensor.",
+          });
+          return;
+        }
         setIsCreating(true);
         const message = {
           api: "admin",
@@ -149,6 +157,11 @@ export default function ModalSensor({
       console.error(e);
     }
   };
+
+  // Lista de tipos de medida que não devem exibir campos de valor mínimo e máximo
+  const typesWithoutMinMax = ["leak", "light", "pir"];
+
+  const showMinMaxFields = !typesWithoutMinMax.includes(typeMeasure);
   return (
     <>
       <Card className="border-none bg-transparent">
@@ -218,37 +231,43 @@ export default function ModalSensor({
                 <SelectItem value="temperature">Temperatura</SelectItem>
                 <SelectItem value="light">Iluminação</SelectItem>
                 <SelectItem value="pir">Presença (V/F)</SelectItem>
+                <SelectItem value="pressure">Pressão</SelectItem>
+                <SelectItem value="tvoc">Compostos Orgânicos Voláteis </SelectItem>
               </SelectContent>
             </Select>
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-end" htmlFor="buttonName">
-              Valor Mínimo
-            </Label>
-            <Input
-              className="col-span-3"
-              id="minValue"
-              placeholder="00"
-              type="number"
-              value={minValue}
-              onChange={handleMinValue}
-              required
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-end" htmlFor="buttonName">
-              Valor Máximo
-            </Label>
-            <Input
-              className="col-span-3"
-              id="maxValue"
-              placeholder="00"
-              type="number"
-              value={maxValue}
-              onChange={handleMaxValue}
-              required
-            />
-          </div>
+          {showMinMaxFields && (
+            <>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label className="text-end" htmlFor="buttonName">
+                  Valor Mínimo
+                </Label>
+                <Input
+                  className="col-span-3"
+                  id="minValue"
+                  placeholder="00"
+                  type="number"
+                  value={minValue}
+                  onChange={handleMinValue}
+                  required
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label className="text-end" htmlFor="buttonName">
+                  Valor Máximo
+                </Label>
+                <Input
+                  className="col-span-3"
+                  id="maxValue"
+                  placeholder="00"
+                  type="number"
+                  value={maxValue}
+                  onChange={handleMaxValue}
+                  required
+                />
+              </div>
+            </>
+          )}
         </CardContent>
         <CardFooter className="flex justify-between">
           {isUpdate && (

@@ -3,6 +3,22 @@
 
 @import "tailwindcss/utilities";
 
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.animate-blink {
+  animation: blink 1.3s infinite;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

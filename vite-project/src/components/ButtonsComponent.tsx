@@ -13,6 +13,7 @@ import { AccountContext } from "./AccountContext";
 import { ButtonInterface, useButtons } from "@/components/ButtonsContext";
 import { useState } from "react";
 import { Button } from "./ui/button";
+import SensorButton from "./SensorButton";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -74,7 +75,6 @@ export default function ButtonsComponent({
   const { sensors } = useSensors();
   const wss = useWebSocketData();
   const [isClicked, setIsClicked] = useState(false);
-  const [hasSentMessage, setHasSentMessage] = useState(false);
 
   useEffect(() => {
     if (button.button_type === "sensor") {
@@ -242,25 +242,10 @@ export default function ButtonsComponent({
           <div>
             <Dialog>
               <DialogTrigger asChild>
-                <div
-                  className={`${commonClasses} flex flex-col cursor-pointer active:bg-red-900 bg-buttonSensor`}
-                  onClick={handleClick}
-                >
-                  <div className="flex items-center gap-1 cursor-pointer">
-                    <Rss size={20} />
-                    <div>
-                      <p className="text-md font-medium leading-none">
-                        {button.button_name}
-                      </p>
-                      <p className="text-[10px] font-medium leading-none text-muted-foreground">
-                        {button.button_prt}
-                      </p>
-                    </div>
-                  </div>
-                  <SensorResponsiveInfo button={button} />
+                <div>
+                  <SensorButton button={button} handleClick={handleClick} />
                 </div>
               </DialogTrigger>
-
               {isAdmin && (
                 <div>
                   <DialogContent>

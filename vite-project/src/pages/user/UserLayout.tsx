@@ -69,13 +69,12 @@ function UserLayout() {
           ...sensorData,
         });
         break;
-        case "SensorReceived":
-          const sensorDataReceived = JSON.parse(message.value);
-          updateSensor({
-            sensor_name: sensorDataReceived.sensor_name,
-            ...sensorDataReceived,
-          });
-          break;
+      case "SensorReceived":
+        console.log("SensorReceived");
+        const sensorDataReceived = JSON.parse(message.value);
+        console.log("SensorReceived data:", sensorDataReceived); // Adicione este log para verificar os dados recebidos
+        updateSensor(sensorDataReceived);
+        break;
       default:
         console.log("Unknown message type:", message);
         break;

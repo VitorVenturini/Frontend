@@ -44,26 +44,30 @@ export const SensorProvider = ({ children }: { children: ReactNode }) => {
 
   const updateSensor = (sensor: SensorInterface) => {
     setSensors((prevSensors) => {
-      console.log("UpdateSensorContext")
-      const updatedSensors = [...prevSensors];
-      const sensorIndex = updatedSensors.findIndex((s) => s.sensor_name === sensor.sensor_name);
-
+      console.log("UpdateSensorContext"); // Este log deve aparecer quando a função é chamada
+  
+      // Verifica se o sensor já existe na lista
+      const sensorIndex = prevSensors.findIndex((s) => s.sensor_name === sensor.sensor_name);
+  
       if (sensorIndex !== -1) {
         // Atualizar apenas o último registro do sensor
+        const updatedSensors = [...prevSensors];
         const sensorHistory = updatedSensors.filter((s) => s.sensor_name === sensor.sensor_name);
         if (sensorHistory.length > 0) {
           const lastIndex = updatedSensors.lastIndexOf(sensorHistory[sensorHistory.length - 1]);
           updatedSensors[lastIndex] = { ...updatedSensors[lastIndex], ...sensor };
+          return [updatedSensors[lastIndex], ...updatedSensors.filter((_, idx) => idx !== lastIndex)];
         } else {
-          updatedSensors.push(sensor);
+          return [sensor, ...updatedSensors];
         }
       } else {
-        updatedSensors.push(sensor);
+        // Adicionar o novo sensor no início da lista
+        return [sensor, ...prevSensors];
       }
-
-      return updatedSensors;
     });
   };
+  
+  
 
   const replaceLatestSensor = (sensor: SensorInterface) => {
     setSensors((prevSensors) => {
