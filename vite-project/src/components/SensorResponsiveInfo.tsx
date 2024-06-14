@@ -46,7 +46,8 @@ export default function SensorResponsiveInfo({
             <div className="flex gap-1">
               <div className="flex items-center gap-1">
                 <p>
-                {newValue !== undefined ? formatValue(newValue) : formatValue((sensor as any)[`${button.sensor_type}`])}
+                {/* {newValue !== undefined ? formatValue(newValue) : formatValue((sensor as any)[`${button.sensor_type}`])} */}
+                {newValue !== undefined ? newValue : (sensor as any)[`${button.sensor_type}`]}
                 </p>
                 <p className="text-[8px] text-muted-foreground">
                   {getMetric(button?.sensor_type)}

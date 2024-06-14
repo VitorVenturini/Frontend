@@ -6,17 +6,23 @@ interface ResponsiveIconProps {
   sensorType?: string | null;
 }
 
-export default function ResponsiveIcon({ oldValue, newValue, sensorType }: ResponsiveIconProps) {
-  console.log("OldValueParaComparar" + oldValue)
-  console.log("NewValueParaComparar" + newValue)
-  if (oldValue !== undefined && newValue !== undefined) {
-    if (newValue > oldValue) {
-      return <CircleArrowUp size={20} color="green" />;
-    } else if (newValue < oldValue) {
-      return <CircleArrowDown size={20} color="red" />;
-    }
+export default function ResponsiveIcon({
+  oldValue,
+  newValue,
+  sensorType,
+}: ResponsiveIconProps) {
+  console.log("OldValueParaComparar" + oldValue);
+  console.log("NewValueParaComparar" + newValue);
+  if (oldValue === undefined || newValue === undefined) {
+    return null; // No icon if values are not defined
   }
 
-  // Default case if no changes in value
-  return null;
+  if (oldValue < newValue) {
+    return <CircleArrowUp size={20} color="green" />;
+  } else if (oldValue > newValue) {
+    return <CircleArrowDown size={20} color="red" />;
+  }
+  //else {
+  //     return <Check size={20} color="green" />;
+  //   }
 }
