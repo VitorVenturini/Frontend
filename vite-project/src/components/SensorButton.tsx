@@ -1,8 +1,10 @@
 import { ButtonInterface } from "./ButtonsContext";
 import { Rss } from "lucide-react";
+import { useButtons } from "./ButtonsContext";
 import SensorResponsiveInfo from "./SensorResponsiveInfo";
 import { useSensors } from "./SensorContext";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
+
 interface ButtonProps {
   handleClick: () => void;
   button: ButtonInterface;
@@ -10,28 +12,26 @@ interface ButtonProps {
 
 export default function SensorButton({ handleClick, button }: ButtonProps) {
   const { sensors } = useSensors();
-  const [oldValue, setOldValue] = useState<number | undefined>();
-  const [newValue, setNewValue] = useState<number | undefined>();
+  const { setOldValue, setNewValue, buttons } = useButtons();
 
-  const filteredSensor = sensors.filter(
+  const buttonState = buttons.find((b) => b.id === button.id);
+  
+  const oldValue = buttonState?.oldValue;
+  const newValue = buttonState?.newValue;
+
+  const filteredSensor = sensors.find(
     (sensor) => sensor.sensor_name === button?.button_prt
-  )[0];
+  );
 
   useEffect(() => {
     if (button?.sensor_type && filteredSensor) {
-      const value = parseInt((filteredSensor as any)?.[button.sensor_type], 10);
-      setNewValue((prevNewValue) => {
-        if (prevNewValue !== value) {
-          setOldValue(prevNewValue);
-          return value;
-        }
-        return prevNewValue;
-      });
+      const value = parseInt((filteredSensor as any)[button.sensor_type], 10);
+      if (newValue !== value) {
+        setOldValue(button.sensor_type, button.button_prt, newValue); // Armazena o valor antigo antes de atualizar
+        setNewValue(button.sensor_type, button.button_prt, value); // Atualiza o valor novo
+      }
     }
-  }, [filteredSensor, button?.sensor_type]);
-
-  console.log("Valor Antigo " + oldValue);
-  console.log("Valor Novo " + newValue);
+  }, [filteredSensor, button?.sensor_type, newValue]);
 
   const commonClasses =
     "w-[128px] h-[55px] rounded-lg border bg-border text-white shadow-sm p-1";
@@ -44,13 +44,12 @@ export default function SensorButton({ handleClick, button }: ButtonProps) {
       const minThreshold = button.sensor_min_threshold
         ? parseInt(button.sensor_min_threshold, 10)
         : undefined;
-      //const currentValue = parseInt((filteredSensor as any)?.[button.sensor_type]);
 
       if (
         (maxThreshold !== undefined && newValue && newValue > maxThreshold) ||
         (minThreshold !== undefined && newValue && newValue < minThreshold)
       ) {
-        return `${commonClasses} flex flex-col cursor-pointer active:bg-red-900 bg-red-800`;
+        return `${commonClasses} flex flex-col cursor-pointer active:bg-red-900 bg-red-800 blinking-background`;
       } else if (minThreshold === undefined || maxThreshold === undefined) {
         console.log("Threshold não definido para este botão.");
         return `${commonClasses} flex flex-col cursor-pointer active:bg-red-900 bg-buttonSensor`;
@@ -58,7 +57,6 @@ export default function SensorButton({ handleClick, button }: ButtonProps) {
         return `${commonClasses} flex flex-col cursor-pointer active:bg-red-900 bg-buttonSensor`;
       }
     }
-    // Return default class if no sensor type or filtered sensor
     return commonClasses;
   };
 

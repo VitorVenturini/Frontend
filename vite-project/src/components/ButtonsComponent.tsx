@@ -87,6 +87,8 @@ export default function ButtonsComponent({
     }
   }, [button]);
 
+  
+  
   const handleClick = () => {
     if (isAdmin) {
       onClickPosition();

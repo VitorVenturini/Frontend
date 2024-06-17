@@ -70,9 +70,7 @@ function UserLayout() {
         });
         break;
       case "SensorReceived":
-        console.log("SensorReceived");
-        const sensorDataReceived = JSON.parse(message.value);
-        console.log("SensorReceived data:", sensorDataReceived); // Adicione este log para verificar os dados recebidos
+        const sensorDataReceived = message.value; // Adicione este log para verificar os dados recebidos
         updateSensor(sensorDataReceived);
         break;
       default:
