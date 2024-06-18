@@ -1,93 +1,62 @@
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-  } from "@/components/ui/card";
-  
-  import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue,
-  } from "@/components/ui/select";
-  import { Label } from "@/components/ui/label";
-  import { Input } from "@/components/ui/input";
-  import { Button } from "@/components/ui/button";
-  import { Loader2 } from "lucide-react";
-  import { Ghost } from "lucide-react";
-  import { ChangeEvent, useState, useEffect } from "react";
-  import { useToast } from "@/components/ui/use-toast";
-  import TableActions from "@/components/TableActions";
-  import page  from "@/Reports/page"
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
- interface User {
-    id: string;
-    name: string;
-  }
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
+import { Ghost } from "lucide-react";
+import { ChangeEvent, useState, useEffect } from "react";
+import { useToast } from "@/components/ui/use-toast";
+import TableActions from "@/components/TableActions";
+import page from "@/Reports/page";
+import { useActions } from "@/components/ActionsContext";
 
-export default function Actions(){
-    const [users, setUsers] = useState<User[]>([]);
-    const [selectedUser, setSelectedUser] = useState<User | null>(null);
-    
-    useEffect(() => {
-        const fetchUsers = async () => {
-          try {
-            const response = await fetch(
-              "https://meet.wecom.com.br/api/listUsers",
-              {
-                method: "GET",
-                headers: {
-                  "Content-Type": "application/json",
-                  "x-auth": localStorage.getItem("token") || "",
-                },
-              }
-            );
-            const data = await response.json();
-            setUsers(data);
-          } catch (error) {
-            console.error(error);
-          }
-        };
-    
-        fetchUsers();
-      },[]);
-    
-      const handleUserSelect = (value: string) => {
-        const user = users.find((user) => user.id === value);
-        setSelectedUser(user || null);
-      };
+//  interface User {
+//     id: string;
+//     name: string;
+//   }
+interface Actions {
+  id: string;
+  action_name: string;
+  action_alarm_code: string;
+  action_start_type: string;
+  action_prt: string;
+  action_user: string;
+  action_type: string; // o ? significa que o valor nao precisa ser presente , se for nulo nao tem problema
+  action_device?: string | null;
+  action_sensor_name?: string | null;
+  action_sensor_type?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
 
-      // implementar lógica do backend para consultar ações do usuário
+export default function Actions() {
+  // const [users, setUsers] = useState<User[]>([]);
+  // const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const actions = useActions();
+
+  // implementar lógica do backend para consultar ações do usuário
   return (
-   <div className="bg-card">
-     <div className="flex items-center justify-center gap-6">
-          <h2>Ações</h2>
-          <Select onValueChange={handleUserSelect}>
-            <SelectTrigger className="w-[500px]">
-              <SelectValue placeholder="Selecione seu usuário" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Selecione seu usuário</SelectLabel>
-                {users.map((user) => (
-                    <SelectItem key={user.id} value={user.id}>
-                        {user.name}
-                    </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-          <Button>Criar Ação</Button>
-        </div>
-        <div>
-        <TableActions selectedUser={selectedUser}></TableActions>
-        </div>
-   </div>
+    <div className="bg-card">
+      <div>
+        <TableActions columns={actions} data={actions}></TableActions>
+      </div>
+    </div>
   );
 }

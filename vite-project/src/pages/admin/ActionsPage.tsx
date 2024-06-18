@@ -1,95 +1,22 @@
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-  } from "@/components/ui/card";
-  
-  import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue,
-  } from "@/components/ui/select";
-  import { Label } from "@/components/ui/label";
-  import { Input } from "@/components/ui/input";
-  import { Button } from "@/components/ui/button";
-  import { Loader2 } from "lucide-react";
-  import { Ghost } from "lucide-react";
-  import { ChangeEvent, useState, useEffect } from "react";
-  import { useToast } from "@/components/ui/use-toast";
-  import TableActions from "@/components/TableActions";
-  import useWebSocket from "@/components/useWebSocket";
-import { useAccount } from "@/components/AccountContext";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { useEffect, useState } from "react";
+import { DataTable } from "@/Reports/data-tableActions";
+import { Actions, columnsActions } from "@/Reports/ColumnsActions";
+import { WebSocketProvider } from "@/components/WebSocketProvider";
+import { Action } from "@radix-ui/react-toast";
+import { useActions } from "@/components/ActionsContext";
 
- interface User {
-    id: string;
-    name: string;
-  }
-
-export default function ActionsPage(){
-    const [users, setUsers] = useState<User[]>([]);
-    const [selectedUser, setSelectedUser] = useState<User | null>(null);
-    const account = useAccount()
-    
-    useEffect(() => {
-        const fetchUsers = async () => {
-          try {
-            const response = await fetch(
-              "https://meet.wecom.com.br/api/listUsers",
-              {
-                method: "GET",
-                headers: {
-                  "Content-Type": "application/json",
-                  "x-auth": localStorage.getItem("token") || "",
-                },
-              }
-            );
-            const data = await response.json();
-            setUsers(data);
-          } catch (error) {
-            console.error(error);
-          }
-        };
-    
-        fetchUsers();
-      },[]);
-    
-      const handleUserSelect = (value: string) => {
-        const user = users.find((user) => user.id === value);
-        setSelectedUser(user || null);
-      };
-
-      // implementar lógica do backend para consultar ações do usuário
+export default function ActionsPage() {
+  //const [actions, setActions] = useState<ActionsInteface[]>([]);
+  const columnsactions = columnsActions; // Certifique-se de que ColumnsActions esteja correto
+ 
+  const {actions} = useActions()
+  console.log('ACTIONS', actions)
   return (
-   <div className="bg-card">
-     <div className="flex items-center justify-center gap-6">
-          <h2>Ações</h2>
-          <Select onValueChange={handleUserSelect}>
-            <SelectTrigger className="w-[500px]">
-              <SelectValue placeholder="Selecione seu usuário" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Selecione seu usuário</SelectLabel>
-                {users.map((user) => (
-                    <SelectItem key={user.id} value={user.id}>
-                        {user.name}
-                    </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-          <Button>Criar Ação</Button>
-        </div>
-        <div>
-        <TableActions selectedUser={selectedUser}></TableActions>
-        </div>
-   </div>
+    <div className="px-2 flex flex-col gap-4 justify-center mx-[250px]">
+      <ScrollArea className="h-[500px]">
+        <DataTable columns={columnsactions} data={actions} />
+      </ScrollArea>
+    </div>
   );
 }
