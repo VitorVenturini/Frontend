@@ -68,7 +68,7 @@ export default function ButtonsGridPages({
       <Tabs
         defaultValue="1"
         onValueChange={handlePageChange}
-        className="w-full flex-grow "
+        className="w-full "
       >
         <TabsList className="w-full flex justify-center ">
           {["1", "2", "3", "4", "5"].map((pageNumber) => (
@@ -79,7 +79,7 @@ export default function ButtonsGridPages({
                 buttonsWarning.some((button) => button.page === pageNumber)
                   ? "blinking-background"
                   : ""
-              }`}
+              } w-full`}
             >
               {texts[language].page} {pageNumber}
             </TabsTrigger>
@@ -87,7 +87,7 @@ export default function ButtonsGridPages({
         </TabsList>
         {["1", "2", "3", "4", "5"].map((pageNumber) => (
           <TabsContent
-            className="w-full flex-gow "
+            className="w-full "
             key={pageNumber}
             value={pageNumber}
           ></TabsContent>
