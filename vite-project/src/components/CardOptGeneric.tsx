@@ -116,31 +116,34 @@ export default function CardOptGeneric({
     }
   };
 
-  const getHeaderContent = () => {
+  const getContent = () => {
     switch (selectedOpt) {
       case "floor":
         return {
           title: "Botão Planta Baixa",
           description: "Descrição para botão Planta Baixa",
-          labelButton: "Link da imagem ou PDF da planta baixa ",
+          labelButton: "Arquivo ",
+          IptType: "file",
         };
       case "maps":
         return {
           title: "Botão Mapa",
           description: "Descrição para botão Mapa",
           labelButton: "URL do google maps ",
+          IptType: "file",
         };
       case "video":
         return {
           title: "Botão Video",
           description: "Descrição para botão Video",
           labelButton: "Link do Vídeo ",
+          IptType: "text",
         };
       default:
         return { title: "um botão", description: "" };
     }
   };
-  const { title, description, labelButton } = getHeaderContent();
+  const { title, description, labelButton, IptType } = getContent();
 
   return (
     <>
@@ -169,12 +172,13 @@ export default function CardOptGeneric({
             <Label className="text-end" htmlFor="buttonName">
               {labelButton}
             </Label>
-            <Input
+            <Input 
               className="col-span-3"
               id="buttonName"
               placeholder={labelButton}
               value={valueOpt}
               onChange={handleValueOpt}
+              type={IptType}
               required
             />
           </div>

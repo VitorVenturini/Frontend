@@ -1,8 +1,8 @@
 
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useEffect, useState } from "react";
-import { DataTable } from "@/Reports/data-table";
-import { User, columns } from "@/Reports/Columns";
+import { DataTable } from "@/Reports/data-tableUser";
+import { User, columnsUser } from "@/Reports/ColumnsUser";
 
 //================================================
 
@@ -32,7 +32,7 @@ export default function Account() {
   return (
     <div className="px-2 flex flex-col gap-4 justify-center mx-[250px]">
       <ScrollArea className="h-[500px]">
-        <DataTable columns={columns} data={users} />
+        <DataTable columns={columnsUser} data={users} />
       </ScrollArea>
     </div>
   );

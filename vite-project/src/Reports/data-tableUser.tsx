@@ -1,5 +1,6 @@
 "use client";
 import * as React from "react";
+import CardCreateAccount from "@/components/CardCreateAccount";
 import {
   ColumnDef,
   flexRender,
@@ -20,7 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import CardCreateAccount from "@/components/CardCreateAccount";
+
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];

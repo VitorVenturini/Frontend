@@ -5,6 +5,7 @@ import SensorGrid from "./SensorGrid";
 import { useState, useEffect } from "react";
 import BatteryGauge from "react-battery-gauge";
 import VideoPlayer from "./VideoPlayer";
+import { useWebSocketData } from "./WebSocketProvider";
 
 interface OptRightBottomProps {
   clickedButtonId: number | null;
@@ -19,7 +20,7 @@ export default function OptRightBottom({
   const [sensorKey, setSensorKey] = useState<string>("");
   const [clickedKey, setClickedKey] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-
+  const wss = useWebSocketData()
   const clickedButton = buttons.find((button) => button.id === clickedButtonId);
 
   useEffect(() => {
@@ -35,6 +36,12 @@ export default function OptRightBottom({
       }
     }
   }, [clickedButton, sensors]);
+
+  // useEffect(() => {
+  //   // Enviar a mensagem toda vez que o componente for renderizado
+  //   wss?.sendMessage({ api: "user", mt: "SelectSensorHistory", sensor: clickedButton?.button_prt  });
+  //   // Aqui você pode colocar a lógica de envio de mensagem, seja via WebSocket, HTTP, etc.
+  // });
 
   const handleKeyChange = (key: string) => {
     setSensorKey(key);

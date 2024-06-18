@@ -93,43 +93,69 @@ export default function CardLogin() {
         console.log("Token de acesso para o local storage:", data.accessToken);
         const accountData = { ...data };
         updateAccount(accountData);
+
+        toast({ description: "Login efetuado com sucesso." });
+
         localStorage.setItem("isLogged", "true");
         updateAccount({ isLogged: true });
-        toast({ description: "Login efetuado com sucesso." });
+        console.log({ ...account, updateAccount: undefined });
+
+        console.log(
+          "isLogged setado para true" + localStorage.getItem("isLogged")
+        );
+
+        console.log("Login efetuado com sucesso");
+
+        console.log(
+          `isLogged: ${localStorage.getItem(
+            "isLogged"
+          )},guid: ${localStorage.getItem(
+            "guid"
+          )}, token: ${localStorage.getItem("token")}  `
+        );
+        setIsLoading(false);
+
         // Sempre navega para a tela de usuário após o login bem-sucedido
         navigate("/user");
       } else {
-        const responseData = await response.json();
-        if (
-          response.status === 404 &&
-          responseData.error === "incorrectPassword"
-        ) {
-          console.error("Senha incorreta. Verifique suas credenciais.");
-          toast({
-            description: "Senha incorreta. Verifique suas credenciais.",
-          });
-        } else if (
-          response.status === 404 &&
-          responseData.error === "emailNotFound"
-        ) {
-          console.error("E-mail não encontrado. Verifique suas credenciais.");
-          toast({
-            description: "E-mail não encontrado. Verifique suas credenciais.",
-          });
-        } else {
-          console.error(
-            "Erro ao enviar dados para o backend:",
-            response.statusText
-          );
-          toast({
-            description: "Erro ao fazer login.",
-          });
+        const data = await response.json();
+        switch (data.error) {
+          case "emailNotFound":
+            console.log("ERRO E-MAIL");
+            toast({ description: "E-mail não localizado" });
+            break;
+          case "invalidPassword":
+            console.error("Erro: Senha inválida.");
+            toast({ description: "Senha inválida" });
+            break;
+          case "rejected":
+            console.error("Erro: Rejeitado.");
+            toast({ description: "Revise suas credenciais" });
+            break;
+            case "SequelizeConnectionRefusedError":
+              console.error("Erro: Backend.");
+              toast({ description: "Contate o adm de Redes" });
+              break;
+          default:
+            console.error(
+              "Erro ao enviar dados para o backend:",
+              response.json(),
+              response.statusText
+            );
+            toast({
+              description: "Erro ao fazer login.",
+            });
+            break;
         }
+        setIsLoading(false);
+
       }
     } catch (error) {
       console.error("Erro:", error);
     }
+
     setIsLoading(false);
+
   };
   const handleFormSubmit = (event: React.FormEvent) => {
     event.preventDefault(); // Previne o comportamento padrão do formulário

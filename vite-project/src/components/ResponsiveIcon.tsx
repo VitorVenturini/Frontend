@@ -3,13 +3,11 @@ import { CircleArrowDown, CircleArrowUp } from "lucide-react";
 interface ResponsiveIconProps {
   oldValue?: number;
   newValue?: number;
-  sensorType?: string | null;
 }
 
 export default function ResponsiveIcon({
   oldValue,
   newValue,
-  sensorType,
 }: ResponsiveIconProps) {
   console.log("OldValueParaComparar" + oldValue);
   console.log("NewValueParaComparar" + newValue);

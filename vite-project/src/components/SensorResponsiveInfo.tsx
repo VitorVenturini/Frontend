@@ -50,7 +50,7 @@ export default function SensorResponsiveInfo({
                   {newValue !== undefined
                     ? formatValue(newValue)
                     : formatValue((sensor as any)[`${button.sensor_type}`])}
-                </p>
+                </p> 
                 <p className="text-[8px] text-muted-foreground">
                   {getMetric(button?.sensor_type as any)}
                 </p>
@@ -58,7 +58,6 @@ export default function SensorResponsiveInfo({
               <ResponsiveIcon
                 oldValue={oldValue}
                 newValue={newValue}
-                sensorType={button.sensor_type}
               />
             </div>
           </div>

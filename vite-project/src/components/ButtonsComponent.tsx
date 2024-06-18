@@ -85,10 +85,9 @@ export default function ButtonsComponent({
         type: button.sensor_type,
       });
     }
-  }, [button]);
+  }, [button.button_type,  button.sensor_type]);
+  
 
-  
-  
   const handleClick = () => {
     if (isAdmin) {
       onClickPosition();

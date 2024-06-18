@@ -32,31 +32,54 @@ export const SensorProvider = ({ children }: { children: ReactNode }) => {
 
   const addSensors = (newSensors: SensorInterface[]) => {
     setSensors((prevSensors) => {
-      const sensorMap = new Map(prevSensors.map(sensor => [sensor.sensor_name + sensor.date, sensor]));
+      const sensorMap = new Map(
+        prevSensors.map((sensor) => [sensor.sensor_name + sensor.date, sensor])
+      );
 
       newSensors.forEach((sensor) => {
         sensorMap.set(sensor.sensor_name + sensor.date, sensor);
       });
-      console.log("Contexto Atualizado")
+      console.log("Contexto Atualizado");
       return Array.from(sensorMap.values());
     });
   };
 
-  const updateSensor = (sensor: SensorInterface) => {
+ const updateSensor = (sensor: SensorInterface) => {
     setSensors((prevSensors) => {
       console.log("UpdateSensorContext"); // Este log deve aparecer quando a função é chamada
-  
+
       // Verifica se o sensor já existe na lista
-      const sensorIndex = prevSensors.findIndex((s) => s.sensor_name === sensor.sensor_name);
-  
+      const sensorIndex = prevSensors.findIndex(
+        (s) => s.sensor_name === sensor.sensor_name
+      );
+
       if (sensorIndex !== -1) {
         // Atualizar apenas o último registro do sensor
         const updatedSensors = [...prevSensors];
-        const sensorHistory = updatedSensors.filter((s) => s.sensor_name === sensor.sensor_name);
+        const sensorHistory = updatedSensors.filter(
+          (s) => s.sensor_name === sensor.sensor_name
+        );
         if (sensorHistory.length > 0) {
-          const lastIndex = updatedSensors.lastIndexOf(sensorHistory[sensorHistory.length - 1]);
-          updatedSensors[lastIndex] = { ...updatedSensors[lastIndex], ...sensor };
-          return [updatedSensors[lastIndex], ...updatedSensors.filter((_, idx) => idx !== lastIndex)];
+          const lastIndex = updatedSensors.lastIndexOf(
+            sensorHistory[sensorHistory.length - 1]
+          );
+
+          // Verifica se o valor do sensor mudou
+          const lastSensor = updatedSensors[lastIndex];
+          const isDifferent = Object.keys(sensor).some(
+            (key) => (sensor as any)[key] !== (lastSensor as any)[key]
+          );
+
+          if (isDifferent) {
+            updatedSensors[lastIndex] = {
+              ...updatedSensors[lastIndex],
+              ...sensor,
+            };
+            return updatedSensors;
+          } else {
+            // Retorna a lista não alterada se os valores não mudaram
+            return prevSensors;
+          }
         } else {
           return [sensor, ...updatedSensors];
         }
@@ -66,12 +89,13 @@ export const SensorProvider = ({ children }: { children: ReactNode }) => {
       }
     });
   };
-  
-  
+
 
   const replaceLatestSensor = (sensor: SensorInterface) => {
     setSensors((prevSensors) => {
-      const sensorIndex = prevSensors.findIndex((s) => s.sensor_name === sensor.sensor_name);
+      const sensorIndex = prevSensors.findIndex(
+        (s) => s.sensor_name === sensor.sensor_name
+      );
       if (sensorIndex !== -1) {
         const updatedSensors = [...prevSensors];
         updatedSensors[sensorIndex] = sensor;
@@ -83,11 +107,22 @@ export const SensorProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const clearSensorsByName = (sensorName: string) => {
-    setSensors((prevSensors) => prevSensors.filter(sensor => sensor.sensor_name !== sensorName));
+    setSensors((prevSensors) =>
+      prevSensors.filter((sensor) => sensor.sensor_name !== sensorName)
+    );
   };
 
   return (
-    <SensorContext.Provider value={{ sensors, setSensors, updateSensor, replaceLatestSensor, clearSensorsByName, addSensors }}>
+    <SensorContext.Provider
+      value={{
+        sensors,
+        setSensors,
+        updateSensor,
+        replaceLatestSensor,
+        clearSensorsByName,
+        addSensors,
+      }}
+    >
       {children}
     </SensorContext.Provider>
   );

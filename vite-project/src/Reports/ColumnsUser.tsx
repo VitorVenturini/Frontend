@@ -12,7 +12,7 @@ export interface User {
   sip: string;
 }
 
-export const columns: ColumnDef<User>[] = [
+export const columnsUser: ColumnDef<User>[] = [
   {
     accessorKey: "id",
     header: "ID",
