@@ -37,15 +37,15 @@ const useWebSocket = (
         console.log("WebSocket connection opened");
         console.log(account.isAdmin);
         console.log(account);
-        if (account.isAdmin) {
-          //ws.current?.send(JSON.stringify({ api: "admin", mt: "DeleteAllButtons" }));
-        } else {
-          // ws.current?.send(JSON.stringify({ api: "user" , mt: "SelectSensorInfoSrc", type: "co2", sensor: "Sensor Técnica" }));
-          ws.current?.send(
-            JSON.stringify({ api: "user", mt: "SelectButtons" })
-          );
-          //ws.current?.send(JSON.stringify({ api: "user", mt: "SelectSensorName" }));
-        }
+        // if (account.isAdmin) {
+        //   //ws.current?.send(JSON.stringify({ api: "admin", mt: "DeleteAllButtons" }));
+        // } else {
+        //   // ws.current?.send(JSON.stringify({ api: "user" , mt: "SelectSensorInfoSrc", type: "co2", sensor: "Sensor Técnica" }));
+        //   ws.current?.send(
+        //     JSON.stringify({ api: "user", mt: "SelectButtons" })
+        //   );
+        //   //ws.current?.send(JSON.stringify({ api: "user", mt: "SelectSensorName" }));
+        // }
       };
 
       ws.current.onclose = (event) => {

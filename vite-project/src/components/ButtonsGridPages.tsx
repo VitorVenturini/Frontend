@@ -67,26 +67,35 @@ export default function ButtonsGridPages({
       <Tabs
         defaultValue="1"
         onValueChange={handlePageChange}
-        className="w-full flex-grow "
+        className="w-full"
       >
         <TabsList className="w-full flex justify-center ">
           {["1", "2", "3", "4", "5"].map((pageNumber) => (
             <TabsTrigger
               key={pageNumber}
               value={pageNumber}
-              className={`${
-                buttonsWarning.some((button) => button.page === pageNumber)
-                  ? "blinking-background"
-                  : ""
-              }`}
+              className="w-full"
+              // className={`${
+              //   buttonsWarning.some((button) => button.page === pageNumber)
+              //     ? " "
+              //     : ""
+              // }`}
             >
               {texts[language].page} {pageNumber}
+              {buttonsWarning.some((button) => button.page === pageNumber) ? (
+                <span className="relative flex h-3 w-3 m-1 ">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                </span>
+              ) : (
+                ""
+              )}
             </TabsTrigger>
           ))}
         </TabsList>
         {["1", "2", "3", "4", "5"].map((pageNumber) => (
           <TabsContent
-            className="w-full flex-gow "
+            className="w-full"
             key={pageNumber}
             value={pageNumber}
           ></TabsContent>
