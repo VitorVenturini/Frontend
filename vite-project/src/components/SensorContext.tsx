@@ -44,52 +44,40 @@ export const SensorProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
- const updateSensor = (sensor: SensorInterface) => {
+  const updateSensor = (sensor: SensorInterface) => {
     setSensors((prevSensors) => {
-      console.log("UpdateSensorContext"); // Este log deve aparecer quando a função é chamada
-
-      // Verifica se o sensor já existe na lista
-      const sensorIndex = prevSensors.findIndex(
+      const existingSensorIndex = prevSensors.findIndex(
         (s) => s.sensor_name === sensor.sensor_name
       );
-
-      if (sensorIndex !== -1) {
-        // Atualizar apenas o último registro do sensor
-        const updatedSensors = [...prevSensors];
-        const sensorHistory = updatedSensors.filter(
-          (s) => s.sensor_name === sensor.sensor_name
+  
+      if (existingSensorIndex !== -1) {
+        // Sensor já existe na lista, vamos comparar os valores
+        const existingSensor = prevSensors[existingSensorIndex];
+  
+        // Verificar se algum valor do sensor atual é diferente do sensor existente
+        const isDifferent = Object.keys(sensor).some(
+          (key) => existingSensor[key as keyof SensorInterface] !== sensor[key as keyof SensorInterface]
         );
-        if (sensorHistory.length > 0) {
-          const lastIndex = updatedSensors.lastIndexOf(
-            sensorHistory[sensorHistory.length - 1]
-          );
-
-          // Verifica se o valor do sensor mudou
-          const lastSensor = updatedSensors[lastIndex];
-          const isDifferent = Object.keys(sensor).some(
-            (key) => (sensor as any)[key] !== (lastSensor as any)[key]
-          );
-
-          if (isDifferent) {
-            updatedSensors[lastIndex] = {
-              ...updatedSensors[lastIndex],
-              ...sensor,
-            };
-            return updatedSensors;
-          } else {
-            // Retorna a lista não alterada se os valores não mudaram
-            return prevSensors;
-          }
+  
+        if (isDifferent) {
+          // Se houver diferença, atualizamos o sensor e colocamos no início da lista
+          const updatedSensor = { ...existingSensor, ...sensor };
+          const updatedSensors = [
+            updatedSensor,
+            ...prevSensors.filter((_, index) => index !== existingSensorIndex)
+          ];
+          return updatedSensors;
         } else {
-          return [sensor, ...updatedSensors];
+          // Não há diferença, retornamos a lista sem alterações
+          return prevSensors;
         }
       } else {
-        // Adicionar o novo sensor no início da lista
-        return [sensor, ...prevSensors];
+        // Sensor não existe na lista, adicionamos no início
+        const updatedSensors = [sensor, ...prevSensors];
+        return updatedSensors;
       }
     });
   };
-
 
   const replaceLatestSensor = (sensor: SensorInterface) => {
     setSensors((prevSensors) => {

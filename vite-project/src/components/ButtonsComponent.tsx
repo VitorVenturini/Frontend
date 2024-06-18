@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect,useMemo } from "react";
 import {
   Plus,
   OctagonAlert,
@@ -75,18 +75,50 @@ export default function ButtonsComponent({
   const { sensors } = useSensors();
   const wss = useWebSocketData();
   const [isClicked, setIsClicked] = useState(false);
+  const { setOldValue, setNewValue, buttons, setButtons } = useButtons();
+  const [buttonsLoaded, setButtonsLoaded] = useState(false);
 
   useEffect(() => {
-    if (button.button_type === "sensor") {
-      wss?.sendMessage({
-        api: "user",
-        mt: "SelectSensorInfoSrc",
-        sensor: button.button_prt,
-        type: button.sensor_type,
+    if (buttons.length > 0) {
+      buttons.forEach((btns) => {
+        if (btns.button_type === "sensor" && btns.page !== "0") {
+          wss?.sendMessage({
+            api: "user",
+            mt: "SelectSensorInfoSrc",
+            sensor: btns.button_prt,
+            type: btns.sensor_type,
+          });
+        }
       });
     }
-  }, [button.button_type,  button.sensor_type]);
-  
+  }, [button.sensor_type, button.button_prt]);
+
+  // para piscar nas outras páginas sem ser a atual
+  useEffect(() => {
+    if (!buttons || buttons.length === 0) return; // Verifica se buttons está definido e não vazio
+
+    buttons.forEach((btns) => {
+      // Itera sobre os botões
+      if (btns.button_type === "sensor" && btns.page !== "0") {
+        const filteredSensor = sensors.find(
+          (sensor) => sensor.sensor_name === btns.button_prt
+        ); // Encontra o sensor correspondente
+
+        if (filteredSensor && btns.sensor_type) {
+          const currentValue = parseInt(
+            (filteredSensor as any)[btns.sensor_type],
+            10
+          ); // Obtém o valor atual do sensor
+
+          // Compara com os valores anteriores
+          if (btns.newValue !== currentValue) {
+            setOldValue(btns.sensor_type, btns.button_prt, btns.newValue); // Define o valor antigo antes de atualizar
+            setNewValue(btns.sensor_type, btns.button_prt, currentValue); // Define o novo valor
+          }
+        }
+      }
+    });
+  }, [sensors, buttons, setOldValue, setNewValue]); // Dependências
 
   const handleClick = () => {
     if (isAdmin) {
