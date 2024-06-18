@@ -19,6 +19,7 @@ import LeftGrid from "@/components/LeftGrid";
 import RightGrid from "@/components/RightGrid";
 import { Ghost } from "lucide-react";
 import { SensorInterface, useSensors } from "@/components/SensorContext";
+import { useWebSocketData } from "@/components/WebSocketProvider";
 
 interface User {
   id: string;
@@ -33,10 +34,17 @@ function UserLayout() {
   // const webSocket = useWebSocket(account.accessToken)
   // console.log("MENSAGEM DO WEBSOCKET" + webSocket.data)
   const { setButtons, buttons } = useButtons();
-  const { setSensors } = useSensors();
+  const {
+    setSensors,
+    updateSensor,
+    replaceLatestSensor,
+    clearSensorsByName,
+    addSensors,
+  } = useSensors();
   const [selectedOpt, setSelectedOpt] = useState<string>("floor");
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState("");
+  const wss = useWebSocketData();
 
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
@@ -44,10 +52,26 @@ function UserLayout() {
       case "SelectButtonsSuccess":
         const buttons: ButtonInterface[] = JSON.parse(message.result);
         setButtons(buttons);
+        setSensors([]);
         break;
       case "SelectSensorHistoryResult":
-        const sensors: SensorInterface[] = JSON.parse(message.result);
-        setSensors(sensors);
+        const sensorsArray: SensorInterface[] = JSON.parse(message.result);
+        if (sensorsArray.length > 0) {
+          const sensorName = sensorsArray[0].sensor_name;
+          clearSensorsByName(sensorName); // Limpa os sensores com base no sensor_name
+          addSensors(sensorsArray);
+        }
+        break;
+      case "SelectSensorInfoResultSrc":
+        const sensorData = JSON.parse(message.result);
+        updateSensor({
+          sensor_name: message.sensor_name,
+          ...sensorData,
+        });
+        break;
+      case "SensorReceived":
+        const sensorDataReceived = message.value; // Adicione este log para verificar os dados recebidos
+        updateSensor(sensorDataReceived);
         break;
       default:
         console.log("Unknown message type:", message);

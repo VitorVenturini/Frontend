@@ -2,6 +2,7 @@ import { Separator } from "@/components/ui/separator";
 import { ButtonInterface, useButtons } from "@/components/ButtonsContext";
 import ButtonsComponent from "./ButtonsComponent";
 import { useState } from "react";
+import { useWebSocketData } from "./WebSocketProvider";
 
 interface ButtonsGridProps {
   buttons: ButtonInterface[];
@@ -25,6 +26,7 @@ export default function ButtonsGrid({
     i: number;
     j: number;
   } | null>(null);
+
   // Crie uma matriz 8x5 preenchida com botões padrão
   const grid = Array(8)
     .fill(null)

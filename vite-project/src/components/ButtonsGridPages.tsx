@@ -11,7 +11,6 @@ import ButtonsGrid from "./ButtonsGrid";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React, { useState, useContext } from "react";
 import OptBar from "./OptBar";
-
 import { useLanguage } from "./LanguageContext";
 import texts from "../_data/texts.json";
 
@@ -47,26 +46,51 @@ export default function ButtonsGridPages({
     onOptChange(newOpt);
   };
 
+  const buttonsWarning = buttons.filter(
+    (button) =>
+      parseInt(button?.newValue as any) >
+      parseInt(button?.sensor_max_threshold as any)
+  );
+
   return (
+
+
     <Card className="p-1 flex flex-col gap-1 items-center justify-center ">
-      <ButtonsGrid
-        buttons={buttonsInSelectedPage}
-        selectedUser={selectedUser}
-        selectedPage={selectedPage}
-      />
-
-      <OptBar onOptChange={handleOptChange} />
-
-      <Tabs className="w-full" defaultValue="1" onValueChange={handlePageChange}>
-        <TabsList className="w-full" >
+      <div className="flex-grow w-full">
+        <ButtonsGrid
+          buttons={buttonsInSelectedPage}
+          selectedUser={selectedUser}
+          selectedPage={selectedPage}
+        />
+        <br />
+        <OptBar onOptChange={handleOptChange} />
+      </div>
+      <Tabs
+        defaultValue="1"
+        onValueChange={handlePageChange}
+        className="w-full flex-grow "
+      >
+        <TabsList className="w-full flex justify-center ">
           {["1", "2", "3", "4", "5"].map((pageNumber) => (
-            <TabsTrigger className="w-full"  key={pageNumber} value={pageNumber}>
+            <TabsTrigger
+              key={pageNumber}
+              value={pageNumber}
+              className={`${
+                buttonsWarning.some((button) => button.page === pageNumber)
+                  ? "blinking-background"
+                  : ""
+              }`}
+            >
               {texts[language].page} {pageNumber}
             </TabsTrigger>
           ))}
         </TabsList>
         {["1", "2", "3", "4", "5"].map((pageNumber) => (
-          <TabsContent className="w-full" key={pageNumber} value={pageNumber}></TabsContent>
+          <TabsContent
+            className="w-full flex-gow "
+            key={pageNumber}
+            value={pageNumber}
+          ></TabsContent>
         ))}
       </Tabs>
     </Card>

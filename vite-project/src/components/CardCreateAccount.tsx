@@ -98,6 +98,15 @@ export default function CardCreateAccount() {
   const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
   };
+
+  const resetForm = () => {
+    setName("");
+    setEmail("");
+    setPassword("");
+    setSip("");
+    setType("");
+  }
+
   const handleCreateUser = async () => {
     console.log(
       `Nome: ${name},Email: ${email}, Senha: ${password}, SIP: ${sip}, Tipo de conta: ${type}`
@@ -170,7 +179,7 @@ export default function CardCreateAccount() {
   return (
     //div que contem os cards
     <div className="flex flex-col md:flex-row gap-5 justify-center">
-      <Dialog>
+      <Dialog onOpenChange={(isOpen) => !isOpen && resetForm()}>
         <DialogTrigger>
           <Button>{texts[language].cardCreateAccountTrigger}</Button>
         </DialogTrigger>

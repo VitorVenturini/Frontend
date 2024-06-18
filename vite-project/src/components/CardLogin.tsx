@@ -24,7 +24,6 @@ import { useLanguage } from "./LanguageContext";
 import { Loader2 } from "lucide-react";
 //import { useWebSocketData } from './WebSocketProvider';// Importe o useWebSocketData
 
-
 import {
   Dialog,
   DialogContent,
@@ -52,7 +51,6 @@ export default function CardLogin() {
   const { language } = useLanguage();
   //const ws = useWebSocketData();
 
-
   const handleEmailChange = (event: ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
   };
@@ -72,7 +70,7 @@ export default function CardLogin() {
 
   const handleLogin = async () => {
     setIsLoading(true);
-    await bcrypt.hash(password, 15);
+    const hash = await bcrypt.hash(password, 15);
 
     const formData = {
       email: email,
@@ -87,49 +85,52 @@ export default function CardLogin() {
         },
         body: JSON.stringify(formData),
       });
-
+      //{"error":"incorrectPassword"}
+      // emailNotFound
       if (response.ok) {
         const data = await response.json();
         localStorage.setItem("token", data.accessToken);
         console.log("Token de acesso para o local storage:", data.accessToken);
-
-        const accountData = {...data,};
-        updateAccount(accountData)
-
+        const accountData = { ...data };
+        updateAccount(accountData);
+        localStorage.setItem("isLogged", "true");
+        updateAccount({ isLogged: true });
+        toast({ description: "Login efetuado com sucesso." });
         // Sempre navega para a tela de usuário após o login bem-sucedido
         navigate("/user");
       } else {
-        console.error(
-          "Erro ao enviar dados para o backend:",
-          response.statusText
-        );
-        toast({
-          description: "Erro ao fazer login.",
-        });
+        const responseData = await response.json();
+        if (
+          response.status === 404 &&
+          responseData.error === "incorrectPassword"
+        ) {
+          console.error("Senha incorreta. Verifique suas credenciais.");
+          toast({
+            description: "Senha incorreta. Verifique suas credenciais.",
+          });
+        } else if (
+          response.status === 404 &&
+          responseData.error === "emailNotFound"
+        ) {
+          console.error("E-mail não encontrado. Verifique suas credenciais.");
+          toast({
+            description: "E-mail não encontrado. Verifique suas credenciais.",
+          });
+        } else {
+          console.error(
+            "Erro ao enviar dados para o backend:",
+            response.statusText
+          );
+          toast({
+            description: "Erro ao fazer login.",
+          });
+        }
       }
     } catch (error) {
       console.error("Erro:", error);
     }
-
-    localStorage.setItem("isLogged", "true");
-    updateAccount({ isLogged: true });
-    console.log({ ...account, updateAccount: undefined });
-
-    console.log("isLogged setado para true" + localStorage.getItem("isLogged"));
-
-    console.log("Login efetuado com sucesso");
-
-    toast({ description: "Login efetuado com sucesso." });
-
-    console.log(
-      `isLogged: ${localStorage.getItem(
-        "isLogged"
-      )},guid: ${localStorage.getItem("guid")}, token: ${localStorage.getItem(
-        "token"
-      )}  `
-    );
     setIsLoading(false);
-};
+  };
   const handleFormSubmit = (event: React.FormEvent) => {
     event.preventDefault(); // Previne o comportamento padrão do formulário
     console.log("Form submitted"); // Debug log
@@ -148,7 +149,9 @@ export default function CardLogin() {
               </div>
             </div>
           </CardTitle>
-          <CardDescription>{texts[language].enterEmail} e {texts[language].enterPassword}</CardDescription>
+          <CardDescription>
+            {texts[language].enterEmail} e {texts[language].enterPassword}
+          </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4 py-9">
           <div className="grid w-full items-center gap-6">
