@@ -49,8 +49,10 @@ export default function SensorGraph({
     }))
     .reverse();
   return (
-    <ResponsiveContainer width={"100%"} aspect={1.2} className="">
-      <LineChart
+
+    <ResponsiveContainer width={"100%"} aspect={2.5} className="">
+        <LineChart
+
         width={500}
         height={300}
         data={data}

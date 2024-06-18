@@ -84,7 +84,6 @@ export default function OptRightBottom({
             </div>
           );
         }
-
       case "floor":
       case "map":
       case "radio":

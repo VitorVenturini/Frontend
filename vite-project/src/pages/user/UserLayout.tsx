@@ -94,14 +94,16 @@ function UserLayout() {
       onMessage={handleWebSocketMessage}
     >
       <div className="flex gap-1 p-1">
-        <LeftGrid buttons={buttons} selectedUser={account} />
-        <div>
-          <ButtonsGridPage
-            buttons={buttons}
-            selectedUser={account}
-            onOptChange={handleOptChange}
-          />
-        </div>
+        <LeftGrid 
+        buttons={buttons} 
+        selectedUser={account} />
+        
+        <ButtonsGridPage
+          buttons={buttons}
+          selectedUser={account}
+          onOptChange={handleOptChange}
+        />
+
         <RightGrid
           onKeyChange={handleOptChange}
           buttons={buttons}

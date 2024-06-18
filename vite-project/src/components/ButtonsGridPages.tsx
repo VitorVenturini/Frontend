@@ -11,7 +11,6 @@ import ButtonsGrid from "./ButtonsGrid";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React, { useState, useContext } from "react";
 import OptBar from "./OptBar";
-
 import { useLanguage } from "./LanguageContext";
 import texts from "../_data/texts.json";
 
@@ -54,7 +53,9 @@ export default function ButtonsGridPages({
   );
 
   return (
-    <Card className="p-1  flex flex-col gap-1 items-center">
+
+
+    <Card className="p-1 flex flex-col gap-1 items-center justify-center ">
       <div className="flex-grow w-full">
         <ButtonsGrid
           buttons={buttonsInSelectedPage}
@@ -67,7 +68,7 @@ export default function ButtonsGridPages({
       <Tabs
         defaultValue="1"
         onValueChange={handlePageChange}
-        className="w-full"
+        className="w-full "
       >
         <TabsList className="w-full flex justify-center ">
           {["1", "2", "3", "4", "5"].map((pageNumber) => (
@@ -75,11 +76,6 @@ export default function ButtonsGridPages({
               key={pageNumber}
               value={pageNumber}
               className="w-full"
-              // className={`${
-              //   buttonsWarning.some((button) => button.page === pageNumber)
-              //     ? " "
-              //     : ""
-              // }`}
             >
               {texts[language].page} {pageNumber}
               {buttonsWarning.some((button) => button.page === pageNumber) ? (
@@ -95,7 +91,8 @@ export default function ButtonsGridPages({
         </TabsList>
         {["1", "2", "3", "4", "5"].map((pageNumber) => (
           <TabsContent
-            className="w-full"
+            className="w-full "
+
             key={pageNumber}
             value={pageNumber}
           ></TabsContent>
