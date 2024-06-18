@@ -1,25 +1,26 @@
-import {
-    Check,
-    CircleArrowDown,
-    CircleArrowUp,
-    X
-  } from "lucide-react";
-  
-  interface ResponsiveIconProps {
-    isBoolean?: boolean;
-    sensorType?: string;
+import { CircleArrowDown, CircleArrowUp } from "lucide-react";
+
+interface ResponsiveIconProps {
+  oldValue?: number;
+  newValue?: number;
+}
+
+export default function ResponsiveIcon({
+  oldValue,
+  newValue,
+}: ResponsiveIconProps) {
+  console.log("OldValueParaComparar" + oldValue);
+  console.log("NewValueParaComparar" + newValue);
+  if (oldValue === undefined || newValue === undefined) {
+    return null; // No icon if values are not defined
   }
-  
-  export default function ResponsiveIcon({ isBoolean, sensorType }: ResponsiveIconProps) {
-    if (isBoolean === true) {
-      return <Check size={20} color="green" />;
-    } else if (isBoolean === false) {
-      return <X size={20} color="red" />;
-    } else {
-      if (sensorType === 'temperature') {
-        return <CircleArrowDown size={20} color="red" />;
-      } else {
-        return <CircleArrowUp size={20} color="green" />;
-      }
-    }
+
+  if (oldValue < newValue) {
+    return <CircleArrowUp size={20} color="green" />;
+  } else if (oldValue > newValue) {
+    return <CircleArrowDown size={20} color="red" />;
   }
+  //else {
+  //     return <Check size={20} color="green" />;
+  //   }
+}

@@ -34,12 +34,12 @@ export default function SensorDisplay({
   };
   return (
     <div
-      className={`bg-muted p-2 rounded-lg cursor-pointer ${isClicked ? "bg-zinc-950" : ""}`}
+      className={`bg-muted px-2 py-1 rounded-lg cursor-pointer ${isClicked ? "bg-zinc-950" : ""}`}
       onClick={() => handleSensorClick(SensorKey)}
     >
       <div className="text-sm">{SensorKey}</div>
       <div className="flex justify-between">
-        <p className="text-lg">{sensorValue}</p>
+        <p className="text-md font-bold">{sensorValue}</p>
         <CircleArrowUp size={20} color="red"/>
       </div>
     </div>

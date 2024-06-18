@@ -140,6 +140,7 @@ export default function ButtonsPage() {
 
         {/* Renderize as informações do usuário selecionado aqui */}
         {selectedUser && (
+          
           <div>
             {
               <ButtonsGridPages

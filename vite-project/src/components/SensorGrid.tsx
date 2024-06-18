@@ -1,6 +1,6 @@
 import SensorDisplay from "./SensorDisplay";
 import { SensorInterface } from "./SensorContext";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import BatteryGauge from "react-battery-gauge";
 
 interface SensorGridProps {
@@ -17,12 +17,13 @@ export default function SensorGrid({
   clickedKey,
 }: SensorGridProps) {
   const firstSensor = sensorInfo[0]; // Pega o primeiro objeto do array
-  console.log(firstSensor);
+  console.log("FirstSensorInfo" + JSON.stringify(firstSensor));
   const [isClicked, setIsClicked] = useState(false);
+  console.log("Info Recebida via Prop" + JSON.stringify(sensorInfo))
 
   return (
     <div>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 p-2">
+      <div className="grid grid-cols-1 gap-1 md:grid-cols-2 lg:grid-cols-3 p-2">
         {firstSensor &&
           Object.entries(firstSensor).map(
             ([key, value]) =>

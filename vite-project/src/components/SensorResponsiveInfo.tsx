@@ -4,14 +4,16 @@ import { ButtonInterface } from "@/components/ButtonsContext";
 
 interface ButtonProps {
   button: ButtonInterface;
+  oldValue?: number;
+  newValue?: number;
 }
 
-export default function SensorResponsiveInfo({ button }: ButtonProps) {
+export default function SensorResponsiveInfo({
+  button,
+  oldValue,
+  newValue,
+}: ButtonProps) {
   const { sensors } = useSensors();
-
-  function isBoolean(value: string): boolean {
-    return value === 'true' || value === 'false';
-  }
 
   const getMetric = (sensorType: string) => {
     switch (sensorType) {
@@ -27,30 +29,36 @@ export default function SensorResponsiveInfo({ button }: ButtonProps) {
         return "";
     }
   };
-
+  const formatValue = (value: number | undefined) => {
+    return isNaN(value as number) ? "" : value;
+  };
   return (
     <div>
       {sensors
         .filter((sensor) => sensor.sensor_name === button?.button_prt)
         .slice(0, 1) // Pega apenas o primeiro sensor filtrado
         .map((sensor, index) => (
-          <div className="flex items-center gap-1 justify-between">
+          <div className="flex items-center gap-1 justify-between" key={index}>
             <p className="text-[10px] font-medium leading-none text-muted-foreground">
               {button.sensor_type}
             </p>
 
             <div className="flex gap-1">
               <div className="flex items-center gap-1">
-                <p className="">
-                  {button.sensor_type && isBoolean(sensor[`${button.sensor_type}`]) 
-                    ? sensor[`${button.sensor_type}`] === null
-                    : sensor[`${button.sensor_type}`]}
-                </p>
+                <p>
+                  {/* {newValue !== undefined ? formatValue(newValue) : formatValue((sensor as any)[`${button.sensor_type}`])} */}
+                  {newValue !== undefined
+                    ? formatValue(newValue)
+                    : formatValue((sensor as any)[`${button.sensor_type}`])}
+                </p> 
                 <p className="text-[8px] text-muted-foreground">
-                  {getMetric(button.sensor_type)}
+                  {getMetric(button?.sensor_type as any)}
                 </p>
               </div>
-              <ResponsiveIcon isBoolean={button.sensor_type && isBoolean(sensor[`${button.sensor_type}`])} sensorType={button.sensor_type}/>
+              <ResponsiveIcon
+                oldValue={oldValue}
+                newValue={newValue}
+              />
             </div>
           </div>
         ))}

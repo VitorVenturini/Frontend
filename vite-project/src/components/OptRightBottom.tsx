@@ -2,9 +2,10 @@ import { useButtons } from "./ButtonsContext";
 import { useSensors } from "./SensorContext";
 import SensorGraph from "./SensorGraph";
 import SensorGrid from "./SensorGrid";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import BatteryGauge from "react-battery-gauge";
 import VideoPlayer from "./VideoPlayer";
+import { useWebSocketData } from "./WebSocketProvider";
 
 interface OptRightBottomProps {
   clickedButtonId: number | null;
@@ -18,8 +19,29 @@ export default function OptRightBottom({
   const { sensors } = useSensors();
   const [sensorKey, setSensorKey] = useState<string>("");
   const [clickedKey, setClickedKey] = useState<string | null>(null);
-
+  const [loading, setLoading] = useState<boolean>(true);
+  const wss = useWebSocketData()
   const clickedButton = buttons.find((button) => button.id === clickedButtonId);
+
+  useEffect(() => {
+    if (clickedButton) {
+      const sensorName = clickedButton.button_prt;
+      const filteredSensorInfo = sensors.filter(
+        (sensor) => sensor.sensor_name === sensorName
+      );
+      if (filteredSensorInfo.length > 0) {
+        setLoading(false);
+      } else {
+        setLoading(true);
+      }
+    }
+  }, [clickedButton, sensors]);
+
+  // useEffect(() => {
+  //   // Enviar a mensagem toda vez que o componente for renderizado
+  //   wss?.sendMessage({ api: "user", mt: "SelectSensorHistory", sensor: clickedButton?.button_prt  });
+  //   // Aqui você pode colocar a lógica de envio de mensagem, seja via WebSocket, HTTP, etc.
+  // });
 
   const handleKeyChange = (key: string) => {
     setSensorKey(key);
@@ -30,25 +52,28 @@ export default function OptRightBottom({
 
     switch (clickedButton.button_type) {
       case "sensor":
-        const filteredSensorInfo = sensors.filter(
-          (sensor) => sensor.sensor_name === clickedButton.button_prt
-        );
-        console.log("AllSensors " + JSON.stringify(sensors))
-        console.log("FilteredSensor" + JSON.stringify(filteredSensorInfo));
-        return (
-          <div className="w-full">
-            <SensorGrid
-              sensorInfo={filteredSensorInfo}
-              onKeyChange={handleKeyChange}
-              clickedKey={clickedKey}
-              setClickedKey={setClickedKey}
-            />
-            <SensorGraph
-              sensorInfo={filteredSensorInfo}
-              sensorKey={sensorKey}
-            />
-            {/* <SensorGraph sensorInfo={filteredSensorInfo} /> */}
-            {/* {filteredSensorInfo.map((sensor) => (
+        if (loading) {
+          return <div>Carregando dados do sensor...</div>;
+        } else {
+          const filteredSensorInfo = sensors.filter(
+            (sensor) => sensor.sensor_name === clickedButton.button_prt
+          );
+          console.log("AllSensors " + JSON.stringify(sensors));
+          console.log("FilteredSensor" + JSON.stringify(filteredSensorInfo));
+          return (
+            <div className="w-full">
+              <SensorGrid
+                sensorInfo={filteredSensorInfo}
+                onKeyChange={handleKeyChange}
+                clickedKey={clickedKey}
+                setClickedKey={setClickedKey}
+              />
+              <SensorGraph
+                sensorInfo={filteredSensorInfo}
+                sensorKey={sensorKey}
+              />
+              {/* <SensorGraph sensorInfo={filteredSensorInfo} /> */}
+              {/* {filteredSensorInfo.map((sensor) => (
               <div>
                 <div>Nome do Sensor: {sensor?.sensor_name}</div>
                 <div>Bateria: {sensor?.battery}</div>
@@ -56,17 +81,18 @@ export default function OptRightBottom({
                 <div>CO²: {sensor?.co2}</div>
               </div>
             ))} */}
-          </div>
-        );
+            </div>
+          );
+        }
       case "floor":
       case "map":
       case "radio":
       case "video":
-        return(
+        return (
           <div className="w-full">
             <VideoPlayer url={clickedButton.button_prt} />
-            </div>
-        ) 
+          </div>
+        );
       case "chat":
 
       default:

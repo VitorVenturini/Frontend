@@ -21,6 +21,7 @@ import useWebSocket from "@/components/useWebSocket";
 import { useToast } from "@/components/ui/use-toast";
 import { useWebSocketData } from "@/components/WebSocketProvider";
 import { SensorInterface, useSensors } from "@/components/SensorContext";
+import { ActionsInteface, useActions } from "@/components/ActionsContext";
 
 function AdminLayout() {
   const account = useAccount();
@@ -28,6 +29,7 @@ function AdminLayout() {
   const { buttons, setButtons, addButton, updateButton } = useButtons();
   const { sensors, setSensors, updateSensor } = useSensors();
   const { toast } = useToast();
+  const { actions, setActions, updateActions } = useActions();
 
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
@@ -62,7 +64,19 @@ function AdminLayout() {
         setSensors(firstSensors);
         console.log(message.result);
         break;
-
+      case "SelectActionsMessageSuccess":
+        console.log('allActions ',JSON.stringify(message.result));
+        const allActions: ActionsInteface[] = JSON.parse(message.result);
+        setActions(allActions);
+        break;
+      case "InsertActionMessageSuccess":
+        console.log(JSON.stringify(message.result));
+        const newAction: ActionsInteface = message.result;
+        updateActions(newAction);
+        toast({
+          description: "Ação Criado com sucesso",
+        });
+        break;
       default:
         console.log("Unknown message type:", message);
         break;

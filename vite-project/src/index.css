@@ -3,6 +3,24 @@
 
 @import "tailwindcss/utilities";
 
+@keyframes blinkBackground {
+  0% {
+    background-color: var(
+      --sensor,
+    ); /* Use --sensor if defined, otherwise fallback to red */
+  }
+  50% {
+    background-color: rgb(175, 1, 1); /* Transparent */
+  }
+  100% {
+    background-color: var(--sensor); /* Red or --sensor */
+  }
+}
+
+.blinking-background {
+  animation: blinkBackground 1s infinite;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -24,12 +42,11 @@
     --border: 20 5.9% 90%;
     --input: 20 5.9% 90%;
     --ring: 24.6 95% 53.1%;
-    --buttonG:  106 100% 16%;
+    --buttonG: 106 100% 16%;
     --buttonG-foreground: 20 14.3% 4.1%;
-    --sensor:  0 0% 26%;
+    --sensor: 0 0% 26%;
     --sensor-foreground: 20 14.3% 4.1%;
     --radius: 0.5rem;
-
   }
 
   .dark {
@@ -52,7 +69,7 @@
     --border: 12 6.5% 15.1%;
     --input: 12 6.5% 15.1%;
     --ring: 20.5 90.2% 48.2%;
-    --buttonG:  106 100% 16%;
+    --buttonG: 106 100% 16%;
     --buttonG-foreground: 20 14.3% 4.1%;
     --sensor: 0 0% 7%;
     --sensor-foreground: 20 14.3% 4.1%;
@@ -67,17 +84,11 @@
 }
 
 @font-face {
-  font-family: 'inter';
+  font-family: "inter";
   font-style: bold;
   font-weight: 700;
   src: url("../src/assets/fonts/Inter-Bold.ttf");
 }
-
-
-
-
-
-
 
 @layer base {
   * {
