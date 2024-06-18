@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, ReactNode } from "react";
-
+import Actions from "@/pages/admin/Actions";
 export interface ActionsInteface {
   id: number;
   action_name: string;
@@ -31,11 +31,11 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
   const updateActions = (action: ActionsInteface) => {
     setActions((prevActions) => [...prevActions, action]);
   };
-
+  
   const clearActions = () => {
     setActions([]);
   };
-
+  console.log('ACTIONCONTEXT actions', actions)
   return (
     <ActionsContext.Provider
       value={{ actions, setActions, updateActions, clearActions }}
@@ -50,5 +50,6 @@ export const useActions = (): ActionsIntefaceType => {
   if (context === undefined) {
     throw new Error("useactions must be used within a actionProvider");
   }
+  
   return context;
 };

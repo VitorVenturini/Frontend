@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import CardCreateAction from "@/components/CardCreateAction";
+import CardCreateAccount from "@/components/CardCreateAccount";
 import {
   ColumnDef,
   flexRender,
@@ -21,7 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import CardCreateAccount from "@/components/CardCreateAccount";
+
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -60,16 +60,15 @@ export function DataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
-          {/*<Input
+          <Input
           placeholder="Filter GUID..."
           value={(table.getColumn("guid")?.getFilterValue() as string) || ""}
           onChange={(event) =>
             table.getColumn("guid")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
-        />*/}
-        <CardCreateAction />
-        {/*<CardCreateAccount />*/}
+        />
+        <CardCreateAccount />
       </div>
       <Table>
         <TableHeader>

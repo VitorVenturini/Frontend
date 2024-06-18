@@ -131,6 +131,10 @@ export default function CardLogin() {
             console.error("Erro: Rejeitado.");
             toast({ description: "Revise suas credenciais" });
             break;
+            case "SequelizeConnectionRefusedError":
+              console.error("Erro: Backend.");
+              toast({ description: "Contate o adm de Redes" });
+              break;
           default:
             console.error(
               "Erro ao enviar dados para o backend:",

@@ -44,30 +44,21 @@ import { useToast } from "./ui/use-toast";
   interface DeleteActionsProps {
     id: string;
   }
+  import { useWebSocketData } from "./WebSocketProvider";
+
   export default function DeleteActions({ id }: DeleteActionsProps){
     const [actions] = useState<Actions[]>([]);
     const {toast} = useToast()
+    const wss = useWebSocketData()
   
       const deleteActions = async (id: string) => {
-        console.log(`id: ${id}`);
-        const formData = {
+        console.log(`Delete Actions id: ${id}`);
+        wss?.sendMessage({
+          api: 'admin',
+          mt: 'DeleteActions',
           id: id,
-        };
-        try {
-          const response = await fetch("https://meet.wecom.com.br/api/DeleteAction", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "x-auth": localStorage.getItem("token") || "",
-            },
-            body: JSON.stringify(formData),
-          });
-          const data: Actions[] = await response.json();
-          setUsers(data);
-        } catch (error) {
-          console.error(error);
-        }
-      };
+        })
+      }
 
       const handleDelete = () => {
         deleteActions(id);

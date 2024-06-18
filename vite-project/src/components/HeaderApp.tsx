@@ -35,7 +35,7 @@ export default function HeaderApp() {
   };
 
   const handleActionsClick = () => {
-    wss?.sendMessage({ api: account.isAdmin ? "admin" : "user", mt: "SelectActionMessage" });
+    wss?.sendMessage({ api: account.isAdmin ? "admin" : "user", mt: "SelectActions" });
     navigate("/admin/actions");
   };
 

@@ -35,27 +35,13 @@ import {
 } from "@/components/ui/select";
 import texts from "../_data/texts.json";
 import { useLanguage } from "./LanguageContext";
+import { useWebSocketData } from "./WebSocketProvider";
 
 interface User {
   id: string;
   name: string;
   guid: string;
 }
-import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu";
-
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-} from "@/components/ui/dropdown-menu";
-
-type Checked = DropdownMenuCheckboxItemProps["checked"];
-
 interface ActionsInteface {
   id: number;
   action_name: string; //
@@ -78,17 +64,14 @@ export default function CardCreateAction() {
   const [actionParameter, setActionParameter] = useState("");
   const [type, setType] = useState("");
   const [actionValue, setActionValue] = useState("");
-  
+
   const [selectedUser, setSelectedUser] = useState<User | null>(null); // Inicialmente, o primeiro usuário é selecionado
   const [isCreating, setIsCreating] = useState(false);
-  const [showStatusBar, setShowStatusBar] = React.useState<Checked>(true);
-  const [showActivityBar, setShowActivityBar] = React.useState<Checked>(false);
-  const [showPanel, setShowPanel] = React.useState<Checked>(false);
-  const [position, setPosition] = React.useState("bottom");
-
+  const wss = useWebSocketData();
   const { language } = useLanguage();
 
   const { toast } = useToast();
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -115,14 +98,14 @@ export default function CardCreateAction() {
   const handleActionName = (event: ChangeEvent<HTMLInputElement>) => {
     setactionName(event.target.value);
   };
-  const handleActionType = (event: ChangeEvent<HTMLInputElement>) => {
-    setActionType(event.target.value);
+  const handleActionType = (value: string) => {
+    setActionType(value);
   };
   const handleParameterAction = (event: ChangeEvent<HTMLInputElement>) => {
     setActionParameter(event.target.value);
   };
-  const handleType = (event: ChangeEvent<HTMLInputElement>) => {
-    setType(event.target.value);
+  const handleType = (value: string) => {
+    setType(value);
   };
   const handleActionValue = (event: ChangeEvent<HTMLInputElement>) => {
     setActionValue(event.target.value);
@@ -130,44 +113,61 @@ export default function CardCreateAction() {
 
   const handleUserSelect = (value: string) => {
     const user = users.find((user) => user.id === value);
-    console.log(user)
+    console.log(user);
     setSelectedUser(user || null);
   };
-
-  const handleCreateAction = async () => {
-    console.log(
-      `User: ${JSON.stringify(selectedUser)}, Action Name: ${actionName}, Action Type: ${actionType}, Parâmetro da Ação: ${actionParameter}, Valor da Ação: ${actionValue}, Tipo de Ação: ${type}`
-    );
+  const resetForm = () => {
+    setactionName("");
+    setActionParameter("");
+    setActionValue("");
   };
-//   const handleCreateOpt = () => {
-//     if (nameOpt && valueOpt) {
-//       setIsCreating(true);
-//       wss?.sendMessage({
-//         api: "admin",
-//         mt: isUpdate ? "UpdateButton" : "InsertButton",
-//         name: nameOpt,
-//         value: valueOpt,
-//         guid: selectedUser?.guid,
-//         type: selectedOpt,
-//         page: "0",
-//         x: clickedPosition?.j,
-//         y: clickedPosition?.i,
-//       });
-//       setIsCreating(false);
-//     } else {
-//       toast({
-//         variant: "destructive",
-//         description:
-//           "Por favor, preencha todos os campos antes de criar o botão.",
-//       });
-//     }
-//   };
+  const handleCreateAction = () => {
+    console.log(
+      `User: ${JSON.stringify(
+        selectedUser
+      )}, Action Name: ${actionName}, Action Type: ${actionType}, Parâmetro da Ação: ${actionParameter}, Valor da Ação: ${actionValue}, Tipo de Ação: ${type}`
+    );
+    if (
+      selectedUser?.guid &&
+      actionName &&
+      actionType &&
+      actionParameter &&
+      actionValue &&
+      type
+    ) {
+      setIsCreating(true);
+      wss?.sendMessage({
+        api: "admin",
+        mt: "InsertAction",
+        name: actionName,
+        alarm: actionParameter,
+        start: actionType,
+        value: actionValue,
+        sip: selectedUser?.guid,
+        type: type,
+        device: "",
+        sensorType: "quando tiver",
+        sensorName: "quando tiver",
+      });
+      setIsCreating(false);
+      setactionName("");
+      setActionParameter("");
+      setActionValue("");
+    } else {
+      toast({
+        variant: "destructive",
+        description:
+          "Por favor, preencha todos os campos antes de criar o botão.",
+      });
+    }
+  };
+
   return (
     //div que contem os cards
     <div className="flex flex-col md:flex-row gap-5 justify-center">
-      <Dialog>
+      <Dialog onOpenChange={(isOpen) => !isOpen && resetForm()}>
         <DialogTrigger>
-          <Button>{texts[language].cardCreateAccountTrigger}</Button>
+          <Button>Criar Ação</Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
@@ -215,35 +215,21 @@ export default function CardCreateAction() {
               <Label className="text-end" htmlFor="name">
                 Tipo de Gatilho
               </Label>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button className="col-span-2" variant="outline">Escolha</Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56">
-                  <DropdownMenuLabel>Gatilho</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuRadioGroup
-                    value={actionType}
-                    onValueChange={setActionType}
-                  >
-                    <DropdownMenuRadioItem value="Alarme">
-                      Alarme
-                    </DropdownMenuRadioItem>
-                    <DropdownMenuRadioItem value="NumeroOrigem">
-                      Número Origem
-                    </DropdownMenuRadioItem>
-                    <DropdownMenuRadioItem value="NumeroDestino">
-                      Número Destino
-                    </DropdownMenuRadioItem>
-                    <DropdownMenuRadioItem value="ValorMin">
-                      Valor Minímo
-                    </DropdownMenuRadioItem>
-                    <DropdownMenuRadioItem value="ValorMax">
-                      Valor Maximo
-                    </DropdownMenuRadioItem>
-                  </DropdownMenuRadioGroup>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <Select onValueChange={handleActionType}>
+                <SelectTrigger className="col-span-2">
+                  <SelectValue placeholder="Selecione o Gatilho" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Gatilho</SelectLabel>
+                    <SelectItem value="alarm">Alarme</SelectItem>
+                    <SelectItem value="origemNumber">Número Origem</SelectItem>
+                    <SelectItem value="destNumber">Número Destino</SelectItem>
+                    <SelectItem value="minValue">Valor Minímo</SelectItem>
+                    <SelectItem value="maxValue">Valor Maxímo</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
             </div>
             <div className="grid grid-cols-3 items-center gap-4">
               <Label className="text-end" htmlFor="name">
@@ -262,29 +248,19 @@ export default function CardCreateAction() {
               <Label className="text-end" htmlFor="name">
                 Tipo
               </Label>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button className="col-span-2" variant="outline">Escolha</Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56">
-                  <DropdownMenuLabel>Tipo</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuRadioGroup
-                    value={type}
-                    onValueChange={setType}
-                  >
-                    <DropdownMenuRadioItem value="Alarme">
-                      Alarme
-                    </DropdownMenuRadioItem>
-                    <DropdownMenuRadioItem value="Número">
-                      Número
-                    </DropdownMenuRadioItem>
-                    <DropdownMenuRadioItem value="Botão">
-                      Botão
-                    </DropdownMenuRadioItem>
-                  </DropdownMenuRadioGroup>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <Select onValueChange={handleType}>
+                <SelectTrigger className="col-span-2">
+                  <SelectValue placeholder="Selecione o Tipo" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Gatilho</SelectLabel>
+                    <SelectItem value="alarm">Alarme</SelectItem>
+                    <SelectItem value="number">Número</SelectItem>
+                    <SelectItem value="button">Botão</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
             </div>
             <div className="grid grid-cols-3 items-center gap-4">
               <Label className="text-end" htmlFor="name">
@@ -301,7 +277,7 @@ export default function CardCreateAction() {
             </div>
 
             <DialogClose className="flex justify-end">
-            {!isCreating && (
+              {!isCreating && (
                 <Button onClick={handleCreateAction}>Criar Ação</Button>
               )}
               {isCreating && (

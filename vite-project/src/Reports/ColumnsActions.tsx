@@ -1,7 +1,8 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import DeleteActions from "@/components/DeleteAction";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react"
-import { Button } from "@/components/ui/button";
 
 export interface Actions {
   id: number;
@@ -17,58 +18,68 @@ export interface Actions {
   createdAt: string;
   updatedAt: string;
 }
-export const ColumnsActions: ColumnDef<Actions>[] = [
+export const columnsActions: ColumnDef<Actions>[] = [
     {
-      accessorKey: "guid",
+      accessorKey: "id",
       header: "ID",
     },
     {
-      accessorKey: "name",
+      accessorKey: "action_user",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Name {/*Ajustar text*/}
+            User {/*Ajustar text*/}
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         )
       },
     },
-    // {
-    //   accessorKey: "action_start_type",
-    //   header: "Parâmetro",
-    // },
-    // {
-    //   accessorKey: "action_prt",
-    //   header: "ação",
-    // },
-    // {
-    //   accessorKey: "action_alarm_code",
-    //   header: "Gatilho",
-    // },
-    // {
-    //   accessorKey: "action_user",
-    //   header: "Usuário",
-    // },
-    // {
-    //   accessorKey: "action_device",
-    //   header: "Device",
-    // },
-    // {
-    //   id: "actions",
-    //   header: "Actions",
-    //   cell: ({ row }) => {
-    //     const actions = row.original;
+    {
+      accessorKey: "action_name",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Action Name {/*Ajustar text*/}
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        )
+      },
+    },
+    {
+      accessorKey: "action_start_type",
+      header: "Parâmetro",
+    },
+    {
+      accessorKey: "action_prt",
+      header: "ação",
+    },
+    {
+      accessorKey: "action_alarm_code",
+      header: "Gatilho",
+    },
+
+    {
+      accessorKey: "action_device",
+      header: "Device",
+    },
+    {
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) => {
+        const actions = row.original;
   
-    //     return (
-    //       /*<div>
-    //         <DeleteAction id={actions.id}/>
-    //       </div>*/
-    //       <div></div>
-    //     );
-    //   },
-    // },
+        return (
+          <div>
+            <DeleteActions id={actions.id}/>
+          </div>
+        );
+      },
+    },
   ];
   
