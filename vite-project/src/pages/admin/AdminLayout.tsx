@@ -19,12 +19,14 @@ import Options from "./Options";
 import Loader from "@/components/Loader";
 import useWebSocket from "@/components/useWebSocket";
 import { useToast } from "@/components/ui/use-toast";
+import { useWebSocketData } from "@/components/WebSocketProvider";
 import { SensorInterface, useSensors } from "@/components/SensorContext";
 import { ActionsInteface, useActions } from "@/components/ActionsContext";
 
 function AdminLayout() {
   const account = useAccount();
-  const { buttons, setButtons, updateButton } = useButtons();
+  const wss = useWebSocketData();
+  const { buttons, setButtons, addButton, updateButton } = useButtons();
   const { sensors, setSensors, updateSensor } = useSensors();
   const { toast } = useToast();
   const { actions, setActions, updateActions } = useActions();
@@ -38,9 +40,16 @@ function AdminLayout() {
         break;
       case "InsertMessageSuccess":
         const newButton: ButtonInterface = message.result;
-        updateButton(newButton);
+        addButton(newButton);
         toast({
           description: "Botão Criado com sucesso",
+        });
+        break;
+      case "UpdateMessageSuccess":
+        const updatedButton: ButtonInterface = message.result;
+        updateButton(updatedButton);
+        toast({
+          description: "Botão Atualizado com sucesso",
         });
         break;
       case "DeleteButtonsSuccess":

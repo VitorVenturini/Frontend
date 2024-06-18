@@ -70,7 +70,7 @@ export default function CardLogin() {
 
   const handleLogin = async () => {
     setIsLoading(true);
-    await bcrypt.hash(password, 15);
+    const hash = await bcrypt.hash(password, 15);
 
     const formData = {
       email: email,
@@ -85,7 +85,8 @@ export default function CardLogin() {
         },
         body: JSON.stringify(formData),
       });
-
+      //{"error":"incorrectPassword"}
+      // emailNotFound
       if (response.ok) {
         const data = await response.json();
         localStorage.setItem("token", data.accessToken);
@@ -147,10 +148,14 @@ export default function CardLogin() {
             break;
         }
         setIsLoading(false);
+
       }
     } catch (error) {
       console.error("Erro:", error);
     }
+
+    setIsLoading(false);
+
   };
   const handleFormSubmit = (event: React.FormEvent) => {
     event.preventDefault(); // Previne o comportamento padrão do formulário

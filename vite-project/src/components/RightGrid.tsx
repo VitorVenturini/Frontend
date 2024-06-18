@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import OtpRow from "./OptBar";
 import OptGrid from "./OptGrid";
 import { ButtonInterface } from "./ButtonsContext";
@@ -31,6 +31,10 @@ export default function RightGrid({
   onKeyChange
 }: RightGridProps) {
   const [clickedButtonId, setClickedButtonId] = useState<number | null>(null);
+
+  useEffect(() => {
+    setClickedButtonId(null);
+  }, [selectedOpt]);
 
   const buttonsInSelectedOpt = buttons.filter(
     (button) => button.button_type === selectedOpt && button.page === "0"

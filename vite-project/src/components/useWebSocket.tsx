@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback} from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { useAccount } from "./AccountContext";
 import { WebSocketMessage } from "./WebSocketProvider";
 
@@ -18,7 +18,6 @@ const useWebSocket = (
   const account = useAccount();
 
   useEffect(() => {
-    
     if (!account.isLogged) return;
 
     const currentUrl = window.location.hostname;
@@ -38,15 +37,15 @@ const useWebSocket = (
         console.log("WebSocket connection opened");
         console.log(account.isAdmin);
         console.log(account);
-        if(account.isAdmin){
-          ws.current?.send(JSON.stringify({ api: "admin" , mt: "SelectButtons" }));
-          ws.current?.send(JSON.stringify({ api: "admin", mt: "SelectSensorName" }));
-          //ws.current?.send(JSON.stringify({ api: "admin", mt: "DeleteAllButtons" }));
-        }else{
-          ws.current?.send(JSON.stringify({ api: "user" , mt: "SelectButtons" }));
-          ws.current?.send(JSON.stringify({ api: "user", mt: "SelectSensorName" }));
-        }
-
+        // if (account.isAdmin) {
+        //   //ws.current?.send(JSON.stringify({ api: "admin", mt: "DeleteAllButtons" }));
+        // } else {
+        //   // ws.current?.send(JSON.stringify({ api: "user" , mt: "SelectSensorInfoSrc", type: "co2", sensor: "Sensor Técnica" }));
+        //   ws.current?.send(
+        //     JSON.stringify({ api: "user", mt: "SelectButtons" })
+        //   );
+        //   //ws.current?.send(JSON.stringify({ api: "user", mt: "SelectSensorName" }));
+        // }
       };
 
       ws.current.onclose = (event) => {
@@ -71,6 +70,20 @@ const useWebSocket = (
       ws.current.onmessage = (message) => {
         console.log("WebSocket message received:", message.data);
         const parsedMessage = JSON.parse(message.data);
+        if (parsedMessage.mt === "UserSessionResult") {
+          if (account.isAdmin) {
+            ws.current?.send(
+              JSON.stringify({ api: "admin", mt: "SelectButtons" })
+            );
+            ws.current?.send(
+              JSON.stringify({ api: "admin", mt: "SelectSensorName" })
+            );
+          } else {
+            ws.current?.send(
+              JSON.stringify({ api: "user", mt: "SelectButtons" })
+            );
+          }
+        }
         if (onMessage) {
           onMessage(parsedMessage);
         }
@@ -92,15 +105,12 @@ const useWebSocket = (
     //if(ws.current) ws.current.onclose
   }, []);
 
-  const sendMessage = useCallback(
-    (message: WebSocketMessage) => {
-      if (ws.current && ws.current.readyState === WebSocket.OPEN) {
-        ws.current.send(JSON.stringify(message));
-        console.log("WebSocketSend " + JSON.stringify(message));
-      }
-    },
-    []
-  );
+  const sendMessage = useCallback((message: WebSocketMessage) => {
+    if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+      ws.current.send(JSON.stringify(message));
+      console.log("WebSocketSend " + JSON.stringify(message));
+    }
+  }, []);
 
   return { data, closeConnection, sendMessage };
 };

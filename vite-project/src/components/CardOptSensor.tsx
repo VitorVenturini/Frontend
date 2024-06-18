@@ -87,10 +87,12 @@ export default function CardOptSensor({
       setIsCreating(true);
       wss?.sendMessage({
         api: "admin",
-        mt: isUpdate ? "UpdateSensorMessage" : "InsertSensorMessage",
+        mt: isUpdate ? "UpdateButton" : "InsertButton",
+        ...(isUpdate && { id: existingButton?.id }),
         name: nameOpt,
         value: nameSensor,
         guid: selectedUser?.guid,
+        img: null,
         type: selectedOpt,
         page: "0",
         x: clickedPosition?.j,
