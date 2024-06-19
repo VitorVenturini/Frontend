@@ -62,17 +62,16 @@ function UserLayout() {
           addSensors(sensorsArray);
         }
         break;
-      case "SelectSensorInfoResultSrc":
-        const sensorData = JSON.parse(message.result);
-        updateSensor({
-          sensor_name: message.sensor_name,
-          ...sensorData,
-        });
+      case "SelectAllSensorInfoResultSrc":
+        console.log("SelectAllSensorInfoSrc" + message.result);
+        const allSensors: SensorInterface[] = JSON.parse(message.result);
+        addSensors(allSensors);
         break;
       case "SensorReceived":
         const sensorDataReceived = message.value; // Adicione este log para verificar os dados recebidos
         updateSensor(sensorDataReceived);
         break;
+
       default:
         console.log("Unknown message type:", message);
         break;
@@ -94,10 +93,8 @@ function UserLayout() {
       onMessage={handleWebSocketMessage}
     >
       <div className="flex gap-1 p-1">
-        <LeftGrid 
-        buttons={buttons} 
-        selectedUser={account} />
-        
+        <LeftGrid buttons={buttons} selectedUser={account} />
+
         <ButtonsGridPage
           buttons={buttons}
           selectedUser={account}

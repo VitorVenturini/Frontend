@@ -159,7 +159,7 @@ export default function ModalSensor({
   };
 
   // Lista de tipos de medida que não devem exibir campos de valor mínimo e máximo
-  const typesWithoutMinMax = ["leak", "light", "pir"];
+  const typesWithoutMinMax = ["leak", "light", "pir","tvoc"];
 
   const showMinMaxFields = !typesWithoutMinMax.includes(typeMeasure);
   return (

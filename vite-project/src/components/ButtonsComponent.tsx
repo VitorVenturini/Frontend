@@ -46,6 +46,7 @@ import {
 import { useLanguage } from "./LanguageContext";
 import ModalCombo from "./ModalCombo";
 import { useWebSocketData } from "./WebSocketProvider";
+import ModalAlarm from "./ModalAlarm";
 import SensorResponsiveInfo from "./SensorResponsiveInfo";
 
 interface User {
@@ -77,21 +78,22 @@ export default function ButtonsComponent({
   const [isClicked, setIsClicked] = useState(false);
   const { setOldValue, setNewValue, buttons, setButtons } = useButtons();
   const [buttonsLoaded, setButtonsLoaded] = useState(false);
+  const [selectedType , setSelectedType] = useState<string>("")
 
-  useEffect(() => {
-    if (buttons.length > 0) {
-      buttons.forEach((btns) => {
-        if (btns.button_type === "sensor" && btns.page !== "0") {
-          wss?.sendMessage({
-            api: "user",
-            mt: "SelectSensorInfoSrc",
-            sensor: btns.button_prt,
-            type: btns.sensor_type,
-          });
-        }
-      });
-    }
-  }, [button.sensor_type, button.button_prt]);
+  // useEffect(() => {
+  //   if (buttons.length > 0) {
+  //     buttons.forEach((btns) => {
+  //       if (btns.button_type === "sensor" && btns.page !== "0") {
+  //         wss?.sendMessage({
+  //           api: "user",
+  //           mt: "SelectSensorInfoSrc",
+  //           sensor: btns.button_prt,
+  //           type: btns.sensor_type,
+  //         });
+  //       }
+  //     });
+  //   }
+  // }, [button.sensor_type, button.button_prt]);
 
   // para piscar nas outras páginas sem ser a atual
   useEffect(() => {
@@ -125,6 +127,42 @@ export default function ButtonsComponent({
       onClickPosition();
     }
     setIsClicked(!isClicked);
+  };
+
+  const handleTypeSelected = (value : string) =>{
+    setSelectedType(value)
+  }
+  // função para abrir o modal Alarm , number , user de acordo com a opção selecionada 
+
+  const renderModalByType = () => {
+    switch (selectedType) {
+      case "alarm":
+        return (
+          <ModalAlarm
+            // selectedPage={selectedPage}
+            // selectedUser={selectedUser}
+            // clickedPosition={clickedPosition}
+          />
+        )
+      // case "number":
+      //   return (
+      //     <ModalNumber
+      //       selectedPage={selectedPage}
+      //       selectedUser={selectedUser}
+      //       clickedPosition={clickedPosition}
+      //     />
+      //   );
+      // // case "user":
+      //   return (
+      //     <ModalUser
+      //       selectedPage={selectedPage}
+      //       selectedUser={selectedUser}
+      //       clickedPosition={clickedPosition}
+      //     />
+      //   );
+      default:
+        return null;
+    }
   };
 
   const getDialogContent = () => {
@@ -164,7 +202,7 @@ export default function ButtonsComponent({
                   >
                     Tipo de botão
                   </Label>
-                  <Select>
+                  <Select onValueChange={handleTypeSelected}>
                     <SelectTrigger className="col-span-1" id="SelectTypeButton">
                       <SelectValue placeholder="Selecione o tipo de Botão" />
                     </SelectTrigger>
@@ -177,6 +215,7 @@ export default function ButtonsComponent({
                 </div>
               </CardContent>
             </Card>
+            {renderModalByType()}
           </>
         );
       default:

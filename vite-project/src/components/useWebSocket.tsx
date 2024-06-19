@@ -82,6 +82,9 @@ const useWebSocket = (
             ws.current?.send(
               JSON.stringify({ api: "user", mt: "SelectButtons" })
             );
+            ws.current?.send(
+              JSON.stringify({ api: "user", mt: "SelectAllSensorInfoSrc" })
+            );
           }
         }
         if (onMessage) {

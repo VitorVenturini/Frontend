@@ -49,22 +49,23 @@ export const SensorProvider = ({ children }: { children: ReactNode }) => {
       const existingSensorIndex = prevSensors.findIndex(
         (s) => s.sensor_name === sensor.sensor_name
       );
-  
+
       if (existingSensorIndex !== -1) {
         // Sensor já existe na lista, vamos comparar os valores
         const existingSensor = prevSensors[existingSensorIndex];
-  
+
         // Verificar se algum valor do sensor atual é diferente do sensor existente
         const isDifferent = Object.keys(sensor).some(
-          (key) => existingSensor[key as keyof SensorInterface] !== sensor[key as keyof SensorInterface]
+          (key) =>
+            existingSensor[key as keyof SensorInterface] !==
+            sensor[key as keyof SensorInterface]
         );
-  
+
         if (isDifferent) {
-          // Se houver diferença, atualizamos o sensor e colocamos no início da lista
-          const updatedSensor = { ...existingSensor, ...sensor };
+          // Se houver diferença, adicionamos o novo sensor no início da lista
           const updatedSensors = [
-            updatedSensor,
-            ...prevSensors.filter((_, index) => index !== existingSensorIndex)
+            sensor,
+            ...prevSensors,
           ];
           return updatedSensors;
         } else {
