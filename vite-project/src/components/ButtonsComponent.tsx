@@ -1,4 +1,4 @@
-import React, { useContext, useEffect,useMemo } from "react";
+import React, { useContext, useEffect, useMemo } from "react";
 import {
   Plus,
   OctagonAlert,
@@ -78,49 +78,37 @@ export default function ButtonsComponent({
   const [isClicked, setIsClicked] = useState(false);
   const { setOldValue, setNewValue, buttons, setButtons } = useButtons();
   const [buttonsLoaded, setButtonsLoaded] = useState(false);
-  const [selectedType , setSelectedType] = useState<string>("")
-
-  // useEffect(() => {
-  //   if (buttons.length > 0) {
-  //     buttons.forEach((btns) => {
-  //       if (btns.button_type === "sensor" && btns.page !== "0") {
-  //         wss?.sendMessage({
-  //           api: "user",
-  //           mt: "SelectSensorInfoSrc",
-  //           sensor: btns.button_prt,
-  //           type: btns.sensor_type,
-  //         });
-  //       }
-  //     });
-  //   }
-  // }, [button.sensor_type, button.button_prt]);
+  const [selectedType, setSelectedType] = useState<string>("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // para piscar nas outras páginas sem ser a atual
-  useEffect(() => {
-    if (!buttons || buttons.length === 0) return; // Verifica se buttons está definido e não vazio
+  if (!isAdmin) {
+    useEffect(() => {
+      if (!buttons || buttons.length === 0) return; // Verifica se buttons está definido e não vazio
 
-    buttons.forEach((btns) => {
-      // Itera sobre os botões
-      if (btns.button_type === "sensor" && btns.page !== "0") {
-        const filteredSensor = sensors.find(
-          (sensor) => sensor.sensor_name === btns.button_prt
-        ); // Encontra o sensor correspondente
+      buttons.forEach((btns) => {
+        // Itera sobre os botões
+        if (btns.button_type === "sensor" && btns.page !== "0") {
+          const filteredSensor = sensors.find(
+            (sensor) => sensor.sensor_name === btns.button_prt
+          ); // Encontra o sensor correspondente
 
-        if (filteredSensor && btns.sensor_type) {
-          const currentValue = parseInt(
-            (filteredSensor as any)[btns.sensor_type],
-            10
-          ); // Obtém o valor atual do sensor
+          if (filteredSensor && btns.sensor_type) {
+            const currentValue = parseInt(
+              (filteredSensor as any)[btns.sensor_type],
+              10
+            ); // Obtém o valor atual do sensor
 
-          // Compara com os valores anteriores
-          if (btns.newValue !== currentValue) {
-            setOldValue(btns.sensor_type, btns.button_prt, btns.newValue); // Define o valor antigo antes de atualizar
-            setNewValue(btns.sensor_type, btns.button_prt, currentValue); // Define o novo valor
+            // Compara com os valores anteriores
+            if (btns.newValue !== currentValue) {
+              setOldValue(btns.sensor_type, btns.button_prt, btns.newValue); // Define o valor antigo antes de atualizar
+              setNewValue(btns.sensor_type, btns.button_prt, currentValue); // Define o novo valor
+            }
           }
         }
-      }
-    });
-  }, [sensors, buttons, setOldValue, setNewValue]); // Dependências
+      });
+    }, [sensors, buttons, setOldValue, setNewValue]); // Dependências
+  }
 
   const handleClick = () => {
     if (isAdmin) {
@@ -129,37 +117,16 @@ export default function ButtonsComponent({
     setIsClicked(!isClicked);
   };
 
-  const handleTypeSelected = (value : string) =>{
-    setSelectedType(value)
-  }
-  // função para abrir o modal Alarm , number , user de acordo com a opção selecionada 
-
+  const handleTypeSelected = (value: string) => {
+    setSelectedType(value);
+    setIsDialogOpen(true);
+  };
+  // função para abrir o modal Alarm , number , user de acordo com a opção selecionada
   const renderModalByType = () => {
     switch (selectedType) {
       case "alarm":
-        return (
-          <ModalAlarm
-            // selectedPage={selectedPage}
-            // selectedUser={selectedUser}
-            // clickedPosition={clickedPosition}
-          />
-        )
-      // case "number":
-      //   return (
-      //     <ModalNumber
-      //       selectedPage={selectedPage}
-      //       selectedUser={selectedUser}
-      //       clickedPosition={clickedPosition}
-      //     />
-      //   );
-      // // case "user":
-      //   return (
-      //     <ModalUser
-      //       selectedPage={selectedPage}
-      //       selectedUser={selectedUser}
-      //       clickedPosition={clickedPosition}
-      //     />
-      //   );
+        return <ModalAlarm />;
+      // Add other cases here as needed
       default:
         return null;
     }
@@ -185,39 +152,47 @@ export default function ButtonsComponent({
             clickedPosition={clickedPosition}
           />
         );
-      case (clickedPosition?.i ?? 0) >= 3 && (clickedPosition?.i ?? 0) <= 8:
-        return (
-          <>
-            <Card className="border-none bg-transparent">
-              <CardHeader>
-                <CardTitle>Criar Botão</CardTitle>
-                <CardDescription>Selecione um tipo de botão</CardDescription>
-              </CardHeader>
-              <CardContent className="gap-4 py-4">
-                <div className="flex gap-4 items-center">
-                  <Label
-                    className="text-end"
-                    htmlFor="framework"
-                    id="typeButton"
-                  >
-                    Tipo de botão
-                  </Label>
-                  <Select onValueChange={handleTypeSelected}>
-                    <SelectTrigger className="col-span-1" id="SelectTypeButton">
-                      <SelectValue placeholder="Selecione o tipo de Botão" />
-                    </SelectTrigger>
-                    <SelectContent position="popper">
-                      <SelectItem value="alarm">Alarme</SelectItem>
-                      <SelectItem value="number">Número</SelectItem>
-                      <SelectItem value="user">Usuário</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </CardContent>
-            </Card>
-            {renderModalByType()}
-          </>
-        );
+        case (clickedPosition?.i ?? 0) >= 3 && (clickedPosition?.i ?? 0) <= 8:
+          return (
+            <>
+              {selectedType ? (
+                <Dialog open={true} onOpenChange={() => setSelectedType("")}>
+                  <DialogContent>{renderModalByType()}</DialogContent>
+                </Dialog>
+              ) : (
+                <Card className="border-none bg-transparent">
+                  <CardHeader>
+                    <CardTitle>Criar Botão</CardTitle>
+                    <CardDescription>Selecione um tipo de botão</CardDescription>
+                  </CardHeader>
+                  <CardContent className="gap-4 py-4">
+                    <div className="flex gap-4 items-center">
+                      <Label
+                        className="text-end"
+                        htmlFor="framework"
+                        id="typeButton"
+                      >
+                        Tipo de botão
+                      </Label>
+                      <Select onValueChange={handleTypeSelected}>
+                        <SelectTrigger
+                          className="col-span-1"
+                          id="SelectTypeButton"
+                        >
+                          <SelectValue placeholder="Selecione o tipo de Botão" />
+                        </SelectTrigger>
+                        <SelectContent position="popper">
+                          <SelectItem value="alarm">Alarme</SelectItem>
+                          <SelectItem value="number">Número</SelectItem>
+                          <SelectItem value="user">Usuário</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </>
+          );
       default:
         return (
           <>
@@ -349,7 +324,7 @@ export default function ButtonsComponent({
                   <Plus />
                 </div>
               </DialogTrigger>
-              {<DialogContent>{getDialogContent()}</DialogContent>}
+              <DialogContent>{getDialogContent()}</DialogContent>
             </Dialog>
           );
         } else {
