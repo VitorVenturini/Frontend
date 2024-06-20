@@ -44,6 +44,7 @@ import {
 import { ButtonInterface } from "./ButtonsContext";
 import { Loader2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { host } from "@/App";
 
 interface User {
   id: string;
@@ -68,6 +69,7 @@ export default function CardOptGeneric({
 }: OptGenericProps) {
   const [nameOpt, setNameOpt] = useState(existingButton?.button_name || "");
   const [valueOpt, setValueOpt] = useState(existingButton?.button_prt || "");
+  const [fileContent, setFileContent] = useState<File | null>(null);
   const { toast } = useToast();
   const [isCreating, setIsCreating] = useState(false);
   const wss = useWebSocketData();
@@ -78,16 +80,56 @@ export default function CardOptGeneric({
   const handleValueOpt = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValueOpt(event.target.value);
   };
+  const handleUploadFile = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files ? event.target.files[0] : null;
+    if (file) {
+      setFileContent(file);
+    }
+    console.log("File" + JSON.stringify(file?.name));
+  };
 
-  const handleCreateOpt = () => {
-    if (nameOpt && valueOpt) {
+  // const handleSendImage = async (): Promise<string | null> => {
+  //   if (!fileContent) return null;
+  //   console.log("Imagem" + JSON.stringify(fileContent));
+
+  // };
+  const handleCreateOpt = async () => {
+    if (nameOpt && (valueOpt || fileContent)) {
       setIsCreating(true);
+
+      let uploadedFileName: string | null = null;
+
+      if (fileContent) {
+        try {
+          const formData = new FormData();
+          formData.append("file", fileContent);
+
+          const response = await fetch(host + "/ui/uploadFiles", {
+            method: "POST",
+            headers: {
+              "x-auth": localStorage.getItem("token") || "",
+            },
+            body: formData,
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            uploadedFileName = data.fileUrl;
+          } else {
+            console.error("Erro ao enviar a imagem", data);
+          }
+        } catch (error) {
+          console.error("Erro ao enviar a imagem", error);
+        }
+      }
+
       wss?.sendMessage({
         api: "admin",
         mt: isUpdate ? "UpdateButton" : "InsertButton",
         ...(isUpdate && { id: existingButton?.id }),
         name: nameOpt,
-        value: valueOpt,
+        value: uploadedFileName || valueOpt,
         guid: selectedUser?.guid,
         img: null,
         type: selectedOpt,
@@ -95,6 +137,7 @@ export default function CardOptGeneric({
         x: clickedPosition?.j,
         y: clickedPosition?.i,
       });
+
       setIsCreating(false);
     } else {
       toast({
@@ -124,13 +167,16 @@ export default function CardOptGeneric({
           description: "Descrição para botão Planta Baixa",
           labelButton: "Arquivo ",
           IptType: "file",
+          onChangeFunction: handleUploadFile,
         };
       case "maps":
         return {
           title: "Botão Mapa",
           description: "Descrição para botão Mapa",
-          labelButton: "URL do google maps ",
-          IptType: "file",
+          labelButton: "Latitude ",
+          labelButton2: "Longitude ",
+          IptType: "text",
+          onChangeFunction: handleValueOpt,
         };
       case "video":
         return {
@@ -138,12 +184,21 @@ export default function CardOptGeneric({
           description: "Descrição para botão Video",
           labelButton: "Link do Vídeo ",
           IptType: "text",
+          onChangeFunction: handleValueOpt,
         };
       default:
         return { title: "um botão", description: "" };
     }
   };
-  const { title, description, labelButton, IptType } = getContent();
+
+  const {
+    title,
+    description,
+    labelButton,
+    labelButton2,
+    IptType,
+    onChangeFunction,
+  } = getContent();
 
   return (
     <>
@@ -172,16 +227,48 @@ export default function CardOptGeneric({
             <Label className="text-end" htmlFor="buttonName">
               {labelButton}
             </Label>
-            <Input 
+            <Input
               className="col-span-3"
               id="buttonName"
               placeholder={labelButton}
-              value={valueOpt}
-              onChange={handleValueOpt}
+              value={selectedOpt === "floor" ? undefined : valueOpt}
+              onChange={onChangeFunction}
               type={IptType}
               required
             />
           </div>
+          {selectedOpt === "floor" && valueOpt ? (
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label className="text-end" htmlFor="buttonName">
+                Valor Atual
+              </Label>
+              <Input
+                className="col-span-3"
+                id="buttonName"
+                placeholder={labelButton}
+                value={fileContent ? fileContent.name : valueOpt}
+                readOnly
+                type="text"
+                required
+              />
+            </div>
+          ) : (
+            ""
+          )}
+          {selectedOpt === "maps" && (
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label className="text-end" htmlFor="buttonName">
+                Longitude
+              </Label>
+              <Input
+                className="col-span-3"
+                id="buttonName"
+                placeholder={labelButton2}
+                type="text"
+                required
+              />
+            </div>
+          )}
         </CardContent>
         <CardFooter className="flex justify-between">
           {isUpdate && (

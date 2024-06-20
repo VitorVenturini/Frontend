@@ -47,6 +47,7 @@ import { useLanguage } from "./LanguageContext";
 import ModalCombo from "./ModalCombo";
 import { useWebSocketData } from "./WebSocketProvider";
 import ModalAlarm from "./ModalAlarm";
+import AlarmButton from "./AlarmButton";
 import SensorResponsiveInfo from "./SensorResponsiveInfo";
 
 interface User {
@@ -125,7 +126,13 @@ export default function ButtonsComponent({
   const renderModalByType = () => {
     switch (selectedType) {
       case "alarm":
-        return <ModalAlarm />;
+        return (
+          <ModalAlarm
+            selectedPage={selectedPage}
+            selectedUser={selectedUser}
+            clickedPosition={clickedPosition}
+          />
+        );
       // Add other cases here as needed
       default:
         return null;
@@ -152,47 +159,47 @@ export default function ButtonsComponent({
             clickedPosition={clickedPosition}
           />
         );
-        case (clickedPosition?.i ?? 0) >= 3 && (clickedPosition?.i ?? 0) <= 8:
-          return (
-            <>
-              {selectedType ? (
-                <Dialog open={true} onOpenChange={() => setSelectedType("")}>
-                  <DialogContent>{renderModalByType()}</DialogContent>
-                </Dialog>
-              ) : (
-                <Card className="border-none bg-transparent">
-                  <CardHeader>
-                    <CardTitle>Criar Botão</CardTitle>
-                    <CardDescription>Selecione um tipo de botão</CardDescription>
-                  </CardHeader>
-                  <CardContent className="gap-4 py-4">
-                    <div className="flex gap-4 items-center">
-                      <Label
-                        className="text-end"
-                        htmlFor="framework"
-                        id="typeButton"
+      case (clickedPosition?.i ?? 0) >= 3 && (clickedPosition?.i ?? 0) <= 8:
+        return (
+          <>
+            {selectedType ? (
+              <Dialog open={true} onOpenChange={() => setSelectedType("")}>
+                <DialogContent>{renderModalByType()}</DialogContent>
+              </Dialog>
+            ) : (
+              <Card className="border-none bg-transparent">
+                <CardHeader>
+                  <CardTitle>Criar Botão</CardTitle>
+                  <CardDescription>Selecione um tipo de botão</CardDescription>
+                </CardHeader>
+                <CardContent className="gap-4 py-4">
+                  <div className="flex gap-4 items-center">
+                    <Label
+                      className="text-end"
+                      htmlFor="framework"
+                      id="typeButton"
+                    >
+                      Tipo de botão
+                    </Label>
+                    <Select onValueChange={handleTypeSelected}>
+                      <SelectTrigger
+                        className="col-span-1"
+                        id="SelectTypeButton"
                       >
-                        Tipo de botão
-                      </Label>
-                      <Select onValueChange={handleTypeSelected}>
-                        <SelectTrigger
-                          className="col-span-1"
-                          id="SelectTypeButton"
-                        >
-                          <SelectValue placeholder="Selecione o tipo de Botão" />
-                        </SelectTrigger>
-                        <SelectContent position="popper">
-                          <SelectItem value="alarm">Alarme</SelectItem>
-                          <SelectItem value="number">Número</SelectItem>
-                          <SelectItem value="user">Usuário</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-            </>
-          );
+                        <SelectValue placeholder="Selecione o tipo de Botão" />
+                      </SelectTrigger>
+                      <SelectContent position="popper">
+                        <SelectItem value="alarm">Alarme</SelectItem>
+                        <SelectItem value="number">Número</SelectItem>
+                        <SelectItem value="user">Usuário</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </>
+        );
       default:
         return (
           <>
@@ -212,30 +219,21 @@ export default function ButtonsComponent({
           <div>
             <Dialog>
               <DialogTrigger asChild>
-                <div
-                  className={`${commonClasses} flex flex-col cursor-pointer bg-buttonNumber`}
-                  onClick={handleClick}
-                >
-                  <div className="flex items-center gap-1 cursor-pointer">
-                    <OctagonAlert />
-                    <p className="text-sm font-medium leading-none">
-                      {button.button_name}
-                    </p>
-                  </div>
-                  <div>
-                    <p>{button.button_prt}</p>
-                  </div>
+                <div>
+                  <AlarmButton button={button}   />
                 </div>
               </DialogTrigger>
               {isAdmin && (
                 <DialogContent>
-                  {/* <CardSensorModal
-                  selectedPage={selectedPage}
-                  selectedUser={selectedUser}
-                  clickedPosition={clickedPosition}
-                  existingButton={button}
-                  isUpdate={true}
-                /> */}
+                  {
+                    <ModalAlarm
+                      selectedPage={selectedPage}
+                      selectedUser={selectedUser}
+                      clickedPosition={clickedPosition}
+                      existingButton={button}
+                      isUpdate={true}
+                    />
+                  }
                 </DialogContent>
               )}
             </Dialog>

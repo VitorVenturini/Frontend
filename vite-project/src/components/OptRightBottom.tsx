@@ -85,6 +85,9 @@ export default function OptRightBottom({
           );
         }
       case "floor":
+        return(
+          <iframe src={clickedButton.button_prt} className="h-full w-full" style={{height: "calc(100vh - 200px)"}}/>
+        )
       case "map":
       case "radio":
       case "video":

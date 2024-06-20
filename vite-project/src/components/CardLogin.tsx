@@ -38,6 +38,7 @@ import {
 
 import { useToast } from "@/components/ui/use-toast";
 import { set } from "date-fns";
+import { host } from "@/App";
 
 export default function CardLogin() {
   const [email, setEmail] = useState("");
@@ -78,7 +79,7 @@ export default function CardLogin() {
     };
 
     try {
-      const response = await fetch("https://meet.wecom.com.br/api/login", {
+      const response = await fetch(host + "/api/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

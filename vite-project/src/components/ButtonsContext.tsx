@@ -22,8 +22,9 @@ export interface ButtonInterface {
   img?: string | null;
   createdAt: string;
   updatedAt: string;
-  oldValue?: number; // Adicionar oldValue como campo opcional
-  newValue?: number; // Adicionar newValue como campo opcional
+  oldValue?: number; // propriedade adicional para sensores
+  newValue?: number; // propriedade adicional para sensores
+  clicked?: boolean; // adicionado para rastrear se o botão foi clicado
 }
 
 interface ButtonContextType {
@@ -31,8 +32,18 @@ interface ButtonContextType {
   setButtons: React.Dispatch<React.SetStateAction<ButtonInterface[]>>;
   addButton: (button: ButtonInterface) => void;
   updateButton: (button: ButtonInterface) => void;
-  setOldValue: (sensorType: string, sensorName: string, value: number | undefined) => void;
-  setNewValue: (sensorType: string, sensorName: string, value: number | undefined) => void;
+  setOldValue: (
+    sensorType: string,
+    sensorName: string,
+    value: number | undefined
+  ) => void;
+  setNewValue: (
+    sensorType: string,
+    sensorName: string,
+    value: number | undefined
+  ) => void;
+  setClickedButton: (id: number) => void;
+  removeClickedButton: (id: number) => void;
   clearButtons: () => void;
 }
 
@@ -54,7 +65,11 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
       )
     );
   };
-  const setOldValue = (sensorType: string, sensorName: string, value: number | undefined) => {
+  const setOldValue = (
+    sensorType: string,
+    sensorName: string,
+    value: number | undefined
+  ) => {
     setButtons((prevButtons) =>
       prevButtons.map((button) =>
         button.sensor_type === sensorType && button.button_prt === sensorName
@@ -63,8 +78,12 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
       )
     );
   };
-  
-  const setNewValue = (sensorType: string, sensorName: string, value: number | undefined) => {
+
+  const setNewValue = (
+    sensorType: string,
+    sensorName: string,
+    value: number | undefined
+  ) => {
     setButtons((prevButtons) =>
       prevButtons.map((button) =>
         button.sensor_type === sensorType && button.button_prt === sensorName
@@ -73,7 +92,23 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
       )
     );
   };
-  
+
+  const setClickedButton = (id: number) => {
+    setButtons((prevButtons) =>
+      prevButtons.map((button) =>
+        button.id === id ? { ...button, clicked: true } : button
+      )
+    );
+  };
+
+  const removeClickedButton = (id: number) => {
+    setButtons((prevButtons) =>
+      prevButtons.map((button) =>
+        button.id === id ? { ...button, clicked: false } : button
+      )
+    );
+  };
+
   const clearButtons = () => {
     setButtons([]);
   };
@@ -88,6 +123,8 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
         updateButton,
         setOldValue,
         setNewValue,
+        setClickedButton,
+        removeClickedButton,
       }}
     >
       {children}

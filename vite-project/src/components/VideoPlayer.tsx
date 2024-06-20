@@ -57,25 +57,29 @@ export default function VideoPlayer({ url }: VideoPlayerProps) {
           title="YouTube video player"
         ></iframe>
       );
-    }
-
-    switch (extension) {
-      case "mp4":
-        return (
-          <video controls width="100%" autoPlay>
-            <source src={url} type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-        );
-      case "m3u8":
-        // para o caso Stream (m3u8) o tratamento é diferente pois ele é realizado no UseEffect com a lib de Hls
-        return (
-          <video controls width="100%" ref={videoRef} autoPlay>
-            Your browser does not support the video tag.
-          </video>
-        );
-      default:
-        return <p>Unsupported video format</p>;
+    } else {
+      switch (extension) {
+        case "mp4":
+          console.log("Extensão " + extension);
+          return (
+            <div>
+              <video controls width="100%" autoPlay>
+                <source src={url} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          );
+        case "m3u8":
+          console.log("Extensão m3u8 " + extension);
+          // para o caso Stream (m3u8) o tratamento é diferente pois ele é realizado no UseEffect com a lib de Hls
+          return (
+            <video controls width="100%" ref={videoRef} autoPlay>
+              Your browser does not support the video tag.
+            </video>
+          );
+        default:
+          return <p>Unsupported video format</p>;
+      }
     }
   };
 
