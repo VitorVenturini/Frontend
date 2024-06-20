@@ -15,6 +15,7 @@ import React, { useEffect, useState, ChangeEvent } from "react";
 import { Value } from "@radix-ui/react-select";
 import TableUser from "@/components/TableUser";
 import { Loader2 } from "lucide-react";
+import { Info } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -36,7 +37,7 @@ import {
 import texts from "../_data/texts.json";
 import { useLanguage } from "./LanguageContext";
 import { useWebSocketData } from "./WebSocketProvider";
-
+import { useSensors } from "./SensorContext";
 interface User {
   id: string;
   name: string;
@@ -71,6 +72,10 @@ export default function CardCreateAction() {
   const { language } = useLanguage();
 
   const { toast } = useToast();
+  const [nameSensor, setNameSensor] = useState("");
+  const { sensors } = useSensors();
+  const [typeMeasure, setTypeMeasure] = useState("");
+  const [deviceDest, setDeviceDest] = useState("");
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -110,11 +115,19 @@ export default function CardCreateAction() {
   const handleActionValue = (event: ChangeEvent<HTMLInputElement>) => {
     setActionValue(event.target.value);
   };
-
+  const handleNameSensor = (value: string) => {
+    setNameSensor(value);
+  };
+  const handleTypeMeasure = (value: string) => {
+    setTypeMeasure(value);
+  };
   const handleUserSelect = (value: string) => {
     const user = users.find((user) => user.id === value);
     console.log(user);
     setSelectedUser(user || null);
+  };
+  const handleDeviceDest = (value: string) => {
+    setDeviceDest(value);
   };
   const resetForm = () => {
     setactionName("");
@@ -145,9 +158,9 @@ export default function CardCreateAction() {
         value: actionValue,
         sip: selectedUser?.guid,
         type: type,
-        device: "",
-        sensorType: "quando tiver",
-        sensorName: "quando tiver",
+        device: deviceDest,
+        sensorType: typeMeasure,
+        sensorName: nameSensor,
       });
       setIsCreating(false);
       setactionName("");
@@ -161,6 +174,9 @@ export default function CardCreateAction() {
       });
     }
   };
+  const shouldRenderInput =
+    actionType === "minValue" || actionType === "maxValue";
+  const shouldRenderDevice = type === "number";
 
   return (
     //div que contem os cards
@@ -212,9 +228,15 @@ export default function CardCreateAction() {
               />
             </div>
             <div className="grid grid-cols-3 items-center gap-4">
-              <Label className="text-end" htmlFor="name">
-                Tipo de Gatilho
-              </Label>
+              <div className="flex justify-end gap-1">
+                <Label
+                  htmlFor="name"
+                  title="Qual contexto irá executar essa ação"
+                >
+                  Tipo de Gatilho
+                </Label>
+                <Info className="size-[12px]" />
+              </div>
               <Select onValueChange={handleActionType}>
                 <SelectTrigger className="col-span-2">
                   <SelectValue placeholder="Selecione o Gatilho" />
@@ -225,16 +247,91 @@ export default function CardCreateAction() {
                     <SelectItem value="alarm">Alarme</SelectItem>
                     <SelectItem value="origemNumber">Número Origem</SelectItem>
                     <SelectItem value="destNumber">Número Destino</SelectItem>
-                    <SelectItem value="minValue">Valor Minímo</SelectItem>
-                    <SelectItem value="maxValue">Valor Maxímo</SelectItem>
+                    <SelectItem value="minValue">
+                      Sensor Valor Minímo
+                    </SelectItem>
+                    <SelectItem value="maxValue">
+                      Sensor Valor Maxímo
+                    </SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>
             </div>
+
+            {shouldRenderInput && (
+              <div className="gap-1">
+                <div className="grid grid-cols-3 items-center gap-4 mb-4">
+                  <div className="flex justify-end gap-1">
+                    <Label
+                      htmlFor="name"
+                      title="Qual contexto irá executar essa ação"
+                    >
+                      Sensor
+                    </Label>
+                  </div>
+                  <Select value={nameSensor} onValueChange={handleNameSensor}>
+                    <SelectTrigger className="col-span-2">
+                      <SelectValue placeholder="Selecione um Sensor" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Sensores</SelectLabel>
+                        {sensors.map((sensor) => (
+                          <SelectItem
+                            key={sensor.sensor_name}
+                            value={sensor.sensor_name}
+                          >
+                            {sensor.sensor_name}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid grid-cols-3 items-center gap-4">
+                  <div className="flex justify-end gap-1">
+                    <Label
+                      className="text-end"
+                      htmlFor="framework"
+                      id="typeMeasure"
+                    >
+                      Tipo de medida
+                    </Label>
+                  </div>
+                  <Select value={typeMeasure} onValueChange={handleTypeMeasure}>
+                    <SelectTrigger
+                      className="col-span-2"
+                      id="SelectTypeMeasure"
+                    >
+                      <SelectValue placeholder="Selecione o tipo de medida" />
+                    </SelectTrigger>
+                    <SelectContent position="popper">
+                      <SelectItem value="co2">CO²</SelectItem>
+                      <SelectItem value="battery">Bateria</SelectItem>
+                      <SelectItem value="humidity">Umidade do ar</SelectItem>
+                      <SelectItem value="leak">Alagamento</SelectItem>
+                      <SelectItem value="temperature">Temperatura</SelectItem>
+                      <SelectItem value="light">Iluminação</SelectItem>
+                      <SelectItem value="pir">Presença (V/F)</SelectItem>
+                      <SelectItem value="pressure">Pressão</SelectItem>
+                      <SelectItem value="tvoc">
+                        Compostos Orgânicos Voláteis{" "}
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            )}
             <div className="grid grid-cols-3 items-center gap-4">
-              <Label className="text-end" htmlFor="name">
-                Parâmetro Gatilho
-              </Label>
+              <div className="flex justify-end gap-1">
+                <Label
+                  htmlFor="name"
+                  title="Qual será o valor que irá executar essa ação"
+                >
+                  Parâmetro Gatilho
+                </Label>
+                <Info className="size-[12px]" />
+              </div>
               <Input
                 className="col-span-2"
                 id="name"
@@ -262,10 +359,31 @@ export default function CardCreateAction() {
                 </SelectContent>
               </Select>
             </div>
+            {shouldRenderDevice && (
+              <div className="grid grid-cols-3 items-center gap-4">
+                <Label className="text-end" htmlFor="paramDest">
+                  Dispositivo
+                </Label>
+                <Select onValueChange={handleDeviceDest}>
+                  <SelectTrigger className="col-span-2">
+                    <SelectValue placeholder="Dispositivo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Softphone">Softphone</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
             <div className="grid grid-cols-3 items-center gap-4">
-              <Label className="text-end" htmlFor="name">
-                Valor
-              </Label>
+              <div className="flex justify-end gap-1">
+                <Label
+                  htmlFor="name"
+                  title="Para qual ramal ou ID do botão a ser chamado/alertado"
+                >
+                  Valor
+                </Label>
+                <Info className="size-[12px]" />
+              </div>
               <Input
                 className="col-span-2"
                 id="name"

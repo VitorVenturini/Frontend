@@ -67,7 +67,7 @@ export default function SensorGraph({
         <XAxis dataKey="date" />
         <YAxis />
         <Tooltip />
-        <Legend /
+        <Legend />
         <Line
           type="monotone"
           dataKey="value"
