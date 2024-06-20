@@ -13,17 +13,26 @@ interface ButtonProps {
 export default function AlarmButton({ button }: ButtonProps) {
   const [clickedClass, setClickedClass] = useState("");
   const { buttons, setClickedButton, removeClickedButton } = useButtons();
-  const wss = useWebSocketData()
+  const wss = useWebSocketData();
   const commonClasses =
     "w-[128px] h-[55px] rounded-lg border bg-border text-white shadow-sm p-1";
+
+  useEffect(() => {
+    // Verifica o estado inicial do botão e define a classe de acordo
+    if (button.clicked) {
+      setClickedClass("bg-red-800");
+    } else {
+      setClickedClass("");
+    }
+  }, [button]);
 
   const handleClickAlarm = () => {
     const isClicked = button.clicked;
     if (isClicked) {
       removeClickedButton(button.id);
       setClickedClass("");
-//       emergency-pietro: send: {"api":"user","mt":"DecrementCount"}
-//    {"api":"user","mt":"TriggerStopAlarm","prt":"2022","btn_id":"9"}
+      //       emergency-pietro: send: {"api":"user","mt":"DecrementCount"}
+      //    {"api":"user","mt":"TriggerStopAlarm","prt":"2022","btn_id":"9"}
     } else {
       setClickedButton(button.id);
       setClickedClass("bg-red-800");
@@ -32,8 +41,8 @@ export default function AlarmButton({ button }: ButtonProps) {
         api: "user",
         mt: "TriggerAlert",
         prt: button.button_prt,
-        btn_id: button.id
-      })
+        btn_id: button.id,
+      });
     }
   };
 
