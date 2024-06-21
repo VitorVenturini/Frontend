@@ -1,7 +1,7 @@
 import icone from "@/assets/icone.svg";
 
-import CardLogin from "@/components/CardLogin";
-import { LanguageToggle } from "@/components/LanguageToggle";
+import CardLogin from "@/components/login/CardLogin"
+import { LanguageToggle } from "@/components/language/LanguageToggle";
 
 
 export default function LoginPage() {

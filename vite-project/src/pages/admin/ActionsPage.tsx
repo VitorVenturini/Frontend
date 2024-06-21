@@ -4,7 +4,7 @@ import { DataTable } from "@/Reports/data-tableActions";
 import { Actions, columnsActions } from "@/Reports/ColumnsActions";
 import { WebSocketProvider } from "@/components/WebSocketProvider";
 import { Action } from "@radix-ui/react-toast";
-import { useActions } from "@/components/ActionsContext";
+import { useActions } from "@/components/actions/ActionsContext";
 
 export default function ActionsPage() {
   //const [actions, setActions] = useState<ActionsInteface[]>([]);

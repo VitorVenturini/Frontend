@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import CardCreateAccount from "@/components/CardCreateAccount";
+import CardCreateAccount from "@/components/account/CardCreateAccount";
 import {
   ColumnDef,
   flexRender,

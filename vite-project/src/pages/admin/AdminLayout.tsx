@@ -1,27 +1,28 @@
 import { Routes, Route } from "react-router-dom";
-import ValidadeToken from "@/components/ValidateToken";
+import ValidadeToken from "@/components/validateToken/ValidateToken";
 import Account from "./Account";
 import ButtonsPage from "./ButtonsPage";
-import HeaderApp from "@/components/HeaderApp";
-import { useAccount } from "@/components/AccountContext";
+import HeaderApp from "@/components/header/HeaderApp";
+import { useAccount } from "@/components/account/AccountContext";
 import {
   ButtonProvider,
   useButtons,
   ButtonInterface,
-} from "@/components/ButtonsContext";
-import ButtonsGrid from "@/components/ButtonsGridPages";
+} from "@/components/buttons/buttonContext/ButtonsContext";
 import React, { useContext, useEffect } from "react";
 import { useState } from "react";
-import { WebSocketProvider } from "@/components/WebSocketProvider";
-import { WebSocketMessage } from "@/components/WebSocketProvider";
+import {
+  WebSocketProvider,
+  useWebSocketData,
+} from "@/components/websocket/WebSocketProvider";
 import ActionsPage from "./ActionsPage";
 import Options from "./Options";
-import Loader from "@/components/Loader";
-import useWebSocket from "@/components/useWebSocket";
 import { useToast } from "@/components/ui/use-toast";
-import { useWebSocketData } from "@/components/WebSocketProvider";
-import { SensorInterface, useSensors } from "@/components/SensorContext";
-import { ActionsInteface, useActions } from "@/components/ActionsContext";
+import { SensorInterface, useSensors } from "@/components/sensor/SensorContext";
+import {
+  ActionsInteface,
+  useActions,
+} from "@/components/actions/ActionsContext";
 
 function AdminLayout() {
   const account = useAccount();
@@ -30,6 +31,8 @@ function AdminLayout() {
   const { sensors, setSensors, updateSensor } = useSensors();
   const { toast } = useToast();
   const { actions, setActions, updateActions } = useActions();
+  const { updateAccount } = useAccount();
+  const [isAdminVerified, setIsAdminVerified] = useState(false);
 
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
@@ -65,7 +68,7 @@ function AdminLayout() {
         console.log(message.result);
         break;
       case "SelectActionsMessageSuccess":
-        console.log('allActions ',JSON.stringify(message.result));
+        console.log("allActions ", JSON.stringify(message.result));
         const allActions: ActionsInteface[] = JSON.parse(message.result);
         setActions(allActions);
         break;

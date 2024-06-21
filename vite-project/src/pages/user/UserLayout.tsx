@@ -1,25 +1,24 @@
 import { Routes, Route, useNavigate } from "react-router-dom";
-import ValidadeToken from "@/components/ValidateToken";
+import ValidadeToken from "@/components/validateToken/ValidateToken";
 import { ThemeProvider } from "@/components/theme-provider";
-import { AccountContext, useAccount } from "@/components/AccountContext";
+import { AccountContext, useAccount } from "@/components/account/AccountContext";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
-import Logout from "@/components/Logout";
-import useWebSocket from "@/components/useWebSocket";
-import { WebSocketProvider } from "@/components/WebSocketProvider";
-import ButtonsGridPage from "@/components/ButtonsGridPages";
+import Logout from "@/components/logout/Logout";
+import { WebSocketProvider } from "@/components/websocket/WebSocketProvider";
+import ButtonsGridPage from "@/components/buttons/buttonsGrid/ButtonsGridPages";
 import {
   ButtonProvider,
   useButtons,
   ButtonInterface,
-} from "@/components/ButtonsContext";
+} from "@/components/buttons/buttonContext/ButtonsContext";
 
-import LeftGrid from "@/components/LeftGrid";
-import RightGrid from "@/components/RightGrid";
+import LeftGrid from "@/components/leftGrid/LeftGrid";
+import RightGrid from "@/components/rightGrid/RightGrid";
 import { Ghost } from "lucide-react";
-import { SensorInterface, useSensors } from "@/components/SensorContext";
-import { useWebSocketData } from "@/components/WebSocketProvider";
+import { SensorInterface, useSensors } from "@/components/sensor/SensorContext";
+import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 
 interface User {
   id: string;
@@ -45,7 +44,7 @@ function UserLayout() {
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState("");
   const wss = useWebSocketData();
-
+  
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
     switch (message.mt) {

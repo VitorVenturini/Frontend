@@ -23,9 +23,8 @@ import { Loader2 } from "lucide-react";
 import { Ghost } from "lucide-react";
 import { ChangeEvent, useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import TableActions from "@/components/TableActions";
-import page from "@/Reports/page";
-import { useActions } from "@/components/ActionsContext";
+import TableActions from "@/components/actions/TableActions";
+import { useActions } from "@/components/actions/ActionsContext";
 
 //  interface User {
 //     id: string;

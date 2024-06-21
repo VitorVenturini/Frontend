@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import DeleteActions from "@/components/DeleteAction";
+import DeleteActions from "@/components/actions/DeleteAction";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react"
 
