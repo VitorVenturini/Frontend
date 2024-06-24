@@ -6,6 +6,9 @@ import { useState, useEffect } from "react";
 import BatteryGauge from "react-battery-gauge";
 import VideoPlayer from "../VideoPlayer/VideoPlayer";
 import { useWebSocketData } from "../websocket/WebSocketProvider";
+import React, { Component } from "react";
+
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
 interface OptRightBottomProps {
   clickedButtonId: number | null;
@@ -85,9 +88,16 @@ export default function OptRightBottom({
           );
         }
       case "floor":
-        return(
-          <iframe src={clickedButton.button_prt} className="h-full w-full" style={{height: "calc(100vh - 200px)"}}/>
-        )
+        return (
+          <TransformWrapper>
+            <TransformComponent>
+              <img src={clickedButton.button_prt} alt="img" />
+            </TransformComponent>
+          </TransformWrapper>
+        );
+        // return(
+        //   //<iframe src={clickedButton.button_prt} className="h-full w-full" style={{height: "calc(100vh - 200px)"}}/>
+        // )
       case "map":
       case "radio":
       case "video":

@@ -16,13 +16,13 @@ export default function AlarmButton({ button }: ButtonProps) {
   const wss = useWebSocketData();
   const commonClasses =
     "w-[128px] h-[55px] rounded-lg border bg-border text-white shadow-sm p-1";
-
+  // fazer um isTriggered para quando for alarmado mudar de cor
   useEffect(() => {
     // Verifica o estado inicial do botão e define a classe de acordo
     if (button.clicked) {
-      setClickedClass("bg-red-800");
+      //setClickedClass("bg-red-800");
     } else {
-      setClickedClass("");
+      //setClickedClass("");
     }
   }, [button]);
 
@@ -31,12 +31,12 @@ export default function AlarmButton({ button }: ButtonProps) {
       const isClicked = button.clicked;
       if (isClicked) {
         removeClickedButton(button.id);
-        setClickedClass("");
+        //setClickedClass("");
         //       emergency-pietro: send: {"api":"user","mt":"DecrementCount"}
         //    {"api":"user","mt":"TriggerStopAlarm","prt":"2022","btn_id":"9"}
       } else {
         setClickedButton(button.id);
-        setClickedClass("bg-red-800");
+        //setClickedClass("bg-red-800");
         //{"api":"user","mt":"TriggerAlert","prt":"2022","btn_id":"9"} estrutura de envio
         wss?.sendMessage({
           api: "user",
@@ -50,7 +50,7 @@ export default function AlarmButton({ button }: ButtonProps) {
 
   return (
     <div
-      className={`${commonClasses} flex flex-col cursor-pointer bg-buttonNumber ${clickedClass}`}
+      className={`${commonClasses} flex flex-col cursor-pointer bg-buttonNumber active:bg-green-950 ${clickedClass}`}
       onClick={handleClickAlarm}
     >
       <div className="flex items-center gap-1 cursor-pointer">
