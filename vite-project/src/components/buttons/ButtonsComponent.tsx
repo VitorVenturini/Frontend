@@ -77,38 +77,37 @@ export default function ButtonsComponent({
   const { sensors } = useSensors();
   const wss = useWebSocketData();
   const [isClicked, setIsClicked] = useState(false);
-  const { setOldValue, setNewValue, buttons, setButtons } = useButtons();
+ // const { setOldValue, setNewValue, buttons, setButtons } = useButtons();
   const [buttonsLoaded, setButtonsLoaded] = useState(false);
   const [selectedType, setSelectedType] = useState<string>("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // para piscar nas outras páginas sem ser a atual
+  // useEffect(() => {
+  //   if (!buttons || buttons.length === 0 || isAdmin) return; // Verifica se buttons está definido e não vazio
 
-  useEffect(() => {
-    if (!buttons || buttons.length === 0 || isAdmin) return; // Verifica se buttons está definido e não vazio
+  //   buttons.forEach((btns) => {
+  //     // Itera sobre os botões
+  //     if (btns.button_type === "sensor" && btns.page !== "0") {
+  //       const filteredSensor = sensors.find(
+  //         (sensor) => sensor.sensor_name === btns.button_prt
+  //       ); // Encontra o sensor correspondente
 
-    buttons.forEach((btns) => {
-      // Itera sobre os botões
-      if (btns.button_type === "sensor" && btns.page !== "0") {
-        const filteredSensor = sensors.find(
-          (sensor) => sensor.sensor_name === btns.button_prt
-        ); // Encontra o sensor correspondente
+  //       if (filteredSensor && btns.sensor_type) {
+  //         const currentValue = parseInt(
+  //           (filteredSensor as any)[btns.sensor_type],
+  //           10
+  //         ); // Obtém o valor atual do sensor
 
-        if (filteredSensor && btns.sensor_type) {
-          const currentValue = parseInt(
-            (filteredSensor as any)[btns.sensor_type],
-            10
-          ); // Obtém o valor atual do sensor
-
-          // Compara com os valores anteriores
-          if (btns.newValue !== currentValue) {
-            setOldValue(btns.sensor_type, btns.button_prt, btns.newValue); // Define o valor antigo antes de atualizar
-            setNewValue(btns.sensor_type, btns.button_prt, currentValue); // Define o novo valor
-          }
-        }
-      }
-    });
-  }, [sensors, buttons, setOldValue, setNewValue]); // Dependências
+  //         // Compara com os valores anteriores
+  //         if (btns.newValue !== currentValue) {
+  //           setOldValue(btns.sensor_type, btns.button_prt, btns.newValue); // Define o valor antigo antes de atualizar
+  //           setNewValue(btns.sensor_type, btns.button_prt, currentValue); // Define o novo valor
+  //         }
+  //       }
+  //     }
+  //   });
+  // }, [sensors, buttons, setOldValue, setNewValue]); // Dependências
 
   const handleClick = () => {
     if (isAdmin) {

@@ -62,7 +62,7 @@ export default function SensorButton({ handleClick, button }: ButtonProps) {
   return (
     <div className={getButtonClassName()} onClick={handleClick}>
       <div className="flex items-center gap-1 cursor-pointer">
-        <Rss size={20} />
+      
         <div>
           <p className="text-md font-medium leading-none">
             {button.button_name}

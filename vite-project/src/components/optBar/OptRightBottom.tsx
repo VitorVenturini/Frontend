@@ -23,7 +23,7 @@ export default function OptRightBottom({
   const [sensorKey, setSensorKey] = useState<string>("");
   const [clickedKey, setClickedKey] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const wss = useWebSocketData()
+  const wss = useWebSocketData();
   const clickedButton = buttons.find((button) => button.id === clickedButtonId);
 
   useEffect(() => {
@@ -39,12 +39,6 @@ export default function OptRightBottom({
       }
     }
   }, [clickedButton, sensors]);
-
-  // useEffect(() => {
-  //   // Enviar a mensagem toda vez que o componente for renderizado
-  //   wss?.sendMessage({ api: "user", mt: "SelectSensorHistory", sensor: clickedButton?.button_prt  });
-  //   // Aqui você pode colocar a lógica de envio de mensagem, seja via WebSocket, HTTP, etc.
-  // });
 
   const handleKeyChange = (key: string) => {
     setSensorKey(key);
@@ -88,16 +82,27 @@ export default function OptRightBottom({
           );
         }
       case "floor":
-        return (
-          <TransformWrapper>
-            <TransformComponent>
-              <img src={clickedButton.button_prt} alt="img" />
-            </TransformComponent>
-          </TransformWrapper>
-        );
-        // return(
-        //   //<iframe src={clickedButton.button_prt} className="h-full w-full" style={{height: "calc(100vh - 200px)"}}/>
-        // )
+        const extension = clickedButton?.button_prt
+          .split(".")
+          .pop()
+          ?.toLowerCase();
+        if (extension === "pdf") {
+          return (
+            <iframe
+              src={clickedButton?.button_prt}
+              className="h-full w-full"
+              style={{ height: "calc(100vh - 200px)" }}
+            />
+          );
+        } else {
+          return (
+            <TransformWrapper>
+              <TransformComponent>
+                <img src={clickedButton.button_prt} alt="img" />
+              </TransformComponent>
+            </TransformWrapper>
+          );
+        }
       case "map":
       case "radio":
       case "video":

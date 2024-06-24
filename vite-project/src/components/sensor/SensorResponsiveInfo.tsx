@@ -39,6 +39,11 @@ export default function SensorResponsiveInfo({
         .slice(0, 1) // Pega apenas o primeiro sensor filtrado
         .map((sensor, index) => (
           <div className="flex items-center gap-1 justify-between" key={index}>
+                          <ResponsiveIcon
+                oldValue={oldValue}
+                newValue={newValue}
+                sensorType = {button.sensor_type}
+              />
             <p className="text-[10px] font-medium leading-none text-muted-foreground">
               {button.sensor_type}
             </p>
@@ -55,10 +60,7 @@ export default function SensorResponsiveInfo({
                   {getMetric(button?.sensor_type as any)}
                 </p>
               </div>
-              <ResponsiveIcon
-                oldValue={oldValue}
-                newValue={newValue}
-              />
+
             </div>
           </div>
         ))}
