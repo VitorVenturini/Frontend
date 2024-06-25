@@ -18,6 +18,22 @@ import { ThemeProvider } from "./components/theme-provider";
 export const host = "https://meet.wecom.com.br";
 
 function App() {
+  useEffect(() => {
+    // Função para verificar se o evento é um gesto de pinça e prevenir o zoom
+    const preventPinchZoom = (e: TouchEvent) => {
+      if (e.touches.length > 1) {
+        e.preventDefault();
+      }
+    };
+
+    // Adiciona o ouvinte de evento ao document
+    document.addEventListener('touchstart', preventPinchZoom, { passive: false });
+
+    // Limpeza: remove o ouvinte de evento quando o componente é desmontado
+    return () => {
+      document.removeEventListener('touchstart', preventPinchZoom);
+    };
+  }, []);
   return (
     <ThemeProvider>
       <LanguageProvider>
