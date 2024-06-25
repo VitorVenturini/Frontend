@@ -127,7 +127,7 @@ export default function ModalAlarm({
   };
   return (
     <>
-      <Card className="border-none bg-transparent">
+      {isUpdate && (
         <CardHeader>
           <CardTitle>
             {isUpdate ? "Atualização" : "Criação"} de Botões de Alarme
@@ -137,70 +137,70 @@ export default function ModalAlarm({
             os campos abaixo
           </CardDescription>
         </CardHeader>
-        <CardContent className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-end" htmlFor="buttonName">
-              Nome do botão
-            </Label>
-            <Input
-              className="col-span-3"
-              id="buttonName"
-              placeholder="Nome do botão"
-              value={nameButton}
-              onChange={handleNameButton}
-              required
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-end" htmlFor="buttonName">
-              Número do Alarme
-            </Label>
-            <Input
-              className="col-span-3"
-              id="buttonName"
-              placeholder="Número do Alarme"
-              value={numberAlarm}
-              onChange={handleNumberAlarm}
-              required
-            />
-          </div>
-        </CardContent>
-        <CardFooter className="flex justify-between">
-          {isUpdate && (
-            <Button variant="secondary">
-              <AlertDialog>
-                <AlertDialogTrigger>Excluir</AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Essa ação nao pode ser desfeita. Isso irá deletar
-                      permanentemente o botão de Alarme.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleDeleteButton}>
-                      Excluir
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </Button>
-          )}
-          {!isCreating && (
-            <Button onClick={handleCreateButton}>
-              {isUpdate ? "Atualizar" : "Criar"} Botão
-            </Button>
-          )}
-          {isCreating && (
-            <Button disabled>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              {isUpdate ? "Atualizar" : "Criar"} Botão
-            </Button>
-          )}
-        </CardFooter>
-      </Card>
+      )}
+      <CardContent className="grid gap-4 py-4">
+        <div className="grid grid-cols-4 items-center gap-4">
+          <Label className="text-end" htmlFor="buttonName">
+            Nome do botão
+          </Label>
+          <Input
+            className="col-span-3"
+            id="buttonName"
+            placeholder="Nome do botão"
+            value={nameButton}
+            onChange={handleNameButton}
+            required
+          />
+        </div>
+        <div className="grid grid-cols-4 items-center gap-4">
+          <Label className="text-end" htmlFor="buttonName">
+            Número do Alarme
+          </Label>
+          <Input
+            className="col-span-3"
+            id="buttonName"
+            placeholder="Número do Alarme"
+            value={numberAlarm}
+            onChange={handleNumberAlarm}
+            required
+          />
+        </div>
+      </CardContent>
+      <CardFooter className="flex justify-between">
+        {isUpdate && (
+          <Button variant="secondary">
+            <AlertDialog>
+              <AlertDialogTrigger>Excluir</AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Essa ação nao pode ser desfeita. Isso irá deletar
+                    permanentemente o botão de Alarme.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleDeleteButton}>
+                    Excluir
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </Button>
+        )}
+        {!isCreating && (
+          <Button onClick={handleCreateButton}>
+            {isUpdate ? "Atualizar" : "Criar"} Botão
+          </Button>
+        )}
+        {isCreating && (
+          <Button disabled>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            {isUpdate ? "Atualizar" : "Criar"} Botão
+          </Button>
+        )}
+      </CardFooter>
     </>
   );
 }

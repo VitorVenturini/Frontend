@@ -10,10 +10,13 @@ import {
   Siren,
 } from "lucide-react";
 import { AccountContext } from "../account/AccountContext";
-import { ButtonInterface, useButtons } from "@/components/buttons/buttonContext/ButtonsContext";
+import {
+  ButtonInterface,
+  useButtons,
+} from "@/components/buttons/buttonContext/ButtonsContext";
 import { useState } from "react";
 import { Button } from "../ui/button";
-import SensorButton from "../sensor/SensorButton"
+import SensorButton from "../sensor/SensorButton";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -77,7 +80,7 @@ export default function ButtonsComponent({
   const { sensors } = useSensors();
   const wss = useWebSocketData();
   const [isClicked, setIsClicked] = useState(false);
- // const { setOldValue, setNewValue, buttons, setButtons } = useButtons();
+  // const { setOldValue, setNewValue, buttons, setButtons } = useButtons();
   const [buttonsLoaded, setButtonsLoaded] = useState(false);
   const [selectedType, setSelectedType] = useState<string>("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -131,6 +134,15 @@ export default function ButtonsComponent({
             clickedPosition={clickedPosition}
           />
         );
+      case "sensor":
+        return (
+          <ModalSensor
+            selectedPage={selectedPage}
+            selectedUser={selectedUser}
+            clickedPosition={clickedPosition}
+          />
+        );
+
       // Add other cases here as needed
       default:
         return null;
@@ -139,72 +151,39 @@ export default function ButtonsComponent({
 
   const getDialogContent = () => {
     //if (!clickedPosition) return null;
-
-    switch (true) {
-      case clickedPosition?.i === 1 && selectedPage !== "0":
-        return (
-          <ModalCombo
-            selectedPage={selectedPage}
-            selectedUser={selectedUser}
-            clickedPosition={clickedPosition}
-          />
-        );
-      case clickedPosition?.i === 2 && selectedPage !== "0":
-        return (
-          <ModalSensor
-            selectedPage={selectedPage}
-            selectedUser={selectedUser}
-            clickedPosition={clickedPosition}
-          />
-        );
-      case (clickedPosition?.i ?? 0) >= 3 && (clickedPosition?.i ?? 0) <= 8:
-        return (
-          <>
-            {selectedType ? (
-              <Dialog open={true} onOpenChange={() => setSelectedType("")}>
-                <DialogContent>{renderModalByType()}</DialogContent>
-              </Dialog>
-            ) : (
-              <Card className="border-none bg-transparent">
-                <CardHeader>
-                  <CardTitle>Criar Botão</CardTitle>
-                  <CardDescription>Selecione um tipo de botão</CardDescription>
-                </CardHeader>
-                <CardContent className="gap-4 py-4">
-                  <div className="flex gap-4 items-center">
-                    <Label
-                      className="text-end"
-                      htmlFor="framework"
-                      id="typeButton"
-                    >
-                      Tipo de botão
-                    </Label>
-                    <Select onValueChange={handleTypeSelected}>
-                      <SelectTrigger
-                        className="col-span-1"
-                        id="SelectTypeButton"
-                      >
-                        <SelectValue placeholder="Selecione o tipo de Botão" />
-                      </SelectTrigger>
-                      <SelectContent position="popper">
-                        <SelectItem value="alarm">Alarme</SelectItem>
-                        <SelectItem value="number">Número</SelectItem>
-                        <SelectItem value="user">Usuário</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-          </>
-        );
-      default:
-        return (
-          <>
-            <DialogTitle>Criar um botão</DialogTitle>
-          </>
-        );
-    }
+    return (
+      <>
+        <Card className="border-none bg-transparent">
+          <CardHeader>
+            <CardTitle>Criar Botão</CardTitle>
+            <CardDescription>Selecione um tipo de botão</CardDescription>
+          </CardHeader>
+          <CardContent className="gap-4 py-4">
+            <div className="flex gap-4 items-center">
+              <Label className="text-end" htmlFor="framework" id="typeButton">
+                Tipo de botão
+              </Label>
+              <Select onValueChange={handleTypeSelected}>
+                <SelectTrigger className="col-span-1" id="SelectTypeButton">
+                  <SelectValue placeholder="Selecione o tipo de Botão" />
+                </SelectTrigger>
+                <SelectContent position="popper">
+                  <SelectItem value="alarm">Alarme</SelectItem>
+                  <SelectItem value="number">Número</SelectItem>
+                  <SelectItem value="user">Usuário</SelectItem>
+                  <SelectItem value="sensor">Sensor</SelectItem>
+                  <SelectItem value="action">Ação</SelectItem>
+                  <SelectItem value="combo">Combo</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              {renderModalByType()}
+            </div>
+          </CardContent>
+        </Card>
+      </>
+    );
   };
 
   const commonClasses =

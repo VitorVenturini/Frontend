@@ -159,155 +159,146 @@ export default function ModalSensor({
   };
 
   // Lista de tipos de medida que não devem exibir campos de valor mínimo e máximo
-  const typesWithoutMinMax = ["leak", "light", "pir", "tvoc","magnet_status"];
+  const typesWithoutMinMax = ["leak", "light", "pir", "tvoc", "magnet_status"];
 
   const showMinMaxFields = !typesWithoutMinMax.includes(typeMeasure);
   return (
     <>
-      <Card className="border-none bg-transparent">
+      {isUpdate && (
         <CardHeader>
-          <CardTitle>
-            {isUpdate ? "Atualização" : "Criação"} de Sensores
-          </CardTitle>
-          <CardDescription>
-            Para {isUpdate ? "atualizar" : "criar"} um sensor complete os campos
-            abaixo
-            <p>
-              Posição X {clickedPosition?.i}
-              Posição Y {clickedPosition?.j}
-            </p>
-          </CardDescription>
+          <CardTitle>Atualizar Botão</CardTitle>
+          <CardDescription>descrição</CardDescription>
         </CardHeader>
-        <CardContent className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-end" htmlFor="buttonName">
-              Selecione o Sensor
-            </Label>
-            <Select value={nameSensor} onValueChange={handleNameSensor}>
-              <SelectTrigger className="col-span-3">
-                <SelectValue placeholder="Selecione um Sensor" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Sensores</SelectLabel>
-                  {sensors.map((sensor) => (
-                    <SelectItem
-                      key={sensor.sensor_name}
-                      value={sensor.sensor_name}
-                    >
-                      {sensor.sensor_name}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-end" htmlFor="buttonName">
-              Nome do botão
-            </Label>
-            <Input
-              className="col-span-3"
-              id="buttonName"
-              placeholder="Nome do botão"
-              value={nameButton}
-              onChange={handleNameButton}
-              required
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-end" htmlFor="framework" id="typeMeasure">
-              Tipo de medida
-            </Label>
-            <Select value={typeMeasure} onValueChange={handleTypeMeasure}>
-              <SelectTrigger className="col-span-3" id="SelectTypeMeasure">
-                <SelectValue placeholder="Selecione o tipo de medida" />
-              </SelectTrigger>
-              <SelectContent position="popper">
-                <SelectItem value="co2">CO²</SelectItem>
-                <SelectItem value="battery">Bateria</SelectItem>
-                <SelectItem value="humidity">Umidade do ar</SelectItem>
-                <SelectItem value="leak">Alagamento</SelectItem>
-                <SelectItem value="temperature">Temperatura</SelectItem>
-                <SelectItem value="light">Iluminação</SelectItem>
-                <SelectItem value="pir">Presença (V/F)</SelectItem>
-                <SelectItem value="pressure">Pressão</SelectItem>
-                <SelectItem value="tvoc">
-                  Compostos Orgânicos Voláteis{" "}
-                </SelectItem>
-                <SelectItem value="magnet_status">Aberto/Fechado </SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          {showMinMaxFields && (
-            <>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label className="text-end" htmlFor="buttonName">
-                  Valor Mínimo
-                </Label>
-                <Input
-                  className="col-span-3"
-                  id="minValue"
-                  placeholder="00"
-                  type="number"
-                  value={minValue}
-                  onChange={handleMinValue}
-                  required
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label className="text-end" htmlFor="buttonName">
-                  Valor Máximo
-                </Label>
-                <Input
-                  className="col-span-3"
-                  id="maxValue"
-                  placeholder="00"
-                  type="number"
-                  value={maxValue}
-                  onChange={handleMaxValue}
-                  required
-                />
-              </div>
-            </>
-          )}
-        </CardContent>
-        <CardFooter className="flex justify-between">
-          {isUpdate && (
-            <Button variant="secondary">
-              <AlertDialog>
-                <AlertDialogTrigger>Excluir</AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Essa ação nao pode ser desfeita. Isso irá deletar
-                      permanentemente o botão Sensor.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleDeleteButton}>
-                      Excluir
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </Button>
-          )}
-          {!isCreating && (
-            <Button onClick={handleCreateButton}>
-              {isUpdate ? "Atualizar" : "Criar"} Sensor
-            </Button>
-          )}
-          {isCreating && (
-            <Button disabled>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              {isUpdate ? "Atualizar" : "Criar"} Sensor
-            </Button>
-          )}
-        </CardFooter>
-      </Card>
+      )}
+      <CardContent className="grid gap-4 py-4">
+        <div className="grid grid-cols-4 items-center gap-4">
+          <Label className="text-end" htmlFor="buttonName">
+            Selecione o Sensor
+          </Label>
+          <Select value={nameSensor} onValueChange={handleNameSensor}>
+            <SelectTrigger className="col-span-3">
+              <SelectValue placeholder="Selecione um Sensor" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Sensores</SelectLabel>
+                {sensors.map((sensor) => (
+                  <SelectItem
+                    key={sensor.sensor_name}
+                    value={sensor.sensor_name}
+                  >
+                    {sensor.sensor_name}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="grid grid-cols-4 items-center gap-4">
+          <Label className="text-end" htmlFor="buttonName">
+            Nome do botão
+          </Label>
+          <Input
+            className="col-span-3"
+            id="buttonName"
+            placeholder="Nome do botão"
+            value={nameButton}
+            onChange={handleNameButton}
+            required
+          />
+        </div>
+        <div className="grid grid-cols-4 items-center gap-4">
+          <Label className="text-end" htmlFor="framework" id="typeMeasure">
+            Tipo de medida
+          </Label>
+          <Select value={typeMeasure} onValueChange={handleTypeMeasure}>
+            <SelectTrigger className="col-span-3" id="SelectTypeMeasure">
+              <SelectValue placeholder="Selecione o tipo de medida" />
+            </SelectTrigger>
+            <SelectContent position="popper">
+              <SelectItem value="co2">CO²</SelectItem>
+              <SelectItem value="battery">Bateria</SelectItem>
+              <SelectItem value="humidity">Umidade do ar</SelectItem>
+              <SelectItem value="leak">Alagamento</SelectItem>
+              <SelectItem value="temperature">Temperatura</SelectItem>
+              <SelectItem value="light">Iluminação</SelectItem>
+              <SelectItem value="pir">Presença (V/F)</SelectItem>
+              <SelectItem value="pressure">Pressão</SelectItem>
+              <SelectItem value="tvoc">
+                Compostos Orgânicos Voláteis{" "}
+              </SelectItem>
+              <SelectItem value="magnet_status">Aberto/Fechado </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        {showMinMaxFields && (
+          <>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label className="text-end" htmlFor="buttonName">
+                Valor Mínimo
+              </Label>
+              <Input
+                className="col-span-3"
+                id="minValue"
+                placeholder="00"
+                type="number"
+                value={minValue}
+                onChange={handleMinValue}
+                required
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label className="text-end" htmlFor="buttonName">
+                Valor Máximo
+              </Label>
+              <Input
+                className="col-span-3"
+                id="maxValue"
+                placeholder="00"
+                type="number"
+                value={maxValue}
+                onChange={handleMaxValue}
+                required
+              />
+            </div>
+          </>
+        )}
+      </CardContent>
+      <CardFooter className="flex justify-between">
+        {isUpdate && (
+          <Button variant="secondary">
+            <AlertDialog>
+              <AlertDialogTrigger>Excluir</AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Essa ação nao pode ser desfeita. Isso irá deletar
+                    permanentemente o botão Sensor.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleDeleteButton}>
+                    Excluir
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </Button>
+        )}
+        {!isCreating && (
+          <Button onClick={handleCreateButton}>
+            {isUpdate ? "Atualizar" : "Criar"} Sensor
+          </Button>
+        )}
+        {isCreating && (
+          <Button disabled>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            {isUpdate ? "Atualizar" : "Criar"} Sensor
+          </Button>
+        )}
+      </CardFooter>
     </>
   );
 }
