@@ -3,6 +3,7 @@ import { Rss } from "lucide-react";
 import SensorResponsiveInfo from "@/components/sensor/SensorResponsiveInfo";
 import { useSensors } from "./SensorContext";
 import { useEffect } from "react";
+import ResponsivePng from "./ResponsivePng";
 
 interface ButtonProps {
   handleClick: () => void;
@@ -61,7 +62,7 @@ export default function SensorButton({ handleClick, button }: ButtonProps) {
 
   return (
     <div className={getButtonClassName()} onClick={handleClick}>
-      <div className="flex items-center gap-1 cursor-pointer">
+      <div className="flex items-center gap-1 cursor-pointer justify-between">
       
         <div>
           <p className="text-md font-medium leading-none">
@@ -71,6 +72,7 @@ export default function SensorButton({ handleClick, button }: ButtonProps) {
             {button.button_prt}
           </p>
         </div>
+      <ResponsivePng sensorName={button.button_prt}/>
       </div>
       <SensorResponsiveInfo
         button={button}
