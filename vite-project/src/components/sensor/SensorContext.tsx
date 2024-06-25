@@ -12,6 +12,7 @@ export interface SensorInterface {
   light?: string;
   tvoc?: string;
   pressure?: string;
+  magnet_status: string;
   date?: string;
   isBoolean?: boolean;
 }

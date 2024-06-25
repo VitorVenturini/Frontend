@@ -1,6 +1,7 @@
 import { useSensors } from "@/components/sensor/SensorContext";
 import ResponsiveIcon from "./ResponsiveIcon";
 import { ButtonInterface } from "@/components/buttons/buttonContext/ButtonsContext";
+import { useAccount } from "../account/AccountContext";
 
 interface ButtonProps {
   button: ButtonInterface;
@@ -14,6 +15,7 @@ export default function SensorResponsiveInfo({
   newValue,
 }: ButtonProps) {
   const { sensors } = useSensors();
+  const account = useAccount();
 
   const getMetric = (sensorType: string) => {
     switch (sensorType) {
@@ -29,8 +31,23 @@ export default function SensorResponsiveInfo({
         return "";
     }
   };
-  const formatValue = (value: number | undefined) => {
-    return isNaN(value as number) ? "" : value;
+  const formatValue = (value: number | undefined, sensorValue: any) => {
+    if (isNaN(value as number)) {
+      return handleSensorSpecificValue(button.sensor_type as any, sensorValue);
+    } else {
+      return handleSensorSpecificValue(button.sensor_type as any, value);
+    }
+  };
+
+  const handleSensorSpecificValue = (sensorType: string, value: any) => {
+    switch (sensorType) {
+      case "leak":
+        return value === "normal" ? "Normal" : "Alagado";
+      case "magnet_status":
+        return value === 1 ? "Open" : "Closed";
+      default:
+        return value;
+    }
   };
   return (
     <div>
@@ -40,25 +57,26 @@ export default function SensorResponsiveInfo({
         .map((sensor, index) => (
           <div className="flex items-center gap-1 justify-between" key={index}>
             <div className="flex items-center">
-            <ResponsiveIcon
-              oldValue={oldValue}
-              newValue={newValue}
-              sensorType={button.sensor_type}
-            />
-            <p className="text-[10px] font-medium leading-none text-muted-foreground">
-              {button.sensor_type}
-            </p>
+              <ResponsiveIcon
+                oldValue={oldValue}
+                newValue={newValue}
+                sensorType={button.sensor_type}
+              />
+              <p className="text-[10px] font-medium leading-none text-muted-foreground">
+                {button.sensor_type}
+              </p>
             </div>
-            
 
             <div className="flex gap-1">
               <div className="flex items-center gap-1">
-                <p>
-                  {/* {newValue !== undefined ? formatValue(newValue) : formatValue((sensor as any)[`${button.sensor_type}`])} */}
-                  {newValue !== undefined
-                    ? formatValue(newValue)
-                    : formatValue((sensor as any)[`${button.sensor_type}`])}
-                </p>
+                {!account.isAdmin && (
+                  <p>
+                    {formatValue(
+                      newValue,
+                      (sensor as any)[`${button.sensor_type}`]
+                    )}
+                  </p>
+                )}
                 <p className="text-[8px] text-muted-foreground">
                   {getMetric(button?.sensor_type as any)}
                 </p>
