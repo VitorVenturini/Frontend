@@ -11,7 +11,6 @@ export default function ActionsPage() {
   const columnsactions = columnsActions; // Certifique-se de que ColumnsActions esteja correto
  
   const {actions} = useActions()
-  console.log('ACTIONS', actions)
   return (
     <div className="px-2 flex flex-col gap-4 justify-center mx-[250px]">
       <ScrollArea className="h-[500px]">

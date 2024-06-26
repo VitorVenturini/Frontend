@@ -62,9 +62,9 @@ import { useToast } from "./ui/use-toast";
 
       const handleDelete = () => {
         deleteActions(id);
-        toast({
-          description: "Ação deletada com sucesso",
-        });
+        // toast({
+        //   description: "Ação deletada com sucesso",
+        // });
       };
     return(
         <AlertDialog>

@@ -5,7 +5,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react"
 
 export interface Actions {
-  id: number;
+  id: string;
   action_name: string;
   action_alarm_code: string;
   action_start_type: string;

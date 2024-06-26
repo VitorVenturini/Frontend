@@ -65,7 +65,7 @@ function AdminLayout() {
         console.log(message.result);
         break;
       case "SelectActionsMessageSuccess":
-        console.log('allActions ',JSON.stringify(message.result));
+        console.log("allActions ", JSON.stringify(message.result));
         const allActions: ActionsInteface[] = JSON.parse(message.result);
         setActions(allActions);
         break;
@@ -77,8 +77,16 @@ function AdminLayout() {
           description: "Ação Criado com sucesso",
         });
         break;
+      case "DeleteActionsMessageSuccess":
+        console.log(JSON.stringify(message.actions));
+        const actionsAfterDelete: ActionsInteface[] = message.actions;
+        setActions(actionsAfterDelete);
+        toast({
+          description: "Ação Deletada com sucesso",
+        });
+        break;
       default:
-        console.log("Unknown message type:", message);
+        console.log("Unknown message type:", message.mt);
         break;
     }
   };

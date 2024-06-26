@@ -18,6 +18,7 @@ import { SensorProvider } from "./components/SensorContext";
 import { ActionProvider } from "./components/ActionsContext";
 import LanguageProvider from "./components/LanguageContext";
 
+const host = 'https://meet.wecom.com.br'
 function App() {
   const account = useContext(AccountContext);
 

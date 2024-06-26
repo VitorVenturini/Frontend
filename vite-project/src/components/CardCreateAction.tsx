@@ -129,11 +129,7 @@ export default function CardCreateAction() {
   const handleDeviceDest = (value: string) => {
     setDeviceDest(value);
   };
-  const resetForm = () => {
-    setactionName("");
-    setActionParameter("");
-    setActionValue("");
-  };
+
   const handleCreateAction = () => {
     console.log(
       `User: ${JSON.stringify(
@@ -177,7 +173,12 @@ export default function CardCreateAction() {
   const shouldRenderInput =
     actionType === "minValue" || actionType === "maxValue";
   const shouldRenderDevice = type === "number";
-
+  const resetForm = () => {
+    setactionName("");
+    setActionParameter("");
+    setActionValue("");
+    
+  };
   return (
     //div que contem os cards
     <div className="flex flex-col md:flex-row gap-5 justify-center">
