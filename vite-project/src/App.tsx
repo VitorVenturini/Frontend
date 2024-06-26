@@ -14,6 +14,7 @@ import { SensorProvider } from "./components/sensor/SensorContext";
 import { ActionProvider } from "./components/actions/ActionsContext";
 import LanguageProvider from "./components/language/LanguageContext";
 import { ThemeProvider } from "./components/theme-provider";
+import { HistoryProvider } from "./components/history/HistoryContext";
 
 export const host = "https://meet.wecom.com.br";
 
@@ -37,6 +38,7 @@ function App() {
   return (
     <ThemeProvider>
       <LanguageProvider>
+        <HistoryProvider>
         <ActionProvider>
           <AccountProvider>
             <ButtonProvider>
@@ -52,6 +54,7 @@ function App() {
             </ButtonProvider>
           </AccountProvider>
         </ActionProvider>
+        </HistoryProvider>
       </LanguageProvider>
     </ThemeProvider>
   );

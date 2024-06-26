@@ -104,7 +104,7 @@ export default function CardOptGeneric({
           const formData = new FormData();
           formData.append("file", fileContent);
 
-          const response = await fetch(host + "/ui/uploadFiles", {
+          const response = await fetch(host + "/api/uploadFiles", {
             method: "POST",
             headers: {
               "x-auth": localStorage.getItem("token") || "",

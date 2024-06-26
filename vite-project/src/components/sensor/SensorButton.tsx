@@ -1,4 +1,7 @@
-import { ButtonInterface,useButtons } from "@/components/buttons/buttonContext/ButtonsContext";
+import {
+  ButtonInterface,
+  useButtons,
+} from "@/components/buttons/buttonContext/ButtonsContext";
 import { Rss } from "lucide-react";
 import SensorResponsiveInfo from "@/components/sensor/SensorResponsiveInfo";
 import { useSensors } from "./SensorContext";
@@ -15,7 +18,7 @@ export default function SensorButton({ handleClick, button }: ButtonProps) {
   const { setOldValue, setNewValue, buttons } = useButtons();
 
   const buttonState = buttons.find((b) => b.id === button.id);
-  
+
   const oldValue = buttonState?.oldValue;
   const newValue = buttonState?.newValue;
 
@@ -63,16 +66,15 @@ export default function SensorButton({ handleClick, button }: ButtonProps) {
   return (
     <div className={getButtonClassName()} onClick={handleClick}>
       <div className="flex items-center gap-1 cursor-pointer justify-between">
-      
         <div>
-          <p className="text-md font-medium leading-none">
+          <p className="text-sm font-medium leading-none">
             {button.button_name}
           </p>
           <p className="text-[10px] font-medium leading-none text-muted-foreground">
             {button.button_prt}
           </p>
         </div>
-      <ResponsivePng sensorName={button.button_prt}/>
+        <ResponsivePng sensorName={button.button_prt} />
       </div>
       <SensorResponsiveInfo
         button={button}

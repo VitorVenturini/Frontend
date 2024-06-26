@@ -25,6 +25,7 @@ export interface ButtonInterface {
   oldValue?: number; // propriedade adicional para sensores
   newValue?: number; // propriedade adicional para sensores
   clicked?: boolean; // adicionado para rastrear se o botão foi clicado
+  triggered: boolean;
 }
 
 interface ButtonContextType {
@@ -45,6 +46,8 @@ interface ButtonContextType {
   setClickedButton: (id: number) => void;
   removeClickedButton: (id: number) => void;
   clearButtons: () => void;
+  setButtonTriggered: (id: number, triggered: boolean) => void;
+  setStopButtonTriggered: (alarm: string, triggered: boolean, guid: string) => void;
 }
 
 const ButtonContext = createContext<ButtonContextType | undefined>(undefined);
@@ -113,6 +116,22 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
     setButtons([]);
   };
 
+  const setButtonTriggered = (id: number, triggered: boolean) => {
+    setButtons((prevButtons) =>
+      prevButtons.map((button) =>
+        button.id === id ? { ...button, triggered } : button
+      )
+    );
+  };
+
+  const setStopButtonTriggered = (alarm: string, triggered: boolean, guid: string) => {
+    setButtons((prevButtons) =>
+      prevButtons.map((button) =>
+        button.button_prt === alarm && button.button_user === guid ? { ...button, triggered } : button
+      )
+    );
+  };
+
   return (
     <ButtonContext.Provider
       value={{
@@ -125,6 +144,8 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
         setNewValue,
         setClickedButton,
         removeClickedButton,
+        setButtonTriggered,
+        setStopButtonTriggered
       }}
     >
       {children}

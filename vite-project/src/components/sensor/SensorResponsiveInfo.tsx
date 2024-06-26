@@ -70,7 +70,7 @@ export default function SensorResponsiveInfo({
             <div className="flex gap-1">
               <div className="flex items-center gap-1">
                 {!account.isAdmin && (
-                  <p>
+                  <p className="text-sm">
                     {formatValue(
                       newValue,
                       (sensor as any)[`${button.sensor_type}`]
