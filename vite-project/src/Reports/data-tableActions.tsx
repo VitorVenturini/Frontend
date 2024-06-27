@@ -1,5 +1,5 @@
 "use client";
-import * as React from "react";
+import React, { useState, useEffect, ChangeEvent, useContext } from "react";
 import CardCreateAction from "@/components/actions/CardCreateAction";
 import {
   ColumnDef,
@@ -21,6 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -35,6 +36,8 @@ export function DataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
+  const [loading, setLoading] = useState<boolean>(true);
+
   const table = useReactTable({
     data,
     columns,
@@ -48,13 +51,21 @@ export function DataTable<TData, TValue>({
       columnFilters,
     },
   });
-
+  useEffect(() => {
+    if (data && data.length > 0) {
+      setLoading(false);
+    } else {
+      setLoading(true);
+    }
+  }, [data]);
   return (
     <div className="rounded-md w-full border">
       <div className="flex items-center justify-between p-4">
         <Input
           placeholder="Filter User..."
-          value={(table.getColumn("action_user")?.getFilterValue() as string) || ""}
+          value={
+            (table.getColumn("action_user")?.getFilterValue() as string) || ""
+          }
           onChange={(event) =>
             table.getColumn("action_user")?.setFilterValue(event.target.value)
           }
@@ -98,7 +109,61 @@ export function DataTable<TData, TValue>({
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="h-24 text-center">
-                No results.
+                {loading == true && (
+                  <div className="flex flex-col gap-8">
+                    <div className="flex items-center space-x-4">
+                      <Skeleton className="h-4 w-[20px]" />
+                      <Skeleton className="h-4 w-[180px]" />
+                      <Skeleton className="h-4 w-[180px]" />
+                      <Skeleton className="h-4 w-[150px]" />
+                      <Skeleton className="h-4 w-[80px]" />
+                      <Skeleton className="h-4 w-[80px]" />
+                      <Skeleton className="h-4 w-[80px]" />
+                      <Skeleton className="h-4 w-[80px]" />
+                    </div>
+                    <div className="flex items-center space-x-4">
+                      <Skeleton className="h-4 w-[20px]" />
+                      <Skeleton className="h-4 w-[180px]" />
+                      <Skeleton className="h-4 w-[180px]" />
+                      <Skeleton className="h-4 w-[150px]" />
+                      <Skeleton className="h-4 w-[80px]" />
+                      <Skeleton className="h-4 w-[80px]" />
+                      <Skeleton className="h-4 w-[80px]" />
+                      <Skeleton className="h-4 w-[80px]" />
+                    </div>
+                    <div className="flex items-center space-x-4">
+                      <Skeleton className="h-4 w-[20px]" />
+                      <Skeleton className="h-4 w-[180px]" />
+                      <Skeleton className="h-4 w-[180px]" />
+                      <Skeleton className="h-4 w-[150px]" />
+                      <Skeleton className="h-4 w-[80px]" />
+                      <Skeleton className="h-4 w-[80px]" />
+                      <Skeleton className="h-4 w-[80px]" />
+                      <Skeleton className="h-4 w-[80px]" />
+                    </div>
+                    <div className="flex items-center space-x-4">
+                      <Skeleton className="h-4 w-[20px]" />
+                      <Skeleton className="h-4 w-[180px]" />
+                      <Skeleton className="h-4 w-[180px]" />
+                      <Skeleton className="h-4 w-[150px]" />
+                      <Skeleton className="h-4 w-[80px]" />
+                      <Skeleton className="h-4 w-[80px]" />
+                      <Skeleton className="h-4 w-[80px]" />
+                      <Skeleton className="h-4 w-[80px]" />
+                    </div>
+                    <div className="flex items-center space-x-4">
+                      <Skeleton className="h-4 w-[20px]" />
+                      <Skeleton className="h-4 w-[180px]" />
+                      <Skeleton className="h-4 w-[180px]" />
+                      <Skeleton className="h-4 w-[150px]" />
+                      <Skeleton className="h-4 w-[80px]" />
+                      <Skeleton className="h-4 w-[80px]" />
+                      <Skeleton className="h-4 w-[80px]" />
+                      <Skeleton className="h-4 w-[80px]" />
+                    </div>
+                  </div>
+                )}
+                <h1 className="m-4">No Result</h1>
               </TableCell>
             </TableRow>
           )}
