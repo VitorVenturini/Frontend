@@ -64,7 +64,7 @@ function UserLayout() {
   const handleWebSocketMessage = (message: any) => {
     switch (message.mt) {
       case "SelectButtonsSuccess":
-        const buttons: ButtonInterface[] = JSON.parse(message.result);
+        const buttons: ButtonInterface[] = message.result
         setButtons(buttons);
         setSensors([]);
         break;
@@ -95,7 +95,9 @@ function UserLayout() {
         setButtonTriggered(message.btn_id, true);
         addHistory({
           button_name: "Alarm" + message.alarm,
-          date: format(new Date(), "dd/MM HH:mm"),
+          date: message.date
+          ? format(new Date(message.date), "dd/MM HH:mm")
+          : format(new Date(), "dd/MM HH:mm"),
         });
         break;
       case "AlarmStopReceived":
