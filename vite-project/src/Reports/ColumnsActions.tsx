@@ -1,9 +1,10 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import DeleteActions from "@/components/DeleteAction";
+import UpdateActions from "@/components/UpdateActions";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react"
-
+import { Pencil } from "lucide-react";
 export interface Actions {
   id: string;
   action_name: string;
@@ -75,7 +76,8 @@ export const columnsActions: ColumnDef<Actions>[] = [
         const actions = row.original;
   
         return (
-          <div>
+          <div className="flex justify-center gap-1 items-center">
+            <UpdateActions action={actions}/>
             <DeleteActions id={actions.id}/>
           </div>
         );

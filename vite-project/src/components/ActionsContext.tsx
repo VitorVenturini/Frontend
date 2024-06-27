@@ -1,7 +1,7 @@
 import React, { createContext, useState, useContext, ReactNode } from "react";
 import Actions from "@/pages/admin/Actions";
 export interface ActionsInteface {
-  id: number;
+  id: string;
   action_name: string;
   action_alarm_code: string;
   action_start_type: string;
