@@ -41,14 +41,14 @@ function AdminLayout() {
         const firstButtons: ButtonInterface[] = JSON.parse(message.result);
         setButtons(firstButtons);
         break;
-      case "InsertMessageSuccess":
+      case "InsertButtonSuccess":
         const newButton: ButtonInterface = message.result;
         addButton(newButton);
         toast({
           description: "Botão Criado com sucesso",
         });
         break;
-      case "UpdateMessageSuccess":
+      case "UpdateButtonSuccess":
         const updatedButton: ButtonInterface = message.result;
         updateButton(updatedButton);
         toast({

@@ -127,7 +127,8 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
   const setStopButtonTriggered = (alarm: string, triggered: boolean, guid: string) => {
     setButtons((prevButtons) =>
       prevButtons.map((button) =>
-        button.button_prt === alarm && button.button_user === guid ? { ...button, triggered } : button
+        //&& button.button_user === guid  restrição para parar todos os botões
+        button.button_prt === alarm ? { ...button, triggered } : button
       )
     );
   };
