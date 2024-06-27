@@ -119,7 +119,7 @@ export default function ModalSensor({
         setIsCreating(true);
         const message = {
           api: "admin",
-          mt: isUpdate ? "UpdateSensorMessage" : "InsertSensorMessage",
+          mt: isUpdate ? "UpdateSensorButton" : "InsertSensorButton",
           ...(isUpdate && { id: existingButton?.id }),
           name: nameButton,
           value: nameSensor,

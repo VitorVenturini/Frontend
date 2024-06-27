@@ -90,28 +90,11 @@ export default function ModalCombo({
   };
   const handleCreateButton = () => {
     try {
-      //   const objComboToInsert = {
-      //     button_name: String(obj.name),
-      //     button_prt : String(obj.value),
-      //     button_user : String(obj.guid),
-      //     button_type : String(obj.type),
-      //     button_type1 : String(obj.type1),
-      //     button_type2 : String(obj.type2),
-      //     button_type3 : String(obj.type3),
-      //     button_type4 : String(obj.type4),
-      //     button_device : String(obj.device),
-      //     create_user : String(conn.guid),
-      //     page : String(obj.page),
-      //     position_x : String(obj.x),
-      //     position_y: String(obj.y),
-      //     createdAt: getDateNow(),
-
-      // }
       if (nameButton && combo1) {
         setIsCreating(true);
         const message = {
           api: "admin",
-          mt: isUpdate ? "UpdateComboMessage" : "InsertComboMessage",
+          mt: isUpdate ? "UpdateComboButton" : "InsertComboButton",
           ...(isUpdate && { id: existingButton?.id }),
           name: nameButton,
           // value: numberAlarm,
@@ -167,17 +150,16 @@ export default function ModalCombo({
 
   return (
     <>
-      {isUpdate && (
-        <CardHeader>
-          <CardTitle>
-            {isUpdate ? "Atualização" : "Criação"} de Botões de Alarme
-          </CardTitle>
-          <CardDescription>
-            Para {isUpdate ? "atualizar" : "criar"} um botão de alarme complete
-            os campos abaixo
-          </CardDescription>
-        </CardHeader>
-      )}
+      <CardHeader>
+        <CardTitle>
+          {isUpdate ? "Atualização" : "Criação"} de Botões Combo
+        </CardTitle>
+        <CardDescription>
+          Para {isUpdate ? "atualizar" : "criar"} um botão de combo complete os
+          campos abaixo
+        </CardDescription>
+      </CardHeader>
+
       <CardContent className="grid gap-4 py-4">
         <div className="grid grid-cols-4 items-center gap-4">
           <Label className="text-end" htmlFor="buttonName">
