@@ -46,6 +46,7 @@
     --buttonG-foreground: 20 14.3% 4.1%;
     --sensor: 0 0% 26%;
     --sensor-foreground: 20 14.3% 4.1%;
+    --combo: 192, 91%, 36%;
     --radius: 0.5rem;
   }
 
@@ -73,6 +74,7 @@
     --buttonG-foreground: 20 14.3% 4.1%;
     --sensor: 0 0% 7%;
     --sensor-foreground: 20 14.3% 4.1%;
+    --combo: 192, 91%, 36%;
   }
 }
 

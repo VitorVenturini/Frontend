@@ -47,7 +47,8 @@ interface ButtonContextType {
   removeClickedButton: (id: number) => void;
   clearButtons: () => void;
   setButtonTriggered: (id: number, triggered: boolean) => void;
-  setStopButtonTriggered: (alarm: string, triggered: boolean, guid: string) => void;
+  setStopButtonTriggered: (alarm: string, triggered: boolean) => void;
+  deleteButton: (id: number) => void;
 }
 
 const ButtonContext = createContext<ButtonContextType | undefined>(undefined);
@@ -68,6 +69,13 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
       )
     );
   };
+
+  const deleteButton = (id: number) => {
+    setButtons((prevButtons) =>
+      prevButtons.filter((button) => button.id !== id)
+    );
+  };
+
   const setOldValue = (
     sensorType: string,
     sensorName: string,
@@ -124,10 +132,11 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
-  const setStopButtonTriggered = (alarm: string, triggered: boolean, guid: string) => {
+  const setStopButtonTriggered = (alarm: string, triggered: boolean) => {
     setButtons((prevButtons) =>
       prevButtons.map((button) =>
-        button.button_prt === alarm && button.button_user === guid ? { ...button, triggered } : button
+        //&& button.button_user === guid  restrição para parar todos os botões
+        button.button_prt === alarm ? { ...button, triggered } : button
       )
     );
   };
@@ -140,6 +149,7 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
         addButton,
         clearButtons,
         updateButton,
+        deleteButton,
         setOldValue,
         setNewValue,
         setClickedButton,
