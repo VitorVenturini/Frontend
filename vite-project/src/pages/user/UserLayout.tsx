@@ -43,6 +43,8 @@ function UserLayout() {
     setButtonTriggered,
     setStopButtonTriggered,
     addButton,
+    deleteButton,
+    updateButton,
     buttons,
   } = useButtons();
   const {
@@ -97,11 +99,14 @@ function UserLayout() {
         });
         break;
       case "AlarmStopReceived":
-        setStopButtonTriggered(message.alarm, false, message.src);
+        setStopButtonTriggered(message.alarm, false);
         addHistory({
           button_name: "Alarm Parou" + message.alarm,
           date: format(new Date(), "dd/MM HH:mm"),
         });
+        break;
+      case "DeleteButtonsSuccess":
+        deleteButton(message.id_deleted);
         break;
       case "IncreaseButtons":
         const newButton: ButtonInterface = message.result;
@@ -109,6 +114,11 @@ function UserLayout() {
         // toast({
         //   description: "Botão Criado com sucesso",
         // });
+        break;
+      case "UpdateButtonSuccess":
+        const updatedButton: ButtonInterface = message.result;
+        updateButton(updatedButton);
+
         break;
       default:
         console.log("Unknown message type:", message);

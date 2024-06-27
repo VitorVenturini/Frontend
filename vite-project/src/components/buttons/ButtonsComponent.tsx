@@ -47,12 +47,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useLanguage } from "../language/LanguageContext";
-import ModalCombo from "@/components/buttons/combo/ModalCombo";
 import { useWebSocketData } from "../websocket/WebSocketProvider";
 import ModalAlarm from "@/components/buttons/alarm/ModalAlarm";
 import AlarmButton from "@/components/buttons/alarm/AlarmButton";
 import SensorResponsiveInfo from "../sensor/SensorResponsiveInfo";
-
+import ModalCombo from "@/components/buttons/combo/ModalCombo";
+import ComboButton from "./combo/ComboButton";
 interface User {
   id: string;
   name: string;
@@ -142,6 +142,14 @@ export default function ButtonsComponent({
             clickedPosition={clickedPosition}
           />
         );
+      case "combo":
+        return (
+          <ModalCombo
+            selectedPage={selectedPage}
+            selectedUser={selectedUser}
+            clickedPosition={clickedPosition}
+          />
+        );
 
       // Add other cases here as needed
       default:
@@ -177,9 +185,7 @@ export default function ButtonsComponent({
                 </SelectContent>
               </Select>
             </div>
-            <div>
-              {renderModalByType()}
-            </div>
+            <div>{renderModalByType()}</div>
           </CardContent>
         </Card>
       </>
@@ -252,11 +258,27 @@ export default function ButtonsComponent({
         );
       case "combo":
         return (
-          <div className={`${commonClasses} flex`} onClick={handleClick}>
-            <div className="flex items-center gap-1">
-              <Layers3 />
-              <p className="text-sm font-medium leading-none">Nome </p>
-            </div>
+          <div>
+            <Dialog>
+              <DialogTrigger asChild>
+                <div>
+                  <ComboButton button={button} />
+                </div>
+              </DialogTrigger>
+              {isAdmin && (
+                <DialogContent>
+                  {
+                    <ModalCombo
+                      selectedPage={selectedPage}
+                      selectedUser={selectedUser}
+                      clickedPosition={clickedPosition}
+                      existingButton={button}
+                      isUpdate={true}
+                    />
+                  }
+                </DialogContent>
+              )}
+            </Dialog>
           </div>
         );
       case "sensor":

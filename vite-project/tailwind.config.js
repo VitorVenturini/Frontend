@@ -57,6 +57,10 @@ module.exports = {
           DEFAULT:"hsl(var(--buttonG))",
           foreground:"hsl(var(--buttonG-foreground))"
         },
+        buttonCombo: {
+          DEFAULT:"hsl(var(--combo))",
+          foreground:"hsl(var(--combo-foreground))"
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

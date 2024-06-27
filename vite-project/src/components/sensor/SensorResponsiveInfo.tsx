@@ -42,7 +42,7 @@ export default function SensorResponsiveInfo({
   const handleSensorSpecificValue = (sensorType: string, value: any) => {
     switch (sensorType) {
       case "leak":
-        return value === "normal" ? "Normal" : "Alagado";
+        return value === 0 ? "Normal" : "Alagado";
       case "magnet_status":
         return value === 1 ? "Open" : "Closed";
       default:

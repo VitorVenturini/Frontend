@@ -27,10 +27,11 @@ import {
 function AdminLayout() {
   const account = useAccount();
   const wss = useWebSocketData();
-  const { buttons, setButtons, addButton, updateButton } = useButtons();
+  const { buttons, setButtons, addButton, updateButton, deleteButton } =
+    useButtons();
   const { sensors, setSensors, updateSensor } = useSensors();
   const { toast } = useToast();
-  const { actions, setActions, updateActions } = useActions();
+  const { actions, setActions, updateActions, deleteAction } = useActions();
   const { updateAccount } = useAccount();
   const [isAdminVerified, setIsAdminVerified] = useState(false);
 
@@ -56,11 +57,12 @@ function AdminLayout() {
         });
         break;
       case "DeleteButtonsSuccess":
-        const buttonsAfterDelete: ButtonInterface[] = message.btns;
-        setButtons(buttonsAfterDelete);
+        // const buttonsAfterDelete: ButtonInterface[] = message.btns;
+        // setButtons(buttonsAfterDelete);
         toast({
           description: "Botão excluído com sucesso",
         });
+        deleteButton(message.id_deleted);
         break;
       case "SelectSensorNameResult":
         const firstSensors: SensorInterface[] = JSON.parse(message.result);
@@ -81,9 +83,7 @@ function AdminLayout() {
         });
         break;
       case "DeleteActionsMessageSuccess":
-        console.log(JSON.stringify(message.actions));
-        const actionsAfterDelete: ActionsInteface[] = message.actions;
-        setActions(actionsAfterDelete);
+        deleteAction(message.id_deleted);
         toast({
           description: "Ação Deletada com sucesso",
         });
