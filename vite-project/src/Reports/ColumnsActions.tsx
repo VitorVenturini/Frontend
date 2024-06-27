@@ -1,11 +1,12 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import DeleteActions from "@/components/DeleteAction";
+import DeleteActions from "@/components/actions/DeleteAction";
+import UpdateActions from "@/components/actions/UpdateActions";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react"
-
+import { Pencil } from "lucide-react";
 export interface Actions {
-  id: number;
+  id: string;
   action_name: string;
   action_alarm_code: string;
   action_start_type: string;
@@ -75,11 +76,13 @@ export const columnsActions: ColumnDef<Actions>[] = [
         const actions = row.original;
   
         return (
-          <div>
+          <div className="flex justify-center gap-1 items-center">
+            <UpdateActions action={actions}/>
             <DeleteActions id={actions.id}/>
           </div>
         );
       },
     },
   ];
+  
   

@@ -1,9 +1,9 @@
 import { Input } from "@/components/ui/input";
 import * as React from "react";
-import ButtonsGridPages from "@/components/ButtonsGridPages";
-import LeftGrid from "@/components/LeftGrid";
-import RightGrid from "@/components/RightGrid";
-import { ButtonInterface, useButtons } from "@/components/ButtonsContext";
+import ButtonsGridPages from "@/components/buttons/buttonsGrid/ButtonsGridPages";
+import LeftGrid from "@/components/leftGrid/LeftGrid";
+import RightGrid from "@/components/rightGrid/RightGrid";
+import { ButtonInterface, useButtons } from "@/components/buttons/buttonContext/ButtonsContext";
 import { PlusSquare, SquarePlus } from "lucide-react";
 import { ArrowBigUpDash } from "lucide-react";
 
@@ -27,11 +27,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useState, useEffect } from "react";
-import useWebSocket from "@/components/useWebSocket";
-import { useAccount } from "@/components/AccountContext";
-import OptBar from "@/components/OptBar";
+import { useAccount } from "@/components/account/AccountContext";
 import texts from "@/_data/texts.json";
-import { useLanguage } from "@/components/LanguageContext";
+import { useLanguage } from "@/components/language/LanguageContext";
 
 interface User {
   id: string;
