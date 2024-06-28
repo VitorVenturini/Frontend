@@ -150,46 +150,89 @@ export default function ButtonsComponent({
 
   const getDialogContent = () => {
     //if (!clickedPosition) return null;
-    if (clickedPosition?.i === 1 && clickedPosition.j >= 1 && clickedPosition.j <= 5) {
-      return (
-        <ModalCombo
-          selectedPage={selectedPage}
-          selectedUser={selectedUser}
-          clickedPosition={clickedPosition}
-        />
-      );
-    } else {
-      return (
-        <>
-          <Card className="border-none bg-transparent">
-            <CardHeader>
-              <CardTitle>Criar Botão</CardTitle>
-              <CardDescription>Selecione um tipo de botão</CardDescription>
-            </CardHeader>
-            <CardContent className="gap-4 py-4">
-              <div className="flex gap-4 items-center">
-                <Label className="text-end" htmlFor="framework" id="typeButton">
-                  Tipo de botão
-                </Label>
-                <Select onValueChange={handleTypeSelected}>
-                  <SelectTrigger className="col-span-1" id="SelectTypeButton">
-                    <SelectValue placeholder="Selecione o tipo de Botão" />
-                  </SelectTrigger>
-                  <SelectContent position="popper">
-                    <SelectItem value="alarm">Alarme</SelectItem>
-                    <SelectItem value="number">Número</SelectItem>
-                    <SelectItem value="user">Usuário</SelectItem>
-                    <SelectItem value="sensor">Sensor</SelectItem>
-                    <SelectItem value="action">Ação</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>{renderModalByType()}</div>
-            </CardContent>
-          </Card>
-        </>
-      );
+    switch (true) {
+      case clickedPosition?.i === 1 && clickedPosition.j >= 1 && clickedPosition.j <= 5:
+        return (
+          <ModalCombo
+            selectedPage={selectedPage}
+            selectedUser={selectedUser}
+            clickedPosition={clickedPosition}
+          />
+        );
+      case clickedPosition && clickedPosition?.i >= 2 && clickedPosition?.i <= 8 && clickedPosition?.j >= 1 && clickedPosition?.j <= 5:
+        return (
+          <>
+            <Card className="border-none bg-transparent">
+              <CardHeader>
+                <CardTitle>Criar Botão</CardTitle>
+                <CardDescription>Selecione um tipo de botão</CardDescription>
+              </CardHeader>
+              <CardContent className="gap-4 py-4">
+                <div className="flex gap-4 items-center">
+                  <Label className="text-end" htmlFor="framework" id="typeButton">
+                    Tipo de botão
+                  </Label>
+                  <Select onValueChange={handleTypeSelected}>
+                    <SelectTrigger className="col-span-1" id="SelectTypeButton">
+                      <SelectValue placeholder="Selecione o tipo de Botão" />
+                    </SelectTrigger>
+                    <SelectContent position="popper">
+                      <SelectItem value="alarm">Alarme</SelectItem>
+                      <SelectItem value="number">Número</SelectItem>
+                      <SelectItem value="user">Usuário</SelectItem>
+                      <SelectItem value="sensor">Sensor</SelectItem>
+                      <SelectItem value="action">Ação</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>{renderModalByType()}</div>
+              </CardContent>
+            </Card>
+          </>
+        );
+      default:
+        break;
     }
+    // if (clickedPosition?.i === 1 && clickedPosition.j >= 1 && clickedPosition.j <= 5) {
+    //   return (
+    //     <ModalCombo
+    //       selectedPage={selectedPage}
+    //       selectedUser={selectedUser}
+    //       clickedPosition={clickedPosition}
+    //     />
+    //   );
+    // } else {
+    //   return (
+    //     <>
+    //       <Card className="border-none bg-transparent">
+    //         <CardHeader>
+    //           <CardTitle>Criar Botão</CardTitle>
+    //           <CardDescription>Selecione um tipo de botão</CardDescription>
+    //         </CardHeader>
+    //         <CardContent className="gap-4 py-4">
+    //           <div className="flex gap-4 items-center">
+    //             <Label className="text-end" htmlFor="framework" id="typeButton">
+    //               Tipo de botão
+    //             </Label>
+    //             <Select onValueChange={handleTypeSelected}>
+    //               <SelectTrigger className="col-span-1" id="SelectTypeButton">
+    //                 <SelectValue placeholder="Selecione o tipo de Botão" />
+    //               </SelectTrigger>
+    //               <SelectContent position="popper">
+    //                 <SelectItem value="alarm">Alarme</SelectItem>
+    //                 <SelectItem value="number">Número</SelectItem>
+    //                 <SelectItem value="user">Usuário</SelectItem>
+    //                 <SelectItem value="sensor">Sensor</SelectItem>
+    //                 <SelectItem value="action">Ação</SelectItem>
+    //               </SelectContent>
+    //             </Select>
+    //           </div>
+    //           <div>{renderModalByType()}</div>
+    //         </CardContent>
+    //       </Card>
+    //     </>
+    //   );
+    // }
   };
 
   const commonClasses =
