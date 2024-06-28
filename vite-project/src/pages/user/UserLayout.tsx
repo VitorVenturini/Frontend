@@ -25,6 +25,7 @@ import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { useHistory } from "@/components/history/HistoryContext";
 import { useEffect } from "node_modules/react-resizable-panels/dist/declarations/src/vendor/react";
 import { format } from "date-fns";
+import { useToast } from "@/components/ui/use-toast";
 
 interface User {
   id: string;
@@ -35,6 +36,7 @@ interface User {
 
 function UserLayout() {
   const account = useAccount();
+  const { toast } = useToast();
   const { updateAccount } = useAccount();
   // const webSocket = useWebSocket(account.accessToken)
   // console.log("MENSAGEM DO WEBSOCKET" + webSocket.data)
@@ -64,7 +66,7 @@ function UserLayout() {
   const handleWebSocketMessage = (message: any) => {
     switch (message.mt) {
       case "SelectButtonsSuccess":
-        const buttons: ButtonInterface[] = message.result
+        const buttons: ButtonInterface[] = message.result;
         setButtons(buttons);
         setSensors([]);
         break;
@@ -96,9 +98,12 @@ function UserLayout() {
         addHistory({
           button_name: "Alarm" + message.alarm,
           date: message.date
-          ? format(new Date(message.date), "dd/MM HH:mm")
-          : format(new Date(), "dd/MM HH:mm"),
+            ? format(new Date(message.date), "dd/MM HH:mm")
+            : format(new Date(), "dd/MM HH:mm"),
         });
+        toast({
+          description: "Alarme Recebido" + message.alarm
+        })
         break;
       case "AlarmStopReceived":
         setStopButtonTriggered(message.alarm, false);
