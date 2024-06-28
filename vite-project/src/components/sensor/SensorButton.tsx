@@ -63,6 +63,10 @@ export default function SensorButton({ handleClick, button }: ButtonProps) {
     return commonClasses;
   };
 
+  const sensorModel = sensors.filter((sensor) =>{
+    return sensor.sensor_name === button.button_prt
+  })[0]
+  
   return (
     <div className={getButtonClassName()} onClick={handleClick}>
       <div className="flex items-center gap-1 cursor-pointer justify-between">
@@ -74,7 +78,7 @@ export default function SensorButton({ handleClick, button }: ButtonProps) {
             {button.button_prt}
           </p>
         </div>
-        <ResponsivePng sensorName={button.button_prt} />
+        <ResponsivePng sensorModel={sensorModel?.description} />
       </div>
       <SensorResponsiveInfo
         button={button}

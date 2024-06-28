@@ -106,7 +106,7 @@ const useWebSocket = (
     if (account.isAdmin) {
       ws.current?.send(JSON.stringify({ api: apiType, mt: "SelectButtons" }));
       ws.current?.send(
-        JSON.stringify({ api: apiType, mt: "SelectSensorName" })
+        JSON.stringify({ api: apiType, mt: "SelectSensorNameTest" })
       );
     } else {
       ws.current?.send(JSON.stringify({ api: apiType, mt: "SelectButtons" }));
