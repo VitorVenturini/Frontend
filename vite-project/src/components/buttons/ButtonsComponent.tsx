@@ -81,9 +81,7 @@ export default function ButtonsComponent({
   const wss = useWebSocketData();
   const [isClicked, setIsClicked] = useState(false);
   // const { setOldValue, setNewValue, buttons, setButtons } = useButtons();
-  const [buttonsLoaded, setButtonsLoaded] = useState(false);
   const [selectedType, setSelectedType] = useState<string>("");
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // para piscar nas outras páginas sem ser a atual
   // useEffect(() => {
@@ -115,13 +113,13 @@ export default function ButtonsComponent({
   const handleClick = () => {
     if (isAdmin) {
       onClickPosition();
+      setSelectedType(""); // limpeza q faltava
     }
     setIsClicked(!isClicked);
   };
 
   const handleTypeSelected = (value: string) => {
     setSelectedType(value);
-    setIsDialogOpen(true);
   };
   // função para abrir o modal Alarm , number , user de acordo com a opção selecionada
   const renderModalByType = () => {
@@ -151,7 +149,9 @@ export default function ButtonsComponent({
   const getDialogContent = () => {
     //if (!clickedPosition) return null;
     switch (true) {
-      case clickedPosition?.i === 1 && clickedPosition.j >= 1 && clickedPosition.j <= 5:
+      case clickedPosition?.i === 1 &&
+        clickedPosition.j >= 1 &&
+        clickedPosition.j <= 5:
         return (
           <ModalCombo
             selectedPage={selectedPage}
@@ -159,7 +159,11 @@ export default function ButtonsComponent({
             clickedPosition={clickedPosition}
           />
         );
-      case clickedPosition && clickedPosition?.i >= 2 && clickedPosition?.i <= 8 && clickedPosition?.j >= 1 && clickedPosition?.j <= 5:
+      case clickedPosition &&
+        clickedPosition?.i >= 2 &&
+        clickedPosition?.i <= 8 &&
+        clickedPosition?.j >= 1 &&
+        clickedPosition?.j <= 5:
         return (
           <>
             <Card className="border-none bg-transparent">
@@ -169,7 +173,11 @@ export default function ButtonsComponent({
               </CardHeader>
               <CardContent className="gap-4 py-4">
                 <div className="flex gap-4 items-center">
-                  <Label className="text-end" htmlFor="framework" id="typeButton">
+                  <Label
+                    className="text-end"
+                    htmlFor="framework"
+                    id="typeButton"
+                  >
                     Tipo de botão
                   </Label>
                   <Select onValueChange={handleTypeSelected}>
@@ -181,7 +189,7 @@ export default function ButtonsComponent({
                       <SelectItem value="number">Número</SelectItem>
                       <SelectItem value="user">Usuário</SelectItem>
                       <SelectItem value="sensor">Sensor</SelectItem>
-                      <SelectItem value="action">Ação</SelectItem>
+                      <SelectItem value="command">Comando</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -246,7 +254,7 @@ export default function ButtonsComponent({
             <Dialog>
               <DialogTrigger asChild>
                 <div>
-                  <AlarmButton button={button} />
+                  <AlarmButton button={button} handleClick={handleClick} />
                 </div>
               </DialogTrigger>
               {isAdmin && (
@@ -305,7 +313,7 @@ export default function ButtonsComponent({
             <Dialog>
               <DialogTrigger asChild>
                 <div>
-                  <ComboButton button={button} />
+                  <ComboButton button={button} handleClick={handleClick} />
                 </div>
               </DialogTrigger>
               {isAdmin && (

@@ -30,9 +30,10 @@ function AdminLayout() {
   const wss = useWebSocketData();
   const { buttons, setButtons, addButton, updateButton, deleteButton } =
     useButtons();
-  const { sensors, setSensors, updateSensor } = useSensors();
+  const { sensors, setSensors, updateSensor, addSensorName } = useSensors();
   const { toast } = useToast();
-  const { actions, setActions, updateActions, deleteAction } = useActions();
+  const { actions, setActions, updateActions, deleteAction, addActions } =
+    useActions();
   const { updateAccount } = useAccount();
   const [isAdminVerified, setIsAdminVerified] = useState(false);
   const navigate = useNavigate();
@@ -67,10 +68,34 @@ function AdminLayout() {
         });
         deleteButton(message.id_deleted);
         break;
-      case "SelectSensorNameResult":
-        const firstSensors: SensorInterface[] = JSON.parse(message.result);
-        setSensors(firstSensors);
-        console.log(message.result);
+      // case "SelectSensorNameResult":
+      //   //Lógica antiga vamos deixar comentado por enquanto
+      //   // const firstSensors: SensorInterface[] = JSON.parse(message.result);
+      //   // setSensors(firstSensors);
+      //   // console.log(message.result);
+      //   break;
+      case "SelectSensorsResult":
+        const result = message.result;
+        const sensorData = result.map((gatewayData: any) => {
+          const gateway_id = Object.keys(gatewayData); // Pegando o gateway_id
+          // console.log("Gateway_ID" + gateway_id);
+          // console.log("Devices " + JSON.stringify(gatewayData[1].devices));
+          const devices = gatewayData[1].devices.map(
+            (device: {
+              name: string;
+              description: string;
+              devEUI: string;
+            }) => ({
+              name: device.name,
+              description: device.description,
+              devEUI: device.devEUI,
+            })
+          );
+
+          return { gateway_id, devices };
+        });
+
+        addSensorName(sensorData);
         break;
       case "SelectActionsMessageSuccess":
         console.log("allActions ", JSON.stringify(message.result));
@@ -81,9 +106,16 @@ function AdminLayout() {
       case "InsertActionMessageSuccess":
         console.log(JSON.stringify(message.result));
         const newAction: ActionsInteface = message.result;
-        updateActions(newAction);
+        addActions(newAction);
         toast({
-          description: "Ação Criado com sucesso",
+          description: "Ação Criada com sucesso",
+        });
+        break;
+      case "UpdateActionMessageSuccess":
+        const updatedAction: ActionsInteface = message.result;
+        updateActions(updatedAction);
+        toast({
+          description: "Ação Atualizada com sucesso",
         });
         break;
       case "DeleteActionsMessageSuccess":
