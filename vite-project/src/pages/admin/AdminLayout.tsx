@@ -4,6 +4,7 @@ import Account from "./Account";
 import ButtonsPage from "./ButtonsPage";
 import HeaderApp from "@/components/header/HeaderApp";
 import { useAccount } from "@/components/account/AccountContext";
+import { useNavigate } from "react-router-dom";
 import {
   ButtonProvider,
   useButtons,
@@ -34,6 +35,8 @@ function AdminLayout() {
   const { actions, setActions, updateActions, deleteAction } = useActions();
   const { updateAccount } = useAccount();
   const [isAdminVerified, setIsAdminVerified] = useState(false);
+  const navigate = useNavigate();
+
 
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
@@ -73,6 +76,7 @@ function AdminLayout() {
         console.log("allActions ", JSON.stringify(message.result));
         const allActions: ActionsInteface[] = JSON.parse(message.result);
         setActions(allActions);
+        navigate("/admin/actions");
         break;
       case "InsertActionMessageSuccess":
         console.log(JSON.stringify(message.result));

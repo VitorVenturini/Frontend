@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import React, { useEffect, useState, ChangeEvent } from "react";
 import { Value } from "@radix-ui/react-select";
-import { Loader2 } from "lucide-react";
+import { Loader2, Pencil } from "lucide-react";
 import { Info } from "lucide-react";
 import {
   Dialog,
@@ -37,44 +37,42 @@ import texts from "@/_data/texts.json";
 import { useLanguage } from "@/components/language/LanguageContext";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { useSensors } from "@/components/sensor/SensorContext";
+import { ActionsInteface } from "./ActionsContext";
 interface User {
   id: string;
   name: string;
   guid: string;
 }
-interface ActionsInteface {
-  id: number;
-  action_name: string; //
-  action_alarm_code: string;
-  action_start_type: string;
-  action_prt: string; //
-  action_user: string; //
-  action_type: string; //
-  action_device?: string | null; //
-  action_sensor_name?: string | null;
-  action_sensor_type?: string | null;
-  createdAt: string;
-  updatedAt: string;
+
+interface UpdateActionsProps {
+  action: ActionsInteface;
+  isUpdate: boolean;
 }
 
-export default function CardCreateAction() {
+export default function CardCreateAction({
+  action,
+  isUpdate = false,
+}: UpdateActionsProps) {
   const [users, setUsers] = useState<User[]>([]);
-  const [actionName, setactionName] = useState("");
-  const [actionType, setActionType] = useState("");
-  const [actionParameter, setActionParameter] = useState("");
-  const [type, setType] = useState("");
-  const [actionValue, setActionValue] = useState("");
-
-  const [selectedUser, setSelectedUser] = useState<User | null>(null); // Inicialmente, o primeiro usuário é selecionado
+  const [actionName, setActionName] = useState(action?.action_name || "");
+  const [actionType, setActionType] = useState(action?.action_type || "");
+  const [actionParameter, setActionParameter] = useState(action?.action_alarm_code || "");
+  const [type, setType] = useState(action?.action_start_type || "");
+  const [actionValue, setActionValue] = useState(action?.action_prt || "");
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isCreating, setIsCreating] = useState(false);
+  const [nameSensor, setNameSensor] = useState(
+    action?.action_sensor_name || ""
+  );
+  const [typeMeasure, setTypeMeasure] = useState(
+    action?.action_sensor_type || ""
+  );
+  const [deviceDest, setDeviceDest] = useState(action?.action_device || "");
+
   const wss = useWebSocketData();
   const { language } = useLanguage();
-
   const { toast } = useToast();
-  const [nameSensor, setNameSensor] = useState("");
   const { sensors } = useSensors();
-  const [typeMeasure, setTypeMeasure] = useState("");
-  const [deviceDest, setDeviceDest] = useState("");
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -100,7 +98,7 @@ export default function CardCreateAction() {
   }, []);
 
   const handleActionName = (event: ChangeEvent<HTMLInputElement>) => {
-    setactionName(event.target.value);
+    setActionName(event.target.value);
   };
   const handleActionType = (value: string) => {
     setActionType(value);
@@ -146,7 +144,8 @@ export default function CardCreateAction() {
       setIsCreating(true);
       wss?.sendMessage({
         api: "admin",
-        mt: "InsertAction",
+        mt: isUpdate ? "UpdateAction" : "InsertAction",
+        ...(isUpdate && { id: action?.id }),
         name: actionName,
         alarm: actionParameter,
         start: actionType,
@@ -158,7 +157,7 @@ export default function CardCreateAction() {
         sensorName: nameSensor,
       });
       setIsCreating(false);
-      setactionName("");
+      setActionName("");
       setActionParameter("");
       setActionValue("");
     } else {
@@ -173,17 +172,16 @@ export default function CardCreateAction() {
     actionType === "minValue" || actionType === "maxValue";
   const shouldRenderDevice = type === "number";
   const resetForm = () => {
-    setactionName("");
+    setActionName("");
     setActionParameter("");
     setActionValue("");
-    
   };
   return (
     //div que contem os cards
     <div className="flex flex-col md:flex-row gap-5 justify-center">
-      <Dialog onOpenChange={(isOpen) => !isOpen && resetForm()}>
+      <Dialog onOpenChange={(isOpen) => !isOpen && !isUpdate && resetForm()}>
         <DialogTrigger>
-          <Button>Criar Ação</Button>
+          {!isUpdate ? <Button>Criar Ação</Button> : <Pencil />}
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
@@ -237,7 +235,7 @@ export default function CardCreateAction() {
                 </Label>
                 <Info className="size-[12px]" />
               </div>
-              <Select onValueChange={handleActionType}>
+              <Select onValueChange={handleActionType} value={actionType}>
                 <SelectTrigger className="col-span-2">
                   <SelectValue placeholder="Selecione o Gatilho" />
                 </SelectTrigger>
@@ -345,7 +343,7 @@ export default function CardCreateAction() {
               <Label className="text-end" htmlFor="name">
                 Tipo
               </Label>
-              <Select onValueChange={handleType}>
+              <Select onValueChange={handleType} value={type}>
                 <SelectTrigger className="col-span-2">
                   <SelectValue placeholder="Selecione o Tipo" />
                 </SelectTrigger>
@@ -364,7 +362,7 @@ export default function CardCreateAction() {
                 <Label className="text-end" htmlFor="paramDest">
                   Dispositivo
                 </Label>
-                <Select onValueChange={handleDeviceDest}>
+                <Select onValueChange={handleDeviceDest} value={deviceDest}>
                   <SelectTrigger className="col-span-2">
                     <SelectValue placeholder="Dispositivo" />
                   </SelectTrigger>

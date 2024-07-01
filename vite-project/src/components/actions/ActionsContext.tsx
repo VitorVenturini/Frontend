@@ -1,7 +1,7 @@
 import React, { createContext, useState, useContext, ReactNode } from "react";
 import Actions from "@/pages/admin/Actions";
 export interface ActionsInteface {
-  id: number;
+  id: string;
   action_name: string;
   action_alarm_code: string;
   action_start_type: string;
@@ -18,8 +18,9 @@ export interface ActionsInteface {
 interface ActionsIntefaceType {
   actions: ActionsInteface[];
   setActions: React.Dispatch<React.SetStateAction<ActionsInteface[]>>;
+  addActions: (action: ActionsInteface) => void;
   updateActions: (action: ActionsInteface) => void;
-  deleteAction: (id: number) => void;
+  deleteAction: (id: string) => void;
   clearActions: () => void;
 }
 const ActionsContext = createContext<ActionsIntefaceType | undefined>(
@@ -29,15 +30,25 @@ const ActionsContext = createContext<ActionsIntefaceType | undefined>(
 export const ActionProvider = ({ children }: { children: ReactNode }) => {
   const [actions, setActions] = useState<ActionsInteface[]>([]);
 
-  const updateActions = (action: ActionsInteface) => {
+  const addActions = (action: ActionsInteface) => {
     setActions((prevActions) => [...prevActions, action]);
+  };
+
+  const updateActions = (updatedAction: ActionsInteface) => {
+    setActions((prevActions) =>
+      prevActions.map((action) =>
+        action.id === updatedAction.id
+          ? { ...action, ...updatedAction }
+          : action
+      )
+    );
   };
 
   const clearActions = () => {
     setActions([]);
   };
 
-  const deleteAction = (id: number) => {
+  const deleteAction = (id: string) => {
     setActions((prevActions) =>
       prevActions.filter((action) => action.id !== id)
     );
@@ -45,7 +56,7 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
   console.log("ACTIONCONTEXT actions", actions);
   return (
     <ActionsContext.Provider
-      value={{ actions, setActions, updateActions, clearActions, deleteAction }}
+      value={{ actions, setActions, addActions, clearActions, deleteAction, updateActions }}
     >
       {children}
     </ActionsContext.Provider>

@@ -5,21 +5,10 @@ import UpdateActions from "@/components/actions/UpdateActions";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react"
 import { Pencil } from "lucide-react";
-export interface Actions {
-  id: string;
-  action_name: string;
-  action_alarm_code: string;
-  action_start_type: string;
-  action_prt: string;
-  action_user: string;
-  action_type: string; // o ? significa que o valor nao precisa ser presente , se for nulo nao tem problema
-  action_device?: string | null;
-  action_sensor_name?: string | null;
-  action_sensor_type?: string | null;
-  createdAt: string;
-  updatedAt: string;
-}
-export const columnsActions: ColumnDef<Actions>[] = [
+import CardCreateAction from "@/components/actions/CardCreateAction";
+import { ActionsInteface } from "@/components/actions/ActionsContext";
+
+export const columnsActions: ColumnDef<ActionsInteface>[] = [
     {
       accessorKey: "id",
       header: "ID",
@@ -32,7 +21,7 @@ export const columnsActions: ColumnDef<Actions>[] = [
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            User {/*Ajustar text*/}
+            User
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         )
@@ -46,7 +35,7 @@ export const columnsActions: ColumnDef<Actions>[] = [
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Action Name {/*Ajustar text*/}
+            Action Name 
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         )
@@ -74,15 +63,13 @@ export const columnsActions: ColumnDef<Actions>[] = [
       header: "Actions",
       cell: ({ row }) => {
         const actions = row.original;
-  
+
         return (
           <div className="flex justify-center gap-1 items-center">
-            <UpdateActions action={actions}/>
+            <CardCreateAction action={actions} isUpdate={true}/>
             <DeleteActions id={actions.id}/>
           </div>
         );
       },
     },
   ];
-  
-  

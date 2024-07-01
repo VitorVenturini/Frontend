@@ -36,9 +36,9 @@ export default function HeaderApp() {
 
   const handleActionsClick = () => {
     wss?.sendMessage({ api: "admin", mt: "SelectActions" });
-    setTimeout(() => {
-      navigate("/admin/actions");
-    }, 1000);
+    //setTimeout(() => {
+      //navigate("/admin/actions");
+    //}, 900);
   };
 
   const handleOptionsClick = () => {
