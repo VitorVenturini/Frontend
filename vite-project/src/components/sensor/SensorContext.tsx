@@ -12,9 +12,13 @@ export interface SensorInterface {
   light?: string;
   tvoc?: string;
   pressure?: string;
-  magnet_status: string;
+  magnet_status?: string;
   date?: string;
   isBoolean?: boolean;
+  devEUI?: string; // info milesight
+  description?: string; // info milesight
+  appKey?: string; // info milesight
+  gateway_id?: string;
 }
 
 interface SensorContextType {
@@ -24,6 +28,7 @@ interface SensorContextType {
   replaceLatestSensor: (sensor: SensorInterface) => void;
   clearSensorsByName: (sensorName: string) => void;
   addSensors: (sensors: SensorInterface[]) => void;
+  addSensorName: (sensors: []) => void;
 }
 
 const SensorContext = createContext<SensorContextType | undefined>(undefined);
@@ -31,20 +36,91 @@ const SensorContext = createContext<SensorContextType | undefined>(undefined);
 export const SensorProvider = ({ children }: { children: ReactNode }) => {
   const [sensors, setSensors] = useState<SensorInterface[]>([]);
 
+  // addSensors é usado no userLayout quando entra no app para receber info dos sensores
+  // e tbm usado quando for visualizar o gráfico de sensores
+  // const addSensors = (newSensors: SensorInterface[]) => {
+  //   setSensors((prevSensors) => {
+  //     const sensorMap = new Map(
+  //       prevSensors.map((sensor) => [sensor.sensor_name + sensor.date, sensor])
+  //     );
+
+  //     newSensors.forEach((sensor) => {
+  //       sensorMap.set(sensor.sensor_name + sensor.date, sensor);
+  //     });
+  //     console.log("Contexto Atualizado");
+  //     return Array.from(sensorMap.values());
+  //   });
+  // };
   const addSensors = (newSensors: SensorInterface[]) => {
     setSensors((prevSensors) => {
       const sensorMap = new Map(
-        prevSensors.map((sensor) => [sensor.sensor_name + sensor.date, sensor])
+        prevSensors.map((sensor) => [sensor.sensor_name, sensor])
       );
-
+  
       newSensors.forEach((sensor) => {
-        sensorMap.set(sensor.sensor_name + sensor.date, sensor);
+        sensorMap.set(sensor.sensor_name, sensor); // Atualiza ou adiciona o sensor
       });
+  
+      console.log("Contexto Atualizado");
+      return Array.from(sensorMap.values());
+    });
+  };
+  
+
+  // const addSensorName = (newSensors: { name: string; description: string; devEUI: string }[]) => {
+  //   setSensors((prevSensors) => {
+  //     const sensorMap = new Map(
+  //       prevSensors.map((sensor) => [sensor.sensor_name + sensor.date, sensor])
+  //     );
+  
+  //     newSensors.forEach((device) => {
+  //       // const sensorName = `${device.name} - ${device.description} - ${device.devEUI}`;
+  //       const newSensor: SensorInterface = {
+  //         sensor_name: device.name,
+  //         description: device.description,
+  //         devEUI: device.devEUI,
+  //       };
+  //       sensorMap.set(device.name , newSensor);
+  //     });
+  
+  //     console.log("Contexto Atualizado");
+  //     return Array.from(sensorMap.values());
+  //   });
+  // };
+
+  const addSensorName = (newSensors: { gateway_id: string, devices: { name: string; description: string; devEUI: string }[] }[]) => {
+    setSensors((prevSensors) => {
+      const sensorMap = new Map(
+        prevSensors.map((sensor) => [sensor.sensor_name, sensor])
+      );
+  
+      newSensors.forEach((sensorGroup) => {
+        const { gateway_id, devices } = sensorGroup;
+        devices.forEach((device) => {
+          const newSensor: SensorInterface = {
+            sensor_name: device.name,
+            description: device.description,
+            devEUI: device.devEUI,
+            gateway_id: gateway_id,
+          };
+          sensorMap.set(device.name, newSensor); // Atualiza ou adiciona o sensor
+        });
+      });
+  
       console.log("Contexto Atualizado");
       return Array.from(sensorMap.values());
     });
   };
 
+  // const setStopButtonTriggered = (alarm: string, triggered: boolean) => {
+  //   setButtons((prevButtons) =>
+  //     prevButtons.map((button) =>
+  //       //&& button.button_user === guid  restrição para parar todos os botões
+  //       button.button_prt === alarm ? { ...button, triggered } : button
+  //     )
+  //   );
+  // };
+  // updateSensors é usado para atualizar os sensores quando recebe eventos "SensorReceived"
   const updateSensor = (sensor: SensorInterface) => {
     setSensors((prevSensors) => {
       const existingSensorIndex = prevSensors.findIndex(
@@ -64,10 +140,7 @@ export const SensorProvider = ({ children }: { children: ReactNode }) => {
 
         if (isDifferent) {
           // Se houver diferença, adicionamos o novo sensor no início da lista
-          const updatedSensors = [
-            sensor,
-            ...prevSensors,
-          ];
+          const updatedSensors = [sensor, ...prevSensors];
           return updatedSensors;
         } else {
           // Não há diferença, retornamos a lista sem alterações
@@ -80,7 +153,7 @@ export const SensorProvider = ({ children }: { children: ReactNode }) => {
       }
     });
   };
-
+  
   const replaceLatestSensor = (sensor: SensorInterface) => {
     setSensors((prevSensors) => {
       const sensorIndex = prevSensors.findIndex(
@@ -111,6 +184,7 @@ export const SensorProvider = ({ children }: { children: ReactNode }) => {
         replaceLatestSensor,
         clearSensorsByName,
         addSensors,
+        addSensorName,
       }}
     >
       {children}

@@ -18,7 +18,7 @@ export const HistoryProvider = ({ children }: { children: ReactNode }) => {
   const [history, setHistoryState] = useState<HistoryInterface[]>([]);
 
   const addHistory = (newHistory: HistoryInterface) => {
-    setHistoryState((prevHistory) => [...prevHistory, newHistory]);
+    setHistoryState((prevHistory) => [ newHistory, ...prevHistory]);
   };
 
   const updateHistory = (updatedHistory: HistoryInterface) => {

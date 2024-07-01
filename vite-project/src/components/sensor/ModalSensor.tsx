@@ -83,6 +83,13 @@ export default function ModalSensor({
   const [minValue, setMinValue] = useState(
     existingButton?.sensor_min_threshold || ""
   );
+
+  const [geralThreshold, setGeralThreshold] = useState(
+    existingButton?.sensor_max_threshold || " "
+  );
+
+  const [modelSensor, setModelSensor] = useState(existingButton?.img || "");
+
   const [isCreating, setIsCreating] = useState(false);
   const { toast } = useToast();
   const { sensors } = useSensors();
@@ -99,15 +106,25 @@ export default function ModalSensor({
     setTypeMeasure(value);
   };
   const handleMaxValue = (event: ChangeEvent<HTMLInputElement>) => {
+    setGeralThreshold("");
     setMaxValue(event.target.value);
   };
   const handleMinValue = (event: ChangeEvent<HTMLInputElement>) => {
+    setGeralThreshold("");
     setMinValue(event.target.value);
+  };
+
+  const handleGeralThreshold = (value: string) => {
+    setGeralThreshold(value);
   };
 
   const handleCreateButton = () => {
     try {
       if (nameButton && typeMeasure) {
+        const filteredModel = sensors.filter((sensor) =>{
+          return sensor.sensor_name === nameSensor
+        })[0]
+        // setModelSensor(filteredModel?.description as string)
         if (showMinMaxFields && (!maxValue || !minValue)) {
           toast({
             variant: "destructive",
@@ -125,8 +142,9 @@ export default function ModalSensor({
           value: nameSensor,
           guid: selectedUser?.guid,
           type: "sensor",
-          min: minValue,
-          max: maxValue,
+          img: filteredModel.description,
+          min: geralThreshold ? geralThreshold : minValue,
+          max: geralThreshold ? geralThreshold : maxValue,
           sensorType: typeMeasure,
           page: selectedPage,
           x: clickedPosition?.j,
@@ -158,10 +176,12 @@ export default function ModalSensor({
     }
   };
 
-  // Lista de tipos de medida que não devem exibir campos de valor mínimo e máximo
   const typesWithoutMinMax = ["leak", "light", "pir", "tvoc", "magnet_status"];
+  const typesWithSelectOnly = ["magnet_status", "leak", "pir"];
 
   const showMinMaxFields = !typesWithoutMinMax.includes(typeMeasure);
+  const showSelectOnly = typesWithSelectOnly.includes(typeMeasure);
+
   return (
     <>
       {isUpdate && (
@@ -224,17 +244,15 @@ export default function ModalSensor({
               <SelectItem value="light">Iluminação</SelectItem>
               <SelectItem value="pir">Presença (V/F)</SelectItem>
               <SelectItem value="pressure">Pressão</SelectItem>
-              <SelectItem value="tvoc">
-                Compostos Orgânicos Voláteis{" "}
-              </SelectItem>
-              <SelectItem value="magnet_status">Aberto/Fechado </SelectItem>
+              <SelectItem value="tvoc">Compostos Orgânicos Voláteis</SelectItem>
+              <SelectItem value="magnet_status">Aberto/Fechado</SelectItem>
             </SelectContent>
           </Select>
         </div>
         {showMinMaxFields && (
           <>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label className="text-end" htmlFor="buttonName">
+              <Label className="text-end" htmlFor="minValue">
                 Valor Mínimo
               </Label>
               <Input
@@ -248,7 +266,7 @@ export default function ModalSensor({
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label className="text-end" htmlFor="buttonName">
+              <Label className="text-end" htmlFor="maxValue">
                 Valor Máximo
               </Label>
               <Input
@@ -263,6 +281,39 @@ export default function ModalSensor({
             </div>
           </>
         )}
+        {showSelectOnly && (
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label className="text-end" htmlFor="selectValue">
+              Valor para ativar o alarme
+            </Label>
+            <Select value={geralThreshold} onValueChange={handleGeralThreshold}>
+              <SelectTrigger className="col-span-3" id="SelectThresholdValue">
+                <SelectValue placeholder="Selecione o tipo de medida" />
+              </SelectTrigger>
+
+              <SelectContent position="popper">
+                {typeMeasure === "magnet_status" && (
+                  <>
+                    <SelectItem value="1">Aberto</SelectItem>
+                    <SelectItem value="0">Fechado</SelectItem>
+                  </>
+                )}
+                {typeMeasure === "leak" && (
+                  <>
+                    <SelectItem value="1">Alagado</SelectItem>
+                    <SelectItem value="0">Seco</SelectItem>
+                  </>
+                )}
+                {typeMeasure === "pir" && (
+                  <>
+                    <SelectItem value="1">Presença</SelectItem>
+                    <SelectItem value="0">Vazio</SelectItem>
+                  </>
+                )}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
       </CardContent>
       <CardFooter className="flex justify-between">
         {isUpdate && (
@@ -273,7 +324,7 @@ export default function ModalSensor({
                 <AlertDialogHeader>
                   <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Essa ação nao pode ser desfeita. Isso irá deletar
+                    Essa ação não pode ser desfeita. Isso irá deletar
                     permanentemente o botão Sensor.
                   </AlertDialogDescription>
                 </AlertDialogHeader>

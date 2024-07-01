@@ -105,14 +105,15 @@ const useWebSocket = (
     const apiType = account.isAdmin ? "admin" : "user";
     if (account.isAdmin) {
       ws.current?.send(JSON.stringify({ api: apiType, mt: "SelectButtons" }));
-      ws.current?.send(
-        JSON.stringify({ api: apiType, mt: "SelectSensorName" })
-      );
+      ws.current?.send(JSON.stringify({ api: apiType, mt: "SelectSensors" }));
     } else {
       ws.current?.send(JSON.stringify({ api: apiType, mt: "SelectButtons" }));
-      ws.current?.send(
-        JSON.stringify({ api: apiType, mt: "SelectAllSensorInfoSrc" })
-      );
+      ws.current?.send(JSON.stringify({ api: apiType, mt: "SelectSensors" }));
+      setTimeout(() =>{
+        ws.current?.send(
+          JSON.stringify({ api: apiType, mt: "SelectAllSensorInfoSrc" })
+        );
+      },1000)
     }
 
     // Reset the flag to avoid sending messages again unless UserSessionResult is received again

@@ -10,9 +10,10 @@ import { useAccount } from "@/components/account/AccountContext";
 
 interface ButtonProps {
   button: ButtonInterface;
+  handleClick: () => void;
 }
 
-export default function AlarmButton({ button }: ButtonProps) {
+export default function AlarmButton({ button, handleClick }: ButtonProps) {
   const [clickedClass, setClickedClass] = useState("");
   const { buttons, setClickedButton, removeClickedButton, setButtonTriggered, setStopButtonTriggered } =
     useButtons();
@@ -30,6 +31,7 @@ export default function AlarmButton({ button }: ButtonProps) {
   }, [setButtonTriggered, setStopButtonTriggered]);
 
   const handleClickAlarm = () => {
+    handleClick()
     if (!account.isAdmin) {
       const isClicked = button.clicked;
       if (isClicked || button.triggered) {

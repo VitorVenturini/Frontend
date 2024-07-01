@@ -55,6 +55,7 @@ function UserLayout() {
     replaceLatestSensor,
     clearSensorsByName,
     addSensors,
+    addSensorName
   } = useSensors();
   const { addHistory, updateHistory } = useHistory();
   const [selectedOpt, setSelectedOpt] = useState<string>("floor");
@@ -102,8 +103,8 @@ function UserLayout() {
             : format(new Date(), "dd/MM HH:mm"),
         });
         toast({
-          description: "Alarme Recebido" + message.alarm
-        })
+          description: "Alarme Recebido" + message.alarm,
+        });
         break;
       case "AlarmStopReceived":
         setStopButtonTriggered(message.alarm, false);
@@ -127,6 +128,29 @@ function UserLayout() {
         updateButton(updatedButton);
 
         break;
+      // case "SelectSensorsResult":
+      //   const result = message.result;
+      //   const sensorData = result.map((gatewayData: any) => {
+      //     const gateway_id = Object.keys(gatewayData); // Pegando o gateway_id
+      //     // console.log("Gateway_ID" + gateway_id);
+      //     // console.log("Devices " + JSON.stringify(gatewayData[1].devices));
+      //     const devices = gatewayData[1].devices.map(
+      //       (device: {
+      //         name: string;
+      //         description: string;
+      //         devEUI: string;
+      //       }) => ({
+      //         name: device.name,
+      //         description: device.description,
+      //         devEUI: device.devEUI,
+      //       })
+      //     );
+
+      //     return { gateway_id, devices };
+      //   });
+
+      //   addSensorName(sensorData);
+      //   break;
       default:
         console.log("Unknown message type:", message);
         break;
