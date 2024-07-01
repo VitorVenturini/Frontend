@@ -7,6 +7,7 @@ import SensorResponsiveInfo from "@/components/sensor/SensorResponsiveInfo";
 import { useSensors } from "./SensorContext";
 import { useEffect } from "react";
 import ResponsivePng from "./ResponsivePng";
+import { useAccount } from "../account/AccountContext";
 
 interface ButtonProps {
   handleClick: () => void;
@@ -16,6 +17,7 @@ interface ButtonProps {
 export default function SensorButton({ handleClick, button }: ButtonProps) {
   const { sensors } = useSensors();
   const { setOldValue, setNewValue, buttons } = useButtons();
+  const account = useAccount()
 
   const buttonState = buttons.find((b) => b.id === button.id);
 
@@ -78,7 +80,7 @@ export default function SensorButton({ handleClick, button }: ButtonProps) {
             {button.button_prt}
           </p>
         </div>
-        <ResponsivePng sensorModel={sensorModel?.description} />
+        <ResponsivePng sensorModel={account.isAdmin ? sensorModel?.description : button.img as any} />
       </div>
       <SensorResponsiveInfo
         button={button}

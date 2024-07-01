@@ -189,7 +189,7 @@ export default function ButtonsComponent({
                       <SelectItem value="number">Número</SelectItem>
                       <SelectItem value="user">Usuário</SelectItem>
                       <SelectItem value="sensor">Sensor</SelectItem>
-                      <SelectItem value="action">Ação</SelectItem>
+                      <SelectItem value="command">Comando</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

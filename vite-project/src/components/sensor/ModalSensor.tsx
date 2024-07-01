@@ -87,6 +87,9 @@ export default function ModalSensor({
   const [geralThreshold, setGeralThreshold] = useState(
     existingButton?.sensor_max_threshold || " "
   );
+
+  const [modelSensor, setModelSensor] = useState(existingButton?.img || "");
+
   const [isCreating, setIsCreating] = useState(false);
   const { toast } = useToast();
   const { sensors } = useSensors();
@@ -118,6 +121,10 @@ export default function ModalSensor({
   const handleCreateButton = () => {
     try {
       if (nameButton && typeMeasure) {
+        const filteredModel = sensors.filter((sensor) =>{
+          return sensor.sensor_name === nameSensor
+        })[0]
+        // setModelSensor(filteredModel?.description as string)
         if (showMinMaxFields && (!maxValue || !minValue)) {
           toast({
             variant: "destructive",
@@ -135,6 +142,7 @@ export default function ModalSensor({
           value: nameSensor,
           guid: selectedUser?.guid,
           type: "sensor",
+          img: filteredModel.description,
           min: geralThreshold ? geralThreshold : minValue,
           max: geralThreshold ? geralThreshold : maxValue,
           sensorType: typeMeasure,
