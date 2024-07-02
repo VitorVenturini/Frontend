@@ -95,7 +95,7 @@ export default function CardLogin() {
         updateAccount(accountData);
 
         toast({ description: "Login efetuado com sucesso." });
-
+        
         localStorage.setItem("isLogged", "true");
         updateAccount({ isLogged: true });
         console.log({ ...account, updateAccount: undefined });

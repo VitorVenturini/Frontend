@@ -54,11 +54,11 @@ export const SensorProvider = ({ children }: { children: ReactNode }) => {
   const addSensors = (newSensors: SensorInterface[]) => {
     setSensors((prevSensors) => {
       const sensorMap = new Map(
-        prevSensors.map((sensor) => [sensor.sensor_name, sensor])
+        prevSensors.map((sensor) => [sensor.sensor_name + sensor.date, sensor])
       );
   
       newSensors.forEach((sensor) => {
-        sensorMap.set(sensor.sensor_name, sensor); // Atualiza ou adiciona o sensor
+        sensorMap.set(sensor.sensor_name + sensor.date, sensor); // Atualiza ou adiciona o sensor
       });
   
       console.log("Contexto Atualizado");

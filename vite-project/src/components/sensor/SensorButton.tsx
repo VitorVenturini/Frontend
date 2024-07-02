@@ -17,7 +17,7 @@ interface ButtonProps {
 export default function SensorButton({ handleClick, button }: ButtonProps) {
   const { sensors } = useSensors();
   const { setOldValue, setNewValue, buttons } = useButtons();
-  const account = useAccount()
+  const account = useAccount();
 
   const buttonState = buttons.find((b) => b.id === button.id);
 
@@ -55,6 +55,20 @@ export default function SensorButton({ handleClick, button }: ButtonProps) {
         (minThreshold !== undefined && newValue && newValue < minThreshold)
       ) {
         return `${commonClasses} flex flex-col cursor-pointer active:bg-red-900 bg-red-800 blinking-background`;
+      } else if (
+        maxThreshold === 0 ||
+        minThreshold === 0 ||
+        maxThreshold === 0 ||
+        maxThreshold === 0
+      ) {
+        return `${commonClasses} flex flex-col cursor-pointer active:bg-red-900 bg-red-800 blinking-background`;
+      } else if (
+        maxThreshold === 1 ||
+        minThreshold === 1 ||
+        maxThreshold === 1 ||
+        maxThreshold === 1
+      ) {
+        return `${commonClasses} flex flex-col cursor-pointer active:bg-red-900 bg-red-800 blinking-background`;
       } else if (minThreshold === undefined || maxThreshold === undefined) {
         console.log("Threshold não definido para este botão.");
         return `${commonClasses} flex flex-col cursor-pointer active:bg-red-900 bg-buttonSensor`;
@@ -65,10 +79,10 @@ export default function SensorButton({ handleClick, button }: ButtonProps) {
     return commonClasses;
   };
 
-  const sensorModel = sensors.filter((sensor) =>{
-    return sensor.sensor_name === button.button_prt
-  })[0]
-  
+  const sensorModel = sensors.filter((sensor) => {
+    return sensor.sensor_name === button.button_prt;
+  })[0];
+
   return (
     <div className={getButtonClassName()} onClick={handleClick}>
       <div className="flex items-center gap-1 cursor-pointer justify-between">
@@ -80,7 +94,11 @@ export default function SensorButton({ handleClick, button }: ButtonProps) {
             {button.button_prt}
           </p>
         </div>
-        <ResponsivePng sensorModel={account.isAdmin ? sensorModel?.description : button.img as any} />
+        <ResponsivePng
+          sensorModel={
+            account.isAdmin ? sensorModel?.description : (button.img as any)
+          }
+        />
       </div>
       <SensorResponsiveInfo
         button={button}

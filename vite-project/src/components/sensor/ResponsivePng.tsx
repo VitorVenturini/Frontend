@@ -3,6 +3,7 @@ import AM103 from "../../assets/SensorsPng/AM103.png";
 import EM300_SLD from "../../assets/SensorsPng/EM300-SLD.png";
 import WS101_SOS from "../../assets/SensorsPng/WS101_SOS.png";
 import WS301 from "../../assets/SensorsPng/WS301.png";
+import UC300 from "@/assets/SensorsPng/UC300.png";
 
 interface ButtonProps {
   sensorModel: string | undefined;
@@ -12,10 +13,13 @@ export default function ResponsivePng({ sensorModel }: ButtonProps) {
   let imageSrc;
   let altText;
 
+  //case sensorModel?.startsWith("AM103"):
+
   switch (sensorModel) {
     case "AM103":
       imageSrc = AM103;
       altText = "AM103 Sensor";
+
       break;
     case "EM300-SLD":
       imageSrc = EM300_SLD;
@@ -29,6 +33,10 @@ export default function ResponsivePng({ sensorModel }: ButtonProps) {
       imageSrc = WS101_SOS;
       altText = "WS101_SOS Sensor";
       break;
+    case "UC300":
+      imageSrc = UC300;
+      altText = "UC300 Sensor";
+      break;
     default:
       imageSrc = ""; // ou uma imagem padrão
       altText = "Default Sensor";
@@ -36,7 +44,7 @@ export default function ResponsivePng({ sensorModel }: ButtonProps) {
 
   return (
     <div className="w-7">
-      <img src={imageSrc} alt={altText} />
+      <img src={imageSrc} alt={altText} width={20} />
     </div>
   );
 }

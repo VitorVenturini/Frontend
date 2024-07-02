@@ -34,7 +34,8 @@ export default function AlarmButton({ button, handleClick }: ButtonProps) {
     handleClick()
     if (!account.isAdmin) {
       const isClicked = button.clicked;
-      if (isClicked || button.triggered) {
+      //isClicked || 
+      if (button.triggered) {
         removeClickedButton(button.id);
         setClickedClass("");
         wss?.sendMessage({
@@ -43,7 +44,18 @@ export default function AlarmButton({ button, handleClick }: ButtonProps) {
           prt: button.button_prt,
           btn_id: button.id,
         });
-      } else {
+      } 
+      else if(isClicked && !button.triggered){
+        setClickedButton(button.id);
+        setClickedClass("bg-red-800");
+        wss?.sendMessage({
+          api: "user",
+          mt: "TriggerAlarm",
+          prt: button.button_prt,
+          btn_id: button.id,
+        });
+       }
+      else {
         setClickedButton(button.id);
         setClickedClass("bg-red-800");
         wss?.sendMessage({

@@ -53,6 +53,8 @@ import AlarmButton from "@/components/buttons/alarm/AlarmButton";
 import SensorResponsiveInfo from "../sensor/SensorResponsiveInfo";
 import ModalCombo from "@/components/buttons/combo/ModalCombo";
 import ComboButton from "./combo/ComboButton";
+import ModalCommand from "./command/ModalCommand";
+import CommandButton from "./command/CommandButton";
 interface User {
   id: string;
   name: string;
@@ -135,6 +137,14 @@ export default function ButtonsComponent({
       case "sensor":
         return (
           <ModalSensor
+            selectedPage={selectedPage}
+            selectedUser={selectedUser}
+            clickedPosition={clickedPosition}
+          />
+        );
+      case "command":
+        return (
+          <ModalCommand
             selectedPage={selectedPage}
             selectedUser={selectedUser}
             clickedPosition={clickedPosition}
@@ -345,6 +355,31 @@ export default function ButtonsComponent({
                 <div>
                   <DialogContent>
                     <ModalSensor
+                      selectedPage={selectedPage}
+                      selectedUser={selectedUser}
+                      clickedPosition={clickedPosition}
+                      existingButton={button}
+                      isUpdate={true}
+                    />
+                  </DialogContent>
+                </div>
+              )}
+            </Dialog>
+          </div>
+        );
+      case "command":
+        return (
+          <div>
+            <Dialog>
+              <DialogTrigger asChild>
+                <div>
+                  <CommandButton button={button} handleClick={handleClick} />
+                </div>
+              </DialogTrigger>
+              {isAdmin && (
+                <div>
+                  <DialogContent>
+                    <ModalCommand
                       selectedPage={selectedPage}
                       selectedUser={selectedUser}
                       clickedPosition={clickedPosition}
