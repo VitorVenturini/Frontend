@@ -68,6 +68,7 @@ export default function ButtonsPage() {
         );
         const data = await response.json();
         setUsers(data);
+        // console.log("ALL USERS" + JSON.stringify(data))
         // sendMessage({
         //   api: account.isAdmin ? "admin" : "user",
         //   mt: "SelectMessage",
