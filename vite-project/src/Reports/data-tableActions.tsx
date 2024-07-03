@@ -12,7 +12,7 @@ import {
   getFilteredRowModel,
 } from "@tanstack/react-table";
 import { Input } from "@/components/ui/input";
-
+import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import {
   Table,
   TableBody,
@@ -22,6 +22,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+
+interface User {
+  id: string;
+  name: string;
+  guid: string;
+}
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -32,12 +39,34 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+  const [users, setUsers] = useState<User[]>([]);
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
   const [loading, setLoading] = useState<boolean>(true);
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch(
+          "https://meet.wecom.com.br/api/listUsers",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "x-auth": localStorage.getItem("token") || "",
+            },
+          }
+        );
+        const data = await response.json();
+        setUsers(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
+    fetchUsers();
+  }, []);
   const table = useReactTable({
     data,
     columns,
@@ -71,7 +100,14 @@ export function DataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
-        <CardCreateAction />
+        <Dialog>
+          <DialogTrigger>
+            <Button> Criar Ação</Button>
+          </DialogTrigger>
+          <DialogContent>
+            <CardCreateAction />
+          </DialogContent>
+        </Dialog>
       </div>
       <Table>
         <TableHeader>
@@ -99,11 +135,18 @@ export function DataTable<TData, TValue>({
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}
               >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
+                {row.getVisibleCells().map((cell) => {
+                  let cellValue = flexRender(
+                    cell.column.columnDef.cell,
+                    cell.getContext()
+                  );
+                  if (cell.column.id === "action_user") {
+                    const userId = cell.row.original.action_user;
+                    const user = users.find((u) => u.guid === userId);
+                    cellValue = user ? user.name : "Unknown User";
+                  }
+                  return <TableCell key={cell.id}>{cellValue}</TableCell>;
+                })}
               </TableRow>
             ))
           ) : (

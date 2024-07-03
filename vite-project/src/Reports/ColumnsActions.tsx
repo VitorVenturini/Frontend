@@ -1,12 +1,13 @@
-"use client";
+
 import { Button } from "@/components/ui/button";
 import DeleteActions from "@/components/actions/DeleteAction";
-import UpdateActions from "@/components/actions/UpdateActions";
-import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, MoreHorizontal } from "lucide-react"
-import { Pencil } from "lucide-react";
+
+import {   ColumnDef } from "@tanstack/react-table";
+import { ArrowUpDown } from "lucide-react"
+import { Pencil } from "lucide-react"
 import CardCreateAction from "@/components/actions/CardCreateAction";
 import { ActionsInteface } from "@/components/actions/ActionsContext";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 export const columnsActions: ColumnDef<ActionsInteface>[] = [
     {
@@ -62,14 +63,23 @@ export const columnsActions: ColumnDef<ActionsInteface>[] = [
       id: "actions",
       header: "Actions",
       cell: ({ row }) => {
-        const actions = row.original;
 
+        const actions = row.original;
+        actions.action_user 
         return (
           <div className="flex justify-center gap-1 items-center">
-            <CardCreateAction action={actions} isUpdate={true}/>
-            <DeleteActions id={actions.id}/>
+            <Dialog>
+              <DialogTrigger>
+                <Pencil />
+              </DialogTrigger>
+              <DialogContent>
+                 <CardCreateAction action={actions} isUpdate={true}/>
+              </DialogContent>
+            </Dialog>
+            <DeleteActions id={actions.id} />
           </div>
         );
+  
       },
     },
   ];
