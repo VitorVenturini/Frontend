@@ -27,6 +27,7 @@ import { useEffect } from "node_modules/react-resizable-panels/dist/declarations
 import { format } from "date-fns";
 import { useToast } from "@/components/ui/use-toast";
 import { UserInterface, useUsers } from "@/components/user/UserContext";
+import { ChatInterface, ChatProvider, useChat } from "@/components/chat/ChatContext";
 
 interface User {
   id: string;
@@ -39,7 +40,7 @@ function UserLayout() {
   const account = useAccount();
   const { toast } = useToast();
   const { updateAccount } = useAccount();
-  const {setUsers} = useUsers()
+  const { setUsers } = useUsers();
   // const webSocket = useWebSocket(account.accessToken)
   // console.log("MENSAGEM DO WEBSOCKET" + webSocket.data)
   const {
@@ -57,9 +58,10 @@ function UserLayout() {
     replaceLatestSensor,
     clearSensorsByName,
     addSensors,
-    addSensorName
+    addSensorName,
   } = useSensors();
   const { addHistory, updateHistory } = useHistory();
+  const { setChat } = useChat();
   const [selectedOpt, setSelectedOpt] = useState<string>("floor");
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState("");
@@ -130,11 +132,19 @@ function UserLayout() {
         updateButton(updatedButton);
 
         break;
-        case "TableUsersResult":
-          const newUser: UserInterface[] = message.result;
-          setUsers(newUser);
-  
-          break;
+      case "TableUsersResult":
+        const newUser: UserInterface[] = message.result;
+        setUsers(newUser);
+
+        break;
+      case "Message":
+        const newMsg: ChatInterface[] = message.msg;
+        setChat(newMsg);
+        console.log("CHEGOU")
+        toast({
+          description: message.msg
+        });
+        break;
       // case "SelectSensorsResult":
       //   const result = message.result;
       //   const sensorData = result.map((gatewayData: any) => {
@@ -201,6 +211,7 @@ function UserLayout() {
         </Button>
       )}
       <Logout />
+   
     </WebSocketProvider>
   );
 }
