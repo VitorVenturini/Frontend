@@ -109,7 +109,8 @@ const useWebSocket = (
     } else { // else para usuario
       ws.current?.send(JSON.stringify({ api: apiType, mt: "SelectButtons" }));
       ws.current?.send(JSON.stringify({ api: apiType, mt: "SelectSensors" }));
-      ws.current?.send(JSON.stringify({ api: apiType, mt: "TableUser" }));
+      ws.current?.send(JSON.stringify({ api: apiType, mt: "TableUsers" }));
+      // ws.current?.send(JSON.stringify({ api: apiType, mt :"SelectMessageHistorySrc", to: "8e4b16d1d79840ba980043ea0d9523a3","src":"src10"}))
       setTimeout(() =>{
         ws.current?.send(
           JSON.stringify({ api: apiType, mt: "SelectAllSensorInfoSrc" })

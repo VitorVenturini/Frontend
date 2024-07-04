@@ -16,6 +16,7 @@ import LanguageProvider from "./components/language/LanguageContext";
 import { ThemeProvider } from "./components/theme-provider";
 import { HistoryProvider } from "./components/history/HistoryContext";
 import { Toaster } from "./components/ui/toaster";
+import { UserProvider } from "./components/user/UserContext";
 
 export const host = "https://meet.wecom.com.br";
 
@@ -29,38 +30,40 @@ function App() {
     };
 
     // Adiciona o ouvinte de evento ao document
-    document.addEventListener('touchstart', preventPinchZoom, { passive: false });
+    document.addEventListener("touchstart", preventPinchZoom, {
+      passive: false,
+    });
 
     // Limpeza: remove o ouvinte de evento quando o componente é desmontado
     return () => {
-      document.removeEventListener('touchstart', preventPinchZoom);
+      document.removeEventListener("touchstart", preventPinchZoom);
     };
   }, []);
   return (
     <ThemeProvider>
       <LanguageProvider>
         <HistoryProvider>
-        <ActionProvider>
-          <AccountProvider>
-            <ButtonProvider>
-              <SensorProvider>
-                <Routes>
-                  <Route path="/" element={<RootRoute />} />
-                  <Route path="/login" element={<LoginPage />} />
-                  <Route path="/admin/*" element={<AdminRoute />} />
-                  <Route path="/user/*" element={<UserRoute />} />
-                  <Route path="*" element={<NoPage />} />
-                </Routes>
-                <Toaster />
-              </SensorProvider>
-            </ButtonProvider>
-          </AccountProvider>
-        </ActionProvider>
+          <ActionProvider>
+            <AccountProvider>
+              <UserProvider>
+                <ButtonProvider>
+                  <SensorProvider>
+                    <Routes>
+                      <Route path="/" element={<RootRoute />} />
+                      <Route path="/login" element={<LoginPage />} />
+                      <Route path="/admin/*" element={<AdminRoute />} />
+                      <Route path="/user/*" element={<UserRoute />} />
+                      <Route path="*" element={<NoPage />} />
+                    </Routes>
+                    <Toaster />
+                  </SensorProvider>
+                </ButtonProvider>
+              </UserProvider>
+            </AccountProvider>
+          </ActionProvider>
         </HistoryProvider>
       </LanguageProvider>
     </ThemeProvider>
-
-    
   );
 }
 

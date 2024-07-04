@@ -119,7 +119,6 @@ export default function OptComponent({
             <DialogTitle>RADIO COMING SOON</DialogTitle>
           </>
         );
-        break;
       case "video":
         return (
           <CardOptGeneric
@@ -207,7 +206,13 @@ export default function OptComponent({
           </Dialog>
         </div>
       );
-    } else {
+    } 
+    // else if(selectedOpt === "chat"){
+    //   return(
+    //     <div>CHAT</div>
+    //   )
+    // }
+    else {
       return (
         <div>
           <Dialog>

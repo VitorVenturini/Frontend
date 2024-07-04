@@ -26,6 +26,7 @@ import { useHistory } from "@/components/history/HistoryContext";
 import { useEffect } from "node_modules/react-resizable-panels/dist/declarations/src/vendor/react";
 import { format } from "date-fns";
 import { useToast } from "@/components/ui/use-toast";
+import { UserInterface, useUsers } from "@/components/user/UserContext";
 
 interface User {
   id: string;
@@ -38,6 +39,7 @@ function UserLayout() {
   const account = useAccount();
   const { toast } = useToast();
   const { updateAccount } = useAccount();
+  const {setUsers} = useUsers()
   // const webSocket = useWebSocket(account.accessToken)
   // console.log("MENSAGEM DO WEBSOCKET" + webSocket.data)
   const {
@@ -128,6 +130,11 @@ function UserLayout() {
         updateButton(updatedButton);
 
         break;
+        case "TableUsersResult":
+          const newUser: UserInterface[] = message.result;
+          setUsers(newUser);
+  
+          break;
       // case "SelectSensorsResult":
       //   const result = message.result;
       //   const sensorData = result.map((gatewayData: any) => {

@@ -31,9 +31,11 @@ export default function RightGrid({
   onKeyChange
 }: RightGridProps) {
   const [clickedButtonId, setClickedButtonId] = useState<number | null>(null);
+  const [clickedUser, setClickedUser] = useState<string | null>(null)
 
   useEffect(() => {
     setClickedButtonId(null);
+    setClickedUser(null)
   }, [selectedOpt]);
 
   const buttonsInSelectedOpt = buttons.filter(
@@ -50,14 +52,16 @@ export default function RightGrid({
                 buttons={buttonsInSelectedOpt}
                 selectedUser={selectedUser}
                 selectedOpt={selectedOpt}
+                setClickedUser ={setClickedUser}
+                clickedUser = {clickedUser}
                 setClickedButtonId={setClickedButtonId}
                 clickedButtonId={clickedButtonId}
               />
             }
           </div>
           <div>
-            {clickedButtonId && (
-              <OptRightBottom clickedButtonId={clickedButtonId} onKeyChange={onKeyChange}/>
+            {clickedButtonId || clickedUser && (
+              <OptRightBottom clickedButtonId={clickedButtonId} clickedUser ={clickedUser} onKeyChange={onKeyChange}/>
             )}
           </div>
         </div>
