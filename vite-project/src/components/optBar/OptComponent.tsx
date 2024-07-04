@@ -130,9 +130,11 @@ export default function OptComponent({
         );
       case "chat":
         return (
-          <>
-            <DialogTitle>CHAT COMING SOON</DialogTitle>
-          </>
+          <CardOptGeneric
+            selectedUser={selectedUser}
+            selectedOpt={selectedOpt}
+            clickedPosition={clickedPosition}
+          />
         );
 
         break;
