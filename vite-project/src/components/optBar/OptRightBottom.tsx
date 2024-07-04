@@ -28,6 +28,7 @@ export default function OptRightBottom({
   const [clickedKey, setClickedKey] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const { users } = useUsers();
+  const wss = useWebSocketData()
 
   const clickedButton = buttons.find((button) => button.id === clickedButtonId);
   const userToChat = users.find((user) => user.guid === clickedUser);
@@ -122,7 +123,9 @@ export default function OptRightBottom({
           return null;
       }
     } else if (userToChat) {
-      return <ChatLayout userToChat={userToChat} />;
+      return (
+      <ChatLayout userToChat={userToChat} />
+    );
     }
   };
 

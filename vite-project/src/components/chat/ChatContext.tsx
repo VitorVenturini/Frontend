@@ -10,11 +10,13 @@ import React, { createContext, useState, useContext, ReactNode } from "react";
 
 export interface ChatInterface {
   id: number;
+  chat_id: string;
   msg?: string;
-  guid?: string;
+  from_guid?: string;
   src?: string;
-  to?: string;
+  to_guid?: string;
   from?: string;
+  date: string
 }
 
 interface ChatContextType {
