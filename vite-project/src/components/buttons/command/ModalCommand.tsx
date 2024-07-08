@@ -79,10 +79,11 @@ export default function ModalCommand({
   const [nameCommand, setNameCommand] = useState(
     existingButton?.button_prt || ""
   );
-  const [nameDeviceIot, setNameDeviceIot] = useState(
-     existingButton?.button_device ? sensors.filter((sensor) =>{
-        return sensor.devEUI === existingButton?.button_device
-      })[0].sensor_name : ""
+  const [deviceEUID, setDeviceEUID] = useState(
+        existingButton?.button_device || ""
+    //  existingButton?.button_device ? sensors.filter((sensor) =>{
+    //     return sensor.devEUI === existingButton?.button_device
+    //   })[0].sensor_name : ""
   );
 
   const handleNameButton = (event: ChangeEvent<HTMLInputElement>) => {
@@ -93,14 +94,14 @@ export default function ModalCommand({
   };
 
   const handleDeviceIot = (value: string) => {
-    setNameDeviceIot(value);
+    setDeviceEUID(value);
   };
 
   const handleCreateButton = () => {
     try {
-      if (nameButton && nameCommand && nameDeviceIot) {
+      if (nameButton && nameCommand && deviceEUID) {
         const sensorInfo = sensors.filter((sensor) => {
-          return sensor.sensor_name === nameDeviceIot;
+          return sensor.devEUI === deviceEUID;
         })[0];
         setIsCreating(true);
         const message = {
@@ -187,7 +188,7 @@ export default function ModalCommand({
           <Label className="text-end" htmlFor="buttonName">
             Selecione o Dispostivo
           </Label>
-          <Select value={nameDeviceIot} onValueChange={handleDeviceIot}>
+          <Select value={deviceEUID} onValueChange={handleDeviceIot}>
             <SelectTrigger className="col-span-3">
               <SelectValue placeholder="Selecione um Dispostivo" />
             </SelectTrigger>
@@ -197,7 +198,7 @@ export default function ModalCommand({
                 {sensors.map((sensor) => (
                   <SelectItem
                     key={sensor.sensor_name}
-                    value={sensor.sensor_name}
+                    value={sensor.devEUI as string}
                   >
                     {sensor.sensor_name}
                   </SelectItem>
