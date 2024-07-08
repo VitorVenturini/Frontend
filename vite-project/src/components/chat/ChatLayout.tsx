@@ -4,7 +4,7 @@ import { Input } from "../ui/input";
 import { UserInterface } from "../user/UserContext";
 import { useWebSocketData } from "../websocket/WebSocketProvider";
 import { useEffect, useState } from "react";
-import { useChat } from "./ChatContext";
+import { ChatInterface, useChat } from "./ChatContext";
 
 interface ChatProps {
   userToChat: UserInterface;
@@ -13,7 +13,7 @@ interface ChatProps {
 export default function ChatLayout({ userToChat }: ChatProps) {
   const wss = useWebSocketData();
   const [message, setMessage] = useState("");
-  const { chat } = useChat();
+  const { chat,addChat } = useChat();
 
   useEffect(() => {
     if (wss) {
@@ -25,6 +25,10 @@ export default function ChatLayout({ userToChat }: ChatProps) {
     }
   }, [userToChat.guid]);
 
+  useEffect(() => {
+    console.log("Chat atualizado:", chat);
+  }, [chat]);
+
   const handleSendMsg = () => {
     wss?.sendMessage({
       api: "user",
@@ -32,23 +36,19 @@ export default function ChatLayout({ userToChat }: ChatProps) {
       to: userToChat.guid,
       msg: message,
     });
+    setMessage("");
   };
   const handleInputMessage = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(event.target.value);
   };
-  console.log("TODAS MENSAGENS" + chat)
-  // chat_id: 'emergencys',
-  // from_guid: conn.guid,
-  // to_guid: obj.to,
-  // date: String(getDateNow()),
-  // msg:obj.msg
+  console.log("TODAS MENSAGENS" + JSON.stringify(chat))
   return (
     <div>
-      {/* <div>{chat}</div> */}
-      {chat.map((chat, i) => (
-        <div key={i}>{chat.msg}</div>
+       {chat.map((message) => (
+        <div key={message.id}>{message.msg}</div>
       ))}
-      <div>Chat com {userToChat.name} </div>
+
+      <div className="mt-5">Chat com {userToChat.name}</div>
 
       <div className="flex items-center gap-3 p-2">
         <Input
@@ -57,8 +57,7 @@ export default function ChatLayout({ userToChat }: ChatProps) {
           onChange={handleInputMessage}
         />
         <Button size="icon" onClick={handleSendMsg}>
-          {" "}
-          <Send />{" "}
+          <Send />
         </Button>
       </div>
     </div>

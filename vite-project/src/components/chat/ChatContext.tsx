@@ -7,16 +7,16 @@
 // "487675116219135218"
 
 import React, { createContext, useState, useContext, ReactNode } from "react";
-
+import { useCallback } from "react";
 export interface ChatInterface {
   id: number;
-  chat_id: string;
+  chat_id?: string;
   msg?: string;
   from_guid?: string;
   src?: string;
   to_guid?: string;
   from?: string;
-  date: string
+  date?: string
 }
 
 interface ChatContextType {
@@ -30,10 +30,9 @@ const chatContext = createContext<ChatContextType | undefined>(undefined);
 export const ChatProvider = ({ children }: { children: ReactNode }) => {
   const [chat, setChat] = useState<ChatInterface[]>([]);
 
-  const addChat = (chat: ChatInterface) => {
-    setChat((prevChat) => [...prevChat, chat]);
-    console.log("Atualizou o contexto")
-  };
+  const addChat = useCallback((newMessage: ChatInterface) => {
+    setChat((prevChat) => [...prevChat, newMessage]);
+  }, []);
 
   return (
     <chatContext.Provider

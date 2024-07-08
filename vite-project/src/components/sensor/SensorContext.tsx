@@ -13,12 +13,35 @@ export interface SensorInterface {
   tvoc?: string;
   pressure?: string;
   magnet_status?: string;
+  light_level?: string; 
+  hcho?: string;
+  pm2_5?: string;
+  pm10?: string;
+  o3?: string;
+  image?: string;
   date?: string;
   isBoolean?: boolean;
   devEUI?: string; // info milesight
   description?: string; // info milesight
   appKey?: string; // info milesight
   gateway_id?: string;
+  paramters: [];
+  adc_1?: string | number;
+  adc_1_avg?: string | number;
+  adc_1_max?: string | number;
+  adc_1_min?: string | number;
+  adc_2?: string | number;
+  adc_2_avg?: string | number;
+  adc_2_max?: string | number;
+  adc_2_min?: string | number;
+  adv_1?: string | number;
+  adv_2?: string | number;
+  counter_1?: string | number;
+  gpio_in_4?: string | number;
+  gpio_out_1?: string | number;
+  gpio_out_2?: string | number;
+  pt100_1?: string | number;
+  pt100_2?: string | number;
 }
 
 interface SensorContextType {
@@ -56,23 +79,22 @@ export const SensorProvider = ({ children }: { children: ReactNode }) => {
       const sensorMap = new Map(
         prevSensors.map((sensor) => [sensor.sensor_name + sensor.date, sensor])
       );
-  
+
       newSensors.forEach((sensor) => {
         sensorMap.set(sensor.sensor_name + sensor.date, sensor); // Atualiza ou adiciona o sensor
       });
-  
+
       console.log("Contexto Atualizado");
       return Array.from(sensorMap.values());
     });
   };
-  
 
   // const addSensorName = (newSensors: { name: string; description: string; devEUI: string }[]) => {
   //   setSensors((prevSensors) => {
   //     const sensorMap = new Map(
   //       prevSensors.map((sensor) => [sensor.sensor_name + sensor.date, sensor])
   //     );
-  
+
   //     newSensors.forEach((device) => {
   //       // const sensorName = `${device.name} - ${device.description} - ${device.devEUI}`;
   //       const newSensor: SensorInterface = {
@@ -82,18 +104,23 @@ export const SensorProvider = ({ children }: { children: ReactNode }) => {
   //       };
   //       sensorMap.set(device.name , newSensor);
   //     });
-  
+
   //     console.log("Contexto Atualizado");
   //     return Array.from(sensorMap.values());
   //   });
   // };
 
-  const addSensorName = (newSensors: { gateway_id: string, devices: { name: string; description: string; devEUI: string }[] }[]) => {
+  const addSensorName = (
+    newSensors: {
+      gateway_id: string;
+      devices: { name: string; description: string; devEUI: string, paramters: [] }[];
+    }[]
+  ) => {
     setSensors((prevSensors) => {
       const sensorMap = new Map(
         prevSensors.map((sensor) => [sensor.sensor_name, sensor])
       );
-  
+
       newSensors.forEach((sensorGroup) => {
         const { gateway_id, devices } = sensorGroup;
         devices.forEach((device) => {
@@ -102,11 +129,12 @@ export const SensorProvider = ({ children }: { children: ReactNode }) => {
             description: device.description,
             devEUI: device.devEUI,
             gateway_id: gateway_id,
+            paramters: []
           };
           sensorMap.set(device.name, newSensor); // Atualiza ou adiciona o sensor
         });
       });
-  
+
       console.log("Contexto Atualizado");
       return Array.from(sensorMap.values());
     });
@@ -153,7 +181,7 @@ export const SensorProvider = ({ children }: { children: ReactNode }) => {
       }
     });
   };
-  
+
   const replaceLatestSensor = (sensor: SensorInterface) => {
     setSensors((prevSensors) => {
       const sensorIndex = prevSensors.findIndex(

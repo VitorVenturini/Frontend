@@ -84,7 +84,7 @@ export default function OptGrid({
         </div>
       </div>
     );
-  } else {
+  } else if(selectedOpt != "chat") {
     const grid = Array(2)
       .fill(null)
       .map(() => Array(6).fill({ variant: "default" }));

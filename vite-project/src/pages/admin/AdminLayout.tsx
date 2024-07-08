@@ -61,8 +61,6 @@ function AdminLayout() {
         });
         break;
       case "DeleteButtonsSuccess":
-        // const buttonsAfterDelete: ButtonInterface[] = message.btns;
-        // setButtons(buttonsAfterDelete);
         toast({
           description: "Botão excluído com sucesso",
         });
@@ -78,8 +76,6 @@ function AdminLayout() {
         const result = message.result;
         const sensorData = result.map((gatewayData: any) => {
           const gateway_id = Object.keys(gatewayData); // Pegando o gateway_id
-          // console.log("Gateway_ID" + gateway_id);
-          // console.log("Devices " + JSON.stringify(gatewayData[1].devices));
           const devices = gatewayData[1].devices.map(
             (device: {
               name: string;

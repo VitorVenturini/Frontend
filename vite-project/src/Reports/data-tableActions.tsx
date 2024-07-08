@@ -104,7 +104,7 @@ export function DataTable<TData, TValue>({
           <DialogTrigger>
             <Button> Criar Ação</Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent >
             <CardCreateAction />
           </DialogContent>
         </Dialog>

@@ -142,19 +142,19 @@ function UserLayout() {
 
         break;
       case "MessageResult":
-        //   const newMsg: ChatInterface = message.result;
-        //   addChat(newMsg);
-        //   toast({
-        //     description: message.result
-        //   });
+          const newMsgTo: ChatInterface = message.result;
+          addChat(newMsgTo);
+          // toast({
+          //   description: message.result
+          // });
         break;
 
       case "Message":
-        //   const newMsg: ChatInterface = message.result;
-        //   addChat(newMsg);
-        //   toast({
-        //     description: message.result
-        //   });
+          const newMsgFrom: ChatInterface = message.result;
+          addChat(newMsgFrom);
+          // toast({
+          //   description: message.result
+          // });
         break;
       case "SelectMessageHistoryResultSrc":
         const allMsg: ChatInterface[] = message.result;

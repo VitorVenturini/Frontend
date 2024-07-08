@@ -11,6 +11,7 @@ import React, { Component } from "react";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { useUsers } from "../user/UserContext";
 import ChatLayout from "../chat/ChatLayout";
+import { useChat } from "../chat/ChatContext";
 
 interface OptRightBottomProps {
   clickedButtonId: number | null;
@@ -28,11 +29,11 @@ export default function OptRightBottom({
   const [clickedKey, setClickedKey] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const { users } = useUsers();
-  const wss = useWebSocketData()
-
+  const wss = useWebSocketData();
   const clickedButton = buttons.find((button) => button.id === clickedButtonId);
   const userToChat = users.find((user) => user.guid === clickedUser);
   console.log("UserToChat" + JSON.stringify(userToChat));
+
   useEffect(() => {
     if (clickedButton) {
       const sensorName = clickedButton.button_prt;
@@ -124,8 +125,10 @@ export default function OptRightBottom({
       }
     } else if (userToChat) {
       return (
-      <ChatLayout userToChat={userToChat} />
-    );
+        <div>
+          <ChatLayout userToChat={userToChat} />
+        </div>
+      );
     }
   };
 
