@@ -142,7 +142,7 @@ function UserLayout() {
 
         break;
       case "MessageResult":
-          const newMsgTo: ChatInterface = message.result;
+          const newMsgTo: ChatInterface = message.result[0];
           addChat(newMsgTo);
           // toast({
           //   description: message.result
@@ -150,7 +150,7 @@ function UserLayout() {
         break;
 
       case "Message":
-          const newMsgFrom: ChatInterface = message.result;
+          const newMsgFrom: ChatInterface = message.result[0];
           addChat(newMsgFrom);
           // toast({
           //   description: message.result

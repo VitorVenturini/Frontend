@@ -30,14 +30,13 @@ function AdminLayout() {
   const wss = useWebSocketData();
   const { buttons, setButtons, addButton, updateButton, deleteButton } =
     useButtons();
-  const { sensors, setSensors, updateSensor, addSensorName } = useSensors();
+  const { setSensors, addSensorName, clearSensors } = useSensors();
   const { toast } = useToast();
   const { actions, setActions, updateActions, deleteAction, addActions } =
     useActions();
   const { updateAccount } = useAccount();
   const [isAdminVerified, setIsAdminVerified] = useState(false);
   const navigate = useNavigate();
-
 
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
@@ -82,10 +81,11 @@ function AdminLayout() {
             devEUI: device.devEUI,
             parameters: device.parameters,
           }));
-      
+
           return { gateway_id, devices };
         });
-      
+        setSensors([]);
+        clearSensors()
         addSensorName(sensorData);
         break;
       case "SelectActionsMessageSuccess":

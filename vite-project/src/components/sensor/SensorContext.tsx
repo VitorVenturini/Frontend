@@ -13,7 +13,7 @@ export interface SensorInterface {
   tvoc?: string;
   pressure?: string;
   magnet_status?: string;
-  light_level?: string; 
+  light_level?: string;
   hcho?: string;
   pm2_5?: string;
   pm10?: string;
@@ -25,7 +25,7 @@ export interface SensorInterface {
   description?: string; // info milesight
   appKey?: string; // info milesight
   gateway_id?: string;
-  parameters: any [];
+  parameters: any[];
   adc_1?: string | number;
   adc_1_avg?: string | number;
   adc_1_max?: string | number;
@@ -52,6 +52,7 @@ interface SensorContextType {
   clearSensorsByName: (sensorName: string) => void;
   addSensors: (sensors: SensorInterface[]) => void;
   addSensorName: (sensors: []) => void;
+  clearSensors: () => void;
 }
 
 const SensorContext = createContext<SensorContextType | undefined>(undefined);
@@ -113,7 +114,12 @@ export const SensorProvider = ({ children }: { children: ReactNode }) => {
   const addSensorName = (
     newSensors: {
       gateway_id: string;
-      devices: { name: string; description: string; devEUI: string; parameters: any[] }[];
+      devices: {
+        name: string;
+        description: string;
+        devEUI: string;
+        parameters: any[];
+      }[];
     }[]
   ) => {
     setSensors((prevSensors) => {
@@ -129,9 +135,9 @@ export const SensorProvider = ({ children }: { children: ReactNode }) => {
             description: device.description,
             devEUI: device.devEUI,
             gateway_id: gateway_id,
-            parameters: device.parameters
+            parameters: device.parameters,
           };
-          sensorMap.set(device.name, newSensor); 
+          sensorMap.set(device.name, newSensor);
         });
       });
 
@@ -203,10 +209,15 @@ export const SensorProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
+  const clearSensors = () => {
+    setSensors([]);
+  };
+
   return (
     <SensorContext.Provider
       value={{
         sensors,
+        clearSensors,
         setSensors,
         updateSensor,
         replaceLatestSensor,

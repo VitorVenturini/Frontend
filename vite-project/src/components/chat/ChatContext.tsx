@@ -15,7 +15,6 @@ export interface ChatInterface {
   from_guid?: string;
   src?: string;
   to_guid?: string;
-  from?: string;
   date?: string
 }
 
