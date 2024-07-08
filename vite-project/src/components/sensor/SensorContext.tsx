@@ -19,6 +19,7 @@ export interface SensorInterface {
   description?: string; // info milesight
   appKey?: string; // info milesight
   gateway_id?: string;
+  parameters?: [];
 }
 
 interface SensorContextType {
@@ -88,7 +89,7 @@ export const SensorProvider = ({ children }: { children: ReactNode }) => {
   //   });
   // };
 
-  const addSensorName = (newSensors: { gateway_id: string, devices: { name: string; description: string; devEUI: string }[] }[]) => {
+  const addSensorName = (newSensors: { gateway_id: string, devices: { name: string; description: string; devEUI: string, parameters: [] }[] }[]) => {
     setSensors((prevSensors) => {
       const sensorMap = new Map(
         prevSensors.map((sensor) => [sensor.sensor_name, sensor])
@@ -102,6 +103,7 @@ export const SensorProvider = ({ children }: { children: ReactNode }) => {
             description: device.description,
             devEUI: device.devEUI,
             gateway_id: gateway_id,
+            parameters: device.parameters,
           };
           sensorMap.set(device.name, newSensor); // Atualiza ou adiciona o sensor
         });
