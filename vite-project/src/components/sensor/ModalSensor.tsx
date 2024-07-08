@@ -97,9 +97,11 @@ export default function ModalSensor({
 
   const handleNameSensor = (value: string) => {
     setNameSensor(value);
+    setTypeMeasure(""); // Reset typeMeasure when changing the sensor
   };
 
   const handleNameButton = (event: ChangeEvent<HTMLInputElement>) => {
+    setTypeMeasure("");
     setNameButton(event.target.value);
   };
   const handleTypeMeasure = (value: string) => {
@@ -121,10 +123,9 @@ export default function ModalSensor({
   const handleCreateButton = () => {
     try {
       if (nameButton && typeMeasure) {
-        const filteredModel = sensors.filter((sensor) =>{
-          return sensor.sensor_name === nameSensor
-        })[0]
-        // setModelSensor(filteredModel?.description as string)
+        const filteredModel = sensors.filter((sensor) => {
+          return sensor.sensor_name === nameSensor;
+        })[0];
         if (showMinMaxFields && (!maxValue || !minValue)) {
           toast({
             variant: "destructive",
@@ -182,6 +183,11 @@ export default function ModalSensor({
   const showMinMaxFields = !typesWithoutMinMax.includes(typeMeasure);
   const showSelectOnly = typesWithSelectOnly.includes(typeMeasure);
 
+  const selectedSensor = sensors.filter((sensor) => {
+    return sensor.sensor_name === nameSensor;
+  })[0];
+
+  const sensorParameters = selectedSensor ? selectedSensor.parameters : [];
   return (
     <>
       {isUpdate && (
@@ -231,21 +237,20 @@ export default function ModalSensor({
           <Label className="text-end" htmlFor="framework" id="typeMeasure">
             Tipo de medida
           </Label>
-          <Select value={typeMeasure} onValueChange={handleTypeMeasure}>
+          <Select
+            value={typeMeasure}
+            onValueChange={handleTypeMeasure}
+            disabled={!nameSensor}
+          >
             <SelectTrigger className="col-span-3" id="SelectTypeMeasure">
               <SelectValue placeholder="Selecione o tipo de medida" />
             </SelectTrigger>
             <SelectContent position="popper">
-              <SelectItem value="co2">CO²</SelectItem>
-              <SelectItem value="battery">Bateria</SelectItem>
-              <SelectItem value="humidity">Umidade do ar</SelectItem>
-              <SelectItem value="leak">Alagamento</SelectItem>
-              <SelectItem value="temperature">Temperatura</SelectItem>
-              <SelectItem value="light">Iluminação</SelectItem>
-              <SelectItem value="pir">Presença (V/F)</SelectItem>
-              <SelectItem value="pressure">Pressão</SelectItem>
-              <SelectItem value="tvoc">Compostos Orgânicos Voláteis</SelectItem>
-              <SelectItem value="magnet_status">Aberto/Fechado</SelectItem>
+              {sensorParameters.map((param, index) => (
+                <SelectItem key={index} value={param.parameter}>
+                  {param.name}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
@@ -263,6 +268,7 @@ export default function ModalSensor({
                 value={minValue}
                 onChange={handleMinValue}
                 required
+                disabled={!typeMeasure}
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
@@ -277,6 +283,7 @@ export default function ModalSensor({
                 value={maxValue}
                 onChange={handleMaxValue}
                 required
+                disabled={!typeMeasure}
               />
             </div>
           </>
@@ -286,7 +293,11 @@ export default function ModalSensor({
             <Label className="text-end" htmlFor="selectValue">
               Valor para ativar o alarme
             </Label>
-            <Select value={geralThreshold} onValueChange={handleGeralThreshold}>
+            <Select
+              value={geralThreshold}
+              onValueChange={handleGeralThreshold}
+              disabled={!typeMeasure}
+            >
               <SelectTrigger className="col-span-3" id="SelectThresholdValue">
                 <SelectValue placeholder="Selecione o tipo de medida" />
               </SelectTrigger>
