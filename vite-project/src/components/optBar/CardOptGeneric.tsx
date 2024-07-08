@@ -45,6 +45,7 @@ import { ButtonInterface } from "@/components/buttons/buttonContext/ButtonsConte
 import { Loader2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { host } from "@/App";
+import { useAccount } from "../account/AccountContext";
 
 interface User {
   id: string;
@@ -67,18 +68,26 @@ export default function CardOptGeneric({
   existingButton,
   isUpdate = false,
 }: OptGenericProps) {
+
+  
   const [nameOpt, setNameOpt] = useState(existingButton?.button_name || "");
   const [valueOpt, setValueOpt] = useState(existingButton?.button_prt || "");
   const [fileContent, setFileContent] = useState<File | null>(null);
+  const [userToChat, setUserToChat] = useState("");
   const { toast } = useToast();
   const [isCreating, setIsCreating] = useState(false);
+  const {} = useAccount()
   const wss = useWebSocketData();
+
 
   const handleNameOpt = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNameOpt(event.target.value);
   };
   const handleValueOpt = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValueOpt(event.target.value);
+  };
+  const handleUserToChat = (value: string) => {
+    setUserToChat(value);
   };
   const handleUploadFile = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files ? event.target.files[0] : null;
@@ -186,6 +195,14 @@ export default function CardOptGeneric({
           IptType: "text",
           onChangeFunction: handleValueOpt,
         };
+      case "chat":
+        return {
+          title: "Botão Chat",
+          description: "Descrição para botão Chat aqui",
+          labelButton: "Selecione o Usuario ",
+          // IptType: "text",
+         // onChangeFunction: handleUserToChat,
+        };
       default:
         return { title: "um botão", description: "" };
     }
@@ -223,20 +240,25 @@ export default function CardOptGeneric({
               required
             />
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-end" htmlFor="buttonName">
-              {labelButton}
-            </Label>
-            <Input
-              className="col-span-3"
-              id="buttonName"
-              placeholder={labelButton}
-              value={selectedOpt === "floor" ? undefined : valueOpt}
-              onChange={onChangeFunction}
-              type={IptType}
-              required
-            />
-          </div>
+          {selectedOpt === "chat" ? (
+            "Inputchat aqui"
+          ) : (
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label className="text-end" htmlFor="buttonName">
+                {labelButton}
+              </Label>
+              <Input
+                className="col-span-3"
+                id="buttonName"
+                placeholder={labelButton}
+                value={selectedOpt === "floor" ? undefined : valueOpt}
+                onChange={onChangeFunction}
+                type={IptType}
+                required
+              />
+            </div>
+          )}
+
           {selectedOpt === "floor" && valueOpt ? (
             <div className="grid grid-cols-4 items-center gap-4">
               <Label className="text-end" htmlFor="buttonName">

@@ -26,6 +26,12 @@ import { useHistory } from "@/components/history/HistoryContext";
 import { useEffect } from "node_modules/react-resizable-panels/dist/declarations/src/vendor/react";
 import { format } from "date-fns";
 import { useToast } from "@/components/ui/use-toast";
+import { UserInterface, useUsers } from "@/components/user/UserContext";
+import {
+  ChatInterface,
+  ChatProvider,
+  useChat,
+} from "@/components/chat/ChatContext";
 
 interface User {
   id: string;
@@ -38,6 +44,7 @@ function UserLayout() {
   const account = useAccount();
   const { toast } = useToast();
   const { updateAccount } = useAccount();
+  const { setUsers } = useUsers();
   // const webSocket = useWebSocket(account.accessToken)
   // console.log("MENSAGEM DO WEBSOCKET" + webSocket.data)
   const {
@@ -55,9 +62,10 @@ function UserLayout() {
     replaceLatestSensor,
     clearSensorsByName,
     addSensors,
-    addSensorName
+    addSensorName,
   } = useSensors();
   const { addHistory, updateHistory } = useHistory();
+  const { setChat, addChat } = useChat();
   const [selectedOpt, setSelectedOpt] = useState<string>("floor");
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState("");
@@ -127,6 +135,30 @@ function UserLayout() {
         const updatedButton: ButtonInterface = message.result;
         updateButton(updatedButton);
 
+        break;
+      case "TableUsersResult":
+        const newUser: UserInterface[] = message.result;
+        setUsers(newUser);
+
+        break;
+      case "MessageResult":
+          const newMsgTo: ChatInterface = message.result;
+          addChat(newMsgTo);
+          // toast({
+          //   description: message.result
+          // });
+        break;
+
+      case "Message":
+          const newMsgFrom: ChatInterface = message.result;
+          addChat(newMsgFrom);
+          // toast({
+          //   description: message.result
+          // });
+        break;
+      case "SelectMessageHistoryResultSrc":
+        const allMsg: ChatInterface[] = message.result;
+        setChat(allMsg);
         break;
       // case "SelectSensorsResult":
       //   const result = message.result;
