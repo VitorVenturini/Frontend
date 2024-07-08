@@ -2,6 +2,14 @@
 import React, { useState, useEffect, ChangeEvent, useContext } from "react";
 import CardCreateAction from "@/components/actions/CardCreateAction";
 import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
@@ -23,6 +31,7 @@ import {
 } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@radix-ui/react-scroll-area";
 
 interface User {
   id: string;
@@ -104,7 +113,7 @@ export function DataTable<TData, TValue>({
           <DialogTrigger>
             <Button> Criar Ação</Button>
           </DialogTrigger>
-          <DialogContent >
+          <DialogContent className="max-w-5xl ">
             <CardCreateAction />
           </DialogContent>
         </Dialog>
@@ -128,89 +137,94 @@ export function DataTable<TData, TValue>({
             </TableRow>
           ))}
         </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
-              >
-                {row.getVisibleCells().map((cell) => {
-                  let cellValue = flexRender(
-                    cell.column.columnDef.cell,
-                    cell.getContext()
-                  );
-                  if (cell.column.id === "action_user") {
-                    const userId = cell.row.original.action_user;
-                    const user = users.find((u) => u.guid === userId);
-                    cellValue = user ? user.name : "Unknown User";
-                  }
-                  return <TableCell key={cell.id}>{cellValue}</TableCell>;
-                })}
+        
+          <TableBody>
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                >
+                  {row.getVisibleCells().map((cell) => {
+                    let cellValue = flexRender(
+                      cell.column.columnDef.cell,
+                      cell.getContext()
+                    );
+                    if (cell.column.id === "action_user") {
+                      const userId = cell.row.original.action_user;
+                      const user = users.find((u) => u.guid === userId);
+                      cellValue = user ? user.name : "Unknown User";
+                    }
+                    return <TableCell key={cell.id}>{cellValue}</TableCell>;
+                  })}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  {loading == true && (
+                    <div className="flex flex-col gap-8">
+                      <div className="flex items-center space-x-4">
+                        <Skeleton className="h-4 w-[20px]" />
+                        <Skeleton className="h-4 w-[180px]" />
+                        <Skeleton className="h-4 w-[180px]" />
+                        <Skeleton className="h-4 w-[150px]" />
+                        <Skeleton className="h-4 w-[80px]" />
+                        <Skeleton className="h-4 w-[80px]" />
+                        <Skeleton className="h-4 w-[80px]" />
+                        <Skeleton className="h-4 w-[80px]" />
+                      </div>
+                      <div className="flex items-center space-x-4">
+                        <Skeleton className="h-4 w-[20px]" />
+                        <Skeleton className="h-4 w-[180px]" />
+                        <Skeleton className="h-4 w-[180px]" />
+                        <Skeleton className="h-4 w-[150px]" />
+                        <Skeleton className="h-4 w-[80px]" />
+                        <Skeleton className="h-4 w-[80px]" />
+                        <Skeleton className="h-4 w-[80px]" />
+                        <Skeleton className="h-4 w-[80px]" />
+                      </div>
+                      <div className="flex items-center space-x-4">
+                        <Skeleton className="h-4 w-[20px]" />
+                        <Skeleton className="h-4 w-[180px]" />
+                        <Skeleton className="h-4 w-[180px]" />
+                        <Skeleton className="h-4 w-[150px]" />
+                        <Skeleton className="h-4 w-[80px]" />
+                        <Skeleton className="h-4 w-[80px]" />
+                        <Skeleton className="h-4 w-[80px]" />
+                        <Skeleton className="h-4 w-[80px]" />
+                      </div>
+                      <div className="flex items-center space-x-4">
+                        <Skeleton className="h-4 w-[20px]" />
+                        <Skeleton className="h-4 w-[180px]" />
+                        <Skeleton className="h-4 w-[180px]" />
+                        <Skeleton className="h-4 w-[150px]" />
+                        <Skeleton className="h-4 w-[80px]" />
+                        <Skeleton className="h-4 w-[80px]" />
+                        <Skeleton className="h-4 w-[80px]" />
+                        <Skeleton className="h-4 w-[80px]" />
+                      </div>
+                      <div className="flex items-center space-x-4">
+                        <Skeleton className="h-4 w-[20px]" />
+                        <Skeleton className="h-4 w-[180px]" />
+                        <Skeleton className="h-4 w-[180px]" />
+                        <Skeleton className="h-4 w-[150px]" />
+                        <Skeleton className="h-4 w-[80px]" />
+                        <Skeleton className="h-4 w-[80px]" />
+                        <Skeleton className="h-4 w-[80px]" />
+                        <Skeleton className="h-4 w-[80px]" />
+                      </div>
+                    </div>
+                  )}
+                  <h1 className="m-4">No Result</h1>
+                </TableCell>
               </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
-                {loading == true && (
-                  <div className="flex flex-col gap-8">
-                    <div className="flex items-center space-x-4">
-                      <Skeleton className="h-4 w-[20px]" />
-                      <Skeleton className="h-4 w-[180px]" />
-                      <Skeleton className="h-4 w-[180px]" />
-                      <Skeleton className="h-4 w-[150px]" />
-                      <Skeleton className="h-4 w-[80px]" />
-                      <Skeleton className="h-4 w-[80px]" />
-                      <Skeleton className="h-4 w-[80px]" />
-                      <Skeleton className="h-4 w-[80px]" />
-                    </div>
-                    <div className="flex items-center space-x-4">
-                      <Skeleton className="h-4 w-[20px]" />
-                      <Skeleton className="h-4 w-[180px]" />
-                      <Skeleton className="h-4 w-[180px]" />
-                      <Skeleton className="h-4 w-[150px]" />
-                      <Skeleton className="h-4 w-[80px]" />
-                      <Skeleton className="h-4 w-[80px]" />
-                      <Skeleton className="h-4 w-[80px]" />
-                      <Skeleton className="h-4 w-[80px]" />
-                    </div>
-                    <div className="flex items-center space-x-4">
-                      <Skeleton className="h-4 w-[20px]" />
-                      <Skeleton className="h-4 w-[180px]" />
-                      <Skeleton className="h-4 w-[180px]" />
-                      <Skeleton className="h-4 w-[150px]" />
-                      <Skeleton className="h-4 w-[80px]" />
-                      <Skeleton className="h-4 w-[80px]" />
-                      <Skeleton className="h-4 w-[80px]" />
-                      <Skeleton className="h-4 w-[80px]" />
-                    </div>
-                    <div className="flex items-center space-x-4">
-                      <Skeleton className="h-4 w-[20px]" />
-                      <Skeleton className="h-4 w-[180px]" />
-                      <Skeleton className="h-4 w-[180px]" />
-                      <Skeleton className="h-4 w-[150px]" />
-                      <Skeleton className="h-4 w-[80px]" />
-                      <Skeleton className="h-4 w-[80px]" />
-                      <Skeleton className="h-4 w-[80px]" />
-                      <Skeleton className="h-4 w-[80px]" />
-                    </div>
-                    <div className="flex items-center space-x-4">
-                      <Skeleton className="h-4 w-[20px]" />
-                      <Skeleton className="h-4 w-[180px]" />
-                      <Skeleton className="h-4 w-[180px]" />
-                      <Skeleton className="h-4 w-[150px]" />
-                      <Skeleton className="h-4 w-[80px]" />
-                      <Skeleton className="h-4 w-[80px]" />
-                      <Skeleton className="h-4 w-[80px]" />
-                      <Skeleton className="h-4 w-[80px]" />
-                    </div>
-                  </div>
-                )}
-                <h1 className="m-4">No Result</h1>
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
+            )}
+          </TableBody>
+
       </Table>
     </div>
   );
