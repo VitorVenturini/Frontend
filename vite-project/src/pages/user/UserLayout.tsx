@@ -65,12 +65,12 @@ function UserLayout() {
     addSensorName,
   } = useSensors();
   const { addHistory, updateHistory } = useHistory();
-  const { setChat, addChat } = useChat();
+  const { setChat, addChat, chatDelivered, chatRead } = useChat();
   const [selectedOpt, setSelectedOpt] = useState<string>("floor");
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState("");
   const wss = useWebSocketData();
-
+  const myAccountInfo = JSON.parse(localStorage.getItem("Account") || "{}");
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
     switch (message.mt) {
@@ -127,9 +127,6 @@ function UserLayout() {
       case "IncreaseButtons":
         const newButton: ButtonInterface = message.result;
         addButton(newButton);
-        // toast({
-        //   description: "Botão Criado com sucesso",
-        // });
         break;
       case "UpdateButtonSuccess":
         const updatedButton: ButtonInterface = message.result;
@@ -141,48 +138,30 @@ function UserLayout() {
         setUsers(newUser);
 
         break;
-      case "MessageResult":
-          const newMsgTo: ChatInterface = message.result[0];
-          addChat(newMsgTo);
-          // toast({
-          //   description: message.result
-          // });
+      case "MessageResult": // minha mensagem
+        const newMsgTo: ChatInterface = message.result[0];
+        addChat(newMsgTo);
         break;
 
-      case "Message":
-          const newMsgFrom: ChatInterface = message.result[0];
-          addChat(newMsgFrom);
-          // toast({
-          //   description: message.result
-          // });
+      case "Message": // mensagem do cara
+        const newMsgFrom: ChatInterface = message.result[0];
+        addChat(newMsgFrom,true);
         break;
       case "SelectMessageHistoryResultSrc":
         const allMsg: ChatInterface[] = message.result;
         setChat(allMsg);
         break;
-      // case "SelectSensorsResult":
-      //   const result = message.result;
-      //   const sensorData = result.map((gatewayData: any) => {
-      //     const gateway_id = Object.keys(gatewayData); // Pegando o gateway_id
-      //     // console.log("Gateway_ID" + gateway_id);
-      //     // console.log("Devices " + JSON.stringify(gatewayData[1].devices));
-      //     const devices = gatewayData[1].devices.map(
-      //       (device: {
-      //         name: string;
-      //         description: string;
-      //         devEUI: string;
-      //       }) => ({
-      //         name: device.name,
-      //         description: device.description,
-      //         devEUI: device.devEUI,
-      //       })
-      //     );
-
-      //     return { gateway_id, devices };
-      //   });
-
-      //   addSensorName(sensorData);
-      //   break;
+      case "ChatDelivered":
+        const msg_id = message.result[0].id;
+        const deliveredDate = message.result[0].delivered;
+        chatDelivered(msg_id, deliveredDate);
+        break;
+      case "ChatRead":
+        const id_Read = message.result[0].id;
+        const deliveredDate_Read = message.result[0].delivered;
+        const readDate = message.result[0].read;
+        chatRead(id_Read, deliveredDate_Read, readDate);
+        break;
       default:
         console.log("Unknown message type:", message);
         break;
