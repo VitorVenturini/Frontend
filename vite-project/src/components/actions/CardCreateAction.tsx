@@ -49,18 +49,18 @@ export default function CardCreateAction({
   const [buttonSelect] = useState("");
 
   const [actionName, setActionName] = useState(action?.action_name || "");
-  const [actionType, setActionType] = useState(action?.action_alarm_code || "");
-  const [actionParameter, setActionParameter] = useState(
+  const [actionStartType, setActionType] = useState(action?.action_alarm_code || "");
+  const [actionStartParameter, setActionParameter] = useState(
     action?.action_start_type || ""
   );
-  const [type, setType] = useState(action?.action_type || "");
+  const [actionExectype, setType] = useState(action?.action_type || "");
   const [actionValue, setActionValue] = useState(action?.action_prt || "");
   const [selectedUser, setSelectedUser] = useState(action?.action_user || "");
   const [isCreating, setIsCreating] = useState(false);
-  const [nameSensor, setNameSensor] = useState(
+  const [actionSensorName, setNameSensor] = useState(
     action?.action_sensor_name || ""
   );
-  const [typeMeasure, setTypeMeasure] = useState(
+  const [actionSensorParameter, setTypeMeasure] = useState(
     action?.action_sensor_type || ""
   );
   const [deviceDest, setDeviceDest] = useState(action?.action_device || "");
@@ -114,6 +114,9 @@ export default function CardCreateAction({
   const handleNameSensor = (value: string) => {
     setNameSensor(value);
   };
+  // const handleParameterSensor = (value: string) => {
+  //   setParameterSensor(value);
+  // };
   const handleTypeMeasure = (value: string) => {
     setTypeMeasure(value);
   };
@@ -131,42 +134,65 @@ export default function CardCreateAction({
   const userButtons = buttons.filter((button) => {
     return button.button_user === selectedUser;
   });
+  const selectedSensor = sensors.filter((p) => {
+    return p.sensor_name === actionSensorName;
+  })[0];
+  const filteredSensor = selectedSensor ? selectedSensor.parameters : [];
 
-  console.log("Botões na userButtons", selectedUser, userButtons);
+  console.log("Botões na userButtons", selectedSensor?.parameters);
 
   const handleCreateAction = () => {
     console.log(
       `User: ${JSON.stringify(
         selectedUser
-      )}, Action Name: ${actionName}, Action Type: ${actionType}, Parâmetro da Ação: ${actionParameter}, Valor da Ação: ${actionValue}, Tipo de Ação: ${type}`
+      )}, Action Name: ${actionName}, Action Type: ${actionStartType}, Parâmetro da Ação: ${actionSensorParameter}, Valor da Ação: ${actionValue}, Tipo de Ação: ${actionExectype}`
     );
     if (
       selectedUser &&
       actionName &&
-      actionType &&
-      actionParameter &&
+      actionStartType &&
+      actionStartParameter &&
       actionValue &&
-      type
+      actionExectype
     ) {
       setIsCreating(true);
       wss?.sendMessage({
         api: "admin",
         mt: isUpdate ? "UpdateAction" : "InsertAction",
         ...(isUpdate && { id: action?.id }),
-        name: actionName,
-        alarm: actionType,
-        start: actionParameter,
-        value: actionValue,
-        sip: selectedUser,
-        type: type,
-        device: deviceDest,
-        sensorType: typeMeasure,
-        sensorName: nameSensor,
+        'action_name': actionName,
+        'action_start_prt': actionStartParameter,
+        'action_start_type': actionStartType,
+        'action_sensor_parameter': actionSensorParameter,
+        'action_sensor_name': actionSensorName,
+        'action_exec_type': actionExectype,
+        'action_exec_type_command_mode': actionValue,
+        'action_exec_prt': actionValue,
+        'action_exec_value': actionValue,
+        'action_exec_device': selectedUser,
       });
       setIsCreating(false);
       setActionName("");
       setActionParameter("");
       setActionValue("");
+      // wss?.sendMessage({
+      //   api: "admin",
+      //   mt: isUpdate ? "UpdateAction" : "InsertAction",
+      //   ...(isUpdate && { id: action?.id }),
+      //   name: actionName,
+      //   alarm: actionType,
+      //   start: actionParameter,
+      //   value: actionValue,
+      //   sip: selectedUser,
+      //   type: type,
+      //   device: deviceDest,
+      //   sensorType: typeMeasure,
+      //   sensorName: nameSensor,
+      // });
+      // setIsCreating(false);
+      // setActionName("");
+      // setActionParameter("");
+      // setActionValue("");
     } else {
       toast({
         variant: "destructive",
@@ -176,9 +202,9 @@ export default function CardCreateAction({
     }
   };
   const shouldRenderInput =
-    actionType === "minValue" || actionType === "maxValue";
-  const shouldRenderDevice = type === "number";
-  const shouldRenderType = type === "button";
+  actionStartType === "minValue" || actionStartType === "maxValue";
+  const shouldRenderDevice = actionExectype === "number";
+  const shouldRenderType = actionExectype === "button";
   return (
     //div que contem os cards
     <div className="w-full">
@@ -190,38 +216,13 @@ export default function CardCreateAction({
         {/* Card de criação da ação */}
         <div className="w-full">
           <div className="grid gap-4 p-4">
-            <CardDescription>User e Name</CardDescription>
-            <div className="grid grid-cols-7 items-center gap-4">
-              <Label className="text-end" htmlFor="name">
-                User
-              </Label>
-              <Select
-                onValueChange={handleUserSelect}
-                value={action?.action_user}
-              >
-                <SelectTrigger className="col-span-6">
-                  <SelectValue
-                    placeholder={texts[language].selectUserPlaceholder}
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>{texts[language].users}</SelectLabel>
-                    {users.map((user) => (
-                      <SelectItem key={user.id} value={user.guid}>
-                        {user.name}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid grid-cols-7 items-center gap-4">
+            <CardDescription>Action Name</CardDescription>
+            <div className="grid grid-cols-8 items-center gap-4">
               <Label className="text-end" htmlFor="name">
                 Nome da ação
               </Label>
               <Input
-                className="col-span-6"
+                className="col-span-7"
                 id="name"
                 placeholder="Nome da ação"
                 type="text"
@@ -245,7 +246,7 @@ export default function CardCreateAction({
                   </Label>
                   <Info className="size-[12px]" />
                 </div>
-                <Select onValueChange={handleActionType} value={actionType}>
+                <Select onValueChange={handleActionType} value={actionStartType}>
                   <SelectTrigger className="col-span-2">
                     <SelectValue placeholder="Selecione o Gatilho" />
                   </SelectTrigger>
@@ -279,7 +280,7 @@ export default function CardCreateAction({
                         IoT Device
                       </Label>
                     </div>
-                    <Select value={nameSensor} onValueChange={handleNameSensor}>
+                    <Select value={actionSensorName} onValueChange={handleNameSensor}>
                       <SelectTrigger className="col-span-2">
                         <SelectValue placeholder="Selecione um Sensor" />
                       </SelectTrigger>
@@ -309,7 +310,7 @@ export default function CardCreateAction({
                       </Label>
                     </div>
                     <Select
-                      value={typeMeasure}
+                      value={actionSensorParameter}
                       onValueChange={handleTypeMeasure}
                     >
                       <SelectTrigger
@@ -319,27 +320,19 @@ export default function CardCreateAction({
                         <SelectValue placeholder="Selecione o tipo de medida" />
                       </SelectTrigger>
                       <SelectContent position="popper">
-                        <SelectItem value="co2">CO²</SelectItem>
-                        <SelectItem value="battery">Bateria</SelectItem>
-                        <SelectItem value="humidity">Umidade do ar</SelectItem>
-                        <SelectItem value="leak">Alagamento</SelectItem>
-                        <SelectItem value="temperature">Temperatura</SelectItem>
-                        <SelectItem value="light">Iluminação</SelectItem>
-                        <SelectItem value="pir">Presença (V/F)</SelectItem>
-                        <SelectItem value="pressure">Pressão</SelectItem>
-                        <SelectItem value="tvoc">
-                          Compostos Orgânicos Voláteis{" "}
-                        </SelectItem>
+                        <SelectGroup>
+                          <SelectLabel>Sensores</SelectLabel>
+                          {filteredSensor.map((sensor, i) => (
+                            <SelectItem key={i} value={sensor.parameter}>
+                              {sensor.name}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
                       </SelectContent>
                     </Select>
                   </div>
                 </div>
               )}
-            </div>
-            <div className="gap-4 grid ">
-              <CardDescription>
-                Configuração dos parâmetros de execução
-              </CardDescription>
               <div className="grid grid-cols-3 items-center gap-4">
                 <div className="flex justify-end gap-1">
                   <Label
@@ -355,16 +348,22 @@ export default function CardCreateAction({
                   id="name"
                   placeholder="Parâmetro Gatilho"
                   type="text"
-                  value={actionParameter}
+                  value={actionStartParameter}
                   onChange={handleParameterAction}
                 />
               </div>
-              <div className="grid grid-cols-3 items-center gap-4">
+            </div>
+            <div className="gap-4 flex flex-col align-top">
+              <CardDescription>
+                Configuração dos parâmetros de execução
+              </CardDescription>
+
+              <div className="grid grid-cols-4 items-center gap-4">
                 <Label className="text-end" htmlFor="name">
                   Tipo
                 </Label>
-                <Select onValueChange={handleType} value={type}>
-                  <SelectTrigger className="col-span-2">
+                <Select onValueChange={handleType} value={actionExectype}>
+                  <SelectTrigger className="col-span-3">
                     <SelectValue placeholder="Selecione o Tipo" />
                   </SelectTrigger>
                   <SelectContent>
@@ -373,17 +372,18 @@ export default function CardCreateAction({
                       <SelectItem value="alarm">Alarme</SelectItem>
                       <SelectItem value="number">Número</SelectItem>
                       <SelectItem value="button">Botão</SelectItem>
+                      <SelectItem value="command">Comando</SelectItem>
                     </SelectGroup>
                   </SelectContent>
                 </Select>
               </div>
               {shouldRenderDevice && (
-                <div className="grid grid-cols-3 items-center gap-4">
+                <div className="grid grid-cols-4 items-center gap-4">
                   <Label className="text-end" htmlFor="paramDest">
                     Dispositivo
                   </Label>
                   <Select onValueChange={handleDeviceDest} value={deviceDest}>
-                    <SelectTrigger className="col-span-2">
+                    <SelectTrigger className="col-span-3">
                       <SelectValue placeholder="Dispositivo" />
                     </SelectTrigger>
                     <SelectContent>
@@ -393,7 +393,7 @@ export default function CardCreateAction({
                 </div>
               )}
               {shouldRenderType && (
-                <div className="grid grid-cols-3 items-center gap-4">
+                <div className="grid grid-cols-4 items-center gap-4">
                   <Label className="text-end" htmlFor="paramDest">
                     Botão
                   </Label>
@@ -401,7 +401,7 @@ export default function CardCreateAction({
                     onValueChange={handleButtonSelect}
                     value={actionValue}
                   >
-                    <SelectTrigger className="col-span-2">
+                    <SelectTrigger className="col-span-3">
                       <SelectValue placeholder="Selecione" />
                     </SelectTrigger>
                     <SelectContent>
@@ -419,8 +419,77 @@ export default function CardCreateAction({
                   </Select>
                 </div>
               )}
+              {actionExectype === "command" && (
+                <div>
+                  <div className="gap-1">
+                    <div className="grid grid-cols-4 items-center gap-4 mb-4">
+                      <div className="flex justify-end gap-1">
+                        <Label
+                          htmlFor="name"
+                          title="Qual contexto irá executar essa ação"
+                        >
+                          IoT Device
+                        </Label>
+                      </div>
+                      <Select
+                        value={actionSensorName}
+                        onValueChange={handleNameSensor}
+                      >
+                        <SelectTrigger className="col-span-3">
+                          <SelectValue placeholder="Selecione um Sensor" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>Sensores</SelectLabel>
+                            {sensors.map((sensor) => (
+                              <SelectItem
+                                key={sensor.sensor_name}
+                                value={sensor.sensor_name}
+                              >
+                                {sensor.sensor_name}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <div className="flex justify-end gap-1">
+                        <Label
+                          className="text-end"
+                          htmlFor="framework"
+                          id="typeMeasure"
+                        >
+                          Tipo de medida
+                        </Label>
+                      </div>
+                      <Select
+                        value={typeMeasure}
+                        onValueChange={handleTypeMeasure}
+                      >
+                        <SelectTrigger
+                          className="col-span-3"
+                          id="SelectTypeMeasure"
+                        >
+                          <SelectValue placeholder="Selecione o tipo de medida" />
+                        </SelectTrigger>
+                        <SelectContent position="popper">
+                          <SelectGroup>
+                            <SelectLabel>Sensores</SelectLabel>
+                            {filteredSensor.map((sensor, i) => (
+                              <SelectItem key={i} value={sensor.parameter}>
+                                {sensor.name}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+              )}
               {!shouldRenderType && (
-                <div className="grid grid-cols-3 items-center gap-4">
+                <div className="grid grid-cols-4 items-center gap-4">
                   <div className="flex justify-end gap-1">
                     <Label
                       htmlFor="name"
@@ -431,7 +500,7 @@ export default function CardCreateAction({
                     <Info className="size-[12px]" />
                   </div>
                   <Input
-                    className="col-span-2"
+                    className="col-span-3"
                     id="name"
                     placeholder="Valor"
                     type="text"
