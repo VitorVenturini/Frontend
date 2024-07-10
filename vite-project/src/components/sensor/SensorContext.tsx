@@ -21,7 +21,7 @@ export interface SensorInterface {
   image?: string;
   date?: string;
   isBoolean?: boolean;
-  devEUI?: string; // info milesight
+  devEUI?: string ; // info milesight
   description?: string; // info milesight
   appKey?: string; // info milesight
   gateway_id?: string;

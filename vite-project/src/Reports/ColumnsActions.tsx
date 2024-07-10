@@ -15,7 +15,7 @@ export const columnsActions: ColumnDef<ActionsInteface>[] = [
       header: "ID",
     },
     {
-      accessorKey: "createdUser",
+      accessorKey: "create_user",
       header: ({ column }) => {
         return (
           <Button
@@ -51,12 +51,11 @@ export const columnsActions: ColumnDef<ActionsInteface>[] = [
       header: "Gatilho",
     },
     {
-      accessorKey: "action_sensor_parameter",
+      accessorKey: "action_start_device_prt",
       header: "Parâmetro",
     },
-
     {
-      accessorKey: "action_sensor_name",
+      accessorKey: "action_start_device",
       header: "Entry IoT Device",
     },
     {

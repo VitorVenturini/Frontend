@@ -5,15 +5,15 @@ export interface ActionsInteface {
   action_name: string;
   action_start_prt: string;
   action_start_type: string;
-  action_sensor_parameter?: string | null;
-  action_sensor_name?: string | null;
-  action_exec_user?: string| null;
-  action_exec_type?: string| null;
+  action_start_device_prt?: string | null;
+  action_start_device?: string | null;
+  action_exec_user?: string ;
+  action_exec_type?: string | null;
   action_exec_type_command_mode?: string| null;
   action_exec_prt?: string | null;
-  action_exec_device?: string | null;
+  action_exec_device?: string ;
   createdAt: string;
-  createdUser: string;
+  create_user: string;
   updatedAt: string;
 }
 
