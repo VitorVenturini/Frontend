@@ -71,7 +71,6 @@ function UserLayout() {
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState("");
   const wss = useWebSocketData();
-  const myAccountInfo = JSON.parse(localStorage.getItem("Account") || "{}");
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
     switch (message.mt) {

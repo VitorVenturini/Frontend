@@ -144,7 +144,7 @@ export default function ModalSensor({
           guid: selectedUser?.guid,
           type: "sensor",
           img: filteredModel.description,
-          min: geralThreshold ? geralThreshold : minValue,
+          min: geralThreshold ? "" : minValue,
           max: geralThreshold ? geralThreshold : maxValue,
           sensorType: typeMeasure,
           page: selectedPage,
@@ -305,8 +305,8 @@ export default function ModalSensor({
               <SelectContent position="popper">
                 {typeMeasure === "magnet_status" && (
                   <>
-                    <SelectItem value="1">Aberto</SelectItem>
-                    <SelectItem value="0">Fechado</SelectItem>
+                    <SelectItem value="open">Aberto</SelectItem>
+                    <SelectItem value="closed">Fechado</SelectItem>
                   </>
                 )}
                 {typeMeasure === "leak" && (
