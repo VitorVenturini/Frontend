@@ -18,13 +18,12 @@ export interface ChatInterface {
   date?: string | Date;
   delivered?: string;
   read?: string;
-  userConnected?: boolean
-
 }
 interface ChatContextType {
   chat: ChatInterface[];
   setChat: React.Dispatch<React.SetStateAction<ChatInterface[]>>;
-  addChat: (chat: ChatInterface, userConnected?: boolean) => void;
+  addChat: (chat: ChatInterface) => void;
+  addChatMessage:  (chat: ChatInterface) => void;
   chatDelivered: (msg_id: number, deliveredDate: string) => void;
   chatRead: (msg_id: number, deliveredDate: string, readDate: string) => void;
 }
@@ -34,11 +33,12 @@ const chatContext = createContext<ChatContextType | undefined>(undefined);
 export const ChatProvider = ({ children }: { children: ReactNode }) => {
   const [chat, setChat] = useState<ChatInterface[]>([]);
 
-  const addChat = (newMessage: ChatInterface, userConnected?: boolean) => {
-    setChat((prevChat) => {
-      const messageWithUserConnected = { ...newMessage, userConnected };
-      return [...prevChat, messageWithUserConnected];
-    });
+  const addChat = (newMessage: ChatInterface) => {
+    setChat((prevChat) => [...prevChat, newMessage]);
+  };
+
+  const addChatMessage = (newMessage: ChatInterface) => {
+    setChat((prevChat) => [...prevChat, newMessage]);
   };
 
   const chatDelivered = (msg_id: number, deliveredDate: string) => {
@@ -71,6 +71,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         chat,
         setChat,
         addChat,
+        addChatMessage,
         chatDelivered,
         chatRead,
       }}
