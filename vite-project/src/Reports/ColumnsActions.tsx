@@ -15,14 +15,14 @@ export const columnsActions: ColumnDef<ActionsInteface>[] = [
       header: "ID",
     },
     {
-      accessorKey: "action_user",
+      accessorKey: "createdUser",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            User
+            Criador
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         )
@@ -36,28 +36,48 @@ export const columnsActions: ColumnDef<ActionsInteface>[] = [
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Action Name 
+            Nome da Ação
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         )
       },
     },
     {
+      accessorKey: "action_start_prt",
+      header: "Parâmetro Entrada",
+    },
+    {
       accessorKey: "action_start_type",
-      header: "Parâmetro",
-    },
-    {
-      accessorKey: "action_prt",
-      header: "ação",
-    },
-    {
-      accessorKey: "action_alarm_code",
       header: "Gatilho",
+    },
+    {
+      accessorKey: "action_sensor_parameter",
+      header: "Parâmetro",
     },
 
     {
-      accessorKey: "action_device",
-      header: "Device",
+      accessorKey: "action_sensor_name",
+      header: "Entry IoT Device",
+    },
+    {
+      accessorKey: "action_exec_user",
+      header: "Usuário Alertado",
+    },
+    {
+      accessorKey: "action_exec_device",
+      header: "Out IoT Device",
+    },
+    {
+      accessorKey: "action_exec_prt",
+      header: "Device Parameter",
+    },
+    {
+      accessorKey: "action_exec_type_command_mode",
+      header: "Command",
+    },
+    {
+      accessorKey: "createdAt",
+      header: "Criado Por",
     },
     {
       id: "actions",
@@ -65,14 +85,14 @@ export const columnsActions: ColumnDef<ActionsInteface>[] = [
       cell: ({ row }) => {
 
         const actions = row.original;
-        actions.action_user 
+
         return (
           <div className="flex justify-center gap-1 items-center">
             <Dialog>
               <DialogTrigger>
                 <Pencil />
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="max-w-5xl">
                  <CardCreateAction action={actions} isUpdate={true}/>
               </DialogContent>
             </Dialog>

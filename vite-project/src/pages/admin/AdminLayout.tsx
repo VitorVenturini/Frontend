@@ -75,17 +75,19 @@ function AdminLayout() {
         const result = message.result;
         const sensorData = result.map((gatewayData: any) => {
           const gateway_id = Object.keys(gatewayData)[0];
-          const devices = gatewayData[gateway_id].map((device: any) => ({
-            name: device.name,
-            description: device.description,
-            devEUI: device.devEUI,
-            parameters: device.parameters,
-          }));
+          const devices = gatewayData[gateway_id].devices.map(
+            (device: any) => ({
+              name: device.name,
+              description: device.description,
+              devEUI: device.devEUI,
+              parameters: device.parameters,
+            })
+          );
 
           return { gateway_id, devices };
         });
         setSensors([]);
-        clearSensors()
+        clearSensors();
         addSensorName(sensorData);
         break;
       case "SelectActionsMessageSuccess":

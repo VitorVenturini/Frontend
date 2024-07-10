@@ -49,21 +49,37 @@ export default function CardCreateAction({
   const [buttonSelect] = useState("");
 
   const [actionName, setActionName] = useState(action?.action_name || "");
-  const [actionStartType, setActionType] = useState(action?.action_alarm_code || "");
-  const [actionStartParameter, setActionParameter] = useState(
+  const [actionStartType, setActionType] = useState(
     action?.action_start_type || ""
   );
-  const [actionExectype, setType] = useState(action?.action_type || "");
-  const [actionValue, setActionValue] = useState(action?.action_prt || "");
-  const [selectedUser, setSelectedUser] = useState(action?.action_user || "");
+  const [actionStartParameter, setActionParameter] = useState(
+    action?.action_start_prt || ""
+  );
+  const [actionExecType, setType] = useState(action?.action_exec_type || "");
+  const [actionExecValue, setActionValue] = useState(""); //SEM USO NO MOMENTO
+  const [selectedUser, setSelectedUser] = useState(
+    action?.action_exec_user || ""
+  );
   const [isCreating, setIsCreating] = useState(false);
   const [actionSensorName, setNameSensor] = useState(
     action?.action_sensor_name || ""
   );
-  const [actionSensorParameter, setTypeMeasure] = useState(
-    action?.action_sensor_type || ""
+  const [actionSensorParameter, setStartDevice] = useState(
+    action?.action_sensor_parameter || ""
   );
-  const [deviceDest, setDeviceDest] = useState(action?.action_device || "");
+  const [actionExecDevice, setActionExecDevice] = useState(
+    action?.action_exec_device || ""
+  );
+  const [actionExecPrt, setActionExecPrt] = useState(
+    action?.action_exec_prt || ""
+  );
+
+  const [deviceDest, setDeviceDest] = useState(
+    action?.action_exec_device || ""
+  );
+  const [actionExecTypeCommandMode, setActionExecTypeCommandMode] = useState(
+    action?.action_exec_type_command_mode || ""
+  );
 
   const wss = useWebSocketData();
   const { language } = useLanguage();
@@ -99,7 +115,7 @@ export default function CardCreateAction({
   const handleActionName = (event: ChangeEvent<HTMLInputElement>) => {
     setActionName(event.target.value);
   };
-  const handleActionType = (value: string) => {
+  const handleActionStartType = (value: string) => {
     setActionType(value);
   };
   const handleParameterAction = (event: ChangeEvent<HTMLInputElement>) => {
@@ -117,8 +133,15 @@ export default function CardCreateAction({
   // const handleParameterSensor = (value: string) => {
   //   setParameterSensor(value);
   // };
-  const handleTypeMeasure = (value: string) => {
-    setTypeMeasure(value);
+  const handleStartDevice = (value: string) => {
+    setStartDevice(value);
+  };
+  const handleExecDevice = (value: string) => {
+    setActionExecDevice(value);
+  };
+
+  const handleExecPrt = (value: string) => {
+    setActionExecPrt(value);
   };
   const handleUserSelect = (value: string) => {
     const user = users.find((user) => user.id === value);
@@ -131,45 +154,70 @@ export default function CardCreateAction({
   const handleButtonSelect = (value: string) => {
     setActionValue(value);
   };
+
+  const handleActionExecTypeCommandMode = (value: string) => {
+    setActionExecTypeCommandMode(value);
+  };
   const userButtons = buttons.filter((button) => {
     return button.button_user === selectedUser;
   });
-  const selectedSensor = sensors.filter((p) => {
-    return p.sensor_name === actionSensorName;
-  })[0];
-  const filteredSensor = selectedSensor ? selectedSensor.parameters : [];
 
-  console.log("Botões na userButtons", selectedSensor?.parameters);
+  const selectedStartSensor = sensors.filter((p) => {
+    return p.sensor_name === actionSensorName;
+  })[0]; // filtra os sensores IoT
+
+  const filteredStartSensor = selectedStartSensor
+    ? selectedStartSensor.parameters
+    : []; // verifica 
+
+  const selectedExecSensor = sensors.filter((p) => {
+    return p.sensor_name === actionExecDevice;
+  })[0];
+
+  const filteredExecSensor = selectedExecSensor
+    ? selectedExecSensor.parameters
+    : [];
+  
+  const selectedExecSensorValue = sensors.filter((p) => {
+    return p.sensor_name === actionExecDevice;
+  })[0];
+  const filteredSelectExecSensor = selectedExecSensorValue
+  ? selectedExecSensorValue.parameters
+  : [];
+
+  const updateExecSensorValue = sensors.filter((p) => {
+    return p.devEUI === actionExecDevice;
+  })[0];
+
+  // const updateExecSensorParameter = updateExecSensorValue?.parameters.filter((p) => {
+  //   return p.parameter === action?.action_exec_prt;
+  // })[0]
+
+  console.log("Botões na userButtons", updateExecSensorValue?.parameters[0].parameter);
 
   const handleCreateAction = () => {
     console.log(
       `User: ${JSON.stringify(
         selectedUser
-      )}, Action Name: ${actionName}, Action Type: ${actionStartType}, Parâmetro da Ação: ${actionSensorParameter}, Valor da Ação: ${actionValue}, Tipo de Ação: ${actionExectype}`
+      )}, Action Name: ${actionName}, Action Type: ${actionStartType}, Parâmetro da Ação: ${actionSensorParameter}, Valor da Ação: ${actionExecValue}, Tipo de Ação: ${actionExecType}`
     );
-    if (
-      selectedUser &&
-      actionName &&
-      actionStartType &&
-      actionStartParameter &&
-      actionValue &&
-      actionExectype
-    ) {
+    if (actionName && actionStartType && actionStartParameter) {
       setIsCreating(true);
       wss?.sendMessage({
         api: "admin",
         mt: isUpdate ? "UpdateAction" : "InsertAction",
         ...(isUpdate && { id: action?.id }),
-        'action_name': actionName,
-        'action_start_prt': actionStartParameter,
-        'action_start_type': actionStartType,
-        'action_sensor_parameter': actionSensorParameter,
-        'action_sensor_name': actionSensorName,
-        'action_exec_type': actionExectype,
-        'action_exec_type_command_mode': actionValue,
-        'action_exec_prt': actionValue,
-        'action_exec_value': actionValue,
-        'action_exec_device': selectedUser,
+        name: actionName,
+        startPrt: actionStartParameter,
+        startType: actionStartType,
+        sensorParameter: actionSensorParameter,
+        sensorName: actionSensorName,
+        guid: selectedUser,
+        execType: actionExecType,
+        execDevice: selectedExecSensorValue.devEUI,
+        commandMode: actionExecTypeCommandMode,
+        execPrt: actionExecPrt,
+        //execValue: actionExecValue,
       });
       setIsCreating(false);
       setActionName("");
@@ -202,9 +250,9 @@ export default function CardCreateAction({
     }
   };
   const shouldRenderInput =
-  actionStartType === "minValue" || actionStartType === "maxValue";
-  const shouldRenderDevice = actionExectype === "number";
-  const shouldRenderType = actionExectype === "button";
+    actionStartType === "minValue" || actionStartType === "maxValue";
+  const shouldRenderDevice = actionExecType === "number";
+  const shouldRenderType = actionExecType === "button";
   return (
     //div que contem os cards
     <div className="w-full">
@@ -246,7 +294,10 @@ export default function CardCreateAction({
                   </Label>
                   <Info className="size-[12px]" />
                 </div>
-                <Select onValueChange={handleActionType} value={actionStartType}>
+                <Select
+                  onValueChange={handleActionStartType}
+                  value={actionStartType}
+                >
                   <SelectTrigger className="col-span-2">
                     <SelectValue placeholder="Selecione o Gatilho" />
                   </SelectTrigger>
@@ -280,7 +331,10 @@ export default function CardCreateAction({
                         IoT Device
                       </Label>
                     </div>
-                    <Select value={actionSensorName} onValueChange={handleNameSensor}>
+                    <Select
+                      value={actionSensorName}
+                      onValueChange={handleNameSensor}
+                    >
                       <SelectTrigger className="col-span-2">
                         <SelectValue placeholder="Selecione um Sensor" />
                       </SelectTrigger>
@@ -311,7 +365,7 @@ export default function CardCreateAction({
                     </div>
                     <Select
                       value={actionSensorParameter}
-                      onValueChange={handleTypeMeasure}
+                      onValueChange={handleStartDevice}
                     >
                       <SelectTrigger
                         className="col-span-2"
@@ -322,7 +376,7 @@ export default function CardCreateAction({
                       <SelectContent position="popper">
                         <SelectGroup>
                           <SelectLabel>Sensores</SelectLabel>
-                          {filteredSensor.map((sensor, i) => (
+                          {filteredStartSensor.map((sensor, i) => (
                             <SelectItem key={i} value={sensor.parameter}>
                               {sensor.name}
                             </SelectItem>
@@ -362,7 +416,7 @@ export default function CardCreateAction({
                 <Label className="text-end" htmlFor="name">
                   Tipo
                 </Label>
-                <Select onValueChange={handleType} value={actionExectype}>
+                <Select onValueChange={handleType} value={actionExecType}>
                   <SelectTrigger className="col-span-3">
                     <SelectValue placeholder="Selecione o Tipo" />
                   </SelectTrigger>
@@ -392,7 +446,7 @@ export default function CardCreateAction({
                   </Select>
                 </div>
               )}
-              {shouldRenderType && (
+              {/* {shouldRenderType && (
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label className="text-end" htmlFor="paramDest">
                     Botão
@@ -418,8 +472,8 @@ export default function CardCreateAction({
                     </SelectContent>
                   </Select>
                 </div>
-              )}
-              {actionExectype === "command" && (
+              )} */}
+              {actionExecType === "command" && (
                 <div>
                   <div className="gap-1">
                     <div className="grid grid-cols-4 items-center gap-4 mb-4">
@@ -432,8 +486,8 @@ export default function CardCreateAction({
                         </Label>
                       </div>
                       <Select
-                        value={actionSensorName}
-                        onValueChange={handleNameSensor}
+                        value={actionExecDevice}
+                        onValueChange={handleExecDevice}
                       >
                         <SelectTrigger className="col-span-3">
                           <SelectValue placeholder="Selecione um Sensor" />
@@ -453,7 +507,7 @@ export default function CardCreateAction({
                         </SelectContent>
                       </Select>
                     </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
+                    <div className="grid grid-cols-4 items-center gap-4 mb-4">
                       <div className="flex justify-end gap-1">
                         <Label
                           className="text-end"
@@ -464,8 +518,8 @@ export default function CardCreateAction({
                         </Label>
                       </div>
                       <Select
-                        value={typeMeasure}
-                        onValueChange={handleTypeMeasure}
+                        value={updateExecSensorValue?.parameters[0].parameter}
+                        onValueChange={handleExecPrt}
                       >
                         <SelectTrigger
                           className="col-span-3"
@@ -476,19 +530,40 @@ export default function CardCreateAction({
                         <SelectContent position="popper">
                           <SelectGroup>
                             <SelectLabel>Sensores</SelectLabel>
-                            {filteredSensor.map((sensor, i) => (
-                              <SelectItem key={i} value={sensor.parameter}>
-                                {sensor.name}
-                              </SelectItem>
-                            ))}
+                            {filteredSelectExecSensor.map((parameters, i) => (
+                            <SelectItem key={i} value={parameters.parameter}>
+                              {parameters.name}
+                            </SelectItem>
+                          ))}
                           </SelectGroup>
                         </SelectContent>
                       </Select>
                     </div>
                   </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label className="text-end" htmlFor="name">
+                      Comando
+                    </Label>
+                    <Select
+                      onValueChange={handleActionExecTypeCommandMode}
+                      value={actionExecTypeCommandMode}
+                    >
+                      <SelectTrigger className="col-span-3">
+                        <SelectValue placeholder="Selecione o Tipo" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectLabel>Comando On / Off</SelectLabel>
+                          <SelectItem value="on">On</SelectItem>
+                          <SelectItem value="off">Off</SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               )}
-              {!shouldRenderType && (
+
+              {!shouldRenderType && actionExecType !== "command" && (
                 <div className="grid grid-cols-4 items-center gap-4">
                   <div className="flex justify-end gap-1">
                     <Label
@@ -504,7 +579,7 @@ export default function CardCreateAction({
                     id="name"
                     placeholder="Valor"
                     type="text"
-                    value={actionValue}
+                    value={actionExecValue}
                     onChange={handleActionValue}
                   />
                 </div>

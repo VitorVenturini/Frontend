@@ -11,8 +11,8 @@ export default function ActionsPage() {
  
   const {actions} = useActions()
   return (
-    <div className="px-2 flex flex-col gap-4 justify-center mx-[250px]">
-      <ScrollArea className="h-[500px]">
+    <div className="px-2 flex flex-col gap-4 justify-center mx-[20px]">
+      <ScrollArea className="w-full h-full">
         <DataTable columns={columnsactions} data={actions} />
       </ScrollArea>
     </div>

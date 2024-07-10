@@ -3,15 +3,17 @@ import Actions from "@/pages/admin/Actions";
 export interface ActionsInteface {
   id: string;
   action_name: string;
-  action_alarm_code: string;
+  action_start_prt: string;
   action_start_type: string;
-  action_prt: string;
-  action_user: string;
-  action_type: string; // o ? significa que o valor nao precisa ser presente , se for nulo nao tem problema
-  action_device?: string | null;
+  action_sensor_parameter?: string | null;
   action_sensor_name?: string | null;
-  action_sensor_type?: string | null;
+  action_exec_user?: string| null;
+  action_exec_type?: string| null;
+  action_exec_type_command_mode?: string| null;
+  action_exec_prt?: string | null;
+  action_exec_device?: string | null;
   createdAt: string;
+  createdUser: string;
   updatedAt: string;
 }
 
