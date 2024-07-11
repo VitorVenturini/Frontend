@@ -124,7 +124,7 @@ export default function ModalSensor({
     try {
       if (nameButton && typeMeasure) {
         const filteredModel = sensors.filter((sensor) => {
-          return sensor.sensor_name === nameSensor;
+          return sensor.deveui === nameSensor;
         })[0];
         if (showMinMaxFields && (!maxValue || !minValue)) {
           toast({
@@ -140,7 +140,7 @@ export default function ModalSensor({
           mt: isUpdate ? "UpdateSensorButton" : "InsertSensorButton",
           ...(isUpdate && { id: existingButton?.id }),
           name: nameButton,
-          value: nameSensor,
+          value: nameSensor, //devEUID
           guid: selectedUser?.guid,
           type: "sensor",
           img: filteredModel.description,
@@ -184,7 +184,7 @@ export default function ModalSensor({
   const showSelectOnly = typesWithSelectOnly.includes(typeMeasure);
 
   const selectedSensor = sensors.filter((sensor) => {
-    return sensor.sensor_name === nameSensor;
+    return sensor.deveui === nameSensor;
   })[0];
 
   const sensorParameters = selectedSensor ? selectedSensor.parameters : [];
@@ -210,8 +210,8 @@ export default function ModalSensor({
                 <SelectLabel>Sensores</SelectLabel>
                 {sensors.map((sensor) => (
                   <SelectItem
-                    key={sensor.sensor_name}
-                    value={sensor.sensor_name}
+                    key={sensor.deveui}
+                    value={sensor.deveui as string}
                   >
                     {sensor.sensor_name}
                   </SelectItem>
@@ -305,8 +305,8 @@ export default function ModalSensor({
               <SelectContent position="popper">
                 {typeMeasure === "magnet_status" && (
                   <>
-                    <SelectItem value="open">Aberto</SelectItem>
-                    <SelectItem value="closed">Fechado</SelectItem>
+                    <SelectItem value="1">Aberto</SelectItem>
+                    <SelectItem value="0">Fechado</SelectItem>
                   </>
                 )}
                 {typeMeasure === "leak" && (

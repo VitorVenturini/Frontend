@@ -122,7 +122,7 @@ const useWebSocket = (
     } else {
       // else para usuario
       ws.current?.send(JSON.stringify({ api: apiType, mt: "SelectButtons" }));
-      ws.current?.send(JSON.stringify({ api: apiType, mt: "SelectSensors" }));
+      // ws.current?.send(JSON.stringify({ api: apiType, mt: "SelectSensors" }));
       ws.current?.send(JSON.stringify({ api: apiType, mt: "TableUsers" }));
       ws.current?.send(
         JSON.stringify({ api: apiType, mt: "SelectAllSensorInfoSrc" })

@@ -101,7 +101,7 @@ export default function ModalCommand({
     try {
       if (nameButton && nameCommand && deviceEUID) {
         const sensorInfo = sensors.filter((sensor) => {
-          return sensor.devEUI === deviceEUID;
+          return sensor.deveui === deviceEUID;
         })[0];
         setIsCreating(true);
         const message = {
@@ -112,7 +112,7 @@ export default function ModalCommand({
           value: nameCommand,
           guid: selectedUser?.guid,
           type: "command",
-          device: sensorInfo.devEUI,
+          device: sensorInfo.deveui,
           gateway_id: sensorInfo.gateway_id,
           img: sensorInfo.description,
           page: selectedPage,
@@ -198,7 +198,7 @@ export default function ModalCommand({
                 {sensors.map((sensor) => (
                   <SelectItem
                     key={sensor.sensor_name}
-                    value={sensor.devEUI as string}
+                    value={sensor.deveui as string}
                   >
                     {sensor.sensor_name}
                   </SelectItem>
