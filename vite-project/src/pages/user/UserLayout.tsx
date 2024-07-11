@@ -54,6 +54,7 @@ function UserLayout() {
     addButton,
     deleteButton,
     updateButton,
+    setCommandValue,
     buttons,
   } = useButtons();
   const {
@@ -161,6 +162,13 @@ function UserLayout() {
         const deliveredDate_Read = message.result[0].delivered;
         const readDate = message.result[0].read;
         chatRead(id_Read, deliveredDate_Read, readDate);
+        break;
+       //{"api":"user","mt":"ControllerReceived","btn_id":"400","prt":"gpio-in-1","value":"off"}
+       case "ControllerReceived":
+        const commandBtn_id = message.btn_id
+        const commandPrt = message.prt
+        const commandValue = message.value
+        setCommandValue(commandBtn_id,commandPrt,commandValue)
         break;
       default:
         console.log("Unknown message type:", message);
