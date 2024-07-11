@@ -8,7 +8,7 @@ import { Pencil } from "lucide-react"
 import CardCreateAction from "@/components/actions/CardCreateAction";
 import { ActionsInteface } from "@/components/actions/ActionsContext";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-
+import { useState } from "react";
 export const columnsActions: ColumnDef<ActionsInteface>[] = [
     {
       accessorKey: "id",
@@ -22,7 +22,7 @@ export const columnsActions: ColumnDef<ActionsInteface>[] = [
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Criador
+            Ultimo editou
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         )
@@ -60,7 +60,7 @@ export const columnsActions: ColumnDef<ActionsInteface>[] = [
     },
     {
       accessorKey: "action_exec_user",
-      header: "Usuário Alertado",
+      header: "Usuário ",
     },
     {
       accessorKey: "action_exec_device",
@@ -76,7 +76,7 @@ export const columnsActions: ColumnDef<ActionsInteface>[] = [
     },
     {
       accessorKey: "createdAt",
-      header: "Criado Por",
+      header: "Criado Em",
     },
     {
       id: "actions",
@@ -84,15 +84,17 @@ export const columnsActions: ColumnDef<ActionsInteface>[] = [
       cell: ({ row }) => {
 
         const actions = row.original;
+        const [isDialogOpen, setIsDialogOpen] = useState(false); 
 
         return (
           <div className="flex justify-center gap-1 items-center">
-            <Dialog>
+             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger>
                 <Pencil />
               </DialogTrigger>
               <DialogContent className="max-w-5xl">
-                 <CardCreateAction action={actions} isUpdate={true}/>
+              <CardCreateAction action={actions} isUpdate={true} 
+                onSuccess={() => setIsDialogOpen(false)} />
               </DialogContent>
             </Dialog>
             <DeleteActions id={actions.id} />

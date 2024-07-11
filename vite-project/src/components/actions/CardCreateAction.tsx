@@ -32,6 +32,7 @@ import { ActionsInteface } from "./ActionsContext";
 import { useButtons } from "../buttons/buttonContext/ButtonsContext";
 import CardExecActions from "./CardExecActions";
 import CardTriggerActions from "./CardTriggerActions";
+import { setPriority } from "os";
 interface User {
   id: string;
   name: string;
@@ -41,20 +42,22 @@ interface User {
 interface UpdateActionsProps {
   action?: ActionsInteface;
   isUpdate?: boolean;
+  onSuccess?: () => void;
 }
 
 export default function CardCreateAction({
   action,
   isUpdate = false,
+  onSuccess
 }: UpdateActionsProps) {
   const [actionName, setActionName] = useState(action?.action_name || "");
-
+  const [priority, setPriority]= useState('')
   const [isCreating, setIsCreating] = useState(false);
 
   const [triggerActionDetails, setTriggerActionDetails] = useState({
     actionStartPrt: action?.action_start_prt || "",
     actionStartType: action?.action_start_type || "",
-    actionStartDevicePrt: action?.action_start_device_prt || "",
+    actionStartDevicePrt: action?.action_start_device_parameter || "",
     actionStartDevice: action?.action_start_device || "",
   });
 
@@ -71,14 +74,15 @@ export default function CardCreateAction({
   const handleUpdateExecActionDetails = (key: string, value: string) => {
     setExecActionDetails((prevDetails) => ({ ...prevDetails, [key]: value }));
   };
+  const handlePriority = (value: string) => {
+    setPriority(value)
+  }
 
   const wss = useWebSocketData();
   const { language } = useLanguage();
   const { toast } = useToast();
   const { sensors } = useSensors();
   const { buttons } = useButtons();
-
-  console.log("Botões na action", buttons);
 
   const handleActionName = (event: ChangeEvent<HTMLInputElement>) => {
     setActionName(event.target.value);
@@ -112,6 +116,7 @@ export default function CardCreateAction({
       });
       setIsCreating(false);
       setActionName("");
+      onSuccess?.();
     } else {
       toast({
         variant: "destructive",
@@ -125,20 +130,28 @@ export default function CardCreateAction({
     //div que contem os cards
     <div className="w-full">
       <CardHeader>
-        <CardTitle>Create Action</CardTitle>
-        <CardDescription>Create Action TEXT</CardDescription>
+        <CardTitle>{isUpdate == true ? (
+          "Update Action"
+        ) : (
+          "Create Action"
+        )}</CardTitle>
+        <CardDescription>{isUpdate == true ? (
+          "Update TEXT Action"
+        ) : (
+          "Create TEXT Action"
+        )}</CardDescription>
       </CardHeader>
       <CardContent>
         {/* Card de criação da ação */}
         <div className="w-full">
           <div className="grid gap-4 p-4">
             <CardDescription>Action Name</CardDescription>
-            <div className="grid grid-cols-8 items-center gap-4">
+            <div className="grid grid-cols-6 items-center gap-4">
               <Label className="text-end" htmlFor="name">
                 Nome da ação
               </Label>
               <Input
-                className="col-span-7"
+                className="col-span-5"
                 id="name"
                 placeholder="Nome da ação"
                 type="text"
@@ -146,6 +159,30 @@ export default function CardCreateAction({
                 onChange={handleActionName}
               />
             </div>
+            {/*FALTA DEFINIÇÃO PRIORIDADE*/}
+            {/* <div className="grid grid-cols-6 items-center gap-4">
+              <Label className="text-end" htmlFor="name">
+                Prioridade
+              </Label>
+              <Select
+                onValueChange={handlePriority}
+                value={priority}
+              >
+                <SelectTrigger className="col-span-2">
+                  <SelectValue placeholder="Selecione o Tipo" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Prioridade</SelectLabel>
+                    <SelectItem value="1">Muita Prioridade</SelectItem>
+                    <SelectItem value="2">Média Prioridade</SelectItem>
+                    <SelectItem value="3">Neutra Prioridade</SelectItem>
+                    <SelectItem value="4">Pouca Prioridade</SelectItem>
+                    <SelectItem value="5">Nenhuma Prioridade</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div> */}
           </div>
           <div className="flex columns gap-4 p-4 justify-between">
             {/*div parametro Trigger */}

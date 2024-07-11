@@ -5,7 +5,7 @@ export interface ActionsInteface {
   action_name: string;
   action_start_prt: string;
   action_start_type: string;
-  action_start_device_prt?: string | null;
+  action_start_device_parameter?: string | null;
   action_start_device?: string | null;
   action_exec_user?: string ;
   action_exec_type?: string | null;
