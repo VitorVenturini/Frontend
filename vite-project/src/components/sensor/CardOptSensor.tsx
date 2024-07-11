@@ -156,8 +156,8 @@ export default function CardOptSensor({
                   <SelectLabel>Sensores</SelectLabel>
                   {sensors.map((sensor) => (
                     <SelectItem
-                      key={sensor.sensor_name}
-                      value={sensor.sensor_name}
+                      key={sensor.deveui }
+                      value={sensor.deveui as string}
                     >
                       {sensor.sensor_name}
                     </SelectItem>

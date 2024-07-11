@@ -30,7 +30,8 @@ export default function SensorGrid({
               key !== "id" &&
               key !== "sensor_name" &&
               key !== "battery" &&
-              key !== "date" && (
+              key !== "date" &&
+              key !== "deveui" && (
                 <SensorDisplay
                   key={key}
                   SensorKey={key}

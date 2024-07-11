@@ -65,12 +65,12 @@ function UserLayout() {
     addSensorName,
   } = useSensors();
   const { addHistory, updateHistory } = useHistory();
-  const { setChat, addChat, chatDelivered, chatRead } = useChat();
+  const { setChat, addChat, addChatMessage, chatDelivered, chatRead } =
+    useChat();
   const [selectedOpt, setSelectedOpt] = useState<string>("floor");
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState("");
   const wss = useWebSocketData();
-  const myAccountInfo = JSON.parse(localStorage.getItem("Account") || "{}");
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
     switch (message.mt) {
@@ -138,15 +138,15 @@ function UserLayout() {
         setUsers(newUser);
 
         break;
+      case "Message": // mensagem do cara
+        const newMsgFrom: ChatInterface = message.result[0];
+        addChatMessage(newMsgFrom);
+        break;
       case "MessageResult": // minha mensagem
         const newMsgTo: ChatInterface = message.result[0];
         addChat(newMsgTo);
         break;
 
-      case "Message": // mensagem do cara
-        const newMsgFrom: ChatInterface = message.result[0];
-        addChat(newMsgFrom,true);
-        break;
       case "SelectMessageHistoryResultSrc":
         const allMsg: ChatInterface[] = message.result;
         setChat(allMsg);

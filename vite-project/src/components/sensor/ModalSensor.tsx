@@ -124,7 +124,7 @@ export default function ModalSensor({
     try {
       if (nameButton && typeMeasure) {
         const filteredModel = sensors.filter((sensor) => {
-          return sensor.sensor_name === nameSensor;
+          return sensor.deveui === nameSensor;
         })[0];
         if (showMinMaxFields && (!maxValue || !minValue)) {
           toast({
@@ -140,11 +140,11 @@ export default function ModalSensor({
           mt: isUpdate ? "UpdateSensorButton" : "InsertSensorButton",
           ...(isUpdate && { id: existingButton?.id }),
           name: nameButton,
-          value: nameSensor,
+          value: nameSensor, //devEUID
           guid: selectedUser?.guid,
           type: "sensor",
           img: filteredModel.description,
-          min: geralThreshold ? geralThreshold : minValue,
+          min: geralThreshold ? "" : minValue,
           max: geralThreshold ? geralThreshold : maxValue,
           sensorType: typeMeasure,
           page: selectedPage,
@@ -184,7 +184,7 @@ export default function ModalSensor({
   const showSelectOnly = typesWithSelectOnly.includes(typeMeasure);
 
   const selectedSensor = sensors.filter((sensor) => {
-    return sensor.sensor_name === nameSensor;
+    return sensor.deveui === nameSensor;
   })[0];
 
   const sensorParameters = selectedSensor ? selectedSensor.parameters : [];
@@ -210,8 +210,8 @@ export default function ModalSensor({
                 <SelectLabel>Sensores</SelectLabel>
                 {sensors.map((sensor) => (
                   <SelectItem
-                    key={sensor.sensor_name}
-                    value={sensor.sensor_name}
+                    key={sensor.deveui}
+                    value={sensor.deveui as string}
                   >
                     {sensor.sensor_name}
                   </SelectItem>
@@ -290,7 +290,7 @@ export default function ModalSensor({
         )}
         {showSelectOnly && (
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-end" htmlFor="selectValue">
+            <Label className="text-end" htmlFor="SelectValue">
               Valor para ativar o alarme
             </Label>
             <Select
@@ -298,8 +298,8 @@ export default function ModalSensor({
               onValueChange={handleGeralThreshold}
               disabled={!typeMeasure}
             >
-              <SelectTrigger className="col-span-3" id="SelectThresholdValue">
-                <SelectValue placeholder="Selecione o tipo de medida" />
+              <SelectTrigger className="col-span-3" id="SelectValue">
+                <SelectValue placeholder="Selecione o Valor" />
               </SelectTrigger>
 
               <SelectContent position="popper">

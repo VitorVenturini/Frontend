@@ -51,7 +51,8 @@ export default function OptGrid({
   // console.log("TODOS USUARIOS" + JSON.stringify(users))
   console.log("Option Selecionada : " + selectedOpt);
   console.log("Buttons" + JSON.stringify(buttons));
-  if (selectedOpt === "chat") {
+  if (selectedOpt === "chat") {  // quando for do TIPO CHAT O TRATAMENTO É DIFERENTE 
+    // precisamos melhorar isso ~vitor ~pietro
     const grid = Array(2)
       .fill(null)
       .map(() => Array(6).fill({ variant: "default" }));

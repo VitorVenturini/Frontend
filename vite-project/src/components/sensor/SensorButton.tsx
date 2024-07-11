@@ -24,8 +24,10 @@ export default function SensorButton({ handleClick, button }: ButtonProps) {
   const oldValue = buttonState?.oldValue;
   const newValue = buttonState?.newValue;
 
+  console.log("Todos Sensores " + JSON.stringify(sensors));
+
   const filteredSensor = sensors.find(
-    (sensor) => sensor.sensor_name === button?.button_prt
+    (sensor) => sensor.deveui === button?.button_prt
   );
 
   useEffect(() => {
@@ -51,28 +53,26 @@ export default function SensorButton({ handleClick, button }: ButtonProps) {
         : undefined;
 
       if (
-        (maxThreshold !== undefined && newValue && newValue > maxThreshold) ||
-        (minThreshold !== undefined && newValue && newValue < minThreshold)
+        // if para quando for threshold que necessitam de comparação tipo co2, umidade,temperatura..etc
+        (maxThreshold !== undefined &&
+          maxThreshold !== 0 &&
+          maxThreshold !== 1 &&
+          newValue &&
+          newValue > maxThreshold) ||
+        (minThreshold !== undefined &&
+          minThreshold !== 0 &&
+          minThreshold !== 1 &&
+          newValue &&
+          newValue < minThreshold)
       ) {
         return `${commonClasses} flex flex-col cursor-pointer active:bg-red-900 bg-red-800 blinking-background`;
       } else if (
-        maxThreshold === 0 ||
-        minThreshold === 0 ||
-        maxThreshold === 0 ||
-        maxThreshold === 0
+        // else if para quando for valores 0 e 1
+        newValue == maxThreshold
       ) {
         return `${commonClasses} flex flex-col cursor-pointer active:bg-red-900 bg-red-800 blinking-background`;
-      } else if (
-        maxThreshold === 1 ||
-        minThreshold === 1 ||
-        maxThreshold === 1 ||
-        maxThreshold === 1
-      ) {
-        return `${commonClasses} flex flex-col cursor-pointer active:bg-red-900 bg-red-800 blinking-background`;
-      } else if (minThreshold === undefined || maxThreshold === undefined) {
-        console.log("Threshold não definido para este botão.");
-        return `${commonClasses} flex flex-col cursor-pointer active:bg-red-900 bg-buttonSensor`;
       } else {
+        // quando nao está alarmando
         return `${commonClasses} flex flex-col cursor-pointer active:bg-red-900 bg-buttonSensor`;
       }
     }
@@ -80,7 +80,7 @@ export default function SensorButton({ handleClick, button }: ButtonProps) {
   };
 
   const sensorModel = sensors.filter((sensor) => {
-    return sensor.sensor_name === button.button_prt;
+    return sensor.deveui === button.button_prt;
   })[0];
 
   return (
@@ -91,7 +91,7 @@ export default function SensorButton({ handleClick, button }: ButtonProps) {
             {button.button_name}
           </p>
           <p className="text-[10px] font-medium leading-none text-muted-foreground">
-            {button.button_prt}
+            {sensorModel ? sensorModel.sensor_name : ""}
           </p>
         </div>
         <ResponsivePng

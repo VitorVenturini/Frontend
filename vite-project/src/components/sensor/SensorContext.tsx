@@ -21,7 +21,7 @@ export interface SensorInterface {
   image?: string;
   date?: string;
   isBoolean?: boolean;
-  devEUI?: string ; // info milesight
+  deveui?: string;  //deveui do usuario é letra minuscula pois vem do banco 
   description?: string; // info milesight
   appKey?: string; // info milesight
   gateway_id?: string;
@@ -133,7 +133,7 @@ export const SensorProvider = ({ children }: { children: ReactNode }) => {
           const newSensor: SensorInterface = {
             sensor_name: device.name,
             description: device.description,
-            devEUI: device.devEUI,
+            deveui: device.devEUI,
             gateway_id: gateway_id,
             parameters: device.parameters,
           };

@@ -38,7 +38,7 @@ export default function OptRightBottom({
     if (clickedButton) {
       const sensorName = clickedButton.button_prt;
       const filteredSensorInfo = sensors.filter(
-        (sensor) => sensor.sensor_name === sensorName
+        (sensor) => sensor.deveui === sensorName
       );
       if (filteredSensorInfo.length > 0) {
         setLoading(false);
@@ -62,7 +62,7 @@ export default function OptRightBottom({
             return <div>Carregando dados do sensor...</div>;
           } else {
             const filteredSensorInfo = sensors.filter(
-              (sensor) => sensor.sensor_name === clickedButton.button_prt
+              (sensor) => sensor.deveui === clickedButton.button_prt
             );
             console.log("AllSensors " + JSON.stringify(sensors));
             console.log("FilteredSensor" + JSON.stringify(filteredSensorInfo));

@@ -18,7 +18,7 @@ interface ChatProps {
 export default function ChatLayout({ userToChat }: ChatProps) {
   const wss = useWebSocketData();
   const [message, setMessage] = useState("");
-  const { chat, addChat, chatDelivered } = useChat();
+  const { chat, addChat, chatDelivered, addChatMessage } = useChat();
   const { users } = useUsers();
 
   const myAccountInfo = JSON.parse(localStorage.getItem("Account") || "{}");
@@ -61,16 +61,12 @@ export default function ChatLayout({ userToChat }: ChatProps) {
     const lastMessage = chat[chat.length - 1];
 
     if (lastMessage) {
-      console.log('lastmessage' + JSON.stringify(lastMessage))
-      if (lastMessage.to_guid === userToChat.guid && !lastMessage.delivered) {
-        if (wss) {
-          wss.sendMessage({
-            api: "user",
-            mt: "ChatDelivered",
-            msg_id: lastMessage.id,
-          });
-        }
-      } else if(userToChat && lastMessage.to_guid === myAccountInfo.guid && userToChat.guid === lastMessage.from_guid){
+      if (
+        userToChat &&
+        lastMessage.to_guid === myAccountInfo.guid &&
+        userToChat.guid === lastMessage.from_guid &&
+        !lastMessage.read
+      ) {
         if (wss) {
           wss.sendMessage({
             api: "user",
@@ -80,21 +76,30 @@ export default function ChatLayout({ userToChat }: ChatProps) {
         }
       }
     }
-  }, [addChat,chat]); 
+  }, [addChat]); // useEffect para monitorar as mensagens recebidas e enviadas
 
-   const filteredMessages = chat.filter(
+  const filteredMessages = chat.filter(
     (message) =>
-      (message.from_guid === myAccountInfo.guid && message.to_guid === userToChat.guid) ||
-      (message.from_guid === userToChat.guid && message.to_guid === myAccountInfo.guid)
+      (message.from_guid === myAccountInfo.guid &&
+        message.to_guid === userToChat.guid) ||
+      (message.from_guid === userToChat.guid &&
+        message.to_guid === myAccountInfo.guid)
   );
 
   return (
     <div>
       <div className="h-[400px] overflow-y-auto">
         {filteredMessages.map((message, index) => {
-          const isMyMessage = message.from_guid === myAccountInfo.guid;
+          const isMyMessage = message.from_guid === myAccountInfo.guid; // se a mensagem é minha ou não 
           const messageText = message.msg || "";
-          //const formattedDate = format(message.date as string, "HH:mm");
+
+          let status;
+          if (isMyMessage) { // se for minha mensagem entao adiciona as verificações 
+            status = message.read ? "read" : (message.delivered ? "received" : "sent") || "sent";
+          } else { // se nao for , entao nao coloca nada , sem o risquinho , igual no whatsapp
+            status = undefined;
+          }
+
           return (
             <MessageBox
               key={index}
@@ -104,9 +109,7 @@ export default function ChatLayout({ userToChat }: ChatProps) {
               title={isMyMessage ? myAccountInfo.name : userToChat.name}
               text={messageText}
               className="text-black"
-              status={
-                message.read ? "read" : (message.delivered ? "received" : "sent") || "sent"
-              }
+              status={status as any}
               focus={false}
               date={new Date(message.date as Date) || new Date()}
               dateString={

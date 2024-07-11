@@ -73,6 +73,19 @@ const useWebSocket = (
         const parsedMessage = JSON.parse(message.data);
         if (parsedMessage.mt === "UserSessionResult") {
           setShouldSendMessages(true);
+        } else if (parsedMessage.mt === "Message") {
+          // enviar confirmação de recebimento de mensagem
+          console.log(
+            "WebSocketSendMessage" +
+              `{ api: user, mt: ChatDelivered, msg_id: ${parsedMessage.result[0].id}}`
+          );
+          ws.current?.send(
+            JSON.stringify({
+              api: "user",
+              mt: "ChatDelivered",
+              msg_id: parsedMessage.result[0].id,
+            })
+          );
         }
         if (onMessage) {
           onMessage(parsedMessage);
@@ -109,7 +122,7 @@ const useWebSocket = (
     } else {
       // else para usuario
       ws.current?.send(JSON.stringify({ api: apiType, mt: "SelectButtons" }));
-      ws.current?.send(JSON.stringify({ api: apiType, mt: "SelectSensors" }));
+      // ws.current?.send(JSON.stringify({ api: apiType, mt: "SelectSensors" }));
       ws.current?.send(JSON.stringify({ api: apiType, mt: "TableUsers" }));
       ws.current?.send(
         JSON.stringify({ api: apiType, mt: "SelectAllSensorInfoSrc" })
