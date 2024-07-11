@@ -85,7 +85,7 @@ export default function ModalSensor({
   );
 
   const [geralThreshold, setGeralThreshold] = useState(
-    existingButton?.sensor_max_threshold || " "
+    existingButton?.sensor_max_threshold || ""
   );
 
   const [modelSensor, setModelSensor] = useState(existingButton?.img || "");
@@ -299,28 +299,31 @@ export default function ModalSensor({
               disabled={!typeMeasure}
             >
               <SelectTrigger className="col-span-3" id="SelectValue">
-                <SelectValue placeholder="Selecione o Valor" />
+                <SelectValue placeholder="Selecione um Valor"/>
               </SelectTrigger>
 
               <SelectContent position="popper">
-                {typeMeasure === "magnet_status" && (
-                  <>
-                    <SelectItem value="1">Aberto</SelectItem>
-                    <SelectItem value="0">Fechado</SelectItem>
-                  </>
-                )}
-                {typeMeasure === "leak" && (
-                  <>
-                    <SelectItem value="1">Alagado</SelectItem>
-                    <SelectItem value="0">Seco</SelectItem>
-                  </>
-                )}
-                {typeMeasure === "pir" && (
-                  <>
-                    <SelectItem value="1">Presença</SelectItem>
-                    <SelectItem value="0">Vazio</SelectItem>
-                  </>
-                )}
+                <SelectGroup>
+                  <SelectLabel>Selecione um Valor</SelectLabel>
+                  {typeMeasure === "magnet_status" && (
+                    <>
+                      <SelectItem value="1">Aberto</SelectItem>
+                      <SelectItem value="0">Fechado</SelectItem>
+                    </>
+                  )}
+                  {typeMeasure === "leak" && (
+                    <>
+                      <SelectItem value="1">Alagado</SelectItem>
+                      <SelectItem value="0">Seco</SelectItem>
+                    </>
+                  )}
+                  {typeMeasure === "pir" && (
+                    <>
+                      <SelectItem value="1">Presença</SelectItem>
+                      <SelectItem value="0">Vazio</SelectItem>
+                    </>
+                  )}
+                </SelectGroup>
               </SelectContent>
             </Select>
           </div>

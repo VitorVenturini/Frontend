@@ -80,21 +80,29 @@ export default function ModalCommand({
     existingButton?.button_prt || ""
   );
   const [deviceEUID, setDeviceEUID] = useState(
-        existingButton?.button_device || ""
+    existingButton?.button_device || ""
     //  existingButton?.button_device ? sensors.filter((sensor) =>{
     //     return sensor.devEUI === existingButton?.button_device
     //   })[0].sensor_name : ""
   );
 
+  const [typeMeasure, setTypeMeasure] = useState(
+    existingButton?.sensor_type || ""
+  );
+
   const handleNameButton = (event: ChangeEvent<HTMLInputElement>) => {
     setNameButton(event.target.value);
   };
-  const handleNameCommand = (event: ChangeEvent<HTMLInputElement>) => {
-    setNameCommand(event.target.value);
+  const handleNameCommand = (value: string) => {
+    setNameCommand(value);
   };
 
   const handleDeviceIot = (value: string) => {
     setDeviceEUID(value);
+  };
+
+  const handleTypeMeasure = (value: string) => {
+    setTypeMeasure(value);
   };
 
   const handleCreateButton = () => {
@@ -144,6 +152,12 @@ export default function ModalCommand({
       console.error(e);
     }
   };
+
+  const selectedSensor = sensors.filter((sensor) => {
+    return sensor.deveui === deviceEUID;
+  })[0];
+
+  const commandParameters = selectedSensor ? selectedSensor.parameters : [];
   return (
     <>
       {isUpdate && (
@@ -173,19 +187,6 @@ export default function ModalCommand({
         </div>
         <div className="grid grid-cols-4 items-center gap-4">
           <Label className="text-end" htmlFor="buttonName">
-            Nome do Comando
-          </Label>
-          <Input
-            className="col-span-3"
-            id="buttonName"
-            placeholder="Nome do comando"
-            value={nameCommand}
-            onChange={handleNameCommand}
-            required
-          />
-        </div>
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label className="text-end" htmlFor="buttonName">
             Selecione o Dispostivo
           </Label>
           <Select value={deviceEUID} onValueChange={handleDeviceIot}>
@@ -197,10 +198,36 @@ export default function ModalCommand({
                 <SelectLabel>Dispositivos</SelectLabel>
                 {sensors.map((sensor) => (
                   <SelectItem
-                    key={sensor.sensor_name}
+                    key={sensor.deveui}
                     value={sensor.deveui as string}
                   >
                     {sensor.sensor_name}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="grid grid-cols-4 items-center gap-4 ">
+          <div className="flex justify-end gap-1">
+            <Label className="text-end" htmlFor="framework" id="typeMeasure">
+              Tipo de medida
+            </Label>
+          </div>
+          <Select
+            value={nameCommand}
+            onValueChange={handleNameCommand}
+            disabled={!deviceEUID}
+          >
+            <SelectTrigger className="col-span-3" id="SelectTypeMeasure">
+              <SelectValue placeholder="Selecione o tipo de medida" />
+            </SelectTrigger>
+            <SelectContent position="popper">
+              <SelectGroup>
+                <SelectLabel>Medidas</SelectLabel>
+                {commandParameters.map((parameters, i) => (
+                  <SelectItem key={i} value={parameters.parameter}>
+                    {parameters.name}
                   </SelectItem>
                 ))}
               </SelectGroup>

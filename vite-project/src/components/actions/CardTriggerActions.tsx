@@ -88,7 +88,7 @@ export default function CardTriggerActions({
     actionStartType === "minValue" || actionStartType === "maxValue";
 
   const selectedStartSensor = sensors.filter((p) => {
-    return p.devEUI === actionSensorName;
+    return p.deveui === actionSensorName;
   })[0]; // filtra os sensores IoT
 
   const filteredStartSensor = selectedStartSensor
@@ -146,7 +146,7 @@ export default function CardTriggerActions({
                     {sensors.map((sensor) => (
                       <SelectItem
                         key={sensor.sensor_name}
-                        value={sensor?.devEUI as string}
+                        value={sensor?.deveui as string}
                       >
                         {sensor.sensor_name}
                       </SelectItem>

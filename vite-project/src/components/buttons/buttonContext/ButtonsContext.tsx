@@ -26,6 +26,7 @@ export interface ButtonInterface {
   newValue?: number; // propriedade adicional para sensores
   clicked?: boolean; // adicionado para rastrear se o botão foi clicado
   triggered: boolean;
+  commandValue?: string;
 }
 
 interface ButtonContextType {
@@ -48,6 +49,7 @@ interface ButtonContextType {
   clearButtons: () => void;
   setButtonTriggered: (id: number, triggered: boolean) => void;
   setStopButtonTriggered: (alarm: string, triggered: boolean) => void;
+  setCommandValue: (btn_id: number, prt: string, value: string) => void;
   deleteButton: (id: number) => void;
 }
 
@@ -90,6 +92,15 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
+  const setCommandValue = (btn_id: number, prt: string, value: string) => {
+    setButtons((prevButtons) =>
+      prevButtons.map((button) =>
+        button.id === btn_id
+          ? { ...button, button_prt: prt, commandValue: value }
+          : button
+      )
+    );
+  };
   const setNewValue = (
     sensorType: string,
     sensorName: string,
@@ -150,12 +161,13 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
         clearButtons,
         updateButton,
         deleteButton,
+        setCommandValue,
         setOldValue,
         setNewValue,
         setClickedButton,
         removeClickedButton,
         setButtonTriggered,
-        setStopButtonTriggered
+        setStopButtonTriggered,
       }}
     >
       {children}

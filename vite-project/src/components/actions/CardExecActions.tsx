@@ -135,18 +135,18 @@ export default function CardExecActions({ action, onUpdateExecActionDetails  }: 
   });
 
   const selectedExecSensor = sensors.filter((p) => {
-    return p.devEUI === actionExecDevice;
+    return p.deveui === actionExecDevice;
   })[0];
 
   const selectedExecSensorValue = sensors.filter((p) => {
-    return p.devEUI === actionExecDevice;
+    return p.deveui === actionExecDevice;
   })[0];
   const filteredSelectExecSensor = selectedExecSensorValue
     ? selectedExecSensorValue.parameters
     : [];
 
   const updateExecSensorValue = sensors.filter((p) => {
-    return p.devEUI === actionExecDevice;
+    return p.deveui === actionExecDevice;
   })[0];
 
   const shouldRenderDevice = actionExecType === "number";
@@ -272,7 +272,7 @@ export default function CardExecActions({ action, onUpdateExecActionDetails  }: 
                       {sensors.map((sensor) => (
                         <SelectItem
                           key={sensor.sensor_name}
-                          value={sensor?.devEUI as string}
+                          value={sensor?.deveui as string}
                         >
                           {sensor.sensor_name}
                         </SelectItem>
@@ -294,6 +294,7 @@ export default function CardExecActions({ action, onUpdateExecActionDetails  }: 
                 <Select
                   value={actionExecPrt}
                   onValueChange={handleExecPrt}
+                  disabled= {!actionExecDevice}
                 >
                   <SelectTrigger className="col-span-3" id="SelectTypeMeasure">
                     <SelectValue placeholder="Selecione o tipo de medida" />
@@ -318,6 +319,7 @@ export default function CardExecActions({ action, onUpdateExecActionDetails  }: 
               <Select
                 onValueChange={handleActionExecTypeCommandMode}
                 value={actionExecTypeCommandMode}
+                disabled={!actionExecPrt}
               >
                 <SelectTrigger className="col-span-3">
                   <SelectValue placeholder="Selecione o Tipo" />
