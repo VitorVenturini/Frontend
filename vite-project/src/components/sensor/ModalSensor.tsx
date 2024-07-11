@@ -290,7 +290,7 @@ export default function ModalSensor({
         )}
         {showSelectOnly && (
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-end" htmlFor="selectValue">
+            <Label className="text-end" htmlFor="SelectValue">
               Valor para ativar o alarme
             </Label>
             <Select
@@ -298,8 +298,8 @@ export default function ModalSensor({
               onValueChange={handleGeralThreshold}
               disabled={!typeMeasure}
             >
-              <SelectTrigger className="col-span-3" id="SelectThresholdValue">
-                <SelectValue placeholder="Selecione o tipo de medida" />
+              <SelectTrigger className="col-span-3" id="SelectValue">
+                <SelectValue placeholder="Selecione o Valor" />
               </SelectTrigger>
 
               <SelectContent position="popper">
