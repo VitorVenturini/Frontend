@@ -53,7 +53,9 @@ export function DataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [loading, setLoading] = useState<boolean>(true);
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -102,19 +104,19 @@ export function DataTable<TData, TValue>({
         <Input
           placeholder="Filter User..."
           value={
-            (table.getColumn("action_user")?.getFilterValue() as string) || ""
+            (table.getColumn("action_name")?.getFilterValue() as string) || ""
           }
           onChange={(event) =>
-            table.getColumn("action_user")?.setFilterValue(event.target.value)
+            table.getColumn("action_name")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
-        <Dialog>
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger>
             <Button> Criar Ação</Button>
           </DialogTrigger>
           <DialogContent className="max-w-5xl ">
-            <CardCreateAction />
+          <CardCreateAction onSuccess={() => setIsDialogOpen(false)} />
           </DialogContent>
         </Dialog>
       </div>

@@ -30,6 +30,9 @@ import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { useSensors } from "@/components/sensor/SensorContext";
 import { ActionsInteface } from "./ActionsContext";
 import { useButtons } from "../buttons/buttonContext/ButtonsContext";
+import CardExecActions from "./CardExecActions";
+import CardTriggerActions from "./CardTriggerActions";
+import { setPriority } from "os";
 interface User {
   id: string;
   name: string;
@@ -39,31 +42,41 @@ interface User {
 interface UpdateActionsProps {
   action?: ActionsInteface;
   isUpdate?: boolean;
+  onSuccess?: () => void;
 }
 
 export default function CardCreateAction({
   action,
   isUpdate = false,
+  onSuccess
 }: UpdateActionsProps) {
-  const [users, setUsers] = useState<User[]>([]);
-  const [buttonSelect] = useState("");
-
   const [actionName, setActionName] = useState(action?.action_name || "");
-  const [actionType, setActionType] = useState(action?.action_alarm_code || "");
-  const [actionParameter, setActionParameter] = useState(
-    action?.action_start_type || ""
-  );
-  const [type, setType] = useState(action?.action_type || "");
-  const [actionValue, setActionValue] = useState(action?.action_prt || "");
-  const [selectedUser, setSelectedUser] = useState(action?.action_user || "");
+  const [priority, setPriority]= useState('')
   const [isCreating, setIsCreating] = useState(false);
-  const [nameSensor, setNameSensor] = useState(
-    action?.action_sensor_name || ""
-  );
-  const [typeMeasure, setTypeMeasure] = useState(
-    action?.action_sensor_type || ""
-  );
-  const [deviceDest, setDeviceDest] = useState(action?.action_device || "");
+
+  const [triggerActionDetails, setTriggerActionDetails] = useState({
+    actionStartPrt: action?.action_start_prt || "",
+    actionStartType: action?.action_start_type || "",
+    actionStartDevicePrt: action?.action_start_device_parameter || "",
+    actionStartDevice: action?.action_start_device || "",
+  });
+
+  const [execActionDetails, setExecActionDetails] = useState({
+    actionExecType: action?.action_exec_type || "",
+    selectedUser: action?.action_exec_user || "",
+    actionExecDevice: action?.action_exec_device || "",
+    actionExecPrt: action?.action_exec_prt || "",
+    actionExecTypeCommandMode: action?.action_exec_type_command_mode || "",
+  });
+  const handleUpdateTriggerActionDetails = (key: string, value: string) => {
+    setTriggerActionDetails((prevDetails) => ({ ...prevDetails, [key]: value }));
+  };
+  const handleUpdateExecActionDetails = (key: string, value: string) => {
+    setExecActionDetails((prevDetails) => ({ ...prevDetails, [key]: value }));
+  };
+  const handlePriority = (value: string) => {
+    setPriority(value)
+  }
 
   const wss = useWebSocketData();
   const { language } = useLanguage();
@@ -71,102 +84,39 @@ export default function CardCreateAction({
   const { sensors } = useSensors();
   const { buttons } = useButtons();
 
-  console.log("Botões na action", buttons);
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await fetch(
-          "https://meet.wecom.com.br/api/listUsers",
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              "x-auth": localStorage.getItem("token") || "",
-            },
-          }
-        );
-        const data = await response.json();
-        setUsers(data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchUsers();
-  }, []);
-
   const handleActionName = (event: ChangeEvent<HTMLInputElement>) => {
     setActionName(event.target.value);
   };
-  const handleActionType = (value: string) => {
-    setActionType(value);
-  };
-  const handleParameterAction = (event: ChangeEvent<HTMLInputElement>) => {
-    setActionParameter(event.target.value);
-  };
-  const handleType = (value: string) => {
-    setType(value);
-  };
-  const handleActionValue = (event: ChangeEvent<HTMLInputElement>) => {
-    setActionValue(event.target.value);
-  };
-  const handleNameSensor = (value: string) => {
-    setNameSensor(value);
-  };
-  const handleTypeMeasure = (value: string) => {
-    setTypeMeasure(value);
-  };
-  const handleUserSelect = (value: string) => {
-    const user = users.find((user) => user.id === value);
-    console.log(user);
-    setSelectedUser(value);
-  };
-  const handleDeviceDest = (value: string) => {
-    setDeviceDest(value);
-  };
-  const handleButtonSelect = (value: string) => {
-    setActionValue(value);
-  };
-  const userButtons = buttons.filter((button) => {
-    return button.button_user === selectedUser;
-  });
 
-  console.log("Botões na userButtons", selectedUser, userButtons);
+  // parametros para enviar
+  //
+  // execType: execActionDetails.actionExecType,
+  // execDevice: execActionDetails.actionExecDevice,
+  // commandMode: execActionDetails.actionExecTypeCommandMode,
+  // execPrt: execActionDetails.actionExecPrt,
 
   const handleCreateAction = () => {
-    console.log(
-      `User: ${JSON.stringify(
-        selectedUser
-      )}, Action Name: ${actionName}, Action Type: ${actionType}, Parâmetro da Ação: ${actionParameter}, Valor da Ação: ${actionValue}, Tipo de Ação: ${type}`
-    );
-    if (
-      selectedUser &&
-      actionName &&
-      actionType &&
-      actionParameter &&
-      actionValue &&
-      type
-    ) {
+
+    if (actionName && triggerActionDetails.actionStartPrt && triggerActionDetails.actionStartType && execActionDetails.actionExecType) {
       setIsCreating(true);
       wss?.sendMessage({
         api: "admin",
         mt: isUpdate ? "UpdateAction" : "InsertAction",
         ...(isUpdate && { id: action?.id }),
         name: actionName,
-        alarm: actionType,
-        start: actionParameter,
-        value: actionValue,
-        sip: selectedUser,
-        type: type,
-        device: deviceDest,
-        sensorType: typeMeasure,
-        sensorName: nameSensor,
+        startPrt: triggerActionDetails.actionStartPrt,
+        startType: triggerActionDetails.actionStartType,
+        startDevicePrt: triggerActionDetails.actionStartDevicePrt,
+        startDevice: triggerActionDetails.actionStartDevice,
+        guid: execActionDetails.selectedUser,
+        execType: execActionDetails.actionExecType,
+        execDevice: execActionDetails.actionExecDevice,
+        commandMode: execActionDetails.actionExecTypeCommandMode,
+        execPrt: execActionDetails.actionExecPrt,
       });
       setIsCreating(false);
       setActionName("");
-      setActionParameter("");
-      setActionValue("");
+      onSuccess?.();
     } else {
       toast({
         variant: "destructive",
@@ -175,53 +125,33 @@ export default function CardCreateAction({
       });
     }
   };
-  const shouldRenderInput =
-    actionType === "minValue" || actionType === "maxValue";
-  const shouldRenderDevice = type === "number";
-  const shouldRenderType = type === "button";
+
   return (
     //div que contem os cards
     <div className="w-full">
       <CardHeader>
-        <CardTitle>Create Action</CardTitle>
-        <CardDescription>Create Action TEXT</CardDescription>
+        <CardTitle>{isUpdate == true ? (
+          "Update Action"
+        ) : (
+          "Create Action"
+        )}</CardTitle>
+        <CardDescription>{isUpdate == true ? (
+          "Update TEXT Action"
+        ) : (
+          "Create TEXT Action"
+        )}</CardDescription>
       </CardHeader>
       <CardContent>
         {/* Card de criação da ação */}
         <div className="w-full">
           <div className="grid gap-4 p-4">
-            <CardDescription>User e Name</CardDescription>
-            <div className="grid grid-cols-7 items-center gap-4">
-              <Label className="text-end" htmlFor="name">
-                User
-              </Label>
-              <Select
-                onValueChange={handleUserSelect}
-                value={action?.action_user}
-              >
-                <SelectTrigger className="col-span-6">
-                  <SelectValue
-                    placeholder={texts[language].selectUserPlaceholder}
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>{texts[language].users}</SelectLabel>
-                    {users.map((user) => (
-                      <SelectItem key={user.id} value={user.guid}>
-                        {user.name}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid grid-cols-7 items-center gap-4">
+            <CardDescription>Action Name</CardDescription>
+            <div className="grid grid-cols-6 items-center gap-4">
               <Label className="text-end" htmlFor="name">
                 Nome da ação
               </Label>
               <Input
-                className="col-span-6"
+                className="col-span-5"
                 id="name"
                 placeholder="Nome da ação"
                 type="text"
@@ -229,218 +159,44 @@ export default function CardCreateAction({
                 onChange={handleActionName}
               />
             </div>
+            {/*FALTA DEFINIÇÃO PRIORIDADE*/}
+            {/* <div className="grid grid-cols-6 items-center gap-4">
+              <Label className="text-end" htmlFor="name">
+                Prioridade
+              </Label>
+              <Select
+                onValueChange={handlePriority}
+                value={priority}
+              >
+                <SelectTrigger className="col-span-2">
+                  <SelectValue placeholder="Selecione o Tipo" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Prioridade</SelectLabel>
+                    <SelectItem value="1">Muita Prioridade</SelectItem>
+                    <SelectItem value="2">Média Prioridade</SelectItem>
+                    <SelectItem value="3">Neutra Prioridade</SelectItem>
+                    <SelectItem value="4">Pouca Prioridade</SelectItem>
+                    <SelectItem value="5">Nenhuma Prioridade</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div> */}
           </div>
           <div className="flex columns gap-4 p-4 justify-between">
-            <div className="gap-4 flex flex-col align-top">
-              <CardDescription>
-                Configuração dos parâmetros de Gatilho
-              </CardDescription>
-              <div className="grid grid-cols-3 items-center gap-4">
-                <div className="flex justify-end gap-1">
-                  <Label
-                    htmlFor="name"
-                    title="Qual contexto irá executar essa ação"
-                  >
-                    Tipo de Gatilho
-                  </Label>
-                  <Info className="size-[12px]" />
-                </div>
-                <Select onValueChange={handleActionType} value={actionType}>
-                  <SelectTrigger className="col-span-2">
-                    <SelectValue placeholder="Selecione o Gatilho" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>Gatilho</SelectLabel>
-                      <SelectItem value="alarm">Alarme</SelectItem>
-                      <SelectItem value="origemNumber">
-                        Número Origem
-                      </SelectItem>
-                      <SelectItem value="destNumber">Número Destino</SelectItem>
-                      <SelectItem value="minValue">
-                        Sensor Valor Minímo
-                      </SelectItem>
-                      <SelectItem value="maxValue">
-                        Sensor Valor Maxímo
-                      </SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </div>
+            {/*div parametro Trigger */}
+            <CardTriggerActions action={action}
+            onUpdateTriggerActionDetails={handleUpdateTriggerActionDetails}
+             />
+            {/* END div parametro Trigger */}
 
-              {shouldRenderInput && (
-                <div className="gap-1">
-                  <div className="grid grid-cols-3 items-center gap-4 mb-4">
-                    <div className="flex justify-end gap-1">
-                      <Label
-                        htmlFor="name"
-                        title="Qual contexto irá executar essa ação"
-                      >
-                        IoT Device
-                      </Label>
-                    </div>
-                    <Select value={nameSensor} onValueChange={handleNameSensor}>
-                      <SelectTrigger className="col-span-2">
-                        <SelectValue placeholder="Selecione um Sensor" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectLabel>Sensores</SelectLabel>
-                          {sensors.map((sensor) => (
-                            <SelectItem
-                              key={sensor.sensor_name}
-                              value={sensor.sensor_name}
-                            >
-                              {sensor.sensor_name}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="grid grid-cols-3 items-center gap-4">
-                    <div className="flex justify-end gap-1">
-                      <Label
-                        className="text-end"
-                        htmlFor="framework"
-                        id="typeMeasure"
-                      >
-                        Tipo de medida
-                      </Label>
-                    </div>
-                    <Select
-                      value={typeMeasure}
-                      onValueChange={handleTypeMeasure}
-                    >
-                      <SelectTrigger
-                        className="col-span-2"
-                        id="SelectTypeMeasure"
-                      >
-                        <SelectValue placeholder="Selecione o tipo de medida" />
-                      </SelectTrigger>
-                      <SelectContent position="popper">
-                        <SelectItem value="co2">CO²</SelectItem>
-                        <SelectItem value="battery">Bateria</SelectItem>
-                        <SelectItem value="humidity">Umidade do ar</SelectItem>
-                        <SelectItem value="leak">Alagamento</SelectItem>
-                        <SelectItem value="temperature">Temperatura</SelectItem>
-                        <SelectItem value="light">Iluminação</SelectItem>
-                        <SelectItem value="pir">Presença (V/F)</SelectItem>
-                        <SelectItem value="pressure">Pressão</SelectItem>
-                        <SelectItem value="tvoc">
-                          Compostos Orgânicos Voláteis{" "}
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              )}
-            </div>
-            <div className="gap-4 grid ">
-              <CardDescription>
-                Configuração dos parâmetros de execução
-              </CardDescription>
-              <div className="grid grid-cols-3 items-center gap-4">
-                <div className="flex justify-end gap-1">
-                  <Label
-                    htmlFor="name"
-                    title="Qual será o valor que irá executar essa ação"
-                  >
-                    Parâmetro Gatilho
-                  </Label>
-                  <Info className="size-[12px]" />
-                </div>
-                <Input
-                  className="col-span-2"
-                  id="name"
-                  placeholder="Parâmetro Gatilho"
-                  type="text"
-                  value={actionParameter}
-                  onChange={handleParameterAction}
-                />
-              </div>
-              <div className="grid grid-cols-3 items-center gap-4">
-                <Label className="text-end" htmlFor="name">
-                  Tipo
-                </Label>
-                <Select onValueChange={handleType} value={type}>
-                  <SelectTrigger className="col-span-2">
-                    <SelectValue placeholder="Selecione o Tipo" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>Gatilho</SelectLabel>
-                      <SelectItem value="alarm">Alarme</SelectItem>
-                      <SelectItem value="number">Número</SelectItem>
-                      <SelectItem value="button">Botão</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </div>
-              {shouldRenderDevice && (
-                <div className="grid grid-cols-3 items-center gap-4">
-                  <Label className="text-end" htmlFor="paramDest">
-                    Dispositivo
-                  </Label>
-                  <Select onValueChange={handleDeviceDest} value={deviceDest}>
-                    <SelectTrigger className="col-span-2">
-                      <SelectValue placeholder="Dispositivo" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Softphone">Softphone</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
-              {shouldRenderType && (
-                <div className="grid grid-cols-3 items-center gap-4">
-                  <Label className="text-end" htmlFor="paramDest">
-                    Botão
-                  </Label>
-                  <Select
-                    onValueChange={handleButtonSelect}
-                    value={actionValue}
-                  >
-                    <SelectTrigger className="col-span-2">
-                      <SelectValue placeholder="Selecione" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel>
-                          {texts[language].headerButtons}
-                        </SelectLabel>
-                        {userButtons.map((button) => (
-                          <SelectItem key={button.id} value={button.id as any}>
-                            {button.button_name}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
-              {!shouldRenderType && (
-                <div className="grid grid-cols-3 items-center gap-4">
-                  <div className="flex justify-end gap-1">
-                    <Label
-                      htmlFor="name"
-                      title="Para qual ramal ou ID do botão a ser chamado/alertado"
-                    >
-                      Valor
-                    </Label>
-                    <Info className="size-[12px]" />
-                  </div>
-                  <Input
-                    className="col-span-2"
-                    id="name"
-                    placeholder="Valor"
-                    type="text"
-                    value={actionValue}
-                    onChange={handleActionValue}
-                  />
-                </div>
-              )}
-            </div>
+            {/*div parametro execução */}
+            <CardExecActions
+              action={action}
+              onUpdateExecActionDetails={handleUpdateExecActionDetails}
+            />
+            {/* END div parametro execução */}
           </div>
           <CardFooter className="flex justify-end">
             {!isCreating && (

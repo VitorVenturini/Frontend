@@ -21,7 +21,6 @@ export interface SensorInterface {
   image?: string;
   date?: string;
   isBoolean?: boolean;
-  // devEUI?: string; // devEUI do admin é letra maiuscula pois ele vem do gateway
   deveui?: string;  //deveui do usuario é letra minuscula pois vem do banco 
   description?: string; // info milesight
   appKey?: string; // info milesight
