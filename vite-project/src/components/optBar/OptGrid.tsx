@@ -78,6 +78,7 @@ export default function OptGrid({
                       clickedUser === user.guid ? null : user.guid
                     );
                   }}
+                  clickedUser={clickedUser}
                 />
               </div>
             ))
