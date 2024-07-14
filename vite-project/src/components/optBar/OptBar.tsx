@@ -9,9 +9,10 @@ type OnOptChange = (opt: string) => void;
 
 interface OtpRowProps {
   onOptChange: OnOptChange;
+  clickedUser: string | null
 }
 
-export default function OptBar({ onOptChange }: OtpRowProps) {
+export default function OptBar({ onOptChange,clickedUser }: OtpRowProps) {
   const { language } = useLanguage();
   const { chat, addChat, addChatMessage } = useChat();
   const [newMessageReceived, setNewMessageReceived] = useState(false);
@@ -21,14 +22,19 @@ export default function OptBar({ onOptChange }: OtpRowProps) {
     onOptChange(newOpt);
   };
 
+  console.log("ClickedUser" + clickedUser)
   useEffect(() => {
+    // ajustar aqui tbm , filtrar pela ultima mensagem de cada usuario 
     const lastMessage = chat[chat.length - 1];
     if (lastMessage) {
-      if (lastMessage.to_guid === myAccountInfo.guid) {
+      if (lastMessage.to_guid === myAccountInfo.guid && clickedUser != lastMessage.from_guid) {
         setNewMessageReceived(true); // marca que uma nova mensagem foi recebida
+      }else if(clickedUser === lastMessage.from_guid){
+        setNewMessageReceived(false);  //quando abrir o chat com o cara que me mandou a mensagem , entao some o ping vermelho
       }
     }
   }, [addChat]); // useEffect para quando eu receber uma mensagem
+
   return (
     <div className="flex">
       <TabsOpt defaultValue="floor" onValueChange={handleOptChange}>

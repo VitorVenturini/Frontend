@@ -66,12 +66,18 @@ function UserLayout() {
     addSensorName,
   } = useSensors();
   const { addHistory, updateHistory } = useHistory();
-  const { setChat, addChat, addChatMessage, chatDelivered, chatRead } =
-    useChat();
+  const {
+    setChat,
+    allMessages,
+    addChat,
+    addChatMessage,
+    chatDelivered,
+    chatRead,
+  } = useChat();
   const [selectedOpt, setSelectedOpt] = useState<string>("floor");
+  const [clickedUser, setClickedUser] = useState<string | null>(null);
   const navigate = useNavigate();
-  const [isAdmin, setIsAdmin] = useState("");
-  const wss = useWebSocketData();
+
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
     switch (message.mt) {
@@ -150,7 +156,7 @@ function UserLayout() {
 
       case "SelectMessageHistoryResultSrc":
         const allMsg: ChatInterface[] = message.result;
-        setChat(allMsg);
+        allMessages(allMsg); // receber todas conversas
         break;
       case "ChatDelivered":
         const msg_id = message.result[0].id;
@@ -163,12 +169,12 @@ function UserLayout() {
         const readDate = message.result[0].read;
         chatRead(id_Read, deliveredDate_Read, readDate);
         break;
-       //{"api":"user","mt":"ControllerReceived","btn_id":"400","prt":"gpio-in-1","value":"off"}
-       case "ControllerReceived":
-        const commandBtn_id = message.btn_id
-        const commandPrt = message.prt
-        const commandValue = message.value
-        setCommandValue(commandBtn_id,commandPrt,commandValue)
+      //{"api":"user","mt":"ControllerReceived","btn_id":"400","prt":"gpio-in-1","value":"off"}
+      case "ControllerReceived":
+        const commandBtn_id = message.btn_id;
+        const commandPrt = message.prt;
+        const commandValue = message.value;
+        setCommandValue(commandBtn_id, commandPrt, commandValue);
         break;
       default:
         console.log("Unknown message type:", message);
@@ -185,6 +191,10 @@ function UserLayout() {
     setSelectedOpt(newOpt);
   };
 
+  const handleClickedUser = (newUser: string | null) => {
+    setClickedUser(newUser);
+  };
+
   return (
     <WebSocketProvider
       token={account.accessToken}
@@ -197,6 +207,7 @@ function UserLayout() {
           buttons={buttons}
           selectedUser={account}
           onOptChange={handleOptChange}
+          clickedUser={clickedUser}
         />
 
         <RightGrid
@@ -204,6 +215,8 @@ function UserLayout() {
           buttons={buttons}
           selectedUser={account}
           selectedOpt={selectedOpt}
+          clickedUser={clickedUser}
+          setClickedUser={handleClickedUser}
         />
       </div>
       {account.type === "admin" && (
