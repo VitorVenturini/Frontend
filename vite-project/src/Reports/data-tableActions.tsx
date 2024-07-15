@@ -55,7 +55,9 @@ export function DataTable<TData, TValue>({
   );
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [loading, setLoading] = useState<boolean>(true);
-
+  const handleRowClick = () =>{
+    console.log("Linha Clicada")
+  }
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -140,7 +142,7 @@ export function DataTable<TData, TValue>({
           ))}
         </TableHeader>
         
-          <TableBody>
+          <TableBody onClick={handleRowClick} >
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
