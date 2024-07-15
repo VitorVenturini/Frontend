@@ -47,13 +47,18 @@ export default function ChatLayout({ userToChat }: ChatProps) {
     setMessage("");
   };
 
+  const handleFormSubmit = (event: React.FormEvent) => {
+    event.preventDefault(); // Previne o comportamento padrão do formulário
+    handleSendMsg(); 
+  };
+
   const handleInputMessage = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(event.target.value);
   };
 
   useEffect(() => {
-    if (endOfMessagesRef.current) {
-      endOfMessagesRef.current.scrollIntoView({ behavior: "smooth" });
+    if (messageListRef.current) {
+      messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
     }
   }, [chat]); // scrollar para baixo apos cada mensagem
 
@@ -120,7 +125,10 @@ export default function ChatLayout({ userToChat }: ChatProps) {
 
   return (
     <div>
-      <div className="h-[400px] overflow-y-auto">
+      <div
+        className="h-[400px] overflow-y-auto"
+        ref={messageListRef}
+      >
         {filteredMessages.map((message, index) => {
           const isMyMessage = message.from_guid === myAccountInfo.guid; // se a mensagem é minha ou não
           const messageText = message.msg || "";
@@ -193,17 +201,18 @@ export default function ChatLayout({ userToChat }: ChatProps) {
       </div> */}
 
       <div className="mt-5">Chat com {userToChat.name}</div>
-
+      <form onSubmit={handleFormSubmit}>
       <div className="flex items-center gap-3 p-2">
         <Input
           placeholder="escreva algo aqui"
           value={message}
           onChange={handleInputMessage}
         />
-        <Button size="icon" onClick={handleSendMsg}>
+        <Button size="icon" type="submit">
           <Send />
         </Button>
       </div>
+      </form>
     </div>
   );
 }

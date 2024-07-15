@@ -38,29 +38,26 @@ export default function UserComponent({
   const [isClicked, setIsClicked] = useState<boolean>(false);
 
   useEffect(() => {
-    // ajustar parar filtrar por cada mensagem de cada usuario e mostrar no componente de cada um
-    const lastMessage = chat[chat.length - 1];
-    if (
-      lastMessage &&
-      lastMessage.to_guid === myAccountInfo.guid &&
-      lastMessage.from_guid === user.guid &&
-      lastMessage.read === null &&
-      lastMessage.from_guid !== clickedUser
-    ) {
-      setNewMessageReceived(true); // marca que uma nova mensagem foi recebida
-    } else if (lastMessage && clickedUser === lastMessage.from_guid) {
-      setNewMessageReceived(false);
+    // Filtra as mensagens recebidas do usuário atual
+    const unreadMessages = chat.filter(
+      (message) =>
+        message.to_guid === myAccountInfo.guid &&
+        message.from_guid === user.guid &&
+        message.read === null
+    );
+  
+    // Verifica se há mensagens não lidas
+    if (unreadMessages.length > 0) {
+      if (clickedUser !== user.guid) {
+        setNewMessageReceived(true); // Marca que há novas mensagens recebidas
+      } else {
+        setNewMessageReceived(false); // Se o chat do usuário estiver aberto, marca como lida
+      }
+    } else {
+      setNewMessageReceived(false); // Se não houver mensagens não lidas, desmarca
     }
-    console.log("Passou aqui")
-  }, [addChat,selectedOpt]);
+  }, [chat]);
 
-  // useEffect(() => {
-  //   if (clickedUser === user.guid) {
-  //      // marca como lida quando o chat é aberto
-  //   }
-  // }, [addChat]);
-
-  // ajustar chat
   return (
     <div>
       <div
