@@ -96,7 +96,7 @@ function UserLayout() {
         break;
       case "SelectAllSensorInfoResultSrc":
         console.log("SelectAllSensorInfoSrc" + message.result);
-        const allSensors: SensorInterface[] = JSON.parse(message.result);
+        const allSensors: SensorInterface[] = message.result
         addSensors(allSensors);
         break;
       case "SensorReceived":
@@ -162,14 +162,15 @@ function UserLayout() {
         const msg_id = message.result[0].id;
         const deliveredDate = message.result[0].delivered;
         chatDelivered(msg_id, deliveredDate);
+          // atualizar que o usuario que eu estou conversando recebeu a mensagem
         break;
       case "ChatRead":
         const id_Read = message.result[0].id;
         const deliveredDate_Read = message.result[0].delivered;
         const readDate = message.result[0].read;
         chatRead(id_Read, deliveredDate_Read, readDate);
+         // atualizar que o usuario que eu estou conversando leu e recebeu a mensagem
         break;
-      //{"api":"user","mt":"ControllerReceived","btn_id":"400","prt":"gpio-in-1","value":"off"}
       case "ControllerReceived":
         const commandBtn_id = message.btn_id;
         const commandPrt = message.prt;
