@@ -61,7 +61,10 @@ export function DataTable<TData extends TableData, TValue>({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [loading, setLoading] = useState<boolean>(true);
   const {users} = useUsers()
-
+  
+    const handleRowClick = () =>{
+    console.log("Linha Clicada")
+  }
 
   const table = useReactTable({
     data,

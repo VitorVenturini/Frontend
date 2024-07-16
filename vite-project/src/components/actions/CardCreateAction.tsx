@@ -159,30 +159,6 @@ export default function CardCreateAction({
                 onChange={handleActionName}
               />
             </div>
-            {/*FALTA DEFINIÇÃO PRIORIDADE*/}
-            {/* <div className="grid grid-cols-6 items-center gap-4">
-              <Label className="text-end" htmlFor="name">
-                Prioridade
-              </Label>
-              <Select
-                onValueChange={handlePriority}
-                value={priority}
-              >
-                <SelectTrigger className="col-span-2">
-                  <SelectValue placeholder="Selecione o Tipo" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Prioridade</SelectLabel>
-                    <SelectItem value="1">Muita Prioridade</SelectItem>
-                    <SelectItem value="2">Média Prioridade</SelectItem>
-                    <SelectItem value="3">Neutra Prioridade</SelectItem>
-                    <SelectItem value="4">Pouca Prioridade</SelectItem>
-                    <SelectItem value="5">Nenhuma Prioridade</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div> */}
           </div>
           <div className="flex columns gap-4 p-4 justify-between">
             {/*div parametro Trigger */}

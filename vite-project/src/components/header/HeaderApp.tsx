@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import Logout from "@/components/logout/Logout";
 import { useAccount } from "@/components/account/AccountContext";
 import { useNavigate } from "react-router-dom";
-
+import { Toggle } from "@radix-ui/react-toggle";
 import {
   WebSocketProvider,
   useWebSocketData,
@@ -69,6 +69,7 @@ export default function HeaderApp() {
 
       <div className="flex items-end ">
         <div className="flex items-center gap-1">
+
           <Button variant="ghost" onClick={handleUserViewClick}>
             {texts[language].headerUser}
           </Button>
