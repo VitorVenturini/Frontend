@@ -57,14 +57,13 @@ export default function ButtonsGridPages({
   return (
 
 
-    <Card className="p-1 flex flex-col gap-1 items-center justify-center ">
-      <div className="flex-grow w-full">
+    <Card className="p-1 flex flex-col gap-1">
+      <div className="w-full space-y-1">
         <ButtonsGrid
           buttons={buttonsInSelectedPage}
           selectedUser={selectedUser}
           selectedPage={selectedPage}
         />
-        <br />
         <OptBar onOptChange={handleOptChange} clickedUser={clickedUser} />
       </div>
       <Tabs

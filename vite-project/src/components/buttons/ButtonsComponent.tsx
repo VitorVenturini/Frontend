@@ -264,7 +264,7 @@ export default function ButtonsComponent({
   };
 
   const commonClasses =
-    "w-[128px] h-[55px] rounded-lg border bg-border text-white shadow-sm p-1";
+    "w-[128px] h-[55px] xl:w-[150px] xl:h-[80px] rounded-lg border bg-border text-white shadow-sm p-1";
 
   const renderButtonContent = () => {
     switch (button.button_type) {
