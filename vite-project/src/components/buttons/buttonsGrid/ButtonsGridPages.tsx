@@ -24,12 +24,14 @@ interface ButtonsGridPagesProps {
   buttons: ButtonInterface[];
   selectedUser: User;
   onOptChange: (newOpt: string) => void;
+  clickedUser?: string | null;
 }
 
 export default function ButtonsGridPages({
   buttons,
   selectedUser,
   onOptChange,
+  clickedUser
 }: ButtonsGridPagesProps) {
   const [selectedPage, setSelectedPage] = useState("1"); // Inicialmente, a página 1 é selecionada. Note que agora é uma string.
   const { language } = useLanguage();
@@ -63,7 +65,7 @@ export default function ButtonsGridPages({
           selectedPage={selectedPage}
         />
         <br />
-        <OptBar onOptChange={handleOptChange} />
+        <OptBar onOptChange={handleOptChange} clickedUser={clickedUser} />
       </div>
       <Tabs
         defaultValue="1"

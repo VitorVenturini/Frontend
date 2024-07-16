@@ -25,9 +25,9 @@ const useWebSocket = (
     const currentUrl = window.location.hostname;
     let wsUrl = "";
     if (window.location.protocol === "http:") {
-      wsUrl = "wss://meet.wecom.com.br:443?token=" + token;
+      wsUrl = "wss://meet.wecom.com.br:443/ws?token=" + token;
     } else {
-      wsUrl = "wss://" + currentUrl + ":443?token=" + token;
+      wsUrl = "wss://" + currentUrl + ":443/ws?token=" + token;
     }
 
     function connect() {
@@ -119,6 +119,7 @@ const useWebSocket = (
     if (account.isAdmin) {
       ws.current?.send(JSON.stringify({ api: apiType, mt: "SelectButtons" }));
       ws.current?.send(JSON.stringify({ api: apiType, mt: "SelectSensors" }));
+      ws.current?.send(JSON.stringify({ api: apiType, mt: "TableUsers" }));
     } else {
       // else para usuario
       ws.current?.send(JSON.stringify({ api: apiType, mt: "SelectButtons" }));

@@ -11,12 +11,12 @@ export default function HistoryGrid() {
   // }, [history]);
 
   return (
-      <ScrollArea className="w-full min-h-[390px] max-h-[390px]">
-        {history.map((hist, index) => (
-          <div key={index} className="w-full ">
-            <HistoryCell historyInfo={hist} />
-          </div>
-        ))}
-      </ScrollArea>
+    <>
+      {history.map((hist, index) => (
+        <div key={index} className="w-full ">
+          <HistoryCell historyInfo={hist} />
+        </div>
+      ))}
+    </>
   );
 }
