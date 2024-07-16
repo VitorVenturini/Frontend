@@ -9,7 +9,7 @@ type OnOptChange = (opt: string) => void;
 
 interface OtpRowProps {
   onOptChange: OnOptChange;
-  clickedUser: string | null
+  clickedUser?: string | null
 }
 
 export default function OptBar({ onOptChange,clickedUser }: OtpRowProps) {

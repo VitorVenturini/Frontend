@@ -55,6 +55,8 @@ import ModalCombo from "@/components/buttons/combo/ModalCombo";
 import ComboButton from "./combo/ComboButton";
 import ModalCommand from "./command/ModalCommand";
 import CommandButton from "./command/CommandButton";
+import ModalUser from "./user/ModalUser";
+import UserButton from "./user/UserButton";
 interface User {
   id: string;
   name: string;
@@ -134,6 +136,14 @@ export default function ButtonsComponent({
             clickedPosition={clickedPosition}
           />
         );
+        case "user":
+          return (
+            <ModalUser
+              selectedPage={selectedPage}
+              selectedUser={selectedUser}
+              clickedPosition={clickedPosition}
+            />
+          );
       case "sensor":
         return (
           <ModalSensor
@@ -285,19 +295,27 @@ export default function ButtonsComponent({
         );
       case "user":
         return (
-          <div
-            className={`${commonClasses} flex flex-col bg-buttonNumber`}
-            onClick={handleClick}
-          >
-            <div className="flex items-center gap-1">
-              <User />
-              <p className="text-sm font-medium leading-none">
-                {button.button_name}{" "}
-              </p>
-            </div>
-            <div>
-              <p>{button.button_prt}</p>
-            </div>
+          <div>
+            <Dialog>
+              <DialogTrigger asChild>
+                <div>
+                  <UserButton button={button} handleClick={handleClick} />
+                </div>
+              </DialogTrigger>
+              {isAdmin && (
+                <DialogContent>
+                  {
+                    <ModalUser
+                      selectedPage={selectedPage}
+                      selectedUser={selectedUser}
+                      clickedPosition={clickedPosition}
+                      existingButton={button}
+                      isUpdate={true}
+                    />
+                  }
+                </DialogContent>
+              )}
+            </Dialog>
           </div>
         );
       case "number":

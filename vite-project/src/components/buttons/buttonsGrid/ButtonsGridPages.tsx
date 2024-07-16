@@ -24,7 +24,7 @@ interface ButtonsGridPagesProps {
   buttons: ButtonInterface[];
   selectedUser: User;
   onOptChange: (newOpt: string) => void;
-  clickedUser: string | null;
+  clickedUser?: string | null;
 }
 
 export default function ButtonsGridPages({

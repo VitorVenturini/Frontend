@@ -30,6 +30,7 @@ interface UserContextType {
   setUsers: React.Dispatch<React.SetStateAction<UserInterface[]>>;
   addUsers: (user: UserInterface) => void;
   updateUser: (user: UserInterface) => void;
+  updateUserStauts: (guid: string, status: string) => void;
 }
 
 const userContext = createContext<UserContextType | undefined>(undefined);
@@ -39,13 +40,18 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
   const addUsers = (user: UserInterface) => {
     setUsers((prevUsers) => [...prevUsers, user]);
-    console.log("Atualizou o contexto")
   };
-
   const updateUser = (updatedUser: UserInterface) => {
     setUsers((prevUsers) =>
       prevUsers.map((user) =>
         user.id === updatedUser.id ? { ...user, ...updatedUser } : user
+      )
+    );
+  };
+  const updateUserStauts = (guid: string, status: string) => {
+    setUsers((prevUsers) =>
+      prevUsers.map((user) =>
+        user.guid === guid ? { ...user, status } : user
       )
     );
   };
@@ -63,6 +69,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         setUsers,
         addUsers,
         updateUser,
+        updateUserStauts
       }}
     >
       {children}

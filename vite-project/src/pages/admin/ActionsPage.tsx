@@ -13,7 +13,7 @@ export default function ActionsPage() {
   return (
     <div className="px-2 flex flex-col gap-4 justify-center mx-[20px]">
       <ScrollArea className="w-full h-full">
-        <DataTable columns={columnsactions} data={actions} />
+        <DataTable columns={columnsactions as any} data={actions as any} />
       </ScrollArea>
     </div>
   );
