@@ -9,6 +9,8 @@ import CardCreateAction from "@/components/actions/CardCreateAction";
 import { ActionsInteface } from "@/components/actions/ActionsContext";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { useState } from "react";
+import { useUsers } from "@/components/user/UserContext";
+
 export const columnsActions: ColumnDef<ActionsInteface>[] = [
     {
       accessorKey: "id",
@@ -26,7 +28,7 @@ export const columnsActions: ColumnDef<ActionsInteface>[] = [
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         )
-      },
+      }
     },
     {
       accessorKey: "action_name",
@@ -51,8 +53,8 @@ export const columnsActions: ColumnDef<ActionsInteface>[] = [
       header: "Gatilho",
     },
     {
-      accessorKey: "action_start_device_prt",
-      header: "Parâmetro",
+      accessorKey: "action_start_device_parameter",
+      header: "Device Parâmetro",
     },
     {
       accessorKey: "action_start_device",

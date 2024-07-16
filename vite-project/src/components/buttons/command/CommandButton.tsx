@@ -35,15 +35,15 @@ export default function CommandButton({ handleClick, button }: ButtonProps) {
         mt: "TriggerCommand",
         btn_id: button.id,
       });
-      setIsLoading(true)
+      setIsLoading(true);
     }
   };
   const buttonState = buttons.find((b) => b.id === button.id);
   const commandValue = buttonState?.commandValue;
 
-  useEffect(() =>{
-    setIsLoading(false)
-  },[commandValue]) // quando vier o novo valor do botão command ( quando vier o ControllerReceived)
+  useEffect(() => {
+    setIsLoading(false);
+  }, [commandValue]); // quando vier o novo valor do botão command ( quando vier o ControllerReceived)
   return (
     <div className={commonClasses} onClick={handleClickCommand}>
       <div className="flex items-center gap-1 cursor-pointer justify-between">
@@ -54,15 +54,16 @@ export default function CommandButton({ handleClick, button }: ButtonProps) {
           <p className="text-[10px] font-medium leading-none text-muted-foreground">
             {button.button_prt}
           </p>
-          <p className=" text-sm font-medium leading-none capitalize mt-1 items-center flex gap-3">
+          <p className=" text-sm font-medium leading-none capitalize mt-1 items-center flex">
             {commandValue}
-            {isLoading ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <Switch
-                className="h-5"
-                checked={commandValue === "on"}
-              />
+            {!account.isAdmin && (
+              <div>
+                {isLoading ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Switch className="h-5" checked={commandValue === "on"} />
+                )}
+              </div>
             )}
           </p>
         </div>
