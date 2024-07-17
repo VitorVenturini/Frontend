@@ -2,7 +2,7 @@
 import UpdateUsers from "@/components/account/UpdateUsers";
 import DeleteUsers from "@/components/account/DeleteUsers";
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, MoreHorizontal } from "lucide-react"
+import { ArrowUpDown } from "lucide-react"
 import { Button } from "@/components/ui/button";
 export interface User {
   id: string;

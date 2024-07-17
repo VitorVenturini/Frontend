@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import LicenseCard from "@/components/options/CardLicense";
 import CardClearDB from "@/components/options/CardClearDB";
-import GatewayCard from "@/components/options/GatewayCard";
+import Gateways from "@/components/options/Gateways";
 import ContaCard from "@/components/options/ContaCard";
 import RadioCard from "@/components/options/RadioCard";
 import TelephonePBXCard from "@/components/options/TelephonePBXCard";
@@ -22,8 +22,8 @@ export default function MenuOptions() {
         return <LicenseCard />;
       case "DataBase":
         return <CardClearDB />;
-      case "Gateway":
-        return <GatewayCard />;
+      case "Gateways":
+        return <Gateways />;
       case "Conta":
         return <ContaCard />;
       case "Radio":
@@ -59,9 +59,9 @@ export default function MenuOptions() {
         <Button
           className="focus:bg-accent"
           variant={"ghost"}
-          onClick={() => handleClick("Gateway")}
+          onClick={() => handleClick("Gateways")}
         >
-          Gateway
+          Gateways
         </Button>
         <Button
           className="focus:bg-accent"
