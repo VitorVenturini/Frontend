@@ -59,6 +59,7 @@ interface OptGenericProps {
   selectedOpt: string;
   existingButton?: ButtonInterface;
   isUpdate?: boolean;
+  onClose?: () => void;
 }
 
 export default function CardOptGeneric({
@@ -66,6 +67,7 @@ export default function CardOptGeneric({
   selectedUser,
   selectedOpt,
   existingButton,
+  onClose,
   isUpdate = false,
 }: OptGenericProps) {
 
@@ -148,6 +150,7 @@ export default function CardOptGeneric({
       });
 
       setIsCreating(false);
+      onClose?.()
     } else {
       toast({
         variant: "destructive",
@@ -163,6 +166,7 @@ export default function CardOptGeneric({
         mt: "DeleteButtons",
         id: existingButton?.id,
       });
+      onClose?.()
     } catch (e) {
       console.error(e);
     }

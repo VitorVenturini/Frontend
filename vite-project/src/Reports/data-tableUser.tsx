@@ -1,6 +1,5 @@
 "use client";
 import * as React from "react";
-import CardCreateAccount from "@/components/account/CardCreateAccount";
 import {
   ColumnDef,
   flexRender,
@@ -21,7 +20,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
+import { Dialog,DialogContent,DialogTrigger } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import CardCreateAccount from "@/components/account/CardCreateAccount";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -35,6 +36,7 @@ export function DataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
+  const [isDialogOpen,setIsDialogOpen] = React.useState(false)
   const table = useReactTable({
     data,
     columns,
@@ -68,7 +70,14 @@ export function DataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
-        <CardCreateAccount />
+         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger>
+            <Button>Criar Conta</Button>
+          </DialogTrigger>
+          <DialogContent>
+            <CardCreateAccount onSuccess={() => setIsDialogOpen(false)} />
+          </DialogContent>
+        </Dialog>
       </div>
       <Table>
         <TableHeader>

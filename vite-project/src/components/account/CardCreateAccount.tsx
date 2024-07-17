@@ -12,44 +12,91 @@ import { useToast } from "@/components/ui/use-toast";
 import { useState, ChangeEvent } from "react";
 import { Loader2 } from "lucide-react";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogClose,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 import texts from "../../_data/texts.json";
 import { useLanguage } from "@/components/language/LanguageContext";
+import { UserInterface, useUsers } from "../user/UserContext";
+import { host } from "@/App";
+import {
+  useWebSocketData,
+  WebSocketProvider,
+} from "../websocket/WebSocketProvider";
 
-interface User {
-  id: string;
-  name: string;
-  guid: string;
-  email: string;
-  sip: string;
-  // Adicione aqui outros campos se necessário
+interface CreateAccountProps {
+  user?: UserInterface;
+  isUpdate?: boolean;
+  onSuccess?: () => void;
 }
-export default function CardCreateAccount() {
-  const [users, setUsers] = useState<User[]>([]);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [sip, setSip] = useState("");
-  const [type, setType] = useState<string>("");
+
+export default function CardCreateAccount({
+  user,
+  isUpdate,
+  onSuccess,
+}: CreateAccountProps) {
+  const [name, setName] = useState(user?.name || "");
+  const [email, setEmail] = useState(user?.email || "");
+  const [password, setPassword] = useState(user?.password || "");
+  const [sip, setSip] = useState(user?.sip || "");
+  const [type, setType] = useState<string>(user?.type || "");
   const [isCreating, setIsCreating] = useState(false);
   const { language } = useLanguage();
-
   const { toast } = useToast();
+  const { addUsers } = useUsers();
+  const wss = useWebSocketData();
 
-  interface ContaProps {
-    onUserCreated: () => void;
-  }
+  const validateFields = () => {
+    let isValid = true;
+
+    if (!name) {
+      toast({
+        variant: "destructive",
+        description: "Nome é obrigatório",
+      });
+      isValid = false;
+    }
+
+    if (!email) {
+      toast({
+        variant: "destructive",
+        description: "Email é obrigatório",
+      });
+      isValid = false;
+    }
+
+    if (!password) {
+      toast({
+        variant: "destructive",
+        description: "Senha é obrigatória",
+      });
+      isValid = false;
+    }
+
+    if (!sip) {
+      toast({
+        variant: "destructive",
+        description: "SIP é obrigatório",
+      });
+      isValid = false;
+    }
+
+    if (!type) {
+      toast({
+        variant: "destructive",
+        description: "Tipo de conta é obrigatório",
+      });
+      isValid = false;
+    }
+
+    return isValid;
+  };
 
   const passwordValidation = (password: string) => {
-    setIsCreating(true);
-    // Verifica se a senha tem pelo menos 6 caracteres
     if (password.length < 6) {
       toast({
         variant: "destructive",
@@ -58,7 +105,6 @@ export default function CardCreateAccount() {
       return false;
     }
 
-    // Verifica se a senha contém pelo menos um caractere especial
     const specialCharacterRegex = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
     if (!specialCharacterRegex.test(password)) {
       toast({
@@ -88,60 +134,50 @@ export default function CardCreateAccount() {
     setName(event.target.value);
   };
 
-  const resetForm = () => {
-    setName("");
-    setEmail("");
-    setPassword("");
-    setSip("");
-    setType("");
-  };
-
   const handleCreateUser = async () => {
-    console.log(
-      `Nome: ${name},Email: ${email}, Senha: ${password}, SIP: ${sip}, Tipo de conta: ${type}`
-    );
-
     setIsCreating(true);
 
-    if (!passwordValidation(password)) {
-      toast({
-        variant: "destructive",
-        description: "Senha inválida",
-      });
+    if (!validateFields()) {
       setIsCreating(false);
       return;
     }
+
+    if (!passwordValidation(password)) {
+      setIsCreating(false);
+      return;
+    }
+    //enviar a senha criptografada depois
     const obj = {
       email: email,
       password: password,
       name: name,
       sip: sip,
       type: type,
+      ...(isUpdate && { id: user?.id }),
     };
 
     try {
-      const response = await fetch("https://meet.wecom.com.br/api/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-auth": localStorage.getItem("token") || "",
-        },
-        body: JSON.stringify(obj),
-      });
+      const response = await fetch(
+        host + (isUpdate ? "/api/updateUser" : "/api/create"),
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-auth": localStorage.getItem("token") || "",
+          },
+          body: JSON.stringify(obj),
+        }
+      );
 
       const data = await response.json();
 
       if (!response.ok) {
-        // Se o servidor retornar um código de status que não está no intervalo 200-299,
-        // então nós lançamos um erro
         if (data.error === "emailDuplicated") {
-          // Se a mensagem de erro for 'Email already exists', então exibimos um toast específico
           toast({
             variant: "destructive",
             description: "Email já está em uso",
           });
         } else {
-          // Se a mensagem de erro for diferente, então exibimos um toast genérico
           toast({
             variant: "destructive",
             description: data.error,
@@ -149,37 +185,51 @@ export default function CardCreateAccount() {
         }
         throw new Error(data.error);
       } else {
-        console.log(data);
-        // Exibe um toast de sucesso
         toast({
           description: "Conta criada com sucesso",
         });
-        setTimeout(() => {
-          window.location.reload();
-        }, 3000);
+        onSuccess?.();
+        wss?.sendMessage({
+          api: "admin",
+          mt: "TableUsers",
+        });
+        // pedir a tableUsers de novo para atualizar o contexto com os novos usuários
+        // podemos modificar isso futuramente e atualizar o contexto de acordo com o retorno da API
 
-        //fazer com que atulize a lista de contas
+        // if (isUpdate) { // metodos para atualizar o contexto
+        //   updateUsers(obj);
+        // } else {
+        //   addUsers(obj);
+        // }
       }
     } catch (error) {
-      // Aqui você pode lidar com qualquer erro que possa ocorrer durante a criação da conta
+      console.error("Erro ao criar conta:", error);
     }
+
     setIsCreating(false);
   };
+
+  const handleFormSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    event.stopPropagation()
+    handleCreateUser();
+  };
   return (
-    //div que contem os cards
-    <div className="flex flex-col md:flex-row gap-5 justify-center">
-      <Dialog onOpenChange={(isOpen) => !isOpen && resetForm()}>
-        <DialogTrigger>
-          <Button>{texts[language].cardCreateAccountTrigger}</Button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{texts[language].cardCreateAccountTittle}</DialogTitle>
-            <DialogDescription>
-              {texts[language].cardCreateAccountDescription}
-            </DialogDescription>
-          </DialogHeader>
-          {/* Card de criação de usuario */}
+      <form onSubmit={handleFormSubmit}>
+      <CardHeader>
+        <CardTitle>
+          {isUpdate
+            ? "Update Account"
+            : texts[language].cardCreateAccountTittle}
+        </CardTitle>
+        <CardDescription>
+          {isUpdate
+            ? "Update Account Information"
+            : texts[language].cardCreateAccountDescription}
+        </CardDescription>
+      </CardHeader>
+    
+        <CardContent>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-3 items-center gap-4">
               <Label className="text-end" htmlFor="name">
@@ -195,7 +245,7 @@ export default function CardCreateAccount() {
               />
             </div>
             <div className="grid grid-cols-3 items-center gap-4">
-              <Label className="text-end" htmlFor="name">
+              <Label className="text-end" htmlFor="email">
                 Email
               </Label>
               <Input
@@ -208,7 +258,7 @@ export default function CardCreateAccount() {
               />
             </div>
             <div className="grid grid-cols-3 items-center gap-4">
-              <Label className="text-end" htmlFor="name">
+              <Label className="text-end" htmlFor="password">
                 Senha
               </Label>
               <Input
@@ -221,7 +271,7 @@ export default function CardCreateAccount() {
               />
             </div>
             <div className="grid grid-cols-3 items-center gap-4">
-              <Label className="text-end" htmlFor="name">
+              <Label className="text-end" htmlFor="sip">
                 SIP
               </Label>
               <Input
@@ -233,7 +283,7 @@ export default function CardCreateAccount() {
               />
             </div>
             <div className="grid grid-cols-3 items-center gap-4">
-              <Label className="text-end" htmlFor="framework" id="type">
+              <Label className="text-end" htmlFor="type">
                 Tipo de conta
               </Label>
               <Select value={type} onValueChange={handleTypeChange}>
@@ -246,20 +296,21 @@ export default function CardCreateAccount() {
                 </SelectContent>
               </Select>
             </div>
-            <DialogClose className="flex justify-end">
-              {!isCreating && (
-                <Button onClick={handleCreateUser}>Criar conta</Button>
-              )}
-              {isCreating && (
-                <Button disabled>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Criar conta
-                </Button>
-              )}
-            </DialogClose>
           </div>
-        </DialogContent>
-      </Dialog>
-    </div>
+        </CardContent>
+        <CardFooter className="flex justify-end">
+          {!isCreating && (
+            <Button type="submit" onSubmit={handleFormSubmit}>
+              {isUpdate ? "Atualizar " : "Criar "} Conta
+            </Button>
+          )}
+          {isCreating && (
+            <Button disabled>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              {isUpdate ? "Atualizar " : "Criar "} Conta
+            </Button>
+          )}
+        </CardFooter>
+        </form>
   );
 }

@@ -1,5 +1,8 @@
 import { AccountContext } from "../account/AccountContext";
-import { ButtonInterface, useButtons } from "@/components/buttons/buttonContext/ButtonsContext";
+import {
+  ButtonInterface,
+  useButtons,
+} from "@/components/buttons/buttonContext/ButtonsContext";
 import React, { useEffect, useState, ChangeEvent, useContext } from "react";
 import { useWebSocketData } from "../websocket/WebSocketProvider";
 import { Input } from "@/components/ui/input";
@@ -80,6 +83,8 @@ export default function OptComponent({
   isClicked,
 }: OptProps) {
   const { isAdmin } = useContext(AccountContext);
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const handleClick = () => {
     onClick();
   };
@@ -111,6 +116,7 @@ export default function OptComponent({
             selectedUser={selectedUser}
             selectedOpt={selectedOpt}
             clickedPosition={clickedPosition}
+            onClose={() => setIsDialogOpen(false)}
           />
         );
       case "radio":
@@ -174,7 +180,7 @@ export default function OptComponent({
       // Caso específico para o tipo "sensor"
       return (
         <div>
-          <Dialog>
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <div
                 className={`${commonClasses} flex flex-col cursor-pointer ${
@@ -200,13 +206,14 @@ export default function OptComponent({
                   clickedPosition={clickedPosition}
                   existingButton={button}
                   isUpdate={true}
+                  onClose={() => setIsDialogOpen(false)}
                 />
               </DialogContent>
             )}
           </Dialog>
         </div>
       );
-    } 
+    }
     // else if(selectedOpt === "chat"){
     //   return(
     //     <div>CHAT</div>
@@ -215,7 +222,7 @@ export default function OptComponent({
     else {
       return (
         <div>
-          <Dialog>
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <div
                 className={`${commonClasses} flex flex-col cursor-pointer ${
