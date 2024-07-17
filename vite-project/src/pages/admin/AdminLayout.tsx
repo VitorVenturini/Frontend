@@ -124,6 +124,9 @@ function AdminLayout() {
           description: "Ação Deletada com sucesso",
         });
         break;
+      case "ConfigResult":
+        // criar um contexto para googleAPI Key 
+        break;
       default:
         console.log("Unknown message type:", message);
         break;
