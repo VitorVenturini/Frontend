@@ -18,7 +18,7 @@ interface ChatProps {
 export default function ChatLayout({ userToChat }: ChatProps) {
   const wss = useWebSocketData();
   const [message, setMessage] = useState("");
-  const { chat, addChat, chatDelivered, addChatMessage } = useChat();
+  const { chat, addChat, chatRead } = useChat();
   const { users } = useUsers();
 
   const myAccountInfo = JSON.parse(localStorage.getItem("Account") || "{}");
@@ -47,36 +47,73 @@ export default function ChatLayout({ userToChat }: ChatProps) {
     setMessage("");
   };
 
+  const handleFormSubmit = (event: React.FormEvent) => {
+    event.preventDefault(); // Previne o comportamento padrão do formulário
+    handleSendMsg(); 
+  };
+
   const handleInputMessage = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(event.target.value);
   };
 
   useEffect(() => {
-    if (endOfMessagesRef.current) {
-      endOfMessagesRef.current.scrollIntoView({ behavior: "smooth" });
+    if (messageListRef.current) {
+      messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
     }
   }, [chat]); // scrollar para baixo apos cada mensagem
 
-  useEffect(() => {
-    const lastMessage = chat[chat.length - 1];
+  // useEffect(() => {
+  //   const lastMessage = chat[chat.length - 1];
 
-    if (lastMessage) {
-      if (
-        userToChat &&
-        lastMessage.to_guid === myAccountInfo.guid &&
-        userToChat.guid === lastMessage.from_guid &&
-        !lastMessage.read
-      ) {
-        if (wss) {
-          wss.sendMessage({
-            api: "user",
-            mt: "ChatRead",
-            msg_id: lastMessage.id,
-          });
+  //   if (lastMessage) {
+  //     if (
+  //       userToChat &&
+  //       lastMessage.to_guid === myAccountInfo.guid &&
+  //       userToChat.guid === lastMessage.from_guid &&
+  //       !lastMessage.read
+  //     ) {
+  //       if (wss) {
+  //         wss.sendMessage({
+  //           api: "user",
+  //           mt: "ChatRead",
+  //           msg_id: lastMessage.id,
+  //         });
+  //         const currentDate = new Date().toISOString();
+  //         chatRead(lastMessage.id,currentDate,currentDate)
+  //         // atualizar que eu li e recebi a mensagem pois estou com o chat aberto com esse usuario
+  //       }
+  //     }
+  //   }
+  // }, [addChat]); // useEffect para monitorar as mensagens recebidas e enviadas
+
+  useEffect(() => {
+    const markMessagesAsRead = () => {
+      chat.forEach((message) => {
+        if (
+          message.to_guid === myAccountInfo.guid &&
+          message.from_guid === userToChat.guid &&
+          !message.read
+        ) {
+          // Marcar a mensagem como lida no backend
+          if (wss) {
+            wss.sendMessage({
+              api: "user",
+              mt: "ChatRead",
+              msg_id: message.id,
+            });
+          }
+          // Atualizar o estado local para refletir que a mensagem foi lida
+          const currentDate = new Date().toISOString();
+          if (userToChat.guid) {
+            chatRead(message.id, currentDate, currentDate);
+          }
         }
-      }
-    }
-  }, [addChat]); // useEffect para monitorar as mensagens recebidas e enviadas
+      });
+    };
+
+    // Chamar a função para marcar as mensagens como lidas ao abrir o chat
+    markMessagesAsRead();
+  }, [chat]); // Dependências do useEffect
 
   const filteredMessages = chat.filter(
     (message) =>
@@ -88,15 +125,22 @@ export default function ChatLayout({ userToChat }: ChatProps) {
 
   return (
     <div>
-      <div className="h-[400px] overflow-y-auto">
+      <div
+        className="h-[400px] overflow-y-auto"
+        ref={messageListRef}
+      >
         {filteredMessages.map((message, index) => {
-          const isMyMessage = message.from_guid === myAccountInfo.guid; // se a mensagem é minha ou não 
+          const isMyMessage = message.from_guid === myAccountInfo.guid; // se a mensagem é minha ou não
           const messageText = message.msg || "";
 
           let status;
-          if (isMyMessage) { // se for minha mensagem entao adiciona as verificações 
-            status = message.read ? "read" : (message.delivered ? "received" : "sent") || "sent";
-          } else { // se nao for , entao nao coloca nada , sem o risquinho , igual no whatsapp
+          if (isMyMessage) {
+            // se for minha mensagem entao adiciona as verificações
+            status = message.read
+              ? "read"
+              : (message.delivered ? "received" : "sent") || "sent";
+          } else {
+            // se nao for , entao nao coloca nada , sem o risquinho , igual no whatsapp
             status = undefined;
           }
 
@@ -157,17 +201,18 @@ export default function ChatLayout({ userToChat }: ChatProps) {
       </div> */}
 
       <div className="mt-5">Chat com {userToChat.name}</div>
-
+      <form onSubmit={handleFormSubmit}>
       <div className="flex items-center gap-3 p-2">
         <Input
           placeholder="escreva algo aqui"
           value={message}
           onChange={handleInputMessage}
         />
-        <Button size="icon" onClick={handleSendMsg}>
+        <Button size="icon" type="submit">
           <Send />
         </Button>
       </div>
+      </form>
     </div>
   );
 }

@@ -20,7 +20,7 @@ interface OptGridProps {
   setClickedButtonId: (id: number | null) => void;
   clickedButtonId: number | null;
   clickedUser: string | null;
-  setClickedUser: (id: string | null) => void;
+  setClickedUser: (newUser: string | null) => void;
   //   selectedPage : string
 }
 
@@ -48,9 +48,12 @@ export default function OptGrid({
   const account = useAccount();
   const { users } = useUsers();
 
-  // console.log("TODOS USUARIOS" + JSON.stringify(users))
-  console.log("Option Selecionada : " + selectedOpt);
-  console.log("Buttons" + JSON.stringify(buttons));
+  const handleClickedUser = (newUser: string | null) => {
+    if (setClickedUser) {
+      setClickedUser(newUser);
+    }
+  };
+
   if (selectedOpt === "chat") {  // quando for do TIPO CHAT O TRATAMENTO É DIFERENTE 
     // precisamos melhorar isso ~vitor ~pietro
     const grid = Array(2)
@@ -74,11 +77,12 @@ export default function OptGrid({
                 <UserComponent
                   user={user}
                   onClick={() => {
-                    setClickedUser(
+                    handleClickedUser(
                       clickedUser === user.guid ? null : user.guid
                     );
                   }}
                   clickedUser={clickedUser}
+                  selectedOpt ={selectedOpt}
                 />
               </div>
             ))

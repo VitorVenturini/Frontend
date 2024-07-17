@@ -29,8 +29,11 @@ import {
   useGateways,
 } from "@/components/Gateways/GatewaysContext";
 
+import { useUsers } from "@/components/user/UserContext";
+import { UserInterface } from "@/components/user/UserContext";
 function AdminLayout() {
   const account = useAccount();
+  const { setUsers } = useUsers();
   const wss = useWebSocketData();
   const { buttons, setButtons, addButton, updateButton, deleteButton } =
     useButtons();
@@ -71,6 +74,11 @@ function AdminLayout() {
         });
         deleteButton(message.id_deleted);
         break;
+      case "TableUsersResult":
+        const newUser: UserInterface[] = message.result;
+        setUsers(newUser);
+        break;
+
       // case "SelectSensorNameResult":
       //   //Lógica antiga vamos deixar comentado por enquanto
       //   // const firstSensors: SensorInterface[] = JSON.parse(message.result);

@@ -119,6 +119,7 @@ const useWebSocket = (
     if (account.isAdmin) {
       ws.current?.send(JSON.stringify({ api: apiType, mt: "SelectButtons" }));
       ws.current?.send(JSON.stringify({ api: apiType, mt: "SelectSensors" }));
+      ws.current?.send(JSON.stringify({ api: apiType, mt: "TableUsers" }));
     } else {
       // else para usuario
       ws.current?.send(JSON.stringify({ api: apiType, mt: "SelectButtons" }));

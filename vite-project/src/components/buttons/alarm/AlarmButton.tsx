@@ -70,7 +70,7 @@ export default function AlarmButton({ button, handleClick }: ButtonProps) {
   // active:bg-green-950
   return (
     <div
-      className={`${commonClasses} flex flex-col cursor-pointer bg-buttonNumber ${clickedClass}`}
+      className={`${commonClasses} flex flex-col cursor-pointer bg-green-700 ${clickedClass}`}
       onClick={handleClickAlarm}
     >
       <div className="flex items-center gap-1 cursor-pointer">

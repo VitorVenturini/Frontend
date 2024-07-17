@@ -22,6 +22,8 @@ interface RightGridProps {
   selectedUser: User | null;
   selectedOpt: string;
   onKeyChange: (key: string) => void;
+  clickedUser?: string | null;
+  setClickedUser?: (newUser: string | null) => void;
 }
 
 export default function RightGrid({
@@ -29,13 +31,21 @@ export default function RightGrid({
   selectedUser,
   selectedOpt,
   onKeyChange,
+  clickedUser,
+  setClickedUser
 }: RightGridProps) {
   const [clickedButtonId, setClickedButtonId] = useState<number | null>(null);
-  const [clickedUser, setClickedUser] = useState<string | null>(null);
+  // const [clickedUser, setClickedUser] = useState<string | null>(null);
 
+  const handleClickedUser = (newUser: string | null) => {
+    if (setClickedUser) {
+      setClickedUser(newUser);
+    }
+  };
+  
   useEffect(() => {
     setClickedButtonId(null);
-    setClickedUser(null);
+    handleClickedUser(null);
   }, [selectedOpt]);
 
   const buttonsInSelectedOpt = buttons.filter(
@@ -52,8 +62,8 @@ export default function RightGrid({
                 buttons={buttonsInSelectedOpt}
                 selectedUser={selectedUser}
                 selectedOpt={selectedOpt}
-                setClickedUser={setClickedUser}
-                clickedUser={clickedUser}
+                setClickedUser={handleClickedUser}
+                clickedUser={clickedUser as string | null}
                 setClickedButtonId={setClickedButtonId}
                 clickedButtonId={clickedButtonId}
               />
@@ -63,7 +73,7 @@ export default function RightGrid({
             {(clickedButtonId || clickedUser) && (
               <OptRightBottom
                 clickedButtonId={clickedButtonId}
-                clickedUser={clickedUser}
+                clickedUser={clickedUser as string | null}
                 onKeyChange={onKeyChange}
               />
             )}
