@@ -65,7 +65,9 @@ export function DataTableGateways<TData, TValue>({
       <div className="flex items-center justify-between p-4">
         <Input
           placeholder="Filter Apelido..."
-          value={(table.getColumn("nickname")?.getFilterValue() as string) || ""}
+          value={
+            (table.getColumn("nickname")?.getFilterValue() as string) || ""
+          }
           onChange={(event) =>
             table.getColumn("nickname")?.setFilterValue(event.target.value)
           }
@@ -79,12 +81,12 @@ export function DataTableGateways<TData, TValue>({
           }
           className="max-w-[300px]"
         />
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger>
             <Button> Criar Gateway</Button>
           </DialogTrigger>
           <DialogContent>
-          <CardCreateGateway onSuccess={() => setIsDialogOpen(false)} />
+            <CardCreateGateway onSuccess={() => setIsDialogOpen(false)} />
           </DialogContent>
         </Dialog>
       </div>

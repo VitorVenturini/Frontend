@@ -71,7 +71,7 @@ export default function CardCreateGateway({
     console.log(
       `Nickname: ${nicknameHost}, Host: ${host}, Host User: ${hostUser}`
     );
-    if (host && hostUser && hostPassword && nicknameHost) {
+    if (host && hostUser && nicknameHost) {
       setIsCreating(true);
       wss?.sendMessage({
         api: "admin",

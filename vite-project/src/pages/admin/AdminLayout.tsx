@@ -120,6 +120,7 @@ function AdminLayout() {
         break;
       case "UpdateActionMessageSuccess":
         const updatedAction: ActionsInteface = message.result;
+        console.log("UpdateActionMessageSuccess", JSON.stringify(message.result))
         updateActions(updatedAction);
         toast({
           description: "Ação Atualizada com sucesso",
@@ -148,7 +149,8 @@ function AdminLayout() {
         });
         break;
       case "UpdateGatewaySuccess":
-        const updatedGateway: GatewaysInterface = message.result;
+        const updatedGateway: GatewaysInterface = message.gateways;
+        console.log("UpdateGatewaySuccess", JSON.stringify(message.gateways));
         updateGateway(updatedGateway);
         toast({
           description: "Gateway atualizado com sucesso",
