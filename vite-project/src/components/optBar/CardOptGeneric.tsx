@@ -59,6 +59,7 @@ interface OptGenericProps {
   selectedOpt: string;
   existingButton?: ButtonInterface;
   isUpdate?: boolean;
+  onClose?: () => void;
 }
 
 export default function CardOptGeneric({
@@ -66,25 +67,35 @@ export default function CardOptGeneric({
   selectedUser,
   selectedOpt,
   existingButton,
+  onClose,
   isUpdate = false,
 }: OptGenericProps) {
-
   
+ const coordinates = selectedOpt === "maps" ? existingButton?.button_prt.split(",") : "";
+ // tratamento adicional para pegar o button_prt e separar os valores de 
+ // latitude e longitude
+
   const [nameOpt, setNameOpt] = useState(existingButton?.button_name || "");
-  const [valueOpt, setValueOpt] = useState(existingButton?.button_prt || "");
+  const [valueOpt, setValueOpt] = useState(coordinates ? coordinates?.[0] : existingButton?.button_prt || "" );
+  // value opt é o primeiro input de todos os cards , nesse caso reaproveitamos ele para armazenar a latitude
+  // e entao concatenar com longitude
+  const [longitudeMaps, setLongitude] = useState(coordinates?.[1] || "");
   const [fileContent, setFileContent] = useState<File | null>(null);
   const [userToChat, setUserToChat] = useState("");
   const { toast } = useToast();
   const [isCreating, setIsCreating] = useState(false);
-  const {} = useAccount()
+  const {} = useAccount();
   const wss = useWebSocketData();
-
 
   const handleNameOpt = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNameOpt(event.target.value);
   };
   const handleValueOpt = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValueOpt(event.target.value);
+  };
+
+  const handleLongitude = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setLongitude(event.target.value);
   };
   const handleUserToChat = (value: string) => {
     setUserToChat(value);
@@ -132,13 +143,12 @@ export default function CardOptGeneric({
           console.error("Erro ao enviar a imagem", error);
         }
       }
-
       wss?.sendMessage({
         api: "admin",
         mt: isUpdate ? "UpdateButton" : "InsertButton",
         ...(isUpdate && { id: existingButton?.id }),
         name: nameOpt,
-        value: uploadedFileName || valueOpt,
+        value: selectedOpt === "maps" ? valueOpt + "," +  longitudeMaps  : uploadedFileName || valueOpt,
         guid: selectedUser?.guid,
         img: null,
         type: selectedOpt,
@@ -148,6 +158,7 @@ export default function CardOptGeneric({
       });
 
       setIsCreating(false);
+      onClose?.();
     } else {
       toast({
         variant: "destructive",
@@ -163,6 +174,7 @@ export default function CardOptGeneric({
         mt: "DeleteButtons",
         id: existingButton?.id,
       });
+      onClose?.();
     } catch (e) {
       console.error(e);
     }
@@ -201,7 +213,7 @@ export default function CardOptGeneric({
           description: "Descrição para botão Chat aqui",
           labelButton: "Selecione o Usuario ",
           // IptType: "text",
-         // onChangeFunction: handleUserToChat,
+          // onChangeFunction: handleUserToChat,
         };
       default:
         return { title: "um botão", description: "" };
@@ -288,6 +300,8 @@ export default function CardOptGeneric({
                 placeholder={labelButton2}
                 type="text"
                 required
+                onChange={handleLongitude}
+                value={longitudeMaps}
               />
             </div>
           )}

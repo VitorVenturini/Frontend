@@ -18,6 +18,7 @@ import { HistoryProvider } from "./components/history/HistoryContext";
 import { Toaster } from "./components/ui/toaster";
 import { UserProvider } from "./components/user/UserContext";
 import { ChatProvider } from "@/components/chat/ChatContext";
+import { GoogleApiKeyProvider } from "./components/options/ApiGoogle/GooglApiContext";
 import { GatewayProvider } from "./components/Gateways/GatewaysContext";
 import { CameraProvider } from "./components/cameras/CameraContext"
 
@@ -43,8 +44,10 @@ function App() {
     };
   }, []);
   return (
+
     <ThemeProvider>
       <LanguageProvider>
+      <GoogleApiKeyProvider>
         <ChatProvider>
           <HistoryProvider>
             <ActionProvider>
@@ -71,6 +74,7 @@ function App() {
             </ActionProvider>
           </HistoryProvider>
         </ChatProvider>
+        </GoogleApiKeyProvider>
       </LanguageProvider>
     </ThemeProvider>
   );

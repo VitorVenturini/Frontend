@@ -59,6 +59,7 @@ interface ButtonProps {
   selectedPage: string;
   existingButton?: ButtonInterface;
   isUpdate?: boolean;
+  onClose?: () => void;
 }
 
 export default function ModalCommand({
@@ -67,6 +68,7 @@ export default function ModalCommand({
   clickedPosition,
   existingButton,
   isUpdate = false,
+  onClose
 }: ButtonProps) {
   const [isCreating, setIsCreating] = useState(false);
   const { toast } = useToast();
@@ -129,6 +131,7 @@ export default function ModalCommand({
         };
         wss?.sendMessage(message);
         setIsCreating(false);
+        onClose?.()
       } else {
         toast({
           variant: "destructive",
@@ -148,6 +151,7 @@ export default function ModalCommand({
         mt: "DeleteButtons",
         id: existingButton?.id,
       });
+      onClose?.()
     } catch (e) {
       console.error(e);
     }

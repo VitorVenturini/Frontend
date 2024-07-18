@@ -54,6 +54,7 @@ export default function DestComponent({
 }: DestProps) {
   const { isAdmin } = useContext(AccountContext);
   const [isUpdate, setIsUpdate] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const handleClick = () => {
     onClick();
@@ -111,7 +112,7 @@ export default function DestComponent({
       }
       return (
         <div>
-          <Dialog>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               {isAdmin ? (
                 // Renderiza a div com onClick apenas se o usuário for admin
@@ -150,6 +151,7 @@ export default function DestComponent({
                         clickedPosition={clickedPosition}
                         existingButton={button}
                         isUpdate={true}
+                        onClose={() => setIsDialogOpen(false)}
                       />
                     </DialogContent>
                   </div>

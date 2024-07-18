@@ -41,7 +41,7 @@ export default function SensorGraph({
   sensorInfo,
   sensorKey,
 }: SensorGraphProps) {
-  const sensorDate = sensorInfo[0].date;
+  const sensorDate = sensorInfo[0]?.date;
   const data = sensorInfo
     .map((sensor) => ({
       date: formatUTCDateToLocal(sensorDate),
@@ -50,7 +50,7 @@ export default function SensorGraph({
     .reverse();
   return (
 
-    <ResponsiveContainer width={"100%"} aspect={2.5} className="">
+    <ResponsiveContainer width={"100%"} aspect={1.5} className="" >
         <LineChart
 
         width={500}
@@ -67,7 +67,7 @@ export default function SensorGraph({
         <XAxis dataKey="date" />
         <YAxis />
         <Tooltip />
-        <Legend />
+        {/* <Legend /> */}
         <Line
           type="monotone"
           dataKey="value"

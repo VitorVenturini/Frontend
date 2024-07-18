@@ -6,7 +6,7 @@ import Gateways from "@/components/options/Gateways";
 import ContaCard from "@/components/options/ContaCard";
 import RadioCard from "@/components/options/RadioCard";
 import TelephonePBXCard from "@/components/options/TelephonePBXCard";
-import APIGoogleCard from "@/components/options/APIGoogleCard";
+import APIGoogleCard from "@/components/options/ApiGoogle/APIGoogleCard";
 import IotCameraCard from "@/components/options/IotCameraCard";
 import Reports from "@/components/options/reports";
 

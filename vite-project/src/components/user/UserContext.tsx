@@ -18,7 +18,7 @@ export interface UserInterface {
   guid: string;
   email: string;
   sip: string;
-  password: string;
+  password?: string;
   createdAt?: string; // o ? significa que o valor nao precisa ser presente , se for nulo nao tem problema
   updatedAt?: string;
   type?: string;
@@ -31,6 +31,7 @@ interface UserContextType {
   addUsers: (user: UserInterface) => void;
   updateUser: (user: UserInterface) => void;
   updateUserStauts: (guid: string, status: string) => void;
+  deleteUser: (id: number) => void;
 }
 
 const userContext = createContext<UserContextType | undefined>(undefined);
@@ -50,18 +51,12 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   };
   const updateUserStauts = (guid: string, status: string) => {
     setUsers((prevUsers) =>
-      prevUsers.map((user) =>
-        user.guid === guid ? { ...user, status } : user
-      )
+      prevUsers.map((user) => (user.guid === guid ? { ...user, status } : user))
     );
   };
-
-  //   const deleteUser = (id: number) => {
-  //     setUsers((prevUsers) =>
-  //         prevUsers.filter((user) => user.id !== id)
-  //     );
-  //   };
-
+  const deleteUser = (id: number) => {
+    setUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
+  };
   return (
     <userContext.Provider
       value={{
@@ -69,7 +64,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         setUsers,
         addUsers,
         updateUser,
-        updateUserStauts
+        updateUserStauts,
+        deleteUser,
       }}
     >
       {children}
