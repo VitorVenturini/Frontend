@@ -59,6 +59,7 @@ interface ButtonProps {
   selectedPage: string;
   existingButton?: ButtonInterface;
   isUpdate?: boolean;
+  onClose?: () => void;
 }
 
 export default function ModalSensor({
@@ -67,6 +68,7 @@ export default function ModalSensor({
   clickedPosition,
   existingButton,
   isUpdate = false,
+  onClose
 }: ButtonProps) {
   const [nameSensor, setNameSensor] = useState(
     existingButton?.button_prt || ""
@@ -101,7 +103,6 @@ export default function ModalSensor({
   };
 
   const handleNameButton = (event: ChangeEvent<HTMLInputElement>) => {
-    setTypeMeasure("");
     setNameButton(event.target.value);
   };
   const handleTypeMeasure = (value: string) => {
@@ -153,6 +154,7 @@ export default function ModalSensor({
         };
         wss?.sendMessage(message);
         setIsCreating(false);
+        onClose?.()
       } else {
         toast({
           variant: "destructive",
@@ -172,6 +174,7 @@ export default function ModalSensor({
         mt: "DeleteButtons",
         id: existingButton?.id,
       });
+      onClose?.()
     } catch (e) {
       console.error(e);
     }

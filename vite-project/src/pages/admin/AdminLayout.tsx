@@ -24,11 +24,18 @@ import {
   ActionsInteface,
   useActions,
 } from "@/components/actions/ActionsContext";
+import {
+  GatewaysInterface,
+  useGateways,
+} from "@/components/Gateways/GatewaysContext";
+
 import { useUsers } from "@/components/user/UserContext";
 import { UserInterface } from "@/components/user/UserContext";
+import { useGoogleApiKey } from "@/components/options/ApiGoogle/GooglApiContext";
 function AdminLayout() {
   const account = useAccount();
   const { setUsers } = useUsers();
+  const {setApiKeyInfo} = useGoogleApiKey()
   const wss = useWebSocketData();
   const { buttons, setButtons, addButton, updateButton, deleteButton } =
     useButtons();
@@ -39,6 +46,8 @@ function AdminLayout() {
   const { updateAccount } = useAccount();
   const [isAdminVerified, setIsAdminVerified] = useState(false);
   const navigate = useNavigate();
+  const { gateways, setGateways, updateGateway, deleteGateway, addGateway } =
+    useGateways();
 
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
@@ -113,6 +122,7 @@ function AdminLayout() {
         break;
       case "UpdateActionMessageSuccess":
         const updatedAction: ActionsInteface = message.result;
+        console.log("UpdateActionMessageSuccess", JSON.stringify(message.result))
         updateActions(updatedAction);
         toast({
           description: "Ação Atualizada com sucesso",
@@ -122,6 +132,38 @@ function AdminLayout() {
         deleteAction(message.id_deleted);
         toast({
           description: "Ação Deletada com sucesso",
+        });
+        break;
+      case "ConfigResult":
+        setApiKeyInfo(message.result)
+      case "SelectGatewaysSuccess":
+        console.log(
+          "SelectGatewaysSuccess ALLGATEWAYS",
+          JSON.stringify(message.result)
+        );
+        const allGateways: GatewaysInterface[] = message.result;
+        setGateways(allGateways);
+        break;
+      case "AddGatewaySuccess":
+        console.log(JSON.stringify(message.result));
+        const newGateway: GatewaysInterface = message.result;
+        addGateway(newGateway);
+        toast({
+          description: "Gateway criado com sucesso",
+        });
+        break;
+      case "UpdateGatewaySuccess":
+        const updatedGateway: GatewaysInterface = message.gateways;
+        console.log("UpdateGatewaySuccess", JSON.stringify(message.gateways));
+        updateGateway(updatedGateway);
+        toast({
+          description: "Gateway atualizado com sucesso",
+        });
+        break;
+      case "DeleteGatewaySuccess":
+        deleteGateway(message.id_deleted);
+        toast({
+          description: "Gateway deletado com sucesso",
         });
         break;
       default:

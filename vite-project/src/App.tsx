@@ -18,6 +18,8 @@ import { HistoryProvider } from "./components/history/HistoryContext";
 import { Toaster } from "./components/ui/toaster";
 import { UserProvider } from "./components/user/UserContext";
 import { ChatProvider } from "@/components/chat/ChatContext";
+import { GoogleApiKeyProvider } from "./components/options/ApiGoogle/GooglApiContext";
+import { GatewayProvider } from "./components/Gateways/GatewaysContext";
 
 export const host = "https://meet.wecom.com.br";
 
@@ -41,30 +43,35 @@ function App() {
     };
   }, []);
   return (
+
     <ThemeProvider>
       <LanguageProvider>
+      <GoogleApiKeyProvider>
         <ChatProvider>
           <HistoryProvider>
             <ActionProvider>
-              <AccountProvider>
-                <UserProvider>
-                  <ButtonProvider>
-                    <SensorProvider>
-                      <Routes>
-                        <Route path="/" element={<RootRoute />} />
-                        <Route path="/login" element={<LoginPage />} />
-                        <Route path="/admin/*" element={<AdminRoute />} />
-                        <Route path="/user/*" element={<UserRoute />} />
-                        <Route path="*" element={<NoPage />} />
-                      </Routes>
-                      <Toaster />
-                    </SensorProvider>
-                  </ButtonProvider>
-                </UserProvider>
-              </AccountProvider>
+              <GatewayProvider>
+                <AccountProvider>
+                  <UserProvider>
+                    <ButtonProvider>
+                      <SensorProvider>
+                        <Routes>
+                          <Route path="/" element={<RootRoute />} />
+                          <Route path="/login" element={<LoginPage />} />
+                          <Route path="/admin/*" element={<AdminRoute />} />
+                          <Route path="/user/*" element={<UserRoute />} />
+                          <Route path="*" element={<NoPage />} />
+                        </Routes>
+                        <Toaster />
+                      </SensorProvider>
+                    </ButtonProvider>
+                  </UserProvider>
+                </AccountProvider>
+              </GatewayProvider>
             </ActionProvider>
           </HistoryProvider>
         </ChatProvider>
+        </GoogleApiKeyProvider>
       </LanguageProvider>
     </ThemeProvider>
   );

@@ -7,11 +7,11 @@ export interface ActionsInteface {
   action_start_type: string;
   action_start_device_parameter?: string | null;
   action_start_device?: string | null;
-  action_exec_user?: string ;
+  action_exec_user?: string;
   action_exec_type?: string | null;
-  action_exec_type_command_mode?: string| null;
+  action_exec_type_command_mode?: string | null;
   action_exec_prt?: string | null;
-  action_exec_device?: string ;
+  action_exec_device?: string;
   createdAt: string;
   create_user: string;
   updatedAt: string;
@@ -58,7 +58,14 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
   console.log("ACTIONCONTEXT actions", actions);
   return (
     <ActionsContext.Provider
-      value={{ actions, setActions, addActions, clearActions, deleteAction, updateActions }}
+      value={{
+        actions,
+        setActions,
+        addActions,
+        clearActions,
+        deleteAction,
+        updateActions,
+      }}
     >
       {children}
     </ActionsContext.Provider>

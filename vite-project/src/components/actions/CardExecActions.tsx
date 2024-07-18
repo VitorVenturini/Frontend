@@ -30,6 +30,7 @@ import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { useSensors } from "@/components/sensor/SensorContext";
 import { ActionsInteface } from "./ActionsContext";
 import { useButtons } from "../buttons/buttonContext/ButtonsContext";
+import { useUsers } from "../user/UserContext";
 interface User {
   id: string;
   name: string;
@@ -40,11 +41,14 @@ interface UpdateActionsProps {
   onUpdateExecActionDetails: (key: string, value: string) => void;
 }
 
-export default function CardExecActions({ action, onUpdateExecActionDetails  }: UpdateActionsProps) {
-  const [users, setUsers] = useState<User[]>([]);
+export default function CardExecActions({
+  action,
+  onUpdateExecActionDetails,
+}: UpdateActionsProps) {
+  const { users } = useUsers();
 
   const [actionExecType, setType] = useState(action?.action_exec_type || "");
-//   const [actionExecValue, setActionValue] = useState(""); //SEM USO NO MOMENTO
+  //   const [actionExecValue, setActionValue] = useState(""); //SEM USO NO MOMENTO
   const [selectedUser, setSelectedUser] = useState(
     action?.action_exec_user || ""
   );
@@ -67,29 +71,6 @@ export default function CardExecActions({ action, onUpdateExecActionDetails  }: 
   const { sensors } = useSensors();
   const { buttons } = useButtons();
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await fetch(
-          "https://meet.wecom.com.br/api/listUsers",
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              "x-auth": localStorage.getItem("token") || "",
-            },
-          }
-        );
-        const data = await response.json();
-        setUsers(data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchUsers();
-  }, []);
-
   const handleType = (value: string) => {
     setType(value);
     onUpdateExecActionDetails("actionExecType", value);
@@ -110,7 +91,7 @@ export default function CardExecActions({ action, onUpdateExecActionDetails  }: 
   };
 
   const handleUserSelect = (value: string) => {
-    const user = users.find((user) => user.id === value);
+    const user = users.find((user) => user.id as any === value);
     setSelectedUser(value);
     onUpdateExecActionDetails("selectedUser", value);
   };
@@ -129,7 +110,7 @@ export default function CardExecActions({ action, onUpdateExecActionDetails  }: 
     setActionExecTypeCommandMode(value);
     onUpdateExecActionDetails("actionExecTypeCommandMode", value);
   };
-  
+
   const userButtons = buttons.filter((button) => {
     return button.button_user === selectedUser;
   });
@@ -225,10 +206,7 @@ export default function CardExecActions({ action, onUpdateExecActionDetails  }: 
               <Label className="text-end" htmlFor="paramDest">
                 Botão
               </Label>
-              <Select
-                onValueChange={handleButtonSelect}
-                value={actionExecPrt}
-              >
+              <Select onValueChange={handleButtonSelect} value={actionExecPrt}>
                 <SelectTrigger className="col-span-3">
                   <SelectValue placeholder="Selecione" />
                 </SelectTrigger>
@@ -294,7 +272,7 @@ export default function CardExecActions({ action, onUpdateExecActionDetails  }: 
                 <Select
                   value={actionExecPrt}
                   onValueChange={handleExecPrt}
-                  disabled= {!actionExecDevice}
+                  disabled={!actionExecDevice}
                 >
                   <SelectTrigger className="col-span-3" id="SelectTypeMeasure">
                     <SelectValue placeholder="Selecione o tipo de medida" />

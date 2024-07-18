@@ -1,10 +1,8 @@
-
 import { Button } from "@/components/ui/button";
 import DeleteActions from "@/components/actions/DeleteAction";
-
-import {   ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react"
-import { Pencil } from "lucide-react"
+import { ColumnDef } from "@tanstack/react-table";
+import { ArrowUpDown } from "lucide-react";
+import { Pencil } from "lucide-react";
 import CardCreateAction from "@/components/actions/CardCreateAction";
 import { ActionsInteface } from "@/components/actions/ActionsContext";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
@@ -88,21 +86,23 @@ export const columnsActions: ColumnDef<ActionsInteface>[] = [
         const actions = row.original;
         const [isDialogOpen, setIsDialogOpen] = useState(false); 
 
-        return (
-          <div className="flex justify-center gap-1 items-center">
-             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogTrigger>
-                <Pencil />
-              </DialogTrigger>
-              <DialogContent className="max-w-5xl">
-              <CardCreateAction action={actions} isUpdate={true} 
-                onSuccess={() => setIsDialogOpen(false)} />
-              </DialogContent>
-            </Dialog>
-            <DeleteActions id={actions.id} />
-          </div>
-        );
-  
-      },
+      return (
+        <div className="flex justify-center gap-1 items-center">
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger>
+              <Pencil />
+            </DialogTrigger>
+            <DialogContent className="max-w-5xl">
+              <CardCreateAction
+                action={actions}
+                isUpdate={true}
+                onSuccess={() => setIsDialogOpen(false)}
+              />
+            </DialogContent>
+          </Dialog>
+          <DeleteActions id={actions.id} />
+        </div>
+      );
     },
-  ];
+  },
+];
