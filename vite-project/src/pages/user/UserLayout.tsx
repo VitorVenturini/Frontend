@@ -96,7 +96,7 @@ function UserLayout() {
         break;
       case "SelectAllSensorInfoResultSrc":
         console.log("SelectAllSensorInfoSrc" + message.result);
-        const allSensors: SensorInterface[] = message.result;
+        const allSensors: SensorInterface[] = JSON.parse(message.result);
         addSensors(allSensors);
         break;
       case "SensorReceived":
