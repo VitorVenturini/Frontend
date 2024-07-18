@@ -20,6 +20,7 @@ import { UserProvider } from "./components/user/UserContext";
 import { ChatProvider } from "@/components/chat/ChatContext";
 import { GoogleApiKeyProvider } from "./components/options/ApiGoogle/GooglApiContext";
 import { GatewayProvider } from "./components/Gateways/GatewaysContext";
+import { CameraProvider } from "./components/cameras/CameraContext"
 
 export const host = "https://meet.wecom.com.br";
 
@@ -55,6 +56,7 @@ function App() {
                   <UserProvider>
                     <ButtonProvider>
                       <SensorProvider>
+                        <CameraProvider>
                         <Routes>
                           <Route path="/" element={<RootRoute />} />
                           <Route path="/login" element={<LoginPage />} />
@@ -63,6 +65,7 @@ function App() {
                           <Route path="*" element={<NoPage />} />
                         </Routes>
                         <Toaster />
+                        </CameraProvider>
                       </SensorProvider>
                     </ButtonProvider>
                   </UserProvider>

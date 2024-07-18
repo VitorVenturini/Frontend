@@ -31,6 +31,7 @@ import {
 
 import { useUsers } from "@/components/user/UserContext";
 import { UserInterface } from "@/components/user/UserContext";
+import { CamerasInterface, useCameras } from "@/components/cameras/CameraContext";
 import { useGoogleApiKey } from "@/components/options/ApiGoogle/GooglApiContext";
 function AdminLayout() {
   const account = useAccount();
@@ -48,6 +49,8 @@ function AdminLayout() {
   const navigate = useNavigate();
   const { gateways, setGateways, updateGateway, deleteGateway, addGateway } =
     useGateways();
+    const { cameras, setCameras, updateCamera, deleteCamera, addCamera } =
+    useCameras();
 
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
@@ -122,7 +125,10 @@ function AdminLayout() {
         break;
       case "UpdateActionMessageSuccess":
         const updatedAction: ActionsInteface = message.result;
-        console.log("UpdateActionMessageSuccess", JSON.stringify(message.result))
+        console.log(
+          "UpdateActionMessageSuccess",
+          JSON.stringify(message.result)
+        );
         updateActions(updatedAction);
         toast({
           description: "Ação Atualizada com sucesso",
@@ -153,8 +159,8 @@ function AdminLayout() {
         });
         break;
       case "UpdateGatewaySuccess":
-        const updatedGateway: GatewaysInterface = message.gateways;
-        console.log("UpdateGatewaySuccess", JSON.stringify(message.gateways));
+        const updatedGateway: GatewaysInterface = message.result;
+        console.log("UpdateGatewaySuccess", JSON.stringify(message.result));
         updateGateway(updatedGateway);
         toast({
           description: "Gateway atualizado com sucesso",
@@ -164,6 +170,36 @@ function AdminLayout() {
         deleteGateway(message.id_deleted);
         toast({
           description: "Gateway deletado com sucesso",
+        });
+        break;
+      case "SelectCamerasSuccess":
+        console.log(
+          "SelectCamerasSuccess ALLCameras",
+          JSON.stringify(message.result)
+        );
+        const allCameras: CamerasInterface[] = message.result;
+        setCameras(allCameras);
+        break;
+      case "AddCameraSuccess":
+        console.log(JSON.stringify(message.result));
+        const newCamera: CamerasInterface = message.result;
+        addCamera(newCamera);
+        toast({
+          description: "Camera criada com sucesso",
+        });
+        break;
+      case "UpdateCameraSuccess":
+        const updatedCamera: CamerasInterface = message.result;
+        console.log("UpdateCameraSuccess", JSON.stringify(message.result));
+        updateCamera(updatedCamera);
+        toast({
+          description: "Camera atualizada com sucesso",
+        });
+        break;
+      case "DeleteCameraSuccess":
+        deleteCamera(message.id_deleted);
+        toast({
+          description: "Camera deletada com sucesso",
         });
         break;
       default:
