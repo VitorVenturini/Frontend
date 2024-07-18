@@ -42,6 +42,7 @@ export default function HeaderApp() {
   };
 
   const handleOptionsClick = () => {
+    wss?.sendMessage({ api: "admin", mt: "SelectGateways" });
     navigate("/admin/options");
   };
   const handleUserViewClick = () => {
