@@ -18,7 +18,7 @@ export interface UserInterface {
   guid: string;
   email: string;
   sip: string;
-  password: string;
+  password?: string;
   createdAt?: string; // o ? significa que o valor nao precisa ser presente , se for nulo nao tem problema
   updatedAt?: string;
   type?: string;

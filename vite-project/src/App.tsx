@@ -18,6 +18,7 @@ import { HistoryProvider } from "./components/history/HistoryContext";
 import { Toaster } from "./components/ui/toaster";
 import { UserProvider } from "./components/user/UserContext";
 import { ChatProvider } from "@/components/chat/ChatContext";
+import { GoogleApiKeyProvider } from "./components/options/ApiGoogle/GooglApiContext";
 
 export const host = "https://meet.wecom.com.br";
 
@@ -41,8 +42,10 @@ function App() {
     };
   }, []);
   return (
+
     <ThemeProvider>
       <LanguageProvider>
+      <GoogleApiKeyProvider>
         <ChatProvider>
           <HistoryProvider>
             <ActionProvider>
@@ -65,6 +68,7 @@ function App() {
             </ActionProvider>
           </HistoryProvider>
         </ChatProvider>
+        </GoogleApiKeyProvider>
       </LanguageProvider>
     </ThemeProvider>
   );

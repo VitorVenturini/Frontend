@@ -26,9 +26,11 @@ import {
 } from "@/components/actions/ActionsContext";
 import { useUsers } from "@/components/user/UserContext";
 import { UserInterface } from "@/components/user/UserContext";
+import { useGoogleApiKey } from "@/components/options/ApiGoogle/GooglApiContext";
 function AdminLayout() {
   const account = useAccount();
   const { setUsers } = useUsers();
+  const {setApiKeyInfo} = useGoogleApiKey()
   const wss = useWebSocketData();
   const { buttons, setButtons, addButton, updateButton, deleteButton } =
     useButtons();
@@ -125,7 +127,7 @@ function AdminLayout() {
         });
         break;
       case "ConfigResult":
-        // criar um contexto para googleAPI Key 
+        setApiKeyInfo(message.result)
         break;
       default:
         console.log("Unknown message type:", message);

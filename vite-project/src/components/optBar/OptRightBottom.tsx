@@ -12,6 +12,7 @@ import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { useUsers } from "../user/UserContext";
 import ChatLayout from "../chat/ChatLayout";
 import { useChat } from "../chat/ChatContext";
+import { useGoogleApiKey } from "../options/ApiGoogle/GooglApiContext";
 
 interface OptRightBottomProps {
   clickedButtonId: number | null;
@@ -30,6 +31,7 @@ export default function OptRightBottom({
   const [loading, setLoading] = useState<boolean>(true);
   const { users } = useUsers();
   const wss = useWebSocketData();
+  const { apiKeyInfo } = useGoogleApiKey();
   const clickedButton = buttons.find((button) => button.id === clickedButtonId);
   const userToChat = users.find((user) => user.guid === clickedUser);
   console.log("UserToChat" + JSON.stringify(userToChat));
@@ -118,7 +120,24 @@ export default function OptRightBottom({
               </TransformWrapper>
             );
           }
-        case "map":
+        case "maps":
+          const filteredGoogleAPI = apiKeyInfo.filter((key) => {
+            return key.entry === "googleApiKey";
+          })[0];
+          const googleMapsUrl = `
+          https://www.google.com/maps/embed/v1/view?key=${filteredGoogleAPI.value}&center=${clickedButton.button_prt}&zoom=14&maptype=roadmap`;
+          // nossa chave :  AIzaSyB4NFiDCIUp6lieu8RXWic22lz0PkKUh9c
+          return (
+            <div className="h-full">
+              <iframe
+                width="100%"
+                style={{ height: "calc(100vh - 200px)" }}
+                frameBorder="0"
+                src={googleMapsUrl}
+                allowFullScreen
+              ></iframe>
+            </div>
+          );
         case "radio":
         case "video":
           return (

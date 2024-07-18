@@ -245,6 +245,7 @@ export default function OptComponent({
                   clickedPosition={clickedPosition}
                   existingButton={button}
                   isUpdate={true}
+                  onClose={() => setIsDialogOpen(false)}
                 />
               </DialogContent>
             )}
