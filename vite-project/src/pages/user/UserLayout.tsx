@@ -32,6 +32,7 @@ import {
   ChatProvider,
   useChat,
 } from "@/components/chat/ChatContext";
+import { useGoogleApiKey } from "@/components/options/ApiGoogle/GooglApiContext";
 
 interface User {
   id: string;
@@ -66,6 +67,7 @@ function UserLayout() {
     addSensorName,
   } = useSensors();
   const { addHistory, updateHistory } = useHistory();
+  const {setApiKeyInfo} = useGoogleApiKey()
   const {
     setChat,
     allMessages,
@@ -95,7 +97,6 @@ function UserLayout() {
         }
         break;
       case "SelectAllSensorInfoResultSrc":
-        console.log("SelectAllSensorInfoSrc" + message.result);
         const allSensors: SensorInterface[] = JSON.parse(message.result);
         addSensors(allSensors);
         break;
@@ -188,6 +189,15 @@ function UserLayout() {
         const commandValue = message.value;
         setCommandValue(commandBtn_id, commandPrt, commandValue);
         break;
+      case "ConfigResult":
+        setApiKeyInfo(message.result);
+        break;
+      // case "ComboStartButton":
+      //   //{ api: "user", mt: "ComboStartButton",  btn_id: button.id, type: button.button_type }
+
+      //   // LÓGICA PARA ATIVAR OS BOTÕES VINCULADOS AO COMBO
+      //   // FUDEU
+      //   break;
       default:
         console.log("Unknown message type:", message);
         break;

@@ -32,10 +32,11 @@ import {
 import { useUsers } from "@/components/user/UserContext";
 import { UserInterface } from "@/components/user/UserContext";
 import { CamerasInterface, useCameras } from "@/components/cameras/CameraContext";
-
+import { useGoogleApiKey } from "@/components/options/ApiGoogle/GooglApiContext";
 function AdminLayout() {
   const account = useAccount();
   const { setUsers } = useUsers();
+  const {setApiKeyInfo} = useGoogleApiKey()
   const wss = useWebSocketData();
   const { buttons, setButtons, addButton, updateButton, deleteButton } =
     useButtons();
@@ -139,6 +140,8 @@ function AdminLayout() {
           description: "Ação Deletada com sucesso",
         });
         break;
+      case "ConfigResult":
+        setApiKeyInfo(message.result)
       case "SelectGatewaysSuccess":
         console.log(
           "SelectGatewaysSuccess ALLGATEWAYS",

@@ -57,6 +57,7 @@ interface OptSensorProps {
   selectedOpt: string;
   existingButton?: ButtonInterface;
   isUpdate?: boolean;
+  onClose?: () => void;
 }
 
 export default function CardOptSensor({
@@ -65,6 +66,7 @@ export default function CardOptSensor({
   selectedOpt,
   existingButton,
   isUpdate = false,
+  onClose
 }: OptSensorProps) {
   const [nameSensor, setNameSensor] = useState(
     existingButton?.button_prt || ""
@@ -99,6 +101,7 @@ export default function CardOptSensor({
         y: clickedPosition?.i,
       });
       setIsCreating(false);
+      onClose?.()
     } else {
       toast({
         variant: "destructive",
@@ -114,6 +117,7 @@ export default function CardOptSensor({
         mt: "DeleteButtons",
         id: existingButton?.id,
       });
+      onClose?.()
     } catch (e) {
       console.error(e);
     }

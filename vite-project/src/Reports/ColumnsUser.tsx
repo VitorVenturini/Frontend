@@ -1,18 +1,16 @@
 "use client";
-import UpdateUsers from "@/components/account/UpdateUsers";
 import DeleteUsers from "@/components/account/DeleteUsers";
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react"
+import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
-export interface User {
-  id: string;
-  name: string;
-  guid: string;
-  email: string;
-  sip: string;
-}
+import { UserInterface } from "@/components/user/UserContext";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { useState } from "react";
+import { Pencil
 
-export const columnsUser: ColumnDef<User>[] = [
+ } from "lucide-react";
+import CardCreateAccount from "@/components/account/CardCreateAccount";
+export const columnsUser: ColumnDef<UserInterface>[] = [
   {
     accessorKey: "id",
     header: "ID",
@@ -28,7 +26,7 @@ export const columnsUser: ColumnDef<User>[] = [
           Name {/*Ajustar text*/}
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
-      )
+      );
     },
   },
   {
@@ -44,15 +42,27 @@ export const columnsUser: ColumnDef<User>[] = [
     header: "SIP",
   },
   {
-    id: "actions",
-    header: "Actions",
+    id: "options",
+    header: "Opções",
     cell: ({ row }) => {
       const user = row.original;
 
+      const [isDialogOpen, setIsDialogOpen] = useState(false);
       return (
-        <div>
-          <UpdateUsers user={user}/>
-          <DeleteUsers id={user.id}/>
+        <div className="flex justify-center gap-1 items-center">
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger>
+              <Pencil />
+            </DialogTrigger>
+            <DialogContent>
+              <CardCreateAccount
+                user={user}
+                isUpdate={true}
+                onSuccess={() => setIsDialogOpen(false)}
+              />
+            </DialogContent>
+          </Dialog>
+         <DeleteUsers id={user.id} />
         </div>
       );
     },

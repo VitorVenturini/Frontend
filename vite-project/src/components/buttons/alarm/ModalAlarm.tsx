@@ -58,6 +58,7 @@ interface ButtonProps {
   selectedPage: string;
   existingButton?: ButtonInterface;
   isUpdate?: boolean;
+  onClose?: () => void;
 }
 
 export default function ModalAlarm({
@@ -66,6 +67,7 @@ export default function ModalAlarm({
   clickedPosition,
   existingButton,
   isUpdate = false,
+  onClose
 }: ButtonProps) {
   const [numberAlarm, setNumberAlarm] = useState(
     existingButton?.button_prt || ""
@@ -102,6 +104,7 @@ export default function ModalAlarm({
         };
         wss?.sendMessage(message);
         setIsCreating(false);
+        onClose?.()
       } else {
         toast({
           variant: "destructive",
@@ -121,6 +124,7 @@ export default function ModalAlarm({
         mt: "DeleteButtons",
         id: existingButton?.id,
       });
+      onClose?.()
     } catch (e) {
       console.error(e);
     }
