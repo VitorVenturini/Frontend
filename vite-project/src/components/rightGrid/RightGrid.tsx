@@ -32,7 +32,7 @@ export default function RightGrid({
   selectedOpt,
   onKeyChange,
   clickedUser,
-  setClickedUser
+  setClickedUser,
 }: RightGridProps) {
   const [clickedButtonId, setClickedButtonId] = useState<number | null>(null);
   // const [clickedUser, setClickedUser] = useState<string | null>(null);
@@ -42,16 +42,23 @@ export default function RightGrid({
       setClickedUser(newUser);
     }
   };
-  
+
   useEffect(() => {
-    setClickedButtonId(null);
-    handleClickedUser(null);
+    setClickedButtonId(null); // fechar a OptRightBottom
+    handleClickedUser(null); // fechar o chat
   }, [selectedOpt]);
 
-  const buttonsInSelectedOpt = buttons.filter(
-    (button) => button.button_type === selectedOpt && button.page === "0"
-  );
-
+  // const buttonsInSelectedOpt = buttons.filter(
+  //   (button) => button.button_type === selectedOpt && button.page === "0"
+  // );
+  const buttonsInSelectedOpt = buttons.filter((button) => {
+    if (selectedOpt === "sensor" && button.page === "0") {
+      // tratamento adicional para carregar sensor junto com camera na mesma aba da direita
+      return button.button_type === "sensor" || button.button_type === "camera";
+    } else {
+      return button.button_type === selectedOpt && button.page === "0";
+    }
+  });
   return (
     <Card className="  flex flex-col gap-1 items-center">
       {selectedUser && (
