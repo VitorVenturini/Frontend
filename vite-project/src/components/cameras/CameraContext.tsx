@@ -4,6 +4,7 @@ import React, { createContext, useState, useContext, ReactNode } from "react";
 export interface CamerasInterface {
   id: string;
   mac: string;
+  nickname: string;
   createdAt: string;
   create_user: string;
   updatedAt: string;
