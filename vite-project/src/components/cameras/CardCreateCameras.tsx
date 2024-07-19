@@ -37,6 +37,7 @@ export default function CardCreateCameras({
   onSuccess,
 }: UpdateCameraProps) {
   const [mac, setMac] = useState(camera?.mac || "");
+  const [nickname, setNickname] = useState(camera?.nickname || "")
   const [isCreating, setIsCreating] = useState(false);
   const { language } = useLanguage();
 
@@ -44,6 +45,9 @@ export default function CardCreateCameras({
 
   const handleMac = (event: ChangeEvent<HTMLInputElement>) => {
     setMac(event.target.value);
+  };
+  const handleNickname = (event: ChangeEvent<HTMLInputElement>) => {
+    setNickname(event.target.value);
   };
   const wss = useWebSocketData();
   const clearForms = () => {
@@ -61,6 +65,7 @@ export default function CardCreateCameras({
         mt: isUpdate ? "UpdateCamera" : "AddCamera",
         ...(isUpdate && { id: camera?.id }),
         mac: mac,
+        nickname: nickname,
       });
       clearForms();
     } else {
@@ -88,6 +93,19 @@ export default function CardCreateCameras({
         </CardHeader>
         {/* Card de criação de usuario */}
         <div className="grid gap-4 py-4">
+          <div className="grid grid-cols-3 items-center gap-4">
+            <Label className="text-end" htmlFor="name">
+              Nickname
+            </Label>
+            <Input
+              className="col-span-2"
+              id="nickname"
+              placeholder="Apelido"
+              type="text"
+              value={nickname}
+              onChange={handleNickname}
+            />
+          </div>
           <div className="grid grid-cols-3 items-center gap-4">
             <Label className="text-end" htmlFor="name">
               Mac Address
