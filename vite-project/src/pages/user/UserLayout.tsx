@@ -88,7 +88,7 @@ function UserLayout() {
         setButtons(buttons);
         setSensors([]);
         break;
-      case "SelectSensorHistoryResult":
+      case "SelectDeviceHistoryResult":
         const sensorsArray: SensorInterface[] = JSON.parse(message.result);
         if (sensorsArray.length > 0) {
           const sensorName = sensorsArray[0].sensor_name;
