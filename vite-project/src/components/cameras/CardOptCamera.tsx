@@ -164,7 +164,7 @@ export default function CardOptCamera({
                       key={cam.id}
                       value={cam.mac}
                     >
-                      {cam.mac}
+                      {cam.nickname}
                     </SelectItem>
                   ))}
                 </SelectGroup>

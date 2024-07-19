@@ -126,12 +126,13 @@ export default function OptGrid({
                       // usuario
                       if (
                         clickedButtonId !== button.id &&
-                        button.button_type === "sensor"
+                        button.button_type === "sensor" || button.button_type === "camera"
                       ) {
+                        // enviar mensagem para consultar imagem da camera ou infos do sensor 
                         wss?.sendMessage({
                           api: "user",
-                          mt: "SelectSensorHistory",
-                          sensor: button.button_prt,
+                          mt: "SelectDeviceHistory",
+                          id: button.button_prt,
                         });
                       }
                       //setIsClicked(clickedButtonId === button.id ? false : true);

@@ -76,7 +76,7 @@ export default function RightGrid({
               />
             }
           </div>
-          <div>
+          <div className="flex justify-center">
             {(clickedButtonId || clickedUser) && (
               <OptRightBottom
                 clickedButtonId={clickedButtonId}

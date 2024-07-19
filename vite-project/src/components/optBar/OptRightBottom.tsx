@@ -13,6 +13,7 @@ import { useUsers } from "../user/UserContext";
 import ChatLayout from "../chat/ChatLayout";
 import { useChat } from "../chat/ChatContext";
 import { useGoogleApiKey } from "../options/ApiGoogle/GooglApiContext";
+import { CarouselImages } from "../Carousel/CarouselImages";
 
 interface OptRightBottomProps {
   clickedButtonId: number | null;
@@ -43,7 +44,7 @@ export default function OptRightBottom({
         (sensor) => sensor.deveui === sensorName
       );
       if (filteredSensorInfo.length > 0) {
-        setLoading(false);
+          setLoading(false);
       } else {
         setLoading(true);
       }
@@ -99,7 +100,19 @@ export default function OptRightBottom({
             );
           }
         case "camera":
-          return <div>DIV COM IMAGEM DA CAMERA</div>
+          if (loading) {
+            return <div>Carregando dados da Câmera...</div>;
+          } else {
+            const filteredCamInfo = sensors.filter(
+              (sensor) => sensor?.deveui === clickedButton?.button_prt
+            );
+            return (
+              <div>
+                <CarouselImages cameraInfo={filteredCamInfo} />
+              </div>
+            );
+          }
+
         case "floor":
           const extension = clickedButton?.button_prt
             .split(".")
