@@ -25,10 +25,12 @@ export default function AlarmButton({ button, handleClick }: ButtonProps) {
   useEffect(() => {
     if (button.triggered) {
       setClickedClass("bg-red-800");
+      // handleClickAlarm()
     } else {
       setClickedClass("");
     }
   }, [setButtonTriggered, setStopButtonTriggered]);
+  //button.triggered
 
   const handleClickAlarm = () => {
     handleClick()

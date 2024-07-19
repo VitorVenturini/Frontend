@@ -98,6 +98,8 @@ export default function OptRightBottom({
               </div>
             );
           }
+        case "camera":
+          return <div>DIV COM IMAGEM DA CAMERA</div>
         case "floor":
           const extension = clickedButton?.button_prt
             .split(".")
@@ -126,7 +128,6 @@ export default function OptRightBottom({
           })[0];
           const googleMapsUrl = `
           https://www.google.com/maps/embed/v1/view?key=${filteredGoogleAPI.value}&center=${clickedButton.button_prt}&zoom=14&maptype=roadmap`;
-          // nossa chave :  AIzaSyB4NFiDCIUp6lieu8RXWic22lz0PkKUh9c
           return (
             <div className="h-full">
               <iframe
