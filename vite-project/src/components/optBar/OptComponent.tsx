@@ -59,6 +59,7 @@ import { useSensors } from "../sensor/SensorContext";
 import CardOptSensor from "@/components/sensor/CardOptSensor";
 // import CardOptCamera from "@/components/camera/CardOptCamera"; // Importe o componente CardOptCamera
 import CardOptGeneric from "./CardOptGeneric";
+import CardOptCamera from "../cameras/CardOptCamera";
 
 interface User {
   id: string;
@@ -135,13 +136,12 @@ export default function OptComponent({
               />
             )}
             {sensorType === "camera" && (
-              <div>Abrir Modal criação de Câmeras</div>
-              // <CardOptCamera
-              //   selectedUser={selectedUser}
-              //   selectedOpt={selectedOpt}
-              //   clickedPosition={clickedPosition}
-              //   onClose={() => setIsDialogOpen(false)}
-              // />
+              <CardOptCamera
+                selectedUser={selectedUser}
+                selectedOpt={selectedOpt}
+                clickedPosition={clickedPosition}
+                onClose={() => setIsDialogOpen(false)}
+              />
             )}
           </>
         );
@@ -210,7 +210,42 @@ export default function OptComponent({
           </Dialog>
         </div>
       );
-    } else {
+    }else if (button.button_type === "camera") {
+      // caso específico para edição de botão do tipo "camera"
+      return (
+        <div>
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <div
+                className={`${commonClasses} flex flex-col cursor-pointer ${
+                  isClicked ? "bg-zinc-950" : ""
+                }`}
+                onClick={handleClick}
+              >
+                <div className="flex items-center gap-1 cursor-pointer">
+                  <p className="text-sm font-medium leading-none">
+                    {button.button_name}
+                  </p>
+                </div>
+              </div>
+            </DialogTrigger>
+            {isAdmin && (
+              <DialogContent>
+                <CardOptCamera
+                  selectedUser={selectedUser}
+                  selectedOpt={selectedOpt}
+                  clickedPosition={clickedPosition}
+                  existingButton={button}
+                  isUpdate={true}
+                  onClose={() => setIsDialogOpen(false)}
+                />
+              </DialogContent>
+            )}
+          </Dialog>
+        </div>
+      );
+    }
+    else {
       // edição de botões que nao forem do tipo "sensor"
       return (
         <div>
