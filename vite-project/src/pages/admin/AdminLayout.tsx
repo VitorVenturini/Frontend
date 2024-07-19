@@ -31,12 +31,15 @@ import {
 
 import { useUsers } from "@/components/user/UserContext";
 import { UserInterface } from "@/components/user/UserContext";
-import { CamerasInterface, useCameras } from "@/components/cameras/CameraContext";
+import {
+  CamerasInterface,
+  useCameras,
+} from "@/components/cameras/CameraContext";
 import { useGoogleApiKey } from "@/components/options/ApiGoogle/GooglApiContext";
 function AdminLayout() {
   const account = useAccount();
   const { setUsers } = useUsers();
-  const {setApiKeyInfo} = useGoogleApiKey()
+  const { setApiKeyInfo } = useGoogleApiKey();
   const wss = useWebSocketData();
   const { buttons, setButtons, addButton, updateButton, deleteButton } =
     useButtons();
@@ -49,7 +52,7 @@ function AdminLayout() {
   const navigate = useNavigate();
   const { gateways, setGateways, updateGateway, deleteGateway, addGateway } =
     useGateways();
-    const { cameras, setCameras, updateCamera, deleteCamera, addCamera } =
+  const { cameras, setCameras, updateCamera, deleteCamera, addCamera } =
     useCameras();
 
   // vamos trtar todas as mensagens recebidas pelo wss aqui
@@ -141,12 +144,9 @@ function AdminLayout() {
         });
         break;
       case "ConfigResult":
-        setApiKeyInfo(message.result)
+        setApiKeyInfo(message.result);
+        break;
       case "SelectGatewaysSuccess":
-        console.log(
-          "SelectGatewaysSuccess ALLGATEWAYS",
-          JSON.stringify(message.result)
-        );
         const allGateways: GatewaysInterface[] = message.result;
         setGateways(allGateways);
         break;
@@ -173,10 +173,6 @@ function AdminLayout() {
         });
         break;
       case "SelectCamerasSuccess":
-        console.log(
-          "SelectCamerasSuccess ALLCameras",
-          JSON.stringify(message.result)
-        );
         const allCameras: CamerasInterface[] = message.result;
         setCameras(allCameras);
         break;

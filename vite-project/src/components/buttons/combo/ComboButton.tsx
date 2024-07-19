@@ -17,11 +17,11 @@ export default function ComboButton({ button, handleClick }: ComboProps) {
     handleClick(); // ativar a prop
     if (!account.isAdmin) {
       console.log("TriggerCombo");
-      // wss?.sendMessage({
-      //   api: "user",
-      //   mt: "TriggerCombo",
-      //   btn_id: button?.id
-      // })
+      wss?.sendMessage({
+        api: "user",
+        mt: "TriggerCombo",
+        btn_id: button?.id,
+      });
     }
   };
   return (

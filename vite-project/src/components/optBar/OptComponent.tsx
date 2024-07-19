@@ -57,6 +57,7 @@ import {
 } from "lucide-react";
 import { useSensors } from "../sensor/SensorContext";
 import CardOptSensor from "@/components/sensor/CardOptSensor";
+// import CardOptCamera from "@/components/camera/CardOptCamera"; // Importe o componente CardOptCamera
 import CardOptGeneric from "./CardOptGeneric";
 
 interface User {
@@ -85,24 +86,26 @@ export default function OptComponent({
   const { isAdmin } = useContext(AccountContext);
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [sensorType, setSensorType] = useState("");
+
   const handleClick = () => {
+    setSensorType("")
     onClick();
   };
+
+  const handleSensorTypeChange = (value: string) => {
+    setSensorType(value);
+  };
+
   const commonClasses =
     "w-[60px] h-[60px] rounded-lg border bg-border text-card-foreground shadow-sm p-1 flex items-center justify-center";
 
   const getDialogContent = () => {
-    console.log(selectedOpt);
     switch (selectedOpt) {
       case "floor":
-        return (
-          <CardOptGeneric
-            selectedUser={selectedUser}
-            selectedOpt={selectedOpt}
-            clickedPosition={clickedPosition}
-          />
-        );
       case "maps":
+      case "video":
+      case "chat":
         return (
           <CardOptGeneric
             selectedUser={selectedUser}
@@ -112,43 +115,40 @@ export default function OptComponent({
         );
       case "sensor":
         return (
-          <CardOptSensor
-            selectedUser={selectedUser}
-            selectedOpt={selectedOpt}
-            clickedPosition={clickedPosition}
-            onClose={() => setIsDialogOpen(false)}
-          />
+          <>
+          <CardHeader>Selecione o Tipo</CardHeader>
+            <Select onValueChange={handleSensorTypeChange}>
+              <SelectTrigger>
+                <SelectValue placeholder="Selecione o tipo" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="camera">Câmera</SelectItem>
+                <SelectItem value="sensor">Sensor</SelectItem>
+              </SelectContent>
+            </Select>
+            {sensorType === "sensor" && (
+              <CardOptSensor
+                selectedUser={selectedUser}
+                selectedOpt={selectedOpt}
+                clickedPosition={clickedPosition}
+                onClose={() => setIsDialogOpen(false)}
+              />
+            )}
+            {sensorType === "camera" && (
+              <div>Abrir Modal criação de Câmeras</div>
+              // <CardOptCamera
+              //   selectedUser={selectedUser}
+              //   selectedOpt={selectedOpt}
+              //   clickedPosition={clickedPosition}
+              //   onClose={() => setIsDialogOpen(false)}
+              // />
+            )}
+          </>
         );
       case "radio":
-        return (
-          <>
-            <DialogTitle>RADIO COMING SOON</DialogTitle>
-          </>
-        );
-      case "video":
-        return (
-          <CardOptGeneric
-            selectedUser={selectedUser}
-            selectedOpt={selectedOpt}
-            clickedPosition={clickedPosition}
-          />
-        );
-      case "chat":
-        return (
-          <CardOptGeneric
-            selectedUser={selectedUser}
-            selectedOpt={selectedOpt}
-            clickedPosition={clickedPosition}
-          />
-        );
-
-        break;
+        return <DialogTitle>RADIO COMING SOON</DialogTitle>;
       default:
-        return (
-          <>
-            <DialogTitle>Criar um botão</DialogTitle>
-          </>
-        );
+        return <DialogTitle>Criar um botão</DialogTitle>;
     }
   };
 
@@ -177,7 +177,7 @@ export default function OptComponent({
         );
       }
     } else if (button.button_type === "sensor") {
-      // Caso específico para o tipo "sensor"
+      // caso específico para edição de botão do tipo "sensor"
       return (
         <div>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -193,9 +193,6 @@ export default function OptComponent({
                     {button.button_name}
                   </p>
                 </div>
-                {/* <div>
-                    <p>{button.button_prt}</p>
-                  </div> */}
               </div>
             </DialogTrigger>
             {isAdmin && (
@@ -213,13 +210,8 @@ export default function OptComponent({
           </Dialog>
         </div>
       );
-    }
-    // else if(selectedOpt === "chat"){
-    //   return(
-    //     <div>CHAT</div>
-    //   )
-    // }
-    else {
+    } else {
+      // edição de botões que nao forem do tipo "sensor"
       return (
         <div>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
