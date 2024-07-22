@@ -222,7 +222,7 @@ function UserLayout() {
       token={account.accessToken}
       onMessage={handleWebSocketMessage}
     >
-      <div className="flex gap-1 p-1">
+      <div className="flex justify-center gap-1 p-1">
         <LeftGrid buttons={buttons} selectedUser={account} />
 
         <ButtonsGridPage
