@@ -26,7 +26,7 @@ export default function UserComponent({
   selectedOpt,
 }: OptProps) {
   const commonClasses =
-    "w-[60px] h-[60px] rounded-lg border bg-border text-card-foreground shadow-sm p-1 flex items-center justify-center";
+    "w-[60px] h-[60px]  xl:w-[60px] xl:h-[60px] 2xl:w-[80px] rounded-lg border bg-border text-card-foreground shadow-sm p-1 flex items-center justify-center";
 
   const [newMessageReceived, setNewMessageReceived] = useState<boolean>(false);
   const handleClick = () => {

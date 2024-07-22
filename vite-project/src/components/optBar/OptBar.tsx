@@ -54,25 +54,25 @@ export default function OptBar({ onOptChange,clickedUser }: OtpRowProps) {
   }, [addChat]);
   console.log("Contexto de Mensagens" + JSON.stringify(chat))
   return (
-    <div className="flex">
-      <TabsOpt defaultValue="floor" onValueChange={handleOptChange}>
+    <div className="flex w-full">
+      <TabsOpt defaultValue="floor" className='w-full' onValueChange={handleOptChange}>
         <TabsList>
-          <TabsTrigger value="floor" icon={Map}>
+          <TabsTrigger value="floor" className='w-full' icon={Map}>
             {texts[language].floorPlan}
           </TabsTrigger>
-          <TabsTrigger value="maps" icon={MapPin}>
+          <TabsTrigger value="maps" className='w-full' icon={MapPin}>
             {texts[language].map}
           </TabsTrigger>
-          <TabsTrigger value="sensor" icon={Rss}>
+          <TabsTrigger value="sensor" className='w-full' icon={Rss}>
             {texts[language].sensor}
           </TabsTrigger>
-          <TabsTrigger value="radio" icon={Radio}>
+          <TabsTrigger value="radio" className='w-full' icon={Radio}>
             {texts[language].radio}
           </TabsTrigger>
-          <TabsTrigger value="video" icon={Video}>
+          <TabsTrigger value="video" className='w-full' icon={Video}>
             {texts[language].video}
           </TabsTrigger>
-          <TabsTrigger value="chat" icon={MessageSquare}>
+          <TabsTrigger value="chat" className='w-full' icon={MessageSquare}>
             <div className="flex items-center">
               <span className="mr-1">{texts[language].chat}</span>
               {newMessageReceived ? (

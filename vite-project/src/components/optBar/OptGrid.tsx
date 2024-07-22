@@ -10,7 +10,7 @@ import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import Keyboard from "react-simple-keyboard";
 import "react-simple-keyboard/build/css/index.css";
 import TestKeyboard from "../testeKeyboard";
-import UserComponent from "../chat/userComponent";
+import UserComponent from "../chat/OptUser";
 import { useUsers } from "../user/UserContext";
 
 interface OptGridProps {

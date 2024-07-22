@@ -128,11 +128,13 @@ export default function OptRightBottom({
             );
           } else {
             return (
+              <div className="h-full">
               <TransformWrapper>
                 <TransformComponent>
-                  <img src={clickedButton.button_prt} alt="img" />
+                  <img src={clickedButton.button_prt} alt="img" className=""/>
                 </TransformComponent>
               </TransformWrapper>
+              </div>
             );
           }
         case "maps":
@@ -142,10 +144,10 @@ export default function OptRightBottom({
           const googleMapsUrl = `
           https://www.google.com/maps/embed/v1/view?key=${filteredGoogleAPI.value}&center=${clickedButton.button_prt}&zoom=14&maptype=roadmap`;
           return (
-            <div className="h-full">
+            <div>
               <iframe
                 width="100%"
-                style={{ height: "calc(100vh - 200px)" }}
+                style={{ height: "100vh" }}
                 frameBorder="0"
                 src={googleMapsUrl}
                 allowFullScreen
