@@ -19,21 +19,43 @@ export default function AlarmButton({ button, handleClick }: ButtonProps) {
     useButtons();
   const account = useAccount();
   const wss = useWebSocketData();
+  const [initiatedByUser, setInitiatedByUser] = useState(false);
   const commonClasses =
     "w-[128px] h-[55px] rounded-lg border bg-border text-white shadow-sm p-1";
   // fazer um isTriggered para quando for alarmado mudar de cor
+  // useEffect(() => {
+  //   if (button.triggered) {
+  //     setClickedClass("bg-red-800");
+  //     // handleClickAlarm()
+  //   } else {
+  //     setClickedClass("");
+  //   }
+  // }, [button.triggered]);
+  // //button.triggered
+
   useEffect(() => {
-    if (button.triggered) {
-      setClickedClass("bg-red-800");
-      // handleClickAlarm()
-    } else {
-      setClickedClass("");
+    if (!initiatedByUser) { // quando nao foi iniciado pelo usuario
+      if (button.triggered && !button.clicked) {  // quando o usuario recebeu um alarme
+        setClickedClass("bg-red-800");
+      } else if (button.triggered && button.clicked) { // quando o usuario disparou um combo
+        setClickedClass("bg-red-800");
+        wss?.sendMessage({
+          api: "user",
+          mt: "TriggerAlarm",
+          prt: button.button_prt,
+          btn_id: button.id,
+        });
+      } else { // quando alguem desativou o alarme do usuario
+        setClickedClass("");
+      }
+    } else { 
+      setInitiatedByUser(false); 
     }
-  }, [setButtonTriggered, setStopButtonTriggered]);
-  //button.triggered
+  }, [button.triggered]);
 
   const handleClickAlarm = () => {
-    handleClick()
+    handleClick();
+    setInitiatedByUser(true);
     if (!account.isAdmin) {
       const isClicked = button.clicked;
       //isClicked || 
@@ -46,8 +68,8 @@ export default function AlarmButton({ button, handleClick }: ButtonProps) {
           prt: button.button_prt,
           btn_id: button.id,
         });
-      } 
-      else if(isClicked && !button.triggered){
+      }
+      else if (isClicked && !button.triggered) {
         setClickedButton(button.id);
         setClickedClass("bg-red-800");
         wss?.sendMessage({
@@ -56,7 +78,7 @@ export default function AlarmButton({ button, handleClick }: ButtonProps) {
           prt: button.button_prt,
           btn_id: button.id,
         });
-       }
+      }
       else {
         setClickedButton(button.id);
         setClickedClass("bg-red-800");

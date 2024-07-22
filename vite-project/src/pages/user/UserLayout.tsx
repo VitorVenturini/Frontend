@@ -56,6 +56,7 @@ function UserLayout() {
     deleteButton,
     updateButton,
     setCommandValue,
+    comboStarted,
     buttons,
   } = useButtons();
   const {
@@ -192,12 +193,9 @@ function UserLayout() {
       case "ConfigResult":
         setApiKeyInfo(message.result);
         break;
-      // case "ComboStartButton":
-      //   //{ api: "user", mt: "ComboStartButton",  btn_id: button.id, type: button.button_type }
-
-      //   // LÓGICA PARA ATIVAR OS BOTÕES VINCULADOS AO COMBO
-      //   // FUDEU
-      //   break;
+      case "ComboStartButton":
+        comboStarted(message.btn_id)
+        break;
       default:
         console.log("Unknown message type:", message);
         break;
