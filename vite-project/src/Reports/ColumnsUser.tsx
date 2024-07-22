@@ -46,6 +46,7 @@ export const columnsUser: ColumnDef<UserInterface>[] = [
     header: "Opções",
     cell: ({ row }) => {
       const user = row.original;
+      console.log()
 
       const [isDialogOpen, setIsDialogOpen] = useState(false);
       return (

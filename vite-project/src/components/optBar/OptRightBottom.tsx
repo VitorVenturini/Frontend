@@ -138,7 +138,7 @@ export default function OptRightBottom({
           const googleMapsUrl = `
           https://www.google.com/maps/embed/v1/view?key=${filteredGoogleAPI.value}&center=${clickedButton.button_prt}&zoom=14&maptype=roadmap`;
           return (
-            <div className="h-fitt w-full">
+            <div className="h-fit w-full">
               <iframe
                 width="100%"
                 height="100%"
