@@ -62,13 +62,11 @@ function UserLayout() {
   const {
     setSensors,
     updateSensor,
-    replaceLatestSensor,
     clearSensorsByName,
-    addSensors,
-    addSensorName,
+    addSensors
   } = useSensors();
   const { addHistory, updateHistory } = useHistory();
-  const {setApiKeyInfo} = useGoogleApiKey()
+  const { setApiKeyInfo } = useGoogleApiKey();
   const {
     setChat,
     allMessages,
@@ -96,6 +94,10 @@ function UserLayout() {
           clearSensorsByName(sensorName);
           addSensors(sensorsArray);
         }
+        break;
+      case "ImageReceived":
+        const camArray: SensorInterface[] = message.result
+        addSensors(camArray)
         break;
       case "SelectAllSensorInfoResultSrc":
         const allSensors: SensorInterface[] = JSON.parse(message.result);
@@ -194,7 +196,7 @@ function UserLayout() {
         setApiKeyInfo(message.result);
         break;
       case "ComboStartButton":
-        comboStarted(message.btn_id)
+        comboStarted(message.btn_id);
         break;
       default:
         console.log("Unknown message type:", message);

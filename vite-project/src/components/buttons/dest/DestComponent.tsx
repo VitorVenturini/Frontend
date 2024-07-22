@@ -58,6 +58,8 @@ export default function DestComponent({
 
   const handleClick = () => {
     onClick();
+    //tratamento de combos aqui:
+    // deixar em off por enquanto até ter a parte de telefonia 
   };
 
   const handleClickUpdate = () => {
