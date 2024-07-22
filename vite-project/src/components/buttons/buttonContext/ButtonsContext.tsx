@@ -27,6 +27,7 @@ export interface ButtonInterface {
   clicked?: boolean; // adicionado para rastrear se o botão foi clicado
   triggered: boolean;
   commandValue?: string;
+  comboStart?: boolean;
 }
 
 interface ButtonContextType {
@@ -50,6 +51,8 @@ interface ButtonContextType {
   setButtonTriggered: (id: number, triggered: boolean) => void;
   setStopButtonTriggered: (alarm: string, triggered: boolean) => void;
   setCommandValue: (btn_id: number, prt: string, value: string) => void;
+  comboStarted: (comboId: number) => void; 
+  setStopCombo: (id: number) => void;
   deleteButton: (id: number) => void;
 }
 
@@ -152,6 +155,25 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
+  const comboStarted = (comboId: number) => {
+    setButtons((prevButtons) =>
+      prevButtons.map((button) =>
+        button.id === comboId 
+          ? { ...button, triggered: true, clicked: true, comboStart: true }
+          : button
+      )
+    );
+  };
+
+  const setStopCombo = (id: number) => {
+    setButtons((prevButtons) =>
+      prevButtons.map((button) =>
+        button.id === id ? { ...button, comboStart: false } : button
+      )
+    );
+  };
+
+
   return (
     <ButtonContext.Provider
       value={{
@@ -168,6 +190,8 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
         removeClickedButton,
         setButtonTriggered,
         setStopButtonTriggered,
+        comboStarted,
+        setStopCombo
       }}
     >
       {children}

@@ -80,6 +80,7 @@ export default function ButtonsComponent({
   selectedPage,
 }: ButtonProps) {
   const { isAdmin } = useContext(AccountContext);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const language = useLanguage();
   const { sensors } = useSensors();
   const wss = useWebSocketData();
@@ -134,22 +135,25 @@ export default function ButtonsComponent({
             selectedPage={selectedPage}
             selectedUser={selectedUser}
             clickedPosition={clickedPosition}
+            onClose={() => setIsDialogOpen(false)}
           />
         );
-        case "user":
-          return (
-            <ModalUser
-              selectedPage={selectedPage}
-              selectedUser={selectedUser}
-              clickedPosition={clickedPosition}
-            />
-          );
+      case "user":
+        return (
+          <ModalUser
+            selectedPage={selectedPage}
+            selectedUser={selectedUser}
+            clickedPosition={clickedPosition}
+            onClose={() => setIsDialogOpen(false)}
+          />
+        );
       case "sensor":
         return (
           <ModalSensor
             selectedPage={selectedPage}
             selectedUser={selectedUser}
             clickedPosition={clickedPosition}
+            onClose={() => setIsDialogOpen(false)}
           />
         );
       case "command":
@@ -158,6 +162,7 @@ export default function ButtonsComponent({
             selectedPage={selectedPage}
             selectedUser={selectedUser}
             clickedPosition={clickedPosition}
+            onClose={() => setIsDialogOpen(false)}
           />
         );
       // Add other cases here as needed
@@ -177,6 +182,7 @@ export default function ButtonsComponent({
             selectedPage={selectedPage}
             selectedUser={selectedUser}
             clickedPosition={clickedPosition}
+            onClose={() => setIsDialogOpen(false)}
           />
         );
       case clickedPosition &&
@@ -271,7 +277,7 @@ export default function ButtonsComponent({
       case "alarm":
         return (
           <div>
-            <Dialog>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <div>
                   <AlarmButton button={button} handleClick={handleClick} />
@@ -286,6 +292,7 @@ export default function ButtonsComponent({
                       clickedPosition={clickedPosition}
                       existingButton={button}
                       isUpdate={true}
+                      onClose={() => setIsDialogOpen(false)}
                     />
                   }
                 </DialogContent>
@@ -296,7 +303,7 @@ export default function ButtonsComponent({
       case "user":
         return (
           <div>
-            <Dialog>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <div>
                   <UserButton button={button} handleClick={handleClick} />
@@ -311,6 +318,7 @@ export default function ButtonsComponent({
                       clickedPosition={clickedPosition}
                       existingButton={button}
                       isUpdate={true}
+                      onClose={() => setIsDialogOpen(false)}
                     />
                   }
                 </DialogContent>
@@ -338,7 +346,7 @@ export default function ButtonsComponent({
       case "combo":
         return (
           <div>
-            <Dialog>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <div>
                   <ComboButton button={button} handleClick={handleClick} />
@@ -353,6 +361,7 @@ export default function ButtonsComponent({
                       clickedPosition={clickedPosition}
                       existingButton={button}
                       isUpdate={true}
+                      onClose={() => setIsDialogOpen(false)}
                     />
                   }
                 </DialogContent>
@@ -363,7 +372,7 @@ export default function ButtonsComponent({
       case "sensor":
         return (
           <div>
-            <Dialog>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <div>
                   <SensorButton button={button} handleClick={handleClick} />
@@ -378,6 +387,7 @@ export default function ButtonsComponent({
                       clickedPosition={clickedPosition}
                       existingButton={button}
                       isUpdate={true}
+                      onClose={() => setIsDialogOpen(false)}
                     />
                   </DialogContent>
                 </div>
@@ -388,7 +398,7 @@ export default function ButtonsComponent({
       case "command":
         return (
           <div>
-            <Dialog>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <div>
                   <CommandButton button={button} handleClick={handleClick} />
@@ -403,6 +413,7 @@ export default function ButtonsComponent({
                       clickedPosition={clickedPosition}
                       existingButton={button}
                       isUpdate={true}
+                      onClose={() => setIsDialogOpen(false)}
                     />
                   </DialogContent>
                 </div>

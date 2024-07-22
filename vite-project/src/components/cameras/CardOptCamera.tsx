@@ -7,7 +7,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useSensors } from "./SensorContext";
+import { useCameras } from "./CameraContext";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
@@ -51,7 +51,7 @@ interface User {
   guid: string;
   // Adicione aqui outros campos se necessário
 }
-interface OptSensorProps {
+interface OptCameraProps {
   clickedPosition: { i: number; j: number } | null;
   selectedUser: User | null;
   selectedOpt: string;
@@ -60,48 +60,49 @@ interface OptSensorProps {
   onClose?: () => void;
 }
 
-export default function CardOptSensor({
+export default function CardOptCamera({
   clickedPosition,
   selectedUser,
   selectedOpt,
   existingButton,
   isUpdate = false,
-  onClose
-}: OptSensorProps) {
-  const [nameSensor, setNameSensor] = useState(
+  onClose,
+}: OptCameraProps) {
+  const [nameOpt, setNameOpt] = useState(existingButton?.button_name || "");
+  const [modelCamera, setModelCamera] = useState(
     existingButton?.button_prt || ""
   );
-  const [nameOpt, setNameOpt] = useState(existingButton?.button_name || "");
+
   const [isCreating, setIsCreating] = useState(false);
-  const { sensors } = useSensors();
+  const { cameras } = useCameras();
   const { toast } = useToast();
   const wss = useWebSocketData();
 
   const handleNameOpt = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNameOpt(event.target.value);
   };
-  const handleNameSensor = (value: string) => {
-    setNameSensor(value);
+  const handleModelCamera = (value: string) => {
+    setModelCamera(value);
   };
 
   const handleCreateOpt = () => {
-    if (nameOpt && nameSensor) {
+    if (nameOpt && modelCamera) {
       setIsCreating(true);
       wss?.sendMessage({
         api: "admin",
         mt: isUpdate ? "UpdateButton" : "InsertButton",
         ...(isUpdate && { id: existingButton?.id }),
         name: nameOpt,
-        value: nameSensor,
+        value: modelCamera,
         guid: selectedUser?.guid,
         img: null,
-        type: selectedOpt,
+        type: "camera",
         page: "0",
         x: clickedPosition?.j,
         y: clickedPosition?.i,
       });
       setIsCreating(false);
-      onClose?.()
+      onClose?.();
     } else {
       toast({
         variant: "destructive",
@@ -117,7 +118,7 @@ export default function CardOptSensor({
         mt: "DeleteButtons",
         id: existingButton?.id,
       });
-      onClose?.()
+      onClose?.();
     } catch (e) {
       console.error(e);
     }
@@ -126,11 +127,11 @@ export default function CardOptSensor({
     <>
       <Card className="border-none bg-transparent">
         <CardHeader>
-          <CardTitle>{isUpdate ? "Atualizar" : "Criar"} Botão Sensor</CardTitle>
+          <CardTitle>{isUpdate ? "Atualizar" : "Criar"} Botão Câmera</CardTitle>
           <CardDescription>
             Escolha um nome para o botão (de preferencia relacionado ao local
-            onde o sensor esta localizado) e escolha o Sensor que voce deseja
-            visualizar as informações
+            onde a câmera está localizada) e escolha a câmera que voce deseja
+            ver as imagens
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4 py-4">
@@ -149,21 +150,21 @@ export default function CardOptSensor({
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-end" htmlFor="buttonName">
-              Selecione o Sensor
+              Selecione a Câmera
             </Label>
-            <Select value={nameSensor} onValueChange={handleNameSensor}>
+            <Select value={modelCamera} onValueChange={handleModelCamera}>
               <SelectTrigger className="col-span-3">
-                <SelectValue placeholder="Selecione um Sensor" />
+                <SelectValue placeholder="Selecione uma Câmera" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectLabel>Sensores</SelectLabel>
-                  {sensors.map((sensor) => (
+                  <SelectLabel>Câmeras</SelectLabel>
+                  {cameras.map((cam) => (
                     <SelectItem
-                      key={sensor.deveui }
-                      value={sensor.deveui as string}
+                      key={cam.id}
+                      value={cam.mac}
                     >
-                      {sensor.sensor_name}
+                      {cam.nickname}
                     </SelectItem>
                   ))}
                 </SelectGroup>
@@ -183,7 +184,7 @@ export default function CardOptSensor({
                     <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
                     <AlertDialogDescription>
                       Essa ação nao pode ser desfeita. Isso irá deletar
-                      permanentemente o botão Sensor.
+                      permanentemente o botão Câmera.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>

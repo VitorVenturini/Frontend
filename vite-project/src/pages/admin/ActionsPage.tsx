@@ -8,8 +8,9 @@ import { useActions } from "@/components/actions/ActionsContext";
 export default function ActionsPage() {
   //const [actions, setActions] = useState<ActionsInteface[]>([]);
   const columnsactions = columnsActions; // Certifique-se de que ColumnsActions esteja correto
- 
-  const {actions} = useActions()
+
+  const { actions } = useActions();
+  console.log('TABLE ACTIONS GATEWAY', actions)
   return (
     <div className="px-2 flex flex-col gap-4 justify-center mx-[20px]">
       <ScrollArea className="w-full h-full">

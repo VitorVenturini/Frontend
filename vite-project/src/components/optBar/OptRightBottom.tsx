@@ -12,6 +12,8 @@ import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { useUsers } from "../user/UserContext";
 import ChatLayout from "../chat/ChatLayout";
 import { useChat } from "../chat/ChatContext";
+import { useGoogleApiKey } from "../options/ApiGoogle/GooglApiContext";
+import { CarouselImages } from "../Carousel/CarouselImages";
 
 interface OptRightBottomProps {
   clickedButtonId: number | null;
@@ -30,6 +32,7 @@ export default function OptRightBottom({
   const [loading, setLoading] = useState<boolean>(true);
   const { users } = useUsers();
   const wss = useWebSocketData();
+  const { apiKeyInfo } = useGoogleApiKey();
   const clickedButton = buttons.find((button) => button.id === clickedButtonId);
   const userToChat = users.find((user) => user.guid === clickedUser);
   console.log("UserToChat" + JSON.stringify(userToChat));
@@ -41,7 +44,7 @@ export default function OptRightBottom({
         (sensor) => sensor.deveui === sensorName
       );
       if (filteredSensorInfo.length > 0) {
-        setLoading(false);
+          setLoading(false);
       } else {
         setLoading(true);
       }
@@ -68,16 +71,22 @@ export default function OptRightBottom({
             console.log("FilteredSensor" + JSON.stringify(filteredSensorInfo));
             return (
               <div className="w-full">
+                {!sensorKey && (
+                  <div>Selecione a informação que você visualizar</div>
+                )}
                 <SensorGrid
                   sensorInfo={filteredSensorInfo}
                   onKeyChange={handleKeyChange}
                   clickedKey={clickedKey}
                   setClickedKey={setClickedKey}
                 />
-                <SensorGraph
-                  sensorInfo={filteredSensorInfo}
-                  sensorKey={sensorKey}
-                />
+                {sensorKey && (
+                  <SensorGraph
+                    sensorInfo={filteredSensorInfo}
+                    sensorKey={sensorKey}
+                  />
+                )}
+
                 {/* <SensorGraph sensorInfo={filteredSensorInfo} /> */}
                 {/* {filteredSensorInfo.map((sensor) => (
                 <div>
@@ -90,6 +99,20 @@ export default function OptRightBottom({
               </div>
             );
           }
+        case "camera":
+          if (loading) {
+            return <div>Carregando dados da Câmera...</div>;
+          } else {
+            const filteredCamInfo = sensors.filter(
+              (sensor) => sensor?.deveui === clickedButton?.button_prt
+            );
+            return (
+              <div>
+                <CarouselImages cameraInfo={filteredCamInfo} />
+              </div>
+            );
+          }
+
         case "floor":
           const extension = clickedButton?.button_prt
             .split(".")
@@ -112,7 +135,23 @@ export default function OptRightBottom({
               </TransformWrapper>
             );
           }
-        case "map":
+        case "maps":
+          const filteredGoogleAPI = apiKeyInfo.filter((key) => {
+            return key.entry === "googleApiKey";
+          })[0];
+          const googleMapsUrl = `
+          https://www.google.com/maps/embed/v1/view?key=${filteredGoogleAPI.value}&center=${clickedButton.button_prt}&zoom=14&maptype=roadmap`;
+          return (
+            <div className="h-full">
+              <iframe
+                width="100%"
+                style={{ height: "calc(100vh - 200px)" }}
+                frameBorder="0"
+                src={googleMapsUrl}
+                allowFullScreen
+              ></iframe>
+            </div>
+          );
         case "radio":
         case "video":
           return (

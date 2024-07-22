@@ -32,6 +32,7 @@ import {
   ChatProvider,
   useChat,
 } from "@/components/chat/ChatContext";
+import { useGoogleApiKey } from "@/components/options/ApiGoogle/GooglApiContext";
 
 interface User {
   id: string;
@@ -55,6 +56,7 @@ function UserLayout() {
     deleteButton,
     updateButton,
     setCommandValue,
+    comboStarted,
     buttons,
   } = useButtons();
   const {
@@ -66,6 +68,7 @@ function UserLayout() {
     addSensorName,
   } = useSensors();
   const { addHistory, updateHistory } = useHistory();
+  const {setApiKeyInfo} = useGoogleApiKey()
   const {
     setChat,
     allMessages,
@@ -86,7 +89,7 @@ function UserLayout() {
         setButtons(buttons);
         setSensors([]);
         break;
-      case "SelectSensorHistoryResult":
+      case "SelectDeviceHistoryResult":
         const sensorsArray: SensorInterface[] = JSON.parse(message.result);
         if (sensorsArray.length > 0) {
           const sensorName = sensorsArray[0].sensor_name;
@@ -95,8 +98,7 @@ function UserLayout() {
         }
         break;
       case "SelectAllSensorInfoResultSrc":
-        console.log("SelectAllSensorInfoSrc" + message.result);
-        const allSensors: SensorInterface[] = message.result;
+        const allSensors: SensorInterface[] = JSON.parse(message.result);
         addSensors(allSensors);
         break;
       case "SensorReceived":
@@ -187,6 +189,12 @@ function UserLayout() {
         const commandPrt = message.prt;
         const commandValue = message.value;
         setCommandValue(commandBtn_id, commandPrt, commandValue);
+        break;
+      case "ConfigResult":
+        setApiKeyInfo(message.result);
+        break;
+      case "ComboStartButton":
+        comboStarted(message.btn_id)
         break;
       default:
         console.log("Unknown message type:", message);

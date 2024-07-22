@@ -1,52 +1,42 @@
-"use client";
-import DeleteUsers from "@/components/account/DeleteUsers";
-import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { UserInterface } from "@/components/user/UserContext";
+import { ColumnDef } from "@tanstack/react-table";
+import { ArrowUpDown } from "lucide-react";
+import { Pencil } from "lucide-react";
+import CardCreateCameras from "./CardCreateCameras";
+import { CamerasInterface } from "./CameraContext";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { useState } from "react";
-import { Pencil
+import DeleteCamera from "./deleteCameras";
 
- } from "lucide-react";
-import CardCreateAccount from "@/components/account/CardCreateAccount";
-export const columnsUser: ColumnDef<UserInterface>[] = [
+
+export const camerasCollumns: ColumnDef<CamerasInterface>[] = [
   {
     accessorKey: "id",
     header: "ID",
   },
   {
-    accessorKey: "name",
+    accessorKey: "nickname",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Name {/*Ajustar text*/}
+          Apelido
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
   },
   {
-    accessorKey: "guid",
-    header: "GUID",
+    accessorKey: "mac",
+    header: "Mac Address",
   },
   {
-    accessorKey: "email",
-    header: "Email",
-  },
-  {
-    accessorKey: "sip",
-    header: "SIP",
-  },
-  {
-    id: "options",
-    header: "Opções",
+    id: "actions",
+    header: "Actions",
     cell: ({ row }) => {
-      const user = row.original;
-
+      const cameras = row.original;
       const [isDialogOpen, setIsDialogOpen] = useState(false);
       return (
         <div className="flex justify-center gap-1 items-center">
@@ -54,15 +44,15 @@ export const columnsUser: ColumnDef<UserInterface>[] = [
             <DialogTrigger>
               <Pencil />
             </DialogTrigger>
-            <DialogContent>
-              <CardCreateAccount
-                user={user}
+            <DialogContent className="max-w-5xl">
+              <CardCreateCameras
+                camera={cameras}
                 isUpdate={true}
                 onSuccess={() => setIsDialogOpen(false)}
               />
             </DialogContent>
           </Dialog>
-         <DeleteUsers id={user.id} />
+            <DeleteCamera id={cameras.id}/>
         </div>
       );
     },

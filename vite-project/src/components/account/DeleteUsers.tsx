@@ -32,23 +32,15 @@ import {
     AlertDialogTrigger,
   } from "@/components/ui/alert-dialog";
 import { useToast } from "../ui/use-toast";
-  interface User {
-    id: string;
-    name: string;
-    guid: string;
-    email: string;
-    sip: string;
-    // Adicione aqui outros campos se necessário
-  }
+import { useUsers } from "../user/UserContext";
   interface DeleteUsersProps {
-    id: string;
+    id: number;
   }
   export default function DeleteUsers({ id }: DeleteUsersProps){
-    const [users, setUsers] = useState<User[]>([]);
     const {toast} = useToast()
+    const {deleteUser} = useUsers()
   
-      const deleteUsers = async (id: string) => {
-        console.log(`id: ${id}`);
+      const deleteUsers = async (id: number) => {
         const formData = {
           id: id,
         };
@@ -61,8 +53,7 @@ import { useToast } from "../ui/use-toast";
             },
             body: JSON.stringify(formData),
           });
-          const data: User[] = await response.json();
-          setUsers(data);
+          deleteUser(id) // deletar o usuario no contexto pelo ID do usuario deletado
         } catch (error) {
           console.error(error);
         }

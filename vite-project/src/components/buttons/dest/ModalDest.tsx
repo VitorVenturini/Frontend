@@ -69,6 +69,7 @@ interface ButtonDestProps {
   selectedPage: string;
   existingButton?: ButtonInterface;
   isUpdate?: boolean;
+  onClose?: () => void;
 }
 
 export default function ModalDest({
@@ -76,6 +77,7 @@ export default function ModalDest({
   selectedPage,
   clickedPosition,
   existingButton,
+  onClose,
   isUpdate = false,
 }: ButtonDestProps) {
   const [nameDest, setNameDest] = useState(existingButton?.button_name || "");
@@ -120,6 +122,7 @@ export default function ModalDest({
         x: clickedPosition?.j,
         y: clickedPosition?.i,
       });
+      onClose?.()
       setIsCreating(false);
     } else {
       toast({
@@ -137,6 +140,7 @@ export default function ModalDest({
         mt: "DeleteButtons",
         id: existingButton?.id,
       });
+      onClose?.()
     } catch (e) {
       console.error(e);
     }
