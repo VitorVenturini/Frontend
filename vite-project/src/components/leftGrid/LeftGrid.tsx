@@ -34,7 +34,7 @@ export default function LeftGrid({ buttons, selectedUser }: LeftGridProps) {
   return (
     <Card className="p-1 flex ju flex-col  gap-1 items-center ">
       {selectedUser && (
-        <ScrollArea className=" lg:w-[190px] lg:h-[430px] xl:w-[220px] xl:h-[500px] 2xl:h-[px] 2xl:w-[250px]">
+        <ScrollArea className=" lg:w-[190px] lg:h-[430px] xl:w-[220px] xl:h-[360px] 2xl:h-[530px] 2xl:w-[250px]">
           {!isAdmin && <HistoryGrid />}
         </ScrollArea>
       )}
