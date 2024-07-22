@@ -11,9 +11,10 @@ type OnOptChange = (opt: string) => void;
 interface OtpRowProps {
   onOptChange: OnOptChange;
   clickedUser?: string | null;
+  selectedOpt: string;
 }
 
-export default function OptBar({ onOptChange, clickedUser }: OtpRowProps) {
+export default function OptBar({ onOptChange, clickedUser,selectedOpt }: OtpRowProps) {
   const { language } = useLanguage();
   const { chat, addChat, addChatMessage } = useChat();
   const { buttons } = useButtons();
@@ -24,19 +25,7 @@ export default function OptBar({ onOptChange, clickedUser }: OtpRowProps) {
   const handleOptChange = (newOpt: string) => {
     onOptChange(newOpt);
   };
-
-  // // função para verificar se o button_type é permitido
-  // const isAllowedButtonType = (type: string) => {
-  //   const allowedTypes = ["floor", "maps", "video", "chat", "sensor", "radio"];
-  //   return allowedTypes.includes(type);
-  // };
-
-  // // percorrer os botões e encontrar o primeiro que atende os critérios
-  // buttons.forEach((btn) => {
-  //   if (btn.comboStart && isAllowedButtonType(btn.button_type)) {
-  //     handleOptChange(btn.button_type);
-  //   }
-  // });
+  console.log(selectedOpt)
 
   useEffect(() => {
     // Verifica se há mensagens não lidas
@@ -56,10 +45,10 @@ export default function OptBar({ onOptChange, clickedUser }: OtpRowProps) {
     // Atualiza o estado de nova mensagem recebida
     setNewMessageReceived(hasUnreadMessage);
   }, [addChat]);
-  console.log("Contexto de Mensagens" + JSON.stringify(chat));
+ 
   return (
     <div className="flex w-full">
-      <TabsOpt defaultValue="floor" className='w-full' onValueChange={handleOptChange}>
+      <TabsOpt value={selectedOpt} className='w-full' onValueChange={handleOptChange}>
         <TabsList>
           <TabsTrigger value="floor" className='w-full' icon={Map}>
             {texts[language].floorPlan}

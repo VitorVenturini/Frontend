@@ -3,7 +3,7 @@ import {
   ButtonInterface,
   useButtons,
 } from "@/components/buttons/buttonContext/ButtonsContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import OptComponent from "@/components/optBar/OptComponent";
 import { useAccount } from "@/components/account/AccountContext";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
@@ -47,6 +47,7 @@ export default function OptGrid({
   const wss = useWebSocketData();
   const account = useAccount();
   const { users } = useUsers();
+  const {setStopCombo} = useButtons()
 
   const handleClickedUser = (newUser: string | null) => {
     if (setClickedUser) {
@@ -54,7 +55,16 @@ export default function OptGrid({
     }
   };
 
-  if (selectedOpt === "chat") {  // quando for do TIPO CHAT O TRATAMENTO É DIFERENTE 
+
+  useEffect(() => {
+    const buttonInCombo = buttons.find((button) => button.comboStart);
+    if (buttonInCombo) {
+      setClickedButtonId(buttonInCombo.id);
+    }
+  }, [buttons]); // useEffect para monitorar quando foi recebido um combo
+
+  if (selectedOpt === "chat") {
+    // quando for do TIPO CHAT O TRATAMENTO É DIFERENTE
     // precisamos melhorar isso ~vitor ~pietro
     const grid = Array(2)
       .fill(null)
@@ -82,7 +92,7 @@ export default function OptGrid({
                     );
                   }}
                   clickedUser={clickedUser}
-                  selectedOpt ={selectedOpt}
+                  selectedOpt={selectedOpt}
                 />
               </div>
             ))
@@ -90,7 +100,7 @@ export default function OptGrid({
         </div>
       </div>
     );
-  } else if(selectedOpt != "chat") {
+  } else if (selectedOpt != "chat") {
     const grid = Array(2)
       .fill(null)
       .map(() => Array(6).fill({ variant: "default" }));
@@ -125,20 +135,25 @@ export default function OptGrid({
                     } else {
                       // usuario
                       if (
-                        clickedButtonId !== button.id &&
-                        button.button_type === "sensor" || button.button_type === "camera"
+                        (clickedButtonId !== button.id &&
+                          button.button_type === "sensor") ||
+                        button.button_type === "camera"
                       ) {
-                        // enviar mensagem para consultar imagem da camera ou infos do sensor 
+                        // enviar mensagem para consultar imagem da camera ou infos do sensor
                         wss?.sendMessage({
                           api: "user",
                           mt: "SelectDeviceHistory",
                           id: button.button_prt,
                         });
                       }
-                      //setIsClicked(clickedButtonId === button.id ? false : true);
-                      setClickedButtonId(
-                        clickedButtonId === button.id ? null : button.id
-                      );
+                      if (button.comboStart) {       
+                          setStopCombo(button.id); 
+                        // Atualizar o botão clicado
+                        setClickedButtonId(button.id);
+                      } else {
+                        // Se o botão não inicia um combo, apenas atualiza o botão clicado
+                        setClickedButtonId(clickedButtonId === button.id ? null : button.id);
+                      }
                     }
                   }}
                 />
