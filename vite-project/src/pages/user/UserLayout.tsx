@@ -56,18 +56,17 @@ function UserLayout() {
     deleteButton,
     updateButton,
     setCommandValue,
+    comboStarted,
     buttons,
   } = useButtons();
   const {
     setSensors,
     updateSensor,
-    replaceLatestSensor,
     clearSensorsByName,
-    addSensors,
-    addSensorName,
+    addSensors
   } = useSensors();
   const { addHistory, updateHistory } = useHistory();
-  const {setApiKeyInfo} = useGoogleApiKey()
+  const { setApiKeyInfo } = useGoogleApiKey();
   const {
     setChat,
     allMessages,
@@ -95,6 +94,10 @@ function UserLayout() {
           clearSensorsByName(sensorName);
           addSensors(sensorsArray);
         }
+        break;
+      case "ImageReceived":
+        const camArray: SensorInterface[] = message.result
+        addSensors(camArray)
         break;
       case "SelectAllSensorInfoResultSrc":
         const allSensors: SensorInterface[] = JSON.parse(message.result);
@@ -192,12 +195,9 @@ function UserLayout() {
       case "ConfigResult":
         setApiKeyInfo(message.result);
         break;
-      // case "ComboStartButton":
-      //   //{ api: "user", mt: "ComboStartButton",  btn_id: button.id, type: button.button_type }
-
-      //   // LÓGICA PARA ATIVAR OS BOTÕES VINCULADOS AO COMBO
-      //   // FUDEU
-      //   break;
+      case "ComboStartButton":
+        comboStarted(message.btn_id);
+        break;
       default:
         console.log("Unknown message type:", message);
         break;
@@ -222,7 +222,7 @@ function UserLayout() {
       token={account.accessToken}
       onMessage={handleWebSocketMessage}
     >
-      <div className="flex gap-1 p-1">
+      <div className="flex justify-center gap-1 p-1">
         <LeftGrid buttons={buttons} selectedUser={account} />
 
         <ButtonsGridPage

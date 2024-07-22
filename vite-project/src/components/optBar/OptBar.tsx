@@ -5,39 +5,43 @@ import { Map, MapPin, Rss, Radio, Video, MessageSquare } from "lucide-react";
 import texts from "@/_data/texts.json";
 import { useLanguage } from "@/components/language/LanguageContext";
 import { ChatInterface, useChat } from "../chat/ChatContext";
+import { useButtons } from "../buttons/buttonContext/ButtonsContext";
 type OnOptChange = (opt: string) => void;
 
 interface OtpRowProps {
   onOptChange: OnOptChange;
-  clickedUser?: string | null
+  clickedUser?: string | null;
 }
 
-export default function OptBar({ onOptChange,clickedUser }: OtpRowProps) {
+export default function OptBar({ onOptChange, clickedUser }: OtpRowProps) {
   const { language } = useLanguage();
   const { chat, addChat, addChatMessage } = useChat();
+  const { buttons } = useButtons();
   const [newMessageReceived, setNewMessageReceived] = useState(false);
   const myAccountInfo = JSON.parse(localStorage.getItem("Account") || "{}");
+  const [initiatedByUser, setInitiatedByUser] = useState(false);
 
   const handleOptChange = (newOpt: string) => {
     onOptChange(newOpt);
   };
 
-  // useEffect(() => {
-  //   // ajustar aqui tbm , filtrar pela ultima mensagem de cada usuario 
-  //   const lastMessage = chat[chat.length - 1];
-  //   if (lastMessage) {
-  //     if (lastMessage.to_guid === myAccountInfo.guid && clickedUser != lastMessage.from_guid) {
-  //       setNewMessageReceived(true); // marca que uma nova mensagem foi recebida
-  //     }else if(clickedUser === lastMessage.from_guid){
-  //       setNewMessageReceived(false);  //quando abrir o chat com o cara que me mandou a mensagem , entao some o ping vermelho
-  //     }
+  // // função para verificar se o button_type é permitido
+  // const isAllowedButtonType = (type: string) => {
+  //   const allowedTypes = ["floor", "maps", "video", "chat", "sensor", "radio"];
+  //   return allowedTypes.includes(type);
+  // };
+
+  // // percorrer os botões e encontrar o primeiro que atende os critérios
+  // buttons.forEach((btn) => {
+  //   if (btn.comboStart && isAllowedButtonType(btn.button_type)) {
+  //     handleOptChange(btn.button_type);
   //   }
-  // }, [addChat]); // useEffect para quando eu receber uma mensagem
+  // });
 
   useEffect(() => {
     // Verifica se há mensagens não lidas
     let hasUnreadMessage = false;
-  
+
     // Percorre todas as mensagens do chat
     chat.forEach((message) => {
       // Verifica se a mensagem é para o seu guid e não foi lida
@@ -48,31 +52,31 @@ export default function OptBar({ onOptChange,clickedUser }: OtpRowProps) {
         }
       }
     });
-  
+
     // Atualiza o estado de nova mensagem recebida
     setNewMessageReceived(hasUnreadMessage);
   }, [addChat]);
-  console.log("Contexto de Mensagens" + JSON.stringify(chat))
+  console.log("Contexto de Mensagens" + JSON.stringify(chat));
   return (
-    <div className="flex">
-      <TabsOpt defaultValue="floor" onValueChange={handleOptChange}>
+    <div className="flex w-full">
+      <TabsOpt defaultValue="floor" className='w-full' onValueChange={handleOptChange}>
         <TabsList>
-          <TabsTrigger value="floor" icon={Map}>
+          <TabsTrigger value="floor" className='w-full' icon={Map}>
             {texts[language].floorPlan}
           </TabsTrigger>
-          <TabsTrigger value="maps" icon={MapPin}>
+          <TabsTrigger value="maps" className='w-full' icon={MapPin}>
             {texts[language].map}
           </TabsTrigger>
-          <TabsTrigger value="sensor" icon={Rss}>
+          <TabsTrigger value="sensor" className='w-full' icon={Rss}>
             {texts[language].sensor}
           </TabsTrigger>
-          <TabsTrigger value="radio" icon={Radio}>
+          <TabsTrigger value="radio" className='w-full' icon={Radio}>
             {texts[language].radio}
           </TabsTrigger>
-          <TabsTrigger value="video" icon={Video}>
+          <TabsTrigger value="video" className='w-full' icon={Video}>
             {texts[language].video}
           </TabsTrigger>
-          <TabsTrigger value="chat" icon={MessageSquare}>
+          <TabsTrigger value="chat" className='w-full' icon={MessageSquare}>
             <div className="flex items-center">
               <span className="mr-1">{texts[language].chat}</span>
               {newMessageReceived ? (

@@ -8,7 +8,7 @@ import {
   CarouselPrevious,
   type CarouselApi,
 } from "@/components/ui/carousel";
-import { SensorInterface } from "../sensor/SensorContext";
+import { SensorInterface } from "@/components/sensor/SensorContext";
 import { format } from "date-fns";
 
 interface CarouselImagesProps {
@@ -33,10 +33,7 @@ export function CarouselImages({ cameraInfo }: CarouselImagesProps) {
 
   return (
     <div>
-      <Carousel
-        setApi={setApi}
-        className="w-[300px] flex justify-center"
-      >
+      <Carousel setApi={setApi} className="w-[300px] flex justify-center">
         <CarouselContent>
           {cameraInfo?.map((sensor, index) => (
             <CarouselItem key={index}>
@@ -53,7 +50,10 @@ export function CarouselImages({ cameraInfo }: CarouselImagesProps) {
         <CarouselNext />
       </Carousel>
       <div className="py-2 text-center text-sm text-muted-foreground">
-        Imagem {current} de 10
+        <div>
+          {" "}
+          Imagem {current} de {cameraInfo.length}
+        </div>
       </div>
     </div>
   );
