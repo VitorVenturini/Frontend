@@ -34,7 +34,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-export function Component() {
+export function Grafico() {
   return (
     <Card>
       <CardHeader>
