@@ -212,6 +212,7 @@ function UserLayout() {
         comboStarted(message.btn_id);
         if (isAllowedButtonType(message.type)) {
           setSelectedOpt(message.type);
+          setComboStart(true)
         }
 
         break;
@@ -257,6 +258,7 @@ function UserLayout() {
           selectedOpt={selectedOpt}
           clickedUser={clickedUser}
           setClickedUser={handleClickedUser}
+          comboStart ={comboStart}
         />
       </div>
       {account.type === "admin" && (

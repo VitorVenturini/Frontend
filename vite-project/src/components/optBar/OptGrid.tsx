@@ -21,6 +21,7 @@ interface OptGridProps {
   clickedButtonId: number | null;
   clickedUser: string | null;
   setClickedUser: (newUser: string | null) => void;
+  comboStart: boolean;
   //   selectedPage : string
 }
 
@@ -38,6 +39,7 @@ export default function OptGrid({
   clickedButtonId,
   clickedUser,
   setClickedUser,
+  comboStart,
 }: OptGridProps) {
   const [clickedPosition, setClickedPosition] = useState<{
     i: number;
@@ -47,21 +49,33 @@ export default function OptGrid({
   const wss = useWebSocketData();
   const account = useAccount();
   const { users } = useUsers();
-  const {setStopCombo} = useButtons()
+  const { setStopCombo } = useButtons();
+  const [lastClickedButtonId, setLastClickedButtonId] = useState<number | null>(
+    null
+  );
 
   const handleClickedUser = (newUser: string | null) => {
     if (setClickedUser) {
       setClickedUser(newUser);
     }
   };
-
-
+  // useEffect para combos 
   useEffect(() => {
-    const buttonInCombo = buttons.find((button) => button.comboStart);
-    if (buttonInCombo) {
-      setClickedButtonId(buttonInCombo.id);
+    if (comboStart) {
+      const buttonInCombo = buttons.find((button) => button.comboStart);
+      if (buttonInCombo) {
+        setClickedButtonId(buttonInCombo.id); // setar o botão clicado atualmente 
+        setLastClickedButtonId(buttonInCombo.id); // setar o ultimo botão clicado , ou seja , oq está com o combo ativo
+        if( buttonInCombo.button_type === "sensor" || buttonInCombo.button_type === "camera"){
+          wss?.sendMessage({
+            api: "user",
+            mt: "SelectDeviceHistory",
+            id: buttonInCombo.button_prt,
+          });
+        } // enviar mensagem para consultar sensores e cameras ao receber o combo
+      }
     }
-  }, [buttons]); // useEffect para monitorar quando foi recebido um combo
+  }, [comboStart, buttons]); // toda vez que carregar o grid , verificar se um dos botões tem um combo
 
   if (selectedOpt === "chat") {
     // quando for do TIPO CHAT O TRATAMENTO É DIFERENTE
@@ -121,6 +135,7 @@ export default function OptGrid({
               <div key={`${i}-${j}`}>
                 <OptComponent
                   button={button}
+                  comboStart={comboStart}
                   selectedUser={selectedUser}
                   clickedPosition={clickedPosition}
                   selectedOpt={selectedOpt}
@@ -133,27 +148,37 @@ export default function OptGrid({
                         "i: " + clickedPosition?.i + " j: " + clickedPosition?.j
                       );
                     } else {
-                      // usuario
+                      // parar combo do botão anterior se existir
+                      if (lastClickedButtonId !== null) {
+                        const lastClickedButton = buttons.find(
+                          (btn) => btn.id === lastClickedButtonId
+                        );
+                        if (lastClickedButton && lastClickedButton.comboStart) {
+                          setStopCombo(lastClickedButton.id); 
+                          //parar o combo ao trocar de botão pois se nao ele vai ficar sempre no botão que está com o combo ativo
+                        }
+                      }
+
+                      // usuário
                       if (
                         (clickedButtonId !== button.id &&
                           button.button_type === "sensor") ||
                         button.button_type === "camera"
                       ) {
-                        // enviar mensagem para consultar imagem da camera ou infos do sensor
+                        // enviar mensagem para consultar imagem da câmera ou infos do sensor
                         wss?.sendMessage({
                           api: "user",
                           mt: "SelectDeviceHistory",
                           id: button.button_prt,
                         });
                       }
-                      if (button.comboStart) {       
-                          setStopCombo(button.id); 
-                        // Atualizar o botão clicado
-                        setClickedButtonId(button.id);
-                      } else {
-                        // Se o botão não inicia um combo, apenas atualiza o botão clicado
-                        setClickedButtonId(clickedButtonId === button.id ? null : button.id);
-                      }
+
+                      // // Atualizar o estado do último botão clicado
+                      // setLastClickedButtonId(button.id);
+
+                      setClickedButtonId(
+                        clickedButtonId === button.id ? null : button.id
+                      );
                     }
                   }}
                 />

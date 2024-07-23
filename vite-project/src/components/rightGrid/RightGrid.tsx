@@ -24,6 +24,7 @@ interface RightGridProps {
   onKeyChange: (key: string) => void;
   clickedUser?: string | null;
   setClickedUser?: (newUser: string | null) => void;
+  comboStart: boolean;
 }
 
 export default function RightGrid({
@@ -33,6 +34,7 @@ export default function RightGrid({
   onKeyChange,
   clickedUser,
   setClickedUser,
+  comboStart
 }: RightGridProps) {
   const [clickedButtonId, setClickedButtonId] = useState<number | null>(null);
   // const [clickedUser, setClickedUser] = useState<string | null>(null);
@@ -73,6 +75,7 @@ export default function RightGrid({
                 clickedUser={clickedUser as string | null}
                 setClickedButtonId={setClickedButtonId}
                 clickedButtonId={clickedButtonId}
+                comboStart ={comboStart}
               />
             }
           </div>

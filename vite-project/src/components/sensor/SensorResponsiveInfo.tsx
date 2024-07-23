@@ -51,7 +51,7 @@ export default function SensorResponsiveInfo({
         metric = "";
         break;
     }
-
+    
     return { formattedValue, metric };
   };
 

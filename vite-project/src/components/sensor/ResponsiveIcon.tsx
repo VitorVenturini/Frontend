@@ -11,8 +11,6 @@ export default function ResponsiveIcon({
   newValue,
   sensorType,
 }: ResponsiveIconProps) {
-  console.log("OldValueParaComparar" + oldValue);
-  console.log("NewValueParaComparar" + newValue);
   switch (sensorType) {
     case "temperature":
       return <Thermometer className="p-0.5"/>;
