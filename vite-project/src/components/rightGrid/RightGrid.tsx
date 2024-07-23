@@ -60,7 +60,7 @@ export default function RightGrid({
     }
   });
   return (
-    <Card className="  flex flex-col gap-1 items-center lg:h-[630px] lg:w-[400px] xl2:w-[520px] xl2:h-[790px]">
+    <Card className="  flex flex-col gap-1 items-center ">
       {selectedUser && (
         <div className="w-full">
           <div className="flex-grow w-full p-1">
@@ -76,7 +76,7 @@ export default function RightGrid({
               />
             }
           </div>
-          <div className="flex justify-center">
+          <div className="flex justify-center lg:h-[430px] lg:w-[400px] xl2:w-[520px] xl2:h-[490px]">
             {(clickedButtonId || clickedUser) && (
               <OptRightBottom
                 clickedButtonId={clickedButtonId}

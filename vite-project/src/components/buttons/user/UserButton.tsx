@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { useAccount } from "@/components/account/AccountContext";
 import { useUsers } from "@/components/user/UserContext";
+import { commonClasses } from "../ButtonsComponent";
 
 interface ButtonProps {
   button: ButtonInterface;
@@ -40,10 +41,9 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
     }
   }, [users]); // monitorar as alterações no contexto de usuario
 
-  const commonClasses = `w-[128px] h-[60px] md:w-[128px] md:h-[60px]  lg:w-[128px] lg:h-[60px]  xl:w-[128px] xl:h-[60px] xl2:w-[150px] xl2:h-[80px] rounded-lg border bg-border text-white shadow-sm p-1 ${statusClass} `;
   return (
     <div
-      className={`${commonClasses} flex flex-col cursor-pointer `}
+      className={`${commonClasses} flex flex-col cursor-pointer ${statusClass} `}
       onClick={handleClick}
     >
       <div className="flex items-center gap-1 cursor-pointer">

@@ -3,6 +3,7 @@ import { ButtonInterface, useButtons } from "../buttonContext/ButtonsContext";
 import { Layers3 } from "lucide-react";
 import { useAccount } from "@/components/account/AccountContext";
 import { useState } from "react";
+import { commonClasses } from "../ButtonsComponent";
 
 interface ComboProps {
   button: ButtonInterface;
@@ -14,9 +15,7 @@ export default function ComboButton({ button, handleClick }: ComboProps) {
   const { buttons, setClickedButton, removeClickedButton } =
     useButtons();
   const [clickedClass, setClickedClass] = useState("");
-  const commonClasses =
-    "w-[128px] h-[60px] md:w-[128px] md:h-[60px]  lg:w-[128px] lg:h-[60px]  xl:w-[128px] xl:h-[60px] xl2:w-[150px] xl2:h-[80px] rounded-lg border bg-border text-white shadow-sm p-1";
-
+  
   const handeClickCombo = () => {
     handleClick(); // ativar a prop
     if (!account.isAdmin) {

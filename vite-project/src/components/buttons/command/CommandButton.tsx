@@ -11,6 +11,7 @@ import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { Switch } from "@/components/ui/switch";
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
+import { commonClasses } from "../ButtonsComponent";
 interface ButtonProps {
   handleClick: () => void;
   button: ButtonInterface;
@@ -24,9 +25,6 @@ export default function CommandButton({ handleClick, button }: ButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [initiatedByUser, setInitiatedByUser] = useState(false);
   const [clickedClass, setClickedClass] = useState("");
-
-  const commonClasses =
-    "w-[128px] h-[60px] md:w-[128px] md:h-[60px]  lg:w-[128px] lg:h-[60px]  xl:w-[128px] xl:h-[60px] xl2:w-[150px] xl2:h-[80px] rounded-lg border bg-border text-white shadow-sm p-1 bg-buttonSensor active:bg-red-800";
 
   const handleClickCommand = () => {
     if (isLoading) return; // impede novos cliques enquanto está carregando

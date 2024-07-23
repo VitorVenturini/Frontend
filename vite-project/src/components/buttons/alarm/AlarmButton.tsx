@@ -7,6 +7,7 @@ import { OctagonAlert } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { useAccount } from "@/components/account/AccountContext";
+import { commonClasses } from "../ButtonsComponent";
 
 interface ButtonProps {
   button: ButtonInterface;
@@ -20,8 +21,6 @@ export default function AlarmButton({ button, handleClick }: ButtonProps) {
   const account = useAccount();
   const wss = useWebSocketData();
   const [initiatedByUser, setInitiatedByUser] = useState(false);
-  const commonClasses =
-    "w-[128px] h-[60px] md:w-[128px] md:h-[60px]  lg:w-[128px] lg:h-[60px]  xl:w-[128px] xl:h-[60px] xl2:w-[150px] xl2:h-[80px] rounded-lg border bg-border text-white shadow-sm p-1";
   // fazer um isTriggered para quando for alarmado mudar de cor
   // useEffect(() => {
   //   if (button.triggered) {
