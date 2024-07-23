@@ -68,7 +68,7 @@ export default function ModalSensor({
   clickedPosition,
   existingButton,
   isUpdate = false,
-  onClose
+  onClose,
 }: ButtonProps) {
   const [nameSensor, setNameSensor] = useState(
     existingButton?.button_prt || ""
@@ -120,7 +120,15 @@ export default function ModalSensor({
   const handleGeralThreshold = (value: string) => {
     setGeralThreshold(value);
   };
+  const handleMinWindThreshold = (value: string) => {
+    setGeralThreshold("");
+    setMinValue(value);
+  };
 
+  const handleMaxWindThreshold = (value: string) => {
+    setGeralThreshold("");
+    setMaxValue(value);
+  };
   const handleCreateButton = () => {
     try {
       if (nameButton && typeMeasure) {
@@ -145,7 +153,7 @@ export default function ModalSensor({
           guid: selectedUser?.guid,
           type: "sensor",
           img: filteredModel.description,
-          min: geralThreshold ? "" : minValue,
+          min: showSelectOnly ? "" : minValue,
           max: geralThreshold ? geralThreshold : maxValue,
           sensorType: typeMeasure,
           page: selectedPage,
@@ -154,7 +162,7 @@ export default function ModalSensor({
         };
         wss?.sendMessage(message);
         setIsCreating(false);
-        onClose?.()
+        onClose?.();
       } else {
         toast({
           variant: "destructive",
@@ -174,14 +182,22 @@ export default function ModalSensor({
         mt: "DeleteButtons",
         id: existingButton?.id,
       });
-      onClose?.()
+      onClose?.();
     } catch (e) {
       console.error(e);
     }
   };
 
-  const typesWithoutMinMax = ["leak", "light", "pir", "tvoc", "magnet_status"];
-  const typesWithSelectOnly = ["magnet_status", "leak", "pir"];
+  const typesWithoutMinMax = [
+    "leak",
+    "light",
+    "pir",
+    "tvoc",
+    "magnet_status",
+    "wind_direction",
+    "tamper_status"
+  ];
+  const typesWithSelectOnly = ["magnet_status", "leak", "pir","tamper_status"];
 
   const showMinMaxFields = !typesWithoutMinMax.includes(typeMeasure);
   const showSelectOnly = typesWithSelectOnly.includes(typeMeasure);
@@ -302,7 +318,7 @@ export default function ModalSensor({
               disabled={!typeMeasure}
             >
               <SelectTrigger className="col-span-3" id="SelectValue">
-                <SelectValue placeholder="Selecione um Valor"/>
+                <SelectValue placeholder="Selecione um Valor" />
               </SelectTrigger>
 
               <SelectContent position="popper">
@@ -312,6 +328,12 @@ export default function ModalSensor({
                     <>
                       <SelectItem value="1">Aberto</SelectItem>
                       <SelectItem value="0">Fechado</SelectItem>
+                    </>
+                  )}
+                  {typeMeasure === "tamper_status" && (
+                    <>
+                      <SelectItem value="1">Não Instalado</SelectItem>
+                      <SelectItem value="0">Instalado</SelectItem>
                     </>
                   )}
                   {typeMeasure === "leak" && (
@@ -329,6 +351,64 @@ export default function ModalSensor({
                 </SelectGroup>
               </SelectContent>
             </Select>
+          </div>
+        )}
+        {typeMeasure === "wind_direction" && (
+          <div>
+            <div className="grid grid-cols-4 items-center gap-4 mb-4">
+              <Label className="text-end" htmlFor="SelectValue">
+                Valor Mínimo
+              </Label>
+              <Select
+                value={minValue}
+                onValueChange={handleMinWindThreshold}
+                disabled={!typeMeasure}
+              >
+                <SelectTrigger className="col-span-3" id="SelectValue">
+                  <SelectValue placeholder="Selecione um Valor" />
+                </SelectTrigger>
+                <SelectContent position="popper">
+                  <SelectGroup>
+                    <SelectLabel>Select a Value</SelectLabel>
+                    <SelectItem value="N">North</SelectItem>
+                    <SelectItem value="NE">Northeast</SelectItem>
+                    <SelectItem value="E">East</SelectItem>
+                    <SelectItem value="SE">Southeast</SelectItem>
+                    <SelectItem value="S">South</SelectItem>
+                    <SelectItem value="SW">Southwest</SelectItem>
+                    <SelectItem value="W">West</SelectItem>
+                    <SelectItem value="NW">Northwest</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label className="text-end" htmlFor="SelectValue">
+                Valor Máximo
+              </Label>
+              <Select
+                value={maxValue}
+                onValueChange={handleMaxWindThreshold}
+                disabled={!typeMeasure}
+              >
+                <SelectTrigger className="col-span-3" id="SelectValue">
+                  <SelectValue placeholder="Selecione um Valor" />
+                </SelectTrigger>
+                <SelectContent position="popper">
+                  <SelectGroup>
+                    <SelectLabel>Select a Value</SelectLabel>
+                    <SelectItem value="N">North</SelectItem>
+                    <SelectItem value="NE">Northeast</SelectItem>
+                    <SelectItem value="E">East</SelectItem>
+                    <SelectItem value="SE">Southeast</SelectItem>
+                    <SelectItem value="S">South</SelectItem>
+                    <SelectItem value="SW">Southwest</SelectItem>
+                    <SelectItem value="W">West</SelectItem>
+                    <SelectItem value="NW">Northwest</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         )}
       </CardContent>

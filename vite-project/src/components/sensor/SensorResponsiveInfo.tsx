@@ -17,6 +17,30 @@ export default function SensorResponsiveInfo({
   const { sensors } = useSensors();
   const account = useAccount();
 
+  function getWindDirection(degrees: number) {
+    if (degrees >= 0 && degrees < 22.5) {
+      return "N";
+    } else if (degrees >= 22.5 && degrees < 67.5) {
+      return "NE";
+    } else if (degrees >= 67.5 && degrees < 112.5) {
+      return "E";
+    } else if (degrees >= 112.5 && degrees < 157.5) {
+      return "SE";
+    } else if (degrees >= 157.5 && degrees < 202.5) {
+      return "S";
+    } else if (degrees >= 202.5 && degrees < 247.5) {
+      return "SW";
+    } else if (degrees >= 247.5 && degrees < 292.5) {
+      return "W";
+    } else if (degrees >= 292.5 && degrees < 337.5) {
+      return "NW";
+    } else if (degrees >= 337.5 && degrees <= 360) {
+      return "N";
+    } else {
+      return "Invalid direction";
+    }
+  }
+
   const handleSensorSpecificValue = (sensorType: string, value: any) => {
     let formattedValue;
     let metric;
@@ -28,6 +52,10 @@ export default function SensorResponsiveInfo({
         break;
       case "magnet_status":
         formattedValue = value === 1 ? "Open" : "Closed";
+        metric = "";
+        break;
+      case "tamper_status":
+        formattedValue = value === 1 ? "Não Instalado" : "Instalado";
         metric = "";
         break;
       case "temperature":
@@ -46,12 +74,16 @@ export default function SensorResponsiveInfo({
         formattedValue = value;
         metric = "N/m²";
         break;
+      case "wind_direction":
+        formattedValue = getWindDirection(value);
+        metric = "";
+        break;
       default:
         formattedValue = value;
         metric = "";
         break;
     }
-    
+
     return { formattedValue, metric };
   };
 
@@ -75,7 +107,10 @@ export default function SensorResponsiveInfo({
           );
 
           return (
-            <div className="flex items-center gap-1 justify-between" key={index}>
+            <div
+              className="flex items-center gap-1 justify-between"
+              key={index}
+            >
               <div className="flex items-center">
                 <ResponsiveIcon
                   oldValue={oldValue}
@@ -90,13 +125,9 @@ export default function SensorResponsiveInfo({
               <div className="flex gap-1">
                 <div className="flex items-center gap-1">
                   {!account.isAdmin && (
-                    <p className="text-sm">
-                      {formattedValue}
-                    </p>
+                    <p className="text-sm">{formattedValue}</p>
                   )}
-                  <p className="text-[8px] text-muted-foreground">
-                    {metric}
-                  </p>
+                  <p className="text-[8px] text-muted-foreground">{metric}</p>
                 </div>
               </div>
             </div>
