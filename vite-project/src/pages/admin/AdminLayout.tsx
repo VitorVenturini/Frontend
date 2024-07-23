@@ -36,6 +36,8 @@ import {
   useCameras,
 } from "@/components/cameras/CameraContext";
 import { useGoogleApiKey } from "@/components/options/ApiGoogle/GooglApiContext";
+import ColumnsReports from '@/Reports/collumnsReports';
+
 function AdminLayout() {
   const account = useAccount();
   const { setUsers } = useUsers();
@@ -54,6 +56,11 @@ function AdminLayout() {
     useGateways();
   const { cameras, setCameras, updateCamera, deleteCamera, addCamera } =
     useCameras();
+    const [receivedFragments, setReceivedFragments] = useState<any[]>([]);
+    const [jsonData, setJsonData] = useState<any>(null);
+    const [jsonKeys, setJsonKeys] = useState<string[]>([]);
+    const [reportType, setReportType] = useState<string>('');
+    const [reportSrc, setSrc] = useState<string>('');
 
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
@@ -198,6 +205,35 @@ function AdminLayout() {
           description: "Camera deletada com sucesso",
         });
         break;
+      case "SelectFromReportsSuccess":
+        if (message.result === '[]') {
+          // Lógica para caso o resultado seja uma string vazia
+        } else {
+          const newFragments = [...receivedFragments, message.result];
+    
+          if (message.lastFragment) {
+            const jsonData = newFragments.join('');
+            const parsedData = JSON.parse(jsonData);
+            const jsonKeys = Object.keys(parsedData[0]); // Supondo que o JSON seja um array de objetos
+            
+            setReceivedFragments([]); // Limpa o array
+            setJsonData(parsedData);
+            setJsonKeys(jsonKeys);
+            setSrc(message.src)
+    
+            if (message.src === "RptSensors") {
+              console.log("relatório tipo sensor", jsonData);
+              setReportType('sensor');
+            } else {
+              console.log("relatório tipo tabela", jsonData);
+              setReportType('table');
+            }
+          }
+    
+          console.log('RELATÓRIO RECEBIDO', JSON.stringify(message.src));
+        }
+        break;
+
       default:
         console.log("Unknown message type:", message);
         break;
@@ -218,6 +254,9 @@ function AdminLayout() {
         <Route path="options" element={<Options />} />
         {/* Add more admin routes as needed */}
       </Routes>
+      {reportType === 'table' && jsonData && jsonKeys.length > 0 && (
+        <ColumnsReports data={jsonData} keys={jsonKeys} report={reportSrc} />
+      )}
     </WebSocketProvider>
   );
 }
