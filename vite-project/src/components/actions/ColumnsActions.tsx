@@ -8,6 +8,8 @@ import { ActionsInteface } from "@/components/actions/ActionsContext";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { useState } from "react";
 import { useUsers } from "@/components/user/UserContext";
+import { MessageCircleWarning } from "lucide-react";
+import NotifyActions from "@/components/actions/CardNotificationAction";
 
 export const columnsActions: ColumnDef<ActionsInteface>[] = [
     {
@@ -87,10 +89,12 @@ export const columnsActions: ColumnDef<ActionsInteface>[] = [
         const [isDialogOpen, setIsDialogOpen] = useState(false); 
 
       return (
-        <div className="flex justify-center gap-1 items-center">
+        <div className="flex justify-center gap-2 items-center">
+          <NotifyActions id={actions.id}/>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger>
               <Pencil />
+              
             </DialogTrigger>
             <DialogContent className="max-w-5xl">
               <CardCreateAction

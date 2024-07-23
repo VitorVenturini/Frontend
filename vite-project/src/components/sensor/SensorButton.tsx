@@ -24,7 +24,6 @@ export default function SensorButton({ handleClick, button }: ButtonProps) {
   const oldValue = buttonState?.oldValue;
   const newValue = buttonState?.newValue;
 
-  console.log("Todos Sensores " + JSON.stringify(sensors));
 
   const filteredSensor = sensors.find(
     (sensor) => sensor.deveui === button?.button_prt

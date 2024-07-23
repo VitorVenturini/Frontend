@@ -24,6 +24,7 @@ interface RightGridProps {
   onKeyChange: (key: string) => void;
   clickedUser?: string | null;
   setClickedUser?: (newUser: string | null) => void;
+  comboStart: boolean;
 }
 
 export default function RightGrid({
@@ -33,6 +34,7 @@ export default function RightGrid({
   onKeyChange,
   clickedUser,
   setClickedUser,
+  comboStart
 }: RightGridProps) {
   const [clickedButtonId, setClickedButtonId] = useState<number | null>(null);
   // const [clickedUser, setClickedUser] = useState<string | null>(null);
@@ -60,7 +62,7 @@ export default function RightGrid({
     }
   });
   return (
-    <Card className="  flex flex-col gap-1 items-center lg:h-[630px] lg:w-[400px] xl:h-[700px] xl:w-[400px] xl2:w-[520px] xl2:h-[790px]">
+    <Card className="  flex flex-col gap-1 items-center lg:h-[630px] lg:w-[400px] xl2:w-[520px] xl2:h-[790px]">
       {selectedUser && (
         <div className="w-full">
           <div className="flex-grow w-full p-1">
@@ -73,6 +75,7 @@ export default function RightGrid({
                 clickedUser={clickedUser as string | null}
                 setClickedButtonId={setClickedButtonId}
                 clickedButtonId={clickedButtonId}
+                comboStart ={comboStart}
               />
             }
           </div>

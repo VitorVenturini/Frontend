@@ -74,6 +74,7 @@ interface OptProps {
   selectedUser: User | null;
   selectedOpt: string;
   isClicked: boolean;
+  comboStart: boolean;
 }
 
 export default function OptComponent({
@@ -83,20 +84,29 @@ export default function OptComponent({
   selectedUser,
   selectedOpt,
   isClicked,
+  comboStart,
 }: OptProps) {
   const { isAdmin } = useContext(AccountContext);
-
+  const { buttons } = useButtons();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [sensorType, setSensorType] = useState("");
 
   const handleClick = () => {
-    setSensorType("")
+    setSensorType("");
     onClick();
   };
 
   const handleSensorTypeChange = (value: string) => {
     setSensorType(value);
   };
+
+  // useEffect(() => {
+  //   if(button?.comboStart){
+  //     console.log("passou aqui")
+  //     onClick()
+  //   }
+  // }, [button,comboStart]);
+
 
   const commonClasses =
     "w-[60px] h-[60px]  xl:w-[60px] xl:h-[60px] xl2:w-[80px] rounded-lg border bg-border text-card-foreground shadow-sm p-1 flex items-center justify-center";
@@ -117,7 +127,7 @@ export default function OptComponent({
       case "sensor":
         return (
           <>
-          <CardHeader>Selecione o Tipo</CardHeader>
+            <CardHeader>Selecione o Tipo</CardHeader>
             <Select onValueChange={handleSensorTypeChange}>
               <SelectTrigger>
                 <SelectValue placeholder="Selecione o tipo" />
@@ -210,7 +220,7 @@ export default function OptComponent({
           </Dialog>
         </div>
       );
-    }else if (button.button_type === "camera") {
+    } else if (button.button_type === "camera") {
       // caso específico para edição de botão do tipo "camera"
       return (
         <div>
@@ -244,8 +254,7 @@ export default function OptComponent({
           </Dialog>
         </div>
       );
-    }
-    else {
+    } else {
       // edição de botões que nao forem do tipo "sensor"
       return (
         <div>

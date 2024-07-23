@@ -1,7 +1,7 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useEffect, useState } from "react";
-import { DataTable } from "@/Reports/data-tableUser";
-import { columnsUser } from "@/Reports/ColumnsUser";
+import { DataTable } from "@/components/user/data-tableUser";
+import { columnsUser } from "@/components/user/ColumnsUser";
 import { useUsers } from "@/components/user/UserContext";
 
 //================================================
