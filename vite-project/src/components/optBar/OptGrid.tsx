@@ -3,14 +3,14 @@ import {
   ButtonInterface,
   useButtons,
 } from "@/components/buttons/buttonContext/ButtonsContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import OptComponent from "@/components/optBar/OptComponent";
 import { useAccount } from "@/components/account/AccountContext";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import Keyboard from "react-simple-keyboard";
 import "react-simple-keyboard/build/css/index.css";
 import TestKeyboard from "../testeKeyboard";
-import UserComponent from "../chat/userComponent";
+import UserComponent from "../chat/OptUser";
 import { useUsers } from "../user/UserContext";
 
 interface OptGridProps {
@@ -21,6 +21,7 @@ interface OptGridProps {
   clickedButtonId: number | null;
   clickedUser: string | null;
   setClickedUser: (newUser: string | null) => void;
+  comboStart: boolean;
   //   selectedPage : string
 }
 
@@ -38,6 +39,7 @@ export default function OptGrid({
   clickedButtonId,
   clickedUser,
   setClickedUser,
+  comboStart,
 }: OptGridProps) {
   const [clickedPosition, setClickedPosition] = useState<{
     i: number;
@@ -47,14 +49,36 @@ export default function OptGrid({
   const wss = useWebSocketData();
   const account = useAccount();
   const { users } = useUsers();
+  const { setStopCombo } = useButtons();
+  const [lastClickedButtonId, setLastClickedButtonId] = useState<number | null>(
+    null
+  );
 
   const handleClickedUser = (newUser: string | null) => {
     if (setClickedUser) {
       setClickedUser(newUser);
     }
   };
+  // useEffect para combos 
+  useEffect(() => {
+    if (comboStart) {
+      const buttonInCombo = buttons.find((button) => button.comboStart);
+      if (buttonInCombo) {
+        setClickedButtonId(buttonInCombo.id); // setar o botão clicado atualmente 
+        setLastClickedButtonId(buttonInCombo.id); // setar o ultimo botão clicado , ou seja , oq está com o combo ativo
+        if( buttonInCombo.button_type === "sensor" || buttonInCombo.button_type === "camera"){
+          wss?.sendMessage({
+            api: "user",
+            mt: "SelectDeviceHistory",
+            id: buttonInCombo.button_prt,
+          });
+        } // enviar mensagem para consultar sensores e cameras ao receber o combo
+      }
+    }
+  }, [comboStart, buttons]); // toda vez que carregar o grid , verificar se um dos botões tem um combo
 
-  if (selectedOpt === "chat") {  // quando for do TIPO CHAT O TRATAMENTO É DIFERENTE 
+  if (selectedOpt === "chat") {
+    // quando for do TIPO CHAT O TRATAMENTO É DIFERENTE
     // precisamos melhorar isso ~vitor ~pietro
     const grid = Array(2)
       .fill(null)
@@ -82,7 +106,7 @@ export default function OptGrid({
                     );
                   }}
                   clickedUser={clickedUser}
-                  selectedOpt ={selectedOpt}
+                  selectedOpt={selectedOpt}
                 />
               </div>
             ))
@@ -90,7 +114,7 @@ export default function OptGrid({
         </div>
       </div>
     );
-  } else if(selectedOpt != "chat") {
+  } else if (selectedOpt != "chat") {
     const grid = Array(2)
       .fill(null)
       .map(() => Array(6).fill({ variant: "default" }));
@@ -111,6 +135,7 @@ export default function OptGrid({
               <div key={`${i}-${j}`}>
                 <OptComponent
                   button={button}
+                  comboStart={comboStart}
                   selectedUser={selectedUser}
                   clickedPosition={clickedPosition}
                   selectedOpt={selectedOpt}
@@ -123,18 +148,34 @@ export default function OptGrid({
                         "i: " + clickedPosition?.i + " j: " + clickedPosition?.j
                       );
                     } else {
-                      // usuario
+                      // parar combo do botão anterior se existir
+                      if (lastClickedButtonId !== null) {
+                        const lastClickedButton = buttons.find(
+                          (btn) => btn.id === lastClickedButtonId
+                        );
+                        if (lastClickedButton && lastClickedButton.comboStart) {
+                          setStopCombo(lastClickedButton.id); 
+                          //parar o combo ao trocar de botão pois se nao ele vai ficar sempre no botão que está com o combo ativo
+                        }
+                      }
+
+                      // usuário
                       if (
-                        clickedButtonId !== button.id &&
-                        button.button_type === "sensor"
+                        (clickedButtonId !== button.id &&
+                          button.button_type === "sensor") ||
+                        button.button_type === "camera"
                       ) {
+                        // enviar mensagem para consultar imagem da câmera ou infos do sensor
                         wss?.sendMessage({
                           api: "user",
-                          mt: "SelectSensorHistory",
-                          sensor: button.button_prt,
+                          mt: "SelectDeviceHistory",
+                          id: button.button_prt,
                         });
                       }
-                      //setIsClicked(clickedButtonId === button.id ? false : true);
+
+                      // // Atualizar o estado do último botão clicado
+                      // setLastClickedButtonId(button.id);
+
                       setClickedButtonId(
                         clickedButtonId === button.id ? null : button.id
                       );

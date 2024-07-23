@@ -48,6 +48,11 @@
     --sensor-foreground: 20 14.3% 4.1%;
     --combo: 192, 91%, 36%;
     --radius: 0.5rem;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
   }
 
   .dark {
@@ -75,6 +80,11 @@
     --sensor: 0 0% 7%;
     --sensor-foreground: 20 14.3% 4.1%;
     --combo: 192, 91%, 36%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
   }
 }
 
@@ -99,5 +109,17 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+@media (orientation: portrait) {
+  body {
+    display: none;
+  }
+  body:before {
+    content: "Por favor, gire seu dispositivo para a visualização horizontal.";
+    display: block;
+    text-align: center;
+    margin-top: 20%;
+    font-size: 24px;
   }
 }

@@ -23,7 +23,7 @@ import { Ghost } from "lucide-react";
 import { SensorInterface, useSensors } from "@/components/sensor/SensorContext";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { useHistory } from "@/components/history/HistoryContext";
-import { useEffect } from "node_modules/react-resizable-panels/dist/declarations/src/vendor/react";
+import { useEffect } from "react";
 import { format } from "date-fns";
 import { useToast } from "@/components/ui/use-toast";
 import { UserInterface, useUsers } from "@/components/user/UserContext";
@@ -56,18 +56,13 @@ function UserLayout() {
     deleteButton,
     updateButton,
     setCommandValue,
+    comboStarted,
     buttons,
   } = useButtons();
-  const {
-    setSensors,
-    updateSensor,
-    replaceLatestSensor,
-    clearSensorsByName,
-    addSensors,
-    addSensorName,
-  } = useSensors();
+  const { setSensors, updateSensor, clearSensorsByName, addSensors } =
+    useSensors();
   const { addHistory, updateHistory } = useHistory();
-  const {setApiKeyInfo} = useGoogleApiKey()
+  const { setApiKeyInfo } = useGoogleApiKey();
   const {
     setChat,
     allMessages,
@@ -80,6 +75,23 @@ function UserLayout() {
   const [clickedUser, setClickedUser] = useState<string | null>(null);
   const navigate = useNavigate();
   const myAccountInfo = JSON.parse(localStorage.getItem("Account") || "{}");
+  const [comboStart, setComboStart] = useState(false);
+
+  const isAllowedButtonType = (type: string) => {
+    const allowedTypes = ["floor", "maps", "video", "chat", "sensor", "radio"];
+    return allowedTypes.includes(type);
+  };
+
+  // useEffect(() => {
+  //   if (buttons) {
+  //     buttons.forEach((btn) =>{
+  //       if(btn.comboStart && isAllowedButtonType(btn.button_type)){
+  //         setSelectedOpt(btn.button_type);
+  //       }
+  //     })
+  //   }
+  // }, [comboStart]);
+
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
     switch (message.mt) {
@@ -88,13 +100,17 @@ function UserLayout() {
         setButtons(buttons);
         setSensors([]);
         break;
-      case "SelectSensorHistoryResult":
+      case "SelectDeviceHistoryResult":
         const sensorsArray: SensorInterface[] = JSON.parse(message.result);
         if (sensorsArray.length > 0) {
           const sensorName = sensorsArray[0].sensor_name;
           clearSensorsByName(sensorName);
           addSensors(sensorsArray);
         }
+        break;
+      case "ImageReceived":
+        const camArray: SensorInterface[] = message.result;
+        addSensors(camArray);
         break;
       case "SelectAllSensorInfoResultSrc":
         const allSensors: SensorInterface[] = JSON.parse(message.result);
@@ -192,12 +208,14 @@ function UserLayout() {
       case "ConfigResult":
         setApiKeyInfo(message.result);
         break;
-      // case "ComboStartButton":
-      //   //{ api: "user", mt: "ComboStartButton",  btn_id: button.id, type: button.button_type }
+      case "ComboStartButton":
+        comboStarted(message.btn_id);
+        if (isAllowedButtonType(message.type)) {
+          setSelectedOpt(message.type);
+          setComboStart(true)
+        }
 
-      //   // LÓGICA PARA ATIVAR OS BOTÕES VINCULADOS AO COMBO
-      //   // FUDEU
-      //   break;
+        break;
       default:
         console.log("Unknown message type:", message);
         break;
@@ -222,12 +240,13 @@ function UserLayout() {
       token={account.accessToken}
       onMessage={handleWebSocketMessage}
     >
-      <div className="flex gap-1 p-1">
+      <div className="flex justify-center gap-1 p-1">
         <LeftGrid buttons={buttons} selectedUser={account} />
 
         <ButtonsGridPage
           buttons={buttons}
           selectedUser={account}
+          selectedOpt={selectedOpt}
           onOptChange={handleOptChange}
           clickedUser={clickedUser}
         />
@@ -239,6 +258,7 @@ function UserLayout() {
           selectedOpt={selectedOpt}
           clickedUser={clickedUser}
           setClickedUser={handleClickedUser}
+          comboStart ={comboStart}
         />
       </div>
       {account.type === "admin" && (

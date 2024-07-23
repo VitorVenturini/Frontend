@@ -58,6 +58,8 @@ export default function DestComponent({
 
   const handleClick = () => {
     onClick();
+    //tratamento de combos aqui:
+    // deixar em off por enquanto até ter a parte de telefonia 
   };
 
   const handleClickUpdate = () => {
@@ -67,7 +69,7 @@ export default function DestComponent({
   };
 
   const commonClasses =
-    "w-[60px] h-[60px] rounded-lg border bg-muted text-card-foreground shadow-sm p-1";
+    "w-[60px] h-[60px] xl2:w-[80px] xl2:h-[80px] rounded-lg border bg-muted text-card-foreground shadow-sm p-1";
 
   const getDialogContent = () => {
     return (

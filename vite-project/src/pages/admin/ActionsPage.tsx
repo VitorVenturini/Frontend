@@ -1,7 +1,7 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useEffect, useState } from "react";
-import { DataTable } from "@/Reports/data-tableActions";
-import { columnsActions } from "@/Reports/ColumnsActions";
+import { DataTable } from "@/components/actions/data-tableActions";
+import { columnsActions } from "@/components/actions/ColumnsActions";
 import { Action } from "@radix-ui/react-toast";
 import { useActions } from "@/components/actions/ActionsContext";
 

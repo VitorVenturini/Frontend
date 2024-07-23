@@ -37,6 +37,7 @@ import { useUsers } from "../user/UserContext";
     id: number;
   }
   export default function DeleteUsers({ id }: DeleteUsersProps){
+    console.log("ID" + id)
     const {toast} = useToast()
     const {deleteUser} = useUsers()
   
