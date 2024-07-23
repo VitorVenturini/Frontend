@@ -60,7 +60,7 @@ export default function RightGrid({
     }
   });
   return (
-    <Card className="  flex flex-col gap-1 items-center">
+    <Card className="  flex flex-col gap-1 items-center lg:h-[630px] lg:w-[400px] xl2:w-[520px] xl2:h-[790px]">
       {selectedUser && (
         <div className="w-full">
           <div className="flex-grow w-full p-1">

@@ -23,6 +23,7 @@ interface User {
 interface ButtonsGridPagesProps {
   buttons: ButtonInterface[];
   selectedUser: User;
+  selectedOpt: string;
   onOptChange: (newOpt: string) => void;
   clickedUser?: string | null;
 }
@@ -31,6 +32,7 @@ export default function ButtonsGridPages({
   buttons,
   selectedUser,
   onOptChange,
+  selectedOpt,
   clickedUser
 }: ButtonsGridPagesProps) {
   const [selectedPage, setSelectedPage] = useState("1"); // Inicialmente, a página 1 é selecionada. Note que agora é uma string.
@@ -57,15 +59,14 @@ export default function ButtonsGridPages({
   return (
 
 
-    <Card className="p-1 flex flex-col gap-1 items-center justify-center ">
-      <div className="flex-grow w-full">
+    <Card className="p-1 flex flex-col gap-1">
+      <div className="w-full space-y-1">
         <ButtonsGrid
           buttons={buttonsInSelectedPage}
           selectedUser={selectedUser}
           selectedPage={selectedPage}
         />
-        <br />
-        <OptBar onOptChange={handleOptChange} clickedUser={clickedUser} />
+        <OptBar onOptChange={handleOptChange} clickedUser={clickedUser} selectedOpt ={selectedOpt} />
       </div>
       <Tabs
         defaultValue="1"

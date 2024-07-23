@@ -13,7 +13,7 @@ import { useUsers } from "../user/UserContext";
 import ChatLayout from "../chat/ChatLayout";
 import { useChat } from "../chat/ChatContext";
 import { useGoogleApiKey } from "../options/ApiGoogle/GooglApiContext";
-import { CarouselImages } from "../Carousel/CarouselImages";
+import { CarouselImages } from "../cameras/Carousel/CarouselImages";
 
 interface OptRightBottomProps {
   clickedButtonId: number | null;
@@ -37,14 +37,16 @@ export default function OptRightBottom({
   const userToChat = users.find((user) => user.guid === clickedUser);
   console.log("UserToChat" + JSON.stringify(userToChat));
 
+  const filteredSensorInfo = sensors.filter(
+    (sensor) => sensor.deveui === clickedButton?.button_prt
+  );
+
   useEffect(() => {
     if (clickedButton) {
-      const sensorName = clickedButton.button_prt;
-      const filteredSensorInfo = sensors.filter(
-        (sensor) => sensor.deveui === sensorName
-      );
       if (filteredSensorInfo.length > 0) {
+        setTimeout(() => {
           setLoading(false);
+        }, 700);
       } else {
         setLoading(true);
       }
@@ -64,11 +66,6 @@ export default function OptRightBottom({
           if (loading) {
             return <div>Carregando dados do sensor...</div>;
           } else {
-            const filteredSensorInfo = sensors.filter(
-              (sensor) => sensor.deveui === clickedButton.button_prt
-            );
-            console.log("AllSensors " + JSON.stringify(sensors));
-            console.log("FilteredSensor" + JSON.stringify(filteredSensorInfo));
             return (
               <div className="w-full">
                 {!sensorKey && (
@@ -103,12 +100,9 @@ export default function OptRightBottom({
           if (loading) {
             return <div>Carregando dados da Câmera...</div>;
           } else {
-            const filteredCamInfo = sensors.filter(
-              (sensor) => sensor?.deveui === clickedButton?.button_prt
-            );
             return (
               <div>
-                <CarouselImages cameraInfo={filteredCamInfo} />
+                <CarouselImages cameraInfo={filteredSensorInfo} />
               </div>
             );
           }
@@ -128,11 +122,13 @@ export default function OptRightBottom({
             );
           } else {
             return (
+              <div className="h-full">
               <TransformWrapper>
                 <TransformComponent>
-                  <img src={clickedButton.button_prt} alt="img" />
+                  <img src={clickedButton.button_prt} alt="img" className=""/>
                 </TransformComponent>
               </TransformWrapper>
+              </div>
             );
           }
         case "maps":
@@ -142,10 +138,11 @@ export default function OptRightBottom({
           const googleMapsUrl = `
           https://www.google.com/maps/embed/v1/view?key=${filteredGoogleAPI.value}&center=${clickedButton.button_prt}&zoom=14&maptype=roadmap`;
           return (
-            <div className="h-full">
+            <div className="h-fit w-full">
               <iframe
                 width="100%"
-                style={{ height: "calc(100vh - 200px)" }}
+                height="100%"
+                className="h-full "
                 frameBorder="0"
                 src={googleMapsUrl}
                 allowFullScreen
