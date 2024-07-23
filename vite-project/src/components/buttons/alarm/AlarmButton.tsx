@@ -21,7 +21,7 @@ export default function AlarmButton({ button, handleClick }: ButtonProps) {
   const wss = useWebSocketData();
   const [initiatedByUser, setInitiatedByUser] = useState(false);
   const commonClasses =
-    "w-[128px] h-[55px] md:w-[128px] md:h-[55px]  lg:w-[128px] lg:h-[55px]  xl:w-[128px] xl:h-[70px] 2xl:w-[150px] 2xl:h-[80px] rounded-lg border bg-border text-white shadow-sm p-1";
+    "w-[128px] h-[60px] md:w-[128px] md:h-[60px]  lg:w-[128px] lg:h-[60px]  xl:w-[128px] xl:h-[60px] xl2:w-[150px] xl2:h-[80px] rounded-lg border bg-border text-white shadow-sm p-1";
   // fazer um isTriggered para quando for alarmado mudar de cor
   // useEffect(() => {
   //   if (button.triggered) {

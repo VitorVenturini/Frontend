@@ -26,7 +26,7 @@ export default function CommandButton({ handleClick, button }: ButtonProps) {
   const [clickedClass, setClickedClass] = useState("");
 
   const commonClasses =
-    "w-[128px] h-[55px] md:w-[128px] md:h-[55px]  lg:w-[128px] lg:h-[55px]  xl:w-[128px] xl:h-[70px] 2xl:w-[150px] 2xl:h-[80px] rounded-lg border bg-border text-white shadow-sm p-1 bg-buttonSensor active:bg-red-800";
+    "w-[128px] h-[60px] md:w-[128px] md:h-[60px]  lg:w-[128px] lg:h-[60px]  xl:w-[128px] xl:h-[60px] xl2:w-[150px] xl2:h-[80px] rounded-lg border bg-border text-white shadow-sm p-1 bg-buttonSensor active:bg-red-800";
 
   const handleClickCommand = () => {
     if (isLoading) return; // impede novos cliques enquanto está carregando
