@@ -113,8 +113,6 @@ export default function SensorResponsiveInfo({
             >
               <div className="flex items-center">
                 <ResponsiveIcon
-                  oldValue={oldValue}
-                  newValue={newValue}
                   sensorType={button.sensor_type}
                 />
                 <p className="text-[10px] font-medium leading-none text-muted-foreground">

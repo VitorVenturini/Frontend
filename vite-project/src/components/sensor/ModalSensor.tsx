@@ -107,6 +107,8 @@ export default function ModalSensor({
   };
   const handleTypeMeasure = (value: string) => {
     setTypeMeasure(value);
+    value === "press_short" || "press_double" || "press_long" ? setGeralThreshold(value) : null
+    // condição especial para setar o tipo de medida do SmartButton no max_threshold 
   };
   const handleMaxValue = (event: ChangeEvent<HTMLInputElement>) => {
     setGeralThreshold("");
@@ -195,7 +197,11 @@ export default function ModalSensor({
     "tvoc",
     "magnet_status",
     "wind_direction",
-    "tamper_status"
+    "tamper_status",
+    "press_short",
+    "press_double",
+    "press_long",
+    
   ];
   const typesWithSelectOnly = ["magnet_status", "leak", "pir","tamper_status"];
 
@@ -206,7 +212,11 @@ export default function ModalSensor({
     return sensor.deveui === nameSensor;
   })[0];
 
-  const sensorParameters = selectedSensor ? selectedSensor.parameters : [];
+  let sensorParameters = selectedSensor ? selectedSensor.parameters : [];
+  // remover parâmetros que contêm "out" no nome se a descrição do sensor começar com "UC" (todos iot controllers)
+  if (selectedSensor?.description?.startsWith("UC")) {
+    sensorParameters = sensorParameters.filter(param => !param.parameter.includes("out"));
+  }
   return (
     <>
       {isUpdate && (

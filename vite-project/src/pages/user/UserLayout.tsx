@@ -75,7 +75,6 @@ function UserLayout() {
   const [clickedUser, setClickedUser] = useState<string | null>(null);
   const navigate = useNavigate();
   const myAccountInfo = JSON.parse(localStorage.getItem("Account") || "{}");
-  const [comboStart, setComboStart] = useState(false);
 
   const isAllowedButtonType = (type: string) => {
     const allowedTypes = ["floor", "maps", "video", "chat", "sensor", "radio"];
@@ -212,7 +211,6 @@ function UserLayout() {
         comboStarted(message.btn_id);
         if (isAllowedButtonType(message.type)) {
           setSelectedOpt(message.type);
-          setComboStart(true)
         }
 
         break;
@@ -258,7 +256,6 @@ function UserLayout() {
           selectedOpt={selectedOpt}
           clickedUser={clickedUser}
           setClickedUser={handleClickedUser}
-          comboStart ={comboStart}
         />
       </div>
       {account.type === "admin" && (

@@ -21,7 +21,6 @@ interface OptGridProps {
   clickedButtonId: number | null;
   clickedUser: string | null;
   setClickedUser: (newUser: string | null) => void;
-  comboStart: boolean;
   //   selectedPage : string
 }
 
@@ -39,7 +38,6 @@ export default function OptGrid({
   clickedButtonId,
   clickedUser,
   setClickedUser,
-  comboStart,
 }: OptGridProps) {
   const [clickedPosition, setClickedPosition] = useState<{
     i: number;
@@ -61,7 +59,6 @@ export default function OptGrid({
   };
   // useEffect para combos 
   useEffect(() => {
-    if (comboStart) {
       const buttonInCombo = buttons.find((button) => button.comboStart);
       if (buttonInCombo) {
         setClickedButtonId(buttonInCombo.id); // setar o botão clicado atualmente 
@@ -74,8 +71,8 @@ export default function OptGrid({
           });
         } // enviar mensagem para consultar sensores e cameras ao receber o combo
       }
-    }
-  }, [comboStart, buttons]); // toda vez que carregar o grid , verificar se um dos botões tem um combo
+
+  }, [buttons]); // toda vez que carregar o grid , verificar se um dos botões tem um combo
 
   if (selectedOpt === "chat") {
     // quando for do TIPO CHAT O TRATAMENTO É DIFERENTE
@@ -135,7 +132,6 @@ export default function OptGrid({
               <div key={`${i}-${j}`}>
                 <OptComponent
                   button={button}
-                  comboStart={comboStart}
                   selectedUser={selectedUser}
                   clickedPosition={clickedPosition}
                   selectedOpt={selectedOpt}
