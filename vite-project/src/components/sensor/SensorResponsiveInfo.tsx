@@ -78,6 +78,10 @@ export default function SensorResponsiveInfo({
         formattedValue = getWindDirection(value);
         metric = "";
         break;
+      case "wind_speed":
+        formattedValue = value
+        metric = "km/h";
+        break;
       default:
         formattedValue = value;
         metric = "";

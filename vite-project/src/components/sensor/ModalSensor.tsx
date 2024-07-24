@@ -107,7 +107,7 @@ export default function ModalSensor({
   };
   const handleTypeMeasure = (value: string) => {
     setTypeMeasure(value);
-    value === "press_short" || "press_double" || "press_long" ? setGeralThreshold(value) : null
+    value === "press_short" || value === "press_double" || value === "press_long" ? setGeralThreshold(value) : null
     // condição especial para setar o tipo de medida do SmartButton no max_threshold 
   };
   const handleMaxValue = (event: ChangeEvent<HTMLInputElement>) => {
@@ -201,9 +201,9 @@ export default function ModalSensor({
     "press_short",
     "press_double",
     "press_long",
-    
+
   ];
-  const typesWithSelectOnly = ["magnet_status", "leak", "pir","tamper_status"];
+  const typesWithSelectOnly = ["magnet_status", "leak", "pir", "tamper_status"];
 
   const showMinMaxFields = !typesWithoutMinMax.includes(typeMeasure);
   const showSelectOnly = typesWithSelectOnly.includes(typeMeasure);
@@ -211,7 +211,7 @@ export default function ModalSensor({
   const selectedSensor = sensors.filter((sensor) => {
     return sensor.deveui === nameSensor;
   })[0];
-
+  console.log("GERAL TRESHOLD" + geralThreshold)
   let sensorParameters = selectedSensor ? selectedSensor.parameters : [];
   // remover parâmetros que contêm "out" no nome se a descrição do sensor começar com "UC" (todos iot controllers)
   if (selectedSensor?.description?.startsWith("UC")) {
@@ -318,50 +318,53 @@ export default function ModalSensor({
           </>
         )}
         {showSelectOnly && (
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-end" htmlFor="SelectValue">
-              Valor para ativar o alarme
-            </Label>
-            <Select
-              value={geralThreshold}
-              onValueChange={handleGeralThreshold}
-              disabled={!typeMeasure}
-            >
-              <SelectTrigger className="col-span-3" id="SelectValue">
-                <SelectValue placeholder="Selecione um Valor" />
-              </SelectTrigger>
+          <>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label className="text-end" htmlFor="SelectValue">
+                Valor para ativar o alarme
+              </Label>
+              <Select
+                value={geralThreshold}
+                onValueChange={handleGeralThreshold}
+                disabled={!typeMeasure}
+              >
+                <SelectTrigger className="col-span-3" id="SelectValue">
+                  <SelectValue placeholder="Selecione um Valor" />
 
-              <SelectContent position="popper">
-                <SelectGroup>
-                  <SelectLabel>Selecione um Valor</SelectLabel>
-                  {typeMeasure === "magnet_status" && (
-                    <>
-                      <SelectItem value="1">Aberto</SelectItem>
-                      <SelectItem value="0">Fechado</SelectItem>
-                    </>
-                  )}
-                  {typeMeasure === "tamper_status" && (
-                    <>
-                      <SelectItem value="1">Não Instalado</SelectItem>
-                      <SelectItem value="0">Instalado</SelectItem>
-                    </>
-                  )}
-                  {typeMeasure === "leak" && (
-                    <>
-                      <SelectItem value="1">Alagado</SelectItem>
-                      <SelectItem value="0">Seco</SelectItem>
-                    </>
-                  )}
-                  {typeMeasure === "pir" && (
-                    <>
-                      <SelectItem value="1">Presença</SelectItem>
-                      <SelectItem value="0">Vazio</SelectItem>
-                    </>
-                  )}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
+                </SelectTrigger>
+
+                <SelectContent position="popper">
+                  <SelectGroup>
+                    <SelectLabel>Selecione um Valor</SelectLabel>
+                    {typeMeasure === "magnet_status" && (
+                      <>
+                        <SelectItem value="1">Aberto</SelectItem>
+                        <SelectItem value="0">Fechado</SelectItem>
+                      </>
+                    )}
+                    {typeMeasure === "tamper_status" && (
+                      <>
+                        <SelectItem value="1">Não Instalado</SelectItem>
+                        <SelectItem value="0">Instalado</SelectItem>
+                      </>
+                    )}
+                    {typeMeasure === "leak" && (
+                      <>
+                        <SelectItem value="1">Alagado</SelectItem>
+                        <SelectItem value="0">Seco</SelectItem>
+                      </>
+                    )}
+                    {typeMeasure === "pir" && (
+                      <>
+                        <SelectItem value="1">Presença</SelectItem>
+                        <SelectItem value="0">Vazio</SelectItem>
+                      </>
+                    )}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+          </>
         )}
         {typeMeasure === "wind_direction" && (
           <div>

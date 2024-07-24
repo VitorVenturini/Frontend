@@ -125,6 +125,18 @@ export default function CardOptSensor({
   return (
     <>
       <Card className="border-none bg-transparent">
+        {
+          isUpdate && (
+            <CardHeader>
+              <CardTitle>Atualizar Botão Sensor</CardTitle>
+              <CardDescription>
+                Escolha um nome para o botão (de preferencia relacionado ao local
+                onde o sensor esta localizado) e escolha o Sensor que voce deseja
+                visualizar as informações
+              </CardDescription>
+            </CardHeader>
+          )
+        }
         <CardContent className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-end" htmlFor="buttonName">
@@ -152,7 +164,7 @@ export default function CardOptSensor({
                   <SelectLabel>Sensores</SelectLabel>
                   {sensors.map((sensor) => (
                     <SelectItem
-                      key={sensor.deveui }
+                      key={sensor.deveui}
                       value={sensor.deveui as string}
                     >
                       {sensor.sensor_name}

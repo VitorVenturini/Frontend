@@ -126,6 +126,18 @@ export default function CardOptCamera({
   return (
     <>
       <Card className="border-none bg-transparent">
+        {
+          isUpdate && (
+            <CardHeader>
+              <CardTitle>Atualizar Botão Câmera</CardTitle>
+              <CardDescription>
+                Escolha um nome para o botão (de preferencia relacionado ao local
+                onde a câmera está localizada) e escolha a câmera que voce deseja
+                ver as imagens
+              </CardDescription>
+            </CardHeader>
+          )
+        }
         <CardContent className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-end" htmlFor="buttonName">
