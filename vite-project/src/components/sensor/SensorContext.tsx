@@ -12,6 +12,7 @@ export interface SensorInterface {
     humidity?: string;
     temperature?: string;
     leak?: string | null;
+    daylight?: string | null;
     pir?: string | null;
     light_level?: string | null;
     hcho?: string | null;

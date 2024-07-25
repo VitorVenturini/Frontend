@@ -41,6 +41,26 @@ export default function SensorResponsiveInfo({
     }
   }
 
+  function getLightLevel(level: number) {
+    switch (level) {
+      case 0:
+        return "Sem Luz"
+      case 1:
+        return "Muito Baixa"
+      case 2:
+        return "Baixa"
+      case 3:
+        return "Média"
+      case 4:
+        return "Alta"
+      case 5:
+        return "Muito Alta"
+
+      default:
+        break;
+    }
+  }
+
   const handleSensorSpecificValue = (sensorType: string, value: any) => {
     let formattedValue;
     let metric;
@@ -56,6 +76,14 @@ export default function SensorResponsiveInfo({
         break;
       case "tamper_status":
         formattedValue = value === 1 ? "Não Instalado" : "Instalado";
+        metric = "";
+        break;
+      case "pir":
+        formattedValue = value === 1 ? "Presença" : "Vazio";
+        metric = "";
+        break;
+      case "daylight":
+        formattedValue = value === 1 ? "Luz" : "Escuro";
         metric = "";
         break;
       case "temperature":
@@ -81,6 +109,10 @@ export default function SensorResponsiveInfo({
       case "wind_speed":
         formattedValue = value
         metric = "km/h";
+        break;
+      case "light_level":
+        formattedValue = getLightLevel(value)
+        metric = "";
         break;
       default:
         formattedValue = value;

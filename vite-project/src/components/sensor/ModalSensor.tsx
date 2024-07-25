@@ -194,7 +194,7 @@ export default function ModalSensor({
     "leak",
     "light",
     "pir",
-    "tvoc",
+    "daylight",
     "magnet_status",
     "wind_direction",
     "tamper_status",
@@ -203,7 +203,7 @@ export default function ModalSensor({
     "press_long",
 
   ];
-  const typesWithSelectOnly = ["magnet_status", "leak", "pir", "tamper_status"];
+  const typesWithSelectOnly = ["magnet_status", "leak", "pir", "tamper_status","daylight"];
 
   const showMinMaxFields = !typesWithoutMinMax.includes(typeMeasure);
   const showSelectOnly = typesWithSelectOnly.includes(typeMeasure);
@@ -358,6 +358,12 @@ export default function ModalSensor({
                       <>
                         <SelectItem value="1">Presença</SelectItem>
                         <SelectItem value="0">Vazio</SelectItem>
+                      </>
+                    )}
+                    {typeMeasure === "daylight" && (
+                      <>
+                        <SelectItem value="1">Luz</SelectItem>
+                        <SelectItem value="0">Escuro</SelectItem>
                       </>
                     )}
                   </SelectGroup>
