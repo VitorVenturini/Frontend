@@ -5,7 +5,8 @@ import WS101_SOS from "../../assets/SensorsPng/WS101_SOS.png";
 import WS301 from "../../assets/SensorsPng/WS301.png";
 import UC300 from "@/assets/SensorsPng/UC300.png";
 import WTS506 from "@/assets/SensorsPng/WTS506.png";
-
+import WS202 from "@/assets/SensorsPng/WS202.png"
+import AM307 from "@/assets/SensorsPng/AM307.png"
 interface ButtonProps {
   sensorModel: string | undefined;
 }
@@ -20,7 +21,10 @@ export default function ResponsivePng({ sensorModel }: ButtonProps) {
     case "AM103":
       imageSrc = AM103;
       altText = "AM103 Sensor";
-
+      break;
+    case "AM307":
+      imageSrc = AM307;
+      altText = "AM307 Sensor";
       break;
     case "EM300-SLD":
       imageSrc = EM300_SLD;
@@ -33,6 +37,10 @@ export default function ResponsivePng({ sensorModel }: ButtonProps) {
     case "WS101":
       imageSrc = WS101_SOS;
       altText = "WS101_SOS Sensor";
+      break;
+    case "WS202":
+      imageSrc = WS202;
+      altText = "WS202 Sensor";
       break;
     case "UC300":
       imageSrc = UC300;

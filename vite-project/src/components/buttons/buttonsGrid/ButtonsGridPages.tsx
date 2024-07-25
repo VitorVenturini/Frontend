@@ -23,7 +23,7 @@ interface User {
 interface ButtonsGridPagesProps {
   buttons: ButtonInterface[];
   selectedUser: User;
-  selectedOpt: string;
+  selectedOpt?: string;
   onOptChange: (newOpt: string) => void;
   clickedUser?: string | null;
 }
@@ -66,7 +66,7 @@ export default function ButtonsGridPages({
           selectedUser={selectedUser}
           selectedPage={selectedPage}
         />
-        <OptBar onOptChange={handleOptChange} clickedUser={clickedUser} selectedOpt ={selectedOpt} />
+        <OptBar onOptChange={handleOptChange} clickedUser={clickedUser} selectedOpt ={selectedOpt as string} />
       </div>
       <Tabs
         defaultValue="1"

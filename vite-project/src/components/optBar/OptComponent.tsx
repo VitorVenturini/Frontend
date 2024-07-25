@@ -74,7 +74,6 @@ interface OptProps {
   selectedUser: User | null;
   selectedOpt: string;
   isClicked: boolean;
-  comboStart: boolean;
 }
 
 export default function OptComponent({
@@ -84,7 +83,6 @@ export default function OptComponent({
   selectedUser,
   selectedOpt,
   isClicked,
-  comboStart,
 }: OptProps) {
   const { isAdmin } = useContext(AccountContext);
   const { buttons } = useButtons();
@@ -99,14 +97,6 @@ export default function OptComponent({
   const handleSensorTypeChange = (value: string) => {
     setSensorType(value);
   };
-
-  // useEffect(() => {
-  //   if(button?.comboStart){
-  //     console.log("passou aqui")
-  //     onClick()
-  //   }
-  // }, [button,comboStart]);
-
 
   const commonClasses =
     "w-[60px] h-[60px]  xl:w-[60px] xl:h-[60px] xl2:w-[80px] rounded-lg border bg-border text-card-foreground shadow-sm p-1 flex items-center justify-center";
@@ -127,32 +117,81 @@ export default function OptComponent({
       case "sensor":
         return (
           <>
-            <CardHeader>Selecione o Tipo</CardHeader>
-            <Select onValueChange={handleSensorTypeChange}>
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione o tipo" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="camera">Câmera</SelectItem>
-                <SelectItem value="sensor">Sensor</SelectItem>
-              </SelectContent>
-            </Select>
-            {sensorType === "sensor" && (
-              <CardOptSensor
-                selectedUser={selectedUser}
-                selectedOpt={selectedOpt}
-                clickedPosition={clickedPosition}
-                onClose={() => setIsDialogOpen(false)}
-              />
-            )}
-            {sensorType === "camera" && (
-              <CardOptCamera
-                selectedUser={selectedUser}
-                selectedOpt={selectedOpt}
-                clickedPosition={clickedPosition}
-                onClose={() => setIsDialogOpen(false)}
-              />
-            )}
+            <Card className="border-none bg-transparent">
+              <CardHeader>
+                <CardTitle>{sensorType === "sensor" && (
+                  <div>Criar Botão Sensor</div>
+                )}
+                  {sensorType === "camera" && (
+                    <div>Criar Botão Câmera</div>
+                  )}
+                  {sensorType !== "camera" && sensorType !== "sensor" && (
+                    <div>Criar Botão</div>
+                  )}
+
+                </CardTitle>
+                <CardDescription>
+                  {sensorType === "sensor" && (
+                    <div>
+                      Escolha um nome para o botão (de preferencia relacionado ao local
+                      onde o sensor esta localizado) e escolha o Sensor que voce deseja
+                      visualizar as informações
+                    </div>
+                  )
+                  }
+                  {
+                    sensorType === "camera" && (
+                      <div>
+                        Escolha um nome para o botão (de preferencia relacionado ao local
+                        onde a câmera está localizada) e escolha a câmera que voce deseja
+                        ver as imagens
+                      </div>
+                    )
+                  }
+                  {sensorType !== "camera" && sensorType !== "sensor" && (
+                    <div>Selecione um tipo de botão</div>
+                  )}
+
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="gap-4 py-4">
+                <div className="flex gap-4 items-center">
+                  <Label
+                    className="text-end"
+                    htmlFor="framework"
+                    id="typeButton"
+                  >
+                    Tipo de botão
+                  </Label>
+                  <Select onValueChange={handleSensorTypeChange}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione o tipo" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="camera">Câmera</SelectItem>
+                      <SelectItem value="sensor">Sensor</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                {sensorType === "sensor" && (
+                  <CardOptSensor
+                    selectedUser={selectedUser}
+                    selectedOpt={selectedOpt}
+                    clickedPosition={clickedPosition}
+                    onClose={() => setIsDialogOpen(false)}
+                  />
+                )}
+                {sensorType === "camera" && (
+                  <CardOptCamera
+                    selectedUser={selectedUser}
+                    selectedOpt={selectedOpt}
+                    clickedPosition={clickedPosition}
+                    onClose={() => setIsDialogOpen(false)}
+                  />
+                )}
+
+              </CardContent>
+            </Card>
           </>
         );
       case "radio":
@@ -193,9 +232,8 @@ export default function OptComponent({
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <div
-                className={`${commonClasses} flex flex-col cursor-pointer ${
-                  isClicked ? "bg-zinc-950" : ""
-                }`}
+                className={`${commonClasses} flex flex-col cursor-pointer ${isClicked ? "bg-zinc-950" : ""
+                  }`}
                 onClick={handleClick}
               >
                 <div className="flex items-center gap-1 cursor-pointer">
@@ -227,9 +265,8 @@ export default function OptComponent({
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <div
-                className={`${commonClasses} flex flex-col cursor-pointer ${
-                  isClicked ? "bg-zinc-950" : ""
-                }`}
+                className={`${commonClasses} flex flex-col cursor-pointer ${isClicked ? "bg-zinc-950" : ""
+                  }`}
                 onClick={handleClick}
               >
                 <div className="flex items-center gap-1 cursor-pointer">
@@ -261,9 +298,8 @@ export default function OptComponent({
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <div
-                className={`${commonClasses} flex flex-col cursor-pointer ${
-                  isClicked ? "bg-zinc-950" : ""
-                }`}
+                className={`${commonClasses} flex flex-col cursor-pointer ${isClicked ? "bg-zinc-950" : ""
+                  }`}
                 onClick={handleClick}
               >
                 <div className="flex items-center gap-1 cursor-pointer">
