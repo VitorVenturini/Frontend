@@ -7,7 +7,6 @@
 // "487675116219135218"
 
 import React, { createContext, useState, useContext, ReactNode } from "react";
-import { useCallback } from "react";
 export interface ChatInterface {
   id: number;
   chat_id?: string;
@@ -29,6 +28,7 @@ interface ChatContextType {
   allMessages: (newMessage: ChatInterface[]) => void;
 }
 
+const myAccountInfo = JSON.parse(localStorage.getItem("Account") || "{}");
 const chatContext = createContext<ChatContextType | undefined>(undefined);
 
 export const ChatProvider = ({ children }: { children: ReactNode }) => {
@@ -43,7 +43,21 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const allMessages = (newMessages: ChatInterface[]) => {
-    setChat((prevChat) => [...prevChat, ...newMessages]);
+    setChat((prevChat) => {
+      // Filtra as mensagens que não pertencem ao usuário específico
+      const myAccountInfoGuid = myAccountInfo.guid ; // Substitua pelo GUID do seu usuário
+      const otherUserGuid = newMessages.length > 0 ? newMessages[0].from_guid === myAccountInfoGuid ? newMessages[0].to_guid : newMessages[0].from_guid : null;
+  
+      if (!otherUserGuid) return prevChat; // Caso não tenha novas mensagens, retorna o estado anterior
+  
+      return prevChat.filter(
+        (message) =>
+          !(
+            (message.from_guid === myAccountInfoGuid && message.to_guid === otherUserGuid) ||
+            (message.from_guid === otherUserGuid && message.to_guid === myAccountInfoGuid)
+          )
+      ).concat(newMessages);
+    });
   };
 
   const chatDelivered = (msg_id: number, deliveredDate: string) => {

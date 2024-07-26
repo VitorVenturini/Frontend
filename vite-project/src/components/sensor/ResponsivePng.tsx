@@ -7,6 +7,7 @@ import UC300 from "@/assets/SensorsPng/UC300.png";
 import WTS506 from "@/assets/SensorsPng/WTS506.png";
 import WS202 from "@/assets/SensorsPng/WS202.png"
 import AM307 from "@/assets/SensorsPng/AM307.png"
+import WS156 from "@/assets/SensorsPng/WS156.png"
 interface ButtonProps {
   sensorModel: string | undefined;
 }
@@ -37,6 +38,10 @@ export default function ResponsivePng({ sensorModel }: ButtonProps) {
     case "WS101":
       imageSrc = WS101_SOS;
       altText = "WS101_SOS Sensor";
+      break;
+    case "WS156":
+      imageSrc = WS156;
+      altText = "WS156 Sensor";
       break;
     case "WS202":
       imageSrc = WS202;
