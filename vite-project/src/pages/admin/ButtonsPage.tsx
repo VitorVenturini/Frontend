@@ -2,7 +2,7 @@ import { Input } from "@/components/ui/input";
 import * as React from "react";
 import ButtonsGridPages from "@/components/buttons/buttonsGrid/ButtonsGridPages";
 import LeftGrid from "@/components/leftGrid/LeftGrid";
-import RightGrid from "@/components/rightGrid/RightGrid";
+import RightGrid from "@/components/Interactive/InteractiveGrid";
 import { ButtonInterface, useButtons } from "@/components/buttons/buttonContext/ButtonsContext";
 import { PlusSquare, SquarePlus } from "lucide-react";
 import { ArrowBigUpDash } from "lucide-react";

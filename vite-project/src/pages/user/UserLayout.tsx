@@ -18,7 +18,7 @@ import {
 } from "@/components/buttons/buttonContext/ButtonsContext";
 
 import LeftGrid from "@/components/leftGrid/LeftGrid";
-import RightGrid from "@/components/rightGrid/RightGrid";
+import RightGrid from "@/components/Interactive/InteractiveGrid";
 import { Ghost } from "lucide-react";
 import { SensorInterface, useSensors } from "@/components/sensor/SensorContext";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
@@ -33,6 +33,7 @@ import {
   useChat,
 } from "@/components/chat/ChatContext";
 import { useGoogleApiKey } from "@/components/options/ApiGoogle/GooglApiContext";
+import InteractiveGrid from "@/components/Interactive/InteractiveGrid";
 
 interface User {
   id: string;
@@ -240,23 +241,31 @@ function UserLayout() {
       onMessage={handleWebSocketMessage}
     >
       <div className="flex justify-center gap-1 p-1">
-        <LeftGrid buttons={buttons} selectedUser={account} />
-
-        <ButtonsGridPage
-          buttons={buttons}
-          selectedUser={account}
-          selectedOpt={selectedOpt}
-          onOptChange={handleOptChange}
-          clickedUser={clickedUser}
-        />
-
-        <RightGrid
+        <div className="gap-1">
+        <InteractiveGrid
           onKeyChange={handleOptChange}
           buttons={buttons}
           selectedUser={account}
           selectedOpt={selectedOpt}
           clickedUser={clickedUser}
           setClickedUser={handleClickedUser}
+        />
+         <InteractiveGrid
+          onKeyChange={handleOptChange}
+          buttons={buttons}
+          selectedUser={account}
+          selectedOpt={selectedOpt}
+          clickedUser={clickedUser}
+          setClickedUser={handleClickedUser}
+        />
+        </div>
+       
+        <ButtonsGridPage
+          buttons={buttons}
+          selectedUser={account}
+          selectedOpt={selectedOpt}
+          onOptChange={handleOptChange}
+          clickedUser={clickedUser}
         />
       </div>
       {account.type === "admin" && (

@@ -10,7 +10,7 @@ import { ButtonInterface } from "../buttonContext/ButtonsContext";
 import ButtonsGrid from "./ButtonsGrid";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React, { useState, useContext } from "react";
-import OptBar from "@/components/optBar/OptBar"
+
 import { useLanguage } from "@/components/language/LanguageContext"
 import texts from "@/_data/texts.json";
 
@@ -66,7 +66,7 @@ export default function ButtonsGridPages({
           selectedUser={selectedUser}
           selectedPage={selectedPage}
         />
-        <OptBar onOptChange={handleOptChange} clickedUser={clickedUser} selectedOpt ={selectedOpt} />
+        
       </div>
       <Tabs
         defaultValue="1"

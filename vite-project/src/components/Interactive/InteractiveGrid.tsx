@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import OptBar from "@/components/optBar/OptBar"
 
 import OptGrid from "@/components/optBar/OptGrid";
 import { ButtonInterface } from "@/components/buttons/buttonContext/ButtonsContext";
@@ -17,7 +18,7 @@ interface User {
   guid: string;
 }
 
-interface RightGridProps {
+interface InteractiveridProps {
   buttons: ButtonInterface[];
   selectedUser: User | null;
   selectedOpt: string;
@@ -26,14 +27,14 @@ interface RightGridProps {
   setClickedUser?: (newUser: string | null) => void;
 }
 
-export default function RightGrid({
+export default function InteractiveGrid({
   buttons,
   selectedUser,
   selectedOpt,
   onKeyChange,
   clickedUser,
   setClickedUser,
-}: RightGridProps) {
+}: InteractiveridProps) {
   const [clickedButtonId, setClickedButtonId] = useState<number | null>(null);
   // const [clickedUser, setClickedUser] = useState<string | null>(null);
 
@@ -41,6 +42,10 @@ export default function RightGrid({
     if (setClickedUser) {
       setClickedUser(newUser);
     }
+  };
+
+  const handleOptChange = (newOpt: string) => {
+    onOptChange(newOpt);
   };
 
   useEffect(() => {
@@ -60,10 +65,13 @@ export default function RightGrid({
     }
   });
   return (
-    <Card className="  flex flex-col gap-1 items-center ">
+    <Card className="  flex flex-col items-center ">
       {selectedUser && (
-        <div className="w-full">
-          <div className="flex-grow w-full p-1">
+        
+        <div className="w-full flex p-1 gap-1">
+          <OptBar />
+          
+          <div className="flex-grow w-full gap-1">
             {
               <OptGrid
                 buttons={buttonsInSelectedOpt}
@@ -75,9 +83,7 @@ export default function RightGrid({
                 clickedButtonId={clickedButtonId}
               />
             }
-          </div>
-          <div className="flex justify-center lg:h-[430px] lg:w-[400px] xl2:w-[520px] xl2:h-[490px]">
-            {(clickedButtonId || clickedUser) && (
+              {(clickedButtonId || clickedUser) && (
               <OptRightBottom
                 clickedButtonId={clickedButtonId}
                 clickedUser={clickedUser as string | null}
