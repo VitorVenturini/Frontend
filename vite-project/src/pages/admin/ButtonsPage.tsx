@@ -2,7 +2,7 @@ import { Input } from "@/components/ui/input";
 import * as React from "react";
 import ButtonsGridPages from "@/components/buttons/buttonsGrid/ButtonsGridPages";
 import LeftGrid from "@/components/leftGrid/LeftGrid";
-import InteractiveGrid from "@/components/Interactive/InteractiveGrid";
+import InteractiveGrid from "@/components/InteractiveGrid/InteractiveGrid";
 import {
   ButtonInterface,
   useButtons,

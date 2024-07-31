@@ -8,8 +8,6 @@ import VideoPlayer from "../VideoPlayer/VideoPlayer";
 import { useWebSocketData } from "../websocket/WebSocketProvider";
 import React, { Component } from "react";
 import { Skeleton } from "@/components/ui/skeleton"
-
-
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { useUsers } from "../user/UserContext";
 import ChatLayout from "../chat/ChatLayout";
@@ -58,8 +56,8 @@ export default function OptLayout({
   const handleKeyChange = (key: string) => {
     setSensorKey(key);
   };
+  
   const commonClasses = "h-full w-full";
-
   const renderButtonInfo = () => {
     if (!clickedButton && !userToChat) return null;
 
@@ -67,11 +65,14 @@ export default function OptLayout({
       switch (clickedButton.button_type) {
         case "sensor":
           if (loading) {
-            return <div><Skeleton className="p-2 rounded-full" />
-</div>;
-          } else {
+            return <div><Skeleton className="p-2 rounded-full" /> </div>;
+          } 
+          else {
             return (
-              <div className={commonClasses} >
+              <div className="w-full">
+                {!sensorKey && (
+                  <div>Selecione a informação que você visualizar</div>
+                )}
                 <SensorGrid
                   sensorInfo={filteredSensorInfo}
                   onKeyChange={handleKeyChange}

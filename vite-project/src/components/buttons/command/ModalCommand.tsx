@@ -157,11 +157,20 @@ export default function ModalCommand({
     }
   };
 
+  const IotControllers = sensors.filter((sensor) => {
+    return sensor.description?.startsWith("UC")
+  })
   const selectedSensor = sensors.filter((sensor) => {
     return sensor.deveui === deviceEUID;
   })[0];
 
-  const commandParameters = selectedSensor ? selectedSensor.parameters : [];
+  let commandParameters = selectedSensor ? selectedSensor.parameters : [];
+
+  // manter parâmetros que contêm "out" no nome se a descrição do sensor começar com "UC"
+  if (selectedSensor?.description?.startsWith("UC")) {
+    commandParameters = commandParameters.filter(param => param.parameter.includes("out"));
+  }
+
   return (
     <>
       {isUpdate && (
@@ -200,7 +209,7 @@ export default function ModalCommand({
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>Dispositivos</SelectLabel>
-                {sensors.map((sensor) => (
+                {IotControllers.map((sensor) => (
                   <SelectItem
                     key={sensor.deveui}
                     value={sensor.deveui as string}

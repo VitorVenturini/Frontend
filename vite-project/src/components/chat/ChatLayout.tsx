@@ -10,6 +10,7 @@ import { MessageList, MessageType, MessageBox } from "react-chat-elements";
 import "react-chat-elements/dist/main.css"; // CSS da biblioteca de chat
 import { useRef } from "react";
 import { format } from "date-fns";
+import { toast } from "../ui/use-toast";
 
 interface ChatProps {
   userToChat: UserInterface;
@@ -38,18 +39,25 @@ export default function ChatLayout({ userToChat }: ChatProps) {
   }, [userToChat.guid]); // sempre que abrir a página de chat
 
   const handleSendMsg = () => {
-    wss?.sendMessage({
-      api: "user",
-      mt: "Message",
-      to: userToChat.guid,
-      msg: message,
-    });
-    setMessage("");
+    if (!message) {
+      toast({
+        variant: "destructive",
+        description: "Você não pode enviar uma mensagem em branco",
+      });
+    } else {
+      wss?.sendMessage({
+        api: "user",
+        mt: "Message",
+        to: userToChat.guid,
+        msg: message,
+      });
+      setMessage("");
+    }
   };
 
   const handleFormSubmit = (event: React.FormEvent) => {
     event.preventDefault(); // Previne o comportamento padrão do formulário
-    handleSendMsg(); 
+    handleSendMsg();
   };
 
   const handleInputMessage = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -125,10 +133,7 @@ export default function ChatLayout({ userToChat }: ChatProps) {
 
   return (
     <div>
-      <div
-        className="h-[400px] overflow-y-auto"
-        ref={messageListRef}
-      >
+      <div className="h-[400px] overflow-y-auto" ref={messageListRef}>
         {filteredMessages.map((message, index) => {
           const isMyMessage = message.from_guid === myAccountInfo.guid; // se a mensagem é minha ou não
           const messageText = message.msg || "";
@@ -202,16 +207,16 @@ export default function ChatLayout({ userToChat }: ChatProps) {
 
       <div className="mt-5">Chat com {userToChat.name}</div>
       <form onSubmit={handleFormSubmit}>
-      <div className="flex items-center gap-3 p-2">
-        <Input
-          placeholder="escreva algo aqui"
-          value={message}
-          onChange={handleInputMessage}
-        />
-        <Button size="icon" type="submit">
-          <Send />
-        </Button>
-      </div>
+        <div className="flex items-center gap-3 p-2">
+          <Input
+            placeholder="escreva algo aqui"
+            value={message}
+            onChange={handleInputMessage}
+          />
+          <Button size="icon" type="submit">
+            <Send />
+          </Button>
+        </div>
       </form>
     </div>
   );

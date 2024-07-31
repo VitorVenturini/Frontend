@@ -32,8 +32,7 @@ import {
   useChat,
 } from "@/components/chat/ChatContext";
 import { useGoogleApiKey } from "@/components/options/ApiGoogle/GooglApiContext";
-import InteractiveGrid from "@/components/Interactive/InteractiveGrid";
-
+import InteractiveGrid from "@/components/InteractiveGrid/InteractiveGrid";
 interface User {
   id: string;
   name: string;
@@ -220,6 +219,18 @@ function UserLayout() {
       //   }
 
       //   break;
+      case "SmartButtonReceived":
+        setButtonTriggered(message.btn_id, true);
+        // addHistory({
+        //   button_name: "Alarm" + message.alarm,
+        //   date: message.date
+        //     ? format(new Date(message.date), "dd/MM HH:mm")
+        //     : format(new Date(), "dd/MM HH:mm"),
+        // });
+        toast({
+          description: "Botão Vermelho Disparou"
+        });
+        break;
       default:
         console.log("Unknown message type:", message);
         break;
