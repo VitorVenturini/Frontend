@@ -21,7 +21,7 @@ interface OptRightBottomProps {
   onKeyChange: (key: string) => void;
 }
 
-export default function OptRightBottom({
+export default function OptLayout({
   clickedButtonId,
   clickedUser,
 }: OptRightBottomProps) {

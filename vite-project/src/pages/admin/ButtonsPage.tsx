@@ -2,8 +2,11 @@ import { Input } from "@/components/ui/input";
 import * as React from "react";
 import ButtonsGridPages from "@/components/buttons/buttonsGrid/ButtonsGridPages";
 import LeftGrid from "@/components/leftGrid/LeftGrid";
-import RightGrid from "@/components/rightGrid/RightGrid";
-import { ButtonInterface, useButtons } from "@/components/buttons/buttonContext/ButtonsContext";
+import InteractiveGrid from "@/components/InteractiveGrid/InteractiveGrid";
+import {
+  ButtonInterface,
+  useButtons,
+} from "@/components/buttons/buttonContext/ButtonsContext";
 import { PlusSquare, SquarePlus } from "lucide-react";
 import { ArrowBigUpDash } from "lucide-react";
 
@@ -45,7 +48,9 @@ interface ButtonsPageProp {
 export default function ButtonsPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null); // Inicialmente, o primeiro usuário é selecionado
-  const [selectedOpt, setSelectedOpt] = useState<string>("floor");
+  const [selectedOptTop, setSelectedOptTop] = useState<string>("floor"); // default for top
+  const [selectedOptBottom, setSelectedOptBottom] = useState<string>("floor"); // default for bottom
+
   const account = useAccount();
   const { language } = useLanguage();
   // const { data: websocketData, sendMessage } = useWebSocket(
@@ -87,9 +92,13 @@ export default function ButtonsPage() {
     const user = users.find((user) => user.id === value);
     setSelectedUser(user || null);
   };
-  
-  const handleOptChange = (newOpt: string) => {
-    setSelectedOpt(newOpt);
+
+  const handleOptChangeTop = (newOpt: string) => {
+    setSelectedOptTop(newOpt);
+  };
+
+  const handleOptChangeBottom = (newOpt: string) => {
+    setSelectedOptBottom(newOpt);
   };
 
   //console.log("Botões recebidos em ButtonsPage:" + JSON.stringify(buttons));
@@ -98,66 +107,74 @@ export default function ButtonsPage() {
     : [];
 
   return (
-<div className="flex justify-center gap-3">
-  <div>
-    {<LeftGrid buttons={filteredButtons} selectedUser={selectedUser} />}
-  </div>
-  <div className=" flex flex-col min-w-[644px] gap-2">
-    <div className="flex justify-between gap-3 items-center">
-      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
-        {texts[language].headerUser}:
-      </h3>
+    <div className="flex flex-col justify-center gap-3">
+      <div className="flex justify-between gap-3 items-center lg:mx-[500px]">
+        <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
+          {texts[language].headerUser}:
+        </h3>
 
-      <Select onValueChange={handleUserSelect}>
-        <SelectTrigger className="">
-          <SelectValue placeholder={texts[language].selectUserPlaceholder} />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            <SelectLabel>{texts[language].users}</SelectLabel>
-            {users.map((user) => (
-              <SelectItem key={user.id} value={user.id}>
-                {user.name}
-              </SelectItem>
-            ))}
-          </SelectGroup>
-        </SelectContent>
-      </Select>
-      <Button>{texts[language].table}</Button>
-    </div>
-    {!selectedUser ? (
-      <div className="flex flex-col justify-center items-center gap-5 mt-5">
-        <div className="flex align-middle items-center gap-8">
-          <ArrowBigUpDash size={30} className="animate-bounce" />
-          {texts[language].chooseUser}
-          <ArrowBigUpDash size={30} className="animate-bounce" />
-        </div>
-          </div>
-        ) : (
-          <div></div>
-        )}
-
-        {/* Renderize as informações do usuário selecionado aqui */}
-        {selectedUser && (
-          
-          <div>
-            {
-              <ButtonsGridPages
-                buttons={filteredButtons}
-                selectedUser={selectedUser}
-                onOptChange={handleOptChange}
-              />
-            }
-          </div>
-        )}
+        <Select onValueChange={handleUserSelect}>
+          <SelectTrigger className="">
+            <SelectValue placeholder={texts[language].selectUserPlaceholder} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>{texts[language].users}</SelectLabel>
+              {users.map((user) => (
+                <SelectItem key={user.id} value={user.id}>
+                  {user.name}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+        <Button>{texts[language].table}</Button>
       </div>
-      <div>
-        <RightGrid
-        onKeyChange={handleOptChange}
-          buttons={filteredButtons}
-          selectedUser={selectedUser}
-          selectedOpt={selectedOpt}
-        />
+      {!selectedUser ? (
+        <div className="flex flex-col justify-center items-center gap-5 mt-5">
+          <div className="flex align-middle items-center gap-8">
+            <ArrowBigUpDash size={30} className="animate-bounce" />
+            {texts[language].chooseUser}
+            <ArrowBigUpDash size={30} className="animate-bounce" />
+          </div>
+        </div>
+      ) : (
+        <div></div>
+      )}
+      <div className="flex item justify-center gap-1">
+        <div>
+         {/* DE CIMA  */}
+         <InteractiveGrid
+            interactive="top"
+            onKeyChange={handleOptChangeTop}
+            buttons={buttons}
+            selectedUser={selectedUser}
+            selectedOpt={selectedOptTop}
+          
+          />
+            {/* DE BAIXO  */}
+          <InteractiveGrid
+            interactive="bottom"
+            onKeyChange={handleOptChangeBottom}
+            buttons={buttons}
+            selectedUser={selectedUser}
+            selectedOpt={selectedOptBottom}
+          /> 
+        </div>
+        <div className=" flex flex-col min-w-[644px] gap-2">
+          {/* Renderize as informações do usuário selecionado aqui */}
+          {selectedUser && (
+            <div>
+              {
+                <ButtonsGridPages
+                  buttons={filteredButtons}
+                  selectedUser={selectedUser}
+                  //onOptChange={handleOptChange}
+                />
+              }
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -18,7 +18,6 @@ import {
 } from "@/components/buttons/buttonContext/ButtonsContext";
 
 import LeftGrid from "@/components/leftGrid/LeftGrid";
-import RightGrid from "@/components/rightGrid/RightGrid";
 import { Ghost } from "lucide-react";
 import { SensorInterface, useSensors } from "@/components/sensor/SensorContext";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
@@ -33,6 +32,7 @@ import {
   useChat,
 } from "@/components/chat/ChatContext";
 import { useGoogleApiKey } from "@/components/options/ApiGoogle/GooglApiContext";
+import InteractiveGrid from "@/components/InteractiveGrid/InteractiveGrid";
 
 interface User {
   id: string;
@@ -71,10 +71,16 @@ function UserLayout() {
     chatDelivered,
     chatRead,
   } = useChat();
-  const [selectedOpt, setSelectedOpt] = useState<string>("floor");
-  const [clickedUser, setClickedUser] = useState<string | null>(null);
+  const [selectedOptTop, setSelectedOptTop] = useState<string>("floor"); // default for top
+  const [clickedUserTop, setClickedUserTop] = useState<string | null>(null);
+  const [selectedOptBottom, setSelectedOptBottom] = useState<string>("floor"); // default for bottom
+  const [clickedUserBottom, setClickedUserBottom] = useState<string | null>(
+    null
+  );
+
   const navigate = useNavigate();
   const myAccountInfo = JSON.parse(localStorage.getItem("Account") || "{}");
+  const [comboStart, setComboStart] = useState(false);
 
   const isAllowedButtonType = (type: string) => {
     const allowedTypes = ["floor", "maps", "video", "chat", "sensor", "radio"];
@@ -207,13 +213,13 @@ function UserLayout() {
       case "ConfigResult":
         setApiKeyInfo(message.result);
         break;
-      case "ComboStartButton":
-        comboStarted(message.btn_id);
-        if (isAllowedButtonType(message.type)) {
-          setSelectedOpt(message.type);
-        }
+      // case "ComboStartButton":
+      //   comboStarted(message.btn_id);
+      //   if (isAllowedButtonType(message.type)) {
+      //     setSelectedOpt(message.type);
+      //   }
 
-        break;
+      //   break;
       case "SmartButtonReceived":
         setButtonTriggered(message.btn_id, true);
         // addHistory({
@@ -237,12 +243,20 @@ function UserLayout() {
     navigate("/admin/buttons"); // Redireciona para a rota admin/buttons
   };
 
-  const handleOptChange = (newOpt: string) => {
-    setSelectedOpt(newOpt);
+  const handleOptChangeTop = (newOpt: string) => {
+    setSelectedOptTop(newOpt);
   };
 
-  const handleClickedUser = (newUser: string | null) => {
-    setClickedUser(newUser);
+  const handleClickedUserTop = (newUser: string | null) => {
+    setClickedUserTop(newUser);
+  };
+
+  const handleOptChangeBottom = (newOpt: string) => {
+    setSelectedOptBottom(newOpt);
+  };
+
+  const handleClickedUserBottom = (newUser: string | null) => {
+    setClickedUserBottom(newUser);
   };
 
   return (
@@ -251,23 +265,35 @@ function UserLayout() {
       onMessage={handleWebSocketMessage}
     >
       <div className="flex justify-center gap-1 p-1">
-        <LeftGrid buttons={buttons} selectedUser={account} />
+        <div className="gap-1 space-y-1">
+          {/* DE CIMA  */}
+          <InteractiveGrid
+            interactive="top"
+            onKeyChange={handleOptChangeTop}
+            buttons={buttons}
+            selectedUser={account}
+            selectedOpt={selectedOptTop}
+            clickedUser={clickedUserTop}
+            setClickedUser={handleClickedUserTop}
+          />
+            {/* DE BAIXO  */}
+          <InteractiveGrid
+            interactive="bottom"
+            onKeyChange={handleOptChangeBottom}
+            buttons={buttons}
+            selectedUser={account}
+            selectedOpt={selectedOptBottom}
+            clickedUser={clickedUserBottom}
+            setClickedUser={handleClickedUserBottom}
+          /> 
+        </div>
 
         <ButtonsGridPage
           buttons={buttons}
           selectedUser={account}
-          selectedOpt={selectedOpt}
-          onOptChange={handleOptChange}
-          clickedUser={clickedUser}
-        />
-
-        <RightGrid
-          onKeyChange={handleOptChange}
-          buttons={buttons}
-          selectedUser={account}
-          selectedOpt={selectedOpt}
-          clickedUser={clickedUser}
-          setClickedUser={handleClickedUser}
+          // selectedOpt={selectedOpt}
+          // onOptChange={handleOptChange}
+          // clickedUser={clickedUser}
         />
       </div>
       {account.type === "admin" && (

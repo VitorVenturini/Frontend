@@ -10,7 +10,7 @@ import { ButtonInterface } from "../buttonContext/ButtonsContext";
 import ButtonsGrid from "./ButtonsGrid";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React, { useState, useContext } from "react";
-import OptBar from "@/components/optBar/OptBar"
+
 import { useLanguage } from "@/components/language/LanguageContext"
 import texts from "@/_data/texts.json";
 
@@ -23,17 +23,18 @@ interface User {
 interface ButtonsGridPagesProps {
   buttons: ButtonInterface[];
   selectedUser: User;
-  selectedOpt?: string;
-  onOptChange: (newOpt: string) => void;
-  clickedUser?: string | null;
+//   selectedOpt?: string;
+//   onOptChange: (newOpt: string) => void;
+//   clickedUser?: string | null;
+// 
 }
 
 export default function ButtonsGridPages({
   buttons,
   selectedUser,
-  onOptChange,
-  selectedOpt,
-  clickedUser
+  // onOptChange,
+  // selectedOpt,
+  // clickedUser
 }: ButtonsGridPagesProps) {
   const [selectedPage, setSelectedPage] = useState("1"); // Inicialmente, a página 1 é selecionada. Note que agora é uma string.
   const { language } = useLanguage();
@@ -46,9 +47,9 @@ export default function ButtonsGridPages({
     setSelectedPage(newPage); // Atualizar a página selecionada quando o usuário seleciona uma nova página. Note que agora é uma string.
   };
 
-  const handleOptChange = (newOpt: string) => {
-    onOptChange(newOpt);
-  };
+  // const handleOptChange = (newOpt: string) => {
+  //   onOptChange(newOpt);
+  // };
 
   const buttonsWarning = buttons.filter(
     (button) =>
@@ -66,7 +67,7 @@ export default function ButtonsGridPages({
           selectedUser={selectedUser}
           selectedPage={selectedPage}
         />
-        <OptBar onOptChange={handleOptChange} clickedUser={clickedUser} selectedOpt ={selectedOpt as string} />
+        
       </div>
       <Tabs
         defaultValue="1"
