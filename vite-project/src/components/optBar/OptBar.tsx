@@ -6,6 +6,7 @@ import texts from "@/_data/texts.json";
 import { useLanguage } from "@/components/language/LanguageContext";
 import { ChatInterface, useChat } from "../chat/ChatContext";
 import { useButtons } from "../buttons/buttonContext/ButtonsContext";
+
 type OnOptChange = (opt: string) => void;
 
 interface OtpRowProps {
@@ -49,7 +50,7 @@ export default function OptBar({ onOptChange, clickedUser,selectedOpt }: OtpRowP
   return (
     <div className="">
       <TabsOpt value={selectedOpt} className=' h-full' onValueChange={handleOptChange}>
-        <TabsList className="flex-col  h-full justify-between">
+        <TabsList className="flex-col  h-full h-max-[400px] justify-between">
           <TabsTrigger value="floor" className='w-full flex-row gap-1' icon={Map}>
             {texts[language].floorPlan}
           </TabsTrigger>
@@ -64,6 +65,9 @@ export default function OptBar({ onOptChange, clickedUser,selectedOpt }: OtpRowP
           </TabsTrigger>
           <TabsTrigger value="video" className='w-full flex-row gap-1' icon={Video}>
             {texts[language].video}
+          </TabsTrigger>
+          <TabsTrigger value="h" className='w-full flex-row gap-1' icon={Video}>
+            Historico
           </TabsTrigger>
           <TabsTrigger value="chat" className='w-full flex-row gap-1' icon={MessageSquare}>
             <div className="flex items-center">

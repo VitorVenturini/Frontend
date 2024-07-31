@@ -7,6 +7,8 @@ import BatteryGauge from "react-battery-gauge";
 import VideoPlayer from "../VideoPlayer/VideoPlayer";
 import { useWebSocketData } from "../websocket/WebSocketProvider";
 import React, { Component } from "react";
+import { Skeleton } from "@/components/ui/skeleton"
+
 
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { useUsers } from "../user/UserContext";
@@ -15,16 +17,16 @@ import { useChat } from "../chat/ChatContext";
 import { useGoogleApiKey } from "../options/ApiGoogle/GooglApiContext";
 import { CarouselImages } from "../cameras/Carousel/CarouselImages";
 
-interface OptRightBottomProps {
+interface OptLayoutProps {
   clickedButtonId: number | null;
   clickedUser: string | null;
   onKeyChange: (key: string) => void;
 }
 
-export default function OptRightBottom({
+export default function OptLayout({
   clickedButtonId,
   clickedUser,
-}: OptRightBottomProps) {
+}: OptLayoutProps) {
   const { buttons } = useButtons();
   const { sensors } = useSensors();
   const [sensorKey, setSensorKey] = useState<string>("");
@@ -56,6 +58,7 @@ export default function OptRightBottom({
   const handleKeyChange = (key: string) => {
     setSensorKey(key);
   };
+  const commonClasses = "h-full w-full";
 
   const renderButtonInfo = () => {
     if (!clickedButton && !userToChat) return null;
@@ -64,13 +67,11 @@ export default function OptRightBottom({
       switch (clickedButton.button_type) {
         case "sensor":
           if (loading) {
-            return <div>Carregando dados do sensor...</div>;
+            return <div><Skeleton className="p-2 rounded-full" />
+</div>;
           } else {
             return (
-              <div className="w-full">
-                {!sensorKey && (
-                  <div>Selecione a informação que você visualizar</div>
-                )}
+              <div className={commonClasses} >
                 <SensorGrid
                   sensorInfo={filteredSensorInfo}
                   onKeyChange={handleKeyChange}
@@ -122,10 +123,10 @@ export default function OptRightBottom({
             );
           } else {
             return (
-              <div className="h-full">
-              <TransformWrapper>
+              <div>
+              <TransformWrapper >
                 <TransformComponent>
-                  <img src={clickedButton.button_prt} alt="img" className=""/>
+                  <img src={clickedButton.button_prt} alt="img"/>
                 </TransformComponent>
               </TransformWrapper>
               </div>
