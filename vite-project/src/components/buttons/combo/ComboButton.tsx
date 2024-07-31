@@ -2,7 +2,6 @@ import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { ButtonInterface } from "../buttonContext/ButtonsContext";
 import { Layers3 } from "lucide-react";
 import { useAccount } from "@/components/account/AccountContext";
-import { useEffect, useRef, useState } from "react";
 
 interface ComboProps {
   button: ButtonInterface;
@@ -12,6 +11,10 @@ interface ComboProps {
 export default function ComboButton({ button, handleClick }: ComboProps) {
   const wss = useWebSocketData();
   const account = useAccount();
+  
+  const { buttons, setClickedButton, removeClickedButton } =
+    useButtons();
+  
   const [isFocused, setIsFocused] = useState(false);
   const buttonRef = useRef<HTMLDivElement>(null);
 

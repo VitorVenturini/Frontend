@@ -33,7 +33,6 @@ import {
 } from "@/components/chat/ChatContext";
 import { useGoogleApiKey } from "@/components/options/ApiGoogle/GooglApiContext";
 import InteractiveGrid from "@/components/InteractiveGrid/InteractiveGrid";
-
 interface User {
   id: string;
   name: string;

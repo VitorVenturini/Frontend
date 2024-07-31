@@ -8,6 +8,7 @@ import { useSensors } from "./SensorContext";
 import { useEffect } from "react";
 import ResponsivePng from "./ResponsivePng";
 import { useAccount } from "../account/AccountContext";
+import { commonClasses } from "../buttons/ButtonsComponent";
 
 interface ButtonProps {
   handleClick: () => void;
@@ -37,10 +38,6 @@ export default function SensorButton({ handleClick, button }: ButtonProps) {
       }
     }
   }, [filteredSensor, button?.sensor_type, newValue]);
-
-  // useEffect(() =>{
-
-  // },[button.triggered])
 
   const commonClasses =
     "w-[128px] h-[60px] md:w-[128px] md:h-[60px]  lg:w-[128px] lg:h-[60px]  xl:w-[128px] xl:h-[60px] xl2:w-[150px] xl2:h-[80px] rounded-lg border bg-border text-white shadow-sm p-1";
@@ -77,7 +74,6 @@ export default function SensorButton({ handleClick, button }: ButtonProps) {
     }
   }
 
-  // função para mudar a cor do sensor de acordo com o threshold
   const getButtonClassName = () => {
     if (button?.sensor_type && filteredSensor) {
       if (button.sensor_type === "wind_direction") {

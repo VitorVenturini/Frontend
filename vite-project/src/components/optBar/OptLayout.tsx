@@ -7,7 +7,7 @@ import BatteryGauge from "react-battery-gauge";
 import VideoPlayer from "../VideoPlayer/VideoPlayer";
 import { useWebSocketData } from "../websocket/WebSocketProvider";
 import React, { Component } from "react";
-
+import { Skeleton } from "@/components/ui/skeleton"
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { useUsers } from "../user/UserContext";
 import ChatLayout from "../chat/ChatLayout";
@@ -15,7 +15,7 @@ import { useChat } from "../chat/ChatContext";
 import { useGoogleApiKey } from "../options/ApiGoogle/GooglApiContext";
 import { CarouselImages } from "../cameras/Carousel/CarouselImages";
 
-interface OptRightBottomProps {
+interface OptLayoutProps {
   clickedButtonId: number | null;
   clickedUser: string | null;
   onKeyChange: (key: string) => void;
@@ -24,7 +24,7 @@ interface OptRightBottomProps {
 export default function OptLayout({
   clickedButtonId,
   clickedUser,
-}: OptRightBottomProps) {
+}: OptLayoutProps) {
   const { buttons } = useButtons();
   const { sensors } = useSensors();
   const [sensorKey, setSensorKey] = useState<string>("");
@@ -56,7 +56,8 @@ export default function OptLayout({
   const handleKeyChange = (key: string) => {
     setSensorKey(key);
   };
-
+  
+  const commonClasses = "h-full w-full";
   const renderButtonInfo = () => {
     if (!clickedButton && !userToChat) return null;
 
@@ -64,8 +65,9 @@ export default function OptLayout({
       switch (clickedButton.button_type) {
         case "sensor":
           if (loading) {
-            return <div>Carregando dados do sensor...</div>;
-          } else {
+            return <div><Skeleton className="p-2 rounded-full" /> </div>;
+          } 
+          else {
             return (
               <div className="w-full">
                 {!sensorKey && (
@@ -122,10 +124,10 @@ export default function OptLayout({
             );
           } else {
             return (
-              <div className="h-full">
-              <TransformWrapper>
+              <div>
+              <TransformWrapper >
                 <TransformComponent>
-                  <img src={clickedButton.button_prt} alt="img" className=""/>
+                  <img src={clickedButton.button_prt} alt="img"/>
                 </TransformComponent>
               </TransformWrapper>
               </div>
