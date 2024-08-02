@@ -17,6 +17,15 @@ import {
   ButtonInterface,
 } from "@/components/buttons/buttonContext/ButtonsContext";
 
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+
 import LeftGrid from "@/components/leftGrid/LeftGrid";
 import { Ghost } from "lucide-react";
 import { SensorInterface, useSensors } from "@/components/sensor/SensorContext";
@@ -32,7 +41,8 @@ import {
   useChat,
 } from "@/components/chat/ChatContext";
 import { useGoogleApiKey } from "@/components/options/ApiGoogle/GooglApiContext";
-import InteractiveGrid from "@/components/InteractiveGrid/InteractiveGrid";
+import InteractiveGridCopy from "@/components/optBar/InteractiveGridCopy";
+
 interface User {
   id: string;
   name: string;
@@ -70,31 +80,25 @@ function UserLayout() {
     chatDelivered,
     chatRead,
   } = useChat();
+
   const [selectedOptTop, setSelectedOptTop] = useState<string>("floor"); // default for top
   const [clickedUserTop, setClickedUserTop] = useState<string | null>(null);
   const [selectedOptBottom, setSelectedOptBottom] = useState<string>("floor"); // default for bottom
   const [clickedUserBottom, setClickedUserBottom] = useState<string | null>(
     null
   );
+  //const [clickedUser , setClickedUser] = useState<UserInterface[]>([])
 
   const navigate = useNavigate();
   const myAccountInfo = JSON.parse(localStorage.getItem("Account") || "{}");
   const [comboStart, setComboStart] = useState(false);
+  
 
   const isAllowedButtonType = (type: string) => {
-    const allowedTypes = ["floor", "maps", "video", "chat", "sensor", "radio"];
+    const allowedTypes = ["floor", "maps", "video", "chat", "sensor","camera", "radio"];
     return allowedTypes.includes(type);
   };
-
-  // useEffect(() => {
-  //   if (buttons) {
-  //     buttons.forEach((btn) =>{
-  //       if(btn.comboStart && isAllowedButtonType(btn.button_type)){
-  //         setSelectedOpt(btn.button_type);
-  //       }
-  //     })
-  //   }
-  // }, [comboStart]);
+  var allBtn: ButtonInterface[];
 
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
@@ -147,6 +151,9 @@ function UserLayout() {
         addHistory({
           button_name: "Alarm Parou" + message.alarm,
           date: format(new Date(), "dd/MM HH:mm"),
+        });
+        toast({
+          description: "Alarme Parou " + message.alarm,
         });
         break;
       case "DeleteButtonsSuccess":
@@ -212,13 +219,24 @@ function UserLayout() {
       case "ConfigResult":
         setApiKeyInfo(message.result);
         break;
-      // case "ComboStartButton":
-      //   comboStarted(message.btn_id);
-      //   if (isAllowedButtonType(message.type)) {
-      //     setSelectedOpt(message.type);
-      //   }
+        case "ComboStartButton":
+        comboStarted(message.btn_id);
+        const comboButtons = allBtn.filter((btn) => {
+          return btn.id === message.btn_id
+        })[0]
 
-      //   break;
+        if (comboButtons) {
+          if (comboButtons.position_y === "1") {
+            if (isAllowedButtonType(message.type)) {
+              setSelectedOptTop(message.type);
+            }
+          } else if (comboButtons.position_y === "2") {
+            if (isAllowedButtonType(message.type)) {
+              setSelectedOptBottom(message.type);
+            }
+          }
+        }
+        break;
       case "SmartButtonReceived":
         setButtonTriggered(message.btn_id, true);
         // addHistory({
@@ -228,7 +246,7 @@ function UserLayout() {
         //     : format(new Date(), "dd/MM HH:mm"),
         // });
         toast({
-          description: "Botão Vermelho Disparou"
+          description: "Botão Vermelho Disparou",
         });
         break;
       default:
@@ -266,7 +284,7 @@ function UserLayout() {
       <div className="flex justify-center gap-1 p-1">
         <div className="gap-1 space-y-1">
           {/* DE CIMA  */}
-          <InteractiveGrid
+          <InteractiveGridCopy
             interactive="top"
             onKeyChange={handleOptChangeTop}
             buttons={buttons}
@@ -275,8 +293,8 @@ function UserLayout() {
             clickedUser={clickedUserTop}
             setClickedUser={handleClickedUserTop}
           />
-            {/* DE BAIXO  */}
-          <InteractiveGrid
+          {/* DE BAIXO  */}
+          <InteractiveGridCopy
             interactive="bottom"
             onKeyChange={handleOptChangeBottom}
             buttons={buttons}
@@ -284,7 +302,8 @@ function UserLayout() {
             selectedOpt={selectedOptBottom}
             clickedUser={clickedUserBottom}
             setClickedUser={handleClickedUserBottom}
-          /> 
+            
+          />
         </div>
 
         <ButtonsGridPage
@@ -302,6 +321,12 @@ function UserLayout() {
         </Button>
       )}
       <Logout />
+      <Sheet>
+        <SheetTrigger>Open</SheetTrigger>
+        <SheetContent>
+          {/* <ChatLayout userToChat={userToChat}/> */}
+        </SheetContent>
+      </Sheet>
     </WebSocketProvider>
   );
 }

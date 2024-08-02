@@ -7,9 +7,37 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
-  ResponsiveContainer,
+  LabelList,
 } from "recharts";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { SensorInterface } from "@/components/sensor/SensorContext";
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+
+import { TrendingUp } from "lucide-react";
+import { Value } from "@radix-ui/react-select";
+
+const chartConfig = {
+  desktop: {
+    label: "Desktop",
+    color: "hsl(var(--chart-1))",
+  },
+  mobile: {
+    label: "Mobile",
+    color: "hsl(var(--chart-2))",
+  },
+} satisfies ChartConfig;
 
 interface SensorGraphProps {
   sensorInfo: SensorInterface[];
@@ -48,33 +76,54 @@ export default function SensorGraph({
       value: parseInt((sensor as any)[sensorKey], 10),
     }))
     .reverse();
+  console.log("data" + JSON.stringify(data));
   return (
-
-    <ResponsiveContainer width={"100%"} aspect={1.5} className="" >
+    <Card className="w-[440px] h-[330px]">
+      <CardContent>
+      <ChartContainer config={chartConfig}>
         <LineChart
-
-        width={500}
-        height={300}
-        data={data}
-        margin={{
-          top: 5,
-          right: 30,
-          left: 20,
-          bottom: 5,
-        }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="date" />
-        <YAxis />
-        <Tooltip />
-        {/* <Legend /> */}
-        <Line
-          type="monotone"
-          dataKey="value"
-          stroke="#8884d8"
-          activeDot={{ r: 8 }}
-        />
-      </LineChart>
-    </ResponsiveContainer>
+          accessibilityLayer
+          data={data}
+          margin={{
+            top: 20,
+            left: 12,
+            right: 12,
+          }}
+        >
+          <CartesianGrid vertical={false} />
+          <XAxis
+            dataKey="date"
+            tickLine={false}
+            axisLine={false}
+            tickMargin={8}
+            tickFormatter={(value) => value.slice(0, 3)}
+          />
+          <ChartTooltip
+            cursor={false}
+            content={<ChartTooltipContent indicator="line" />}
+          />
+          <Line
+            dataKey="value"
+            type="natural"
+            stroke="var(--color-desktop)"
+            strokeWidth={2}
+            dot={{
+              fill: "var(--color-desktop)",
+            }}
+            activeDot={{
+              r: 6,
+            }}
+          >
+            <LabelList
+              position="top"
+              offset={12}
+              className="fill-foreground"
+              fontSize={12}
+            />
+          </Line>
+        </LineChart>
+      </ChartContainer>
+      </CardContent>
+    </Card>
   );
 }

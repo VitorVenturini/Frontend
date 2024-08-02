@@ -1,21 +1,12 @@
-import React, { useContext, useEffect, useMemo } from "react";
+import { useContext } from "react";
 import {
   Plus,
-  OctagonAlert,
-  User,
-  Phone,
-  Layers3,
-  Rss,
-  CircleArrowUp,
-  Siren,
 } from "lucide-react";
 import { AccountContext } from "../account/AccountContext";
 import {
   ButtonInterface,
-  useButtons,
 } from "@/components/buttons/buttonContext/ButtonsContext";
 import { useState } from "react";
-import { Button } from "../ui/button";
 import SensorButton from "../sensor/SensorButton";
 import { Label } from "@/components/ui/label";
 import {
@@ -25,13 +16,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useSensors } from "../sensor/SensorContext";
+
 
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -40,23 +30,18 @@ import ModalSensor from "../sensor/ModalSensor";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useLanguage } from "../language/LanguageContext";
-import { useWebSocketData } from "../websocket/WebSocketProvider";
 import ModalAlarm from "@/components/buttons/alarm/ModalAlarm";
 import AlarmButton from "@/components/buttons/alarm/AlarmButton";
-import SensorResponsiveInfo from "../sensor/SensorResponsiveInfo";
 import ModalCombo from "@/components/buttons/combo/ModalCombo";
 import ComboButton from "./combo/ComboButton";
 import ModalCommand from "./command/ModalCommand";
 import CommandButton from "./command/CommandButton";
 import ModalUser from "./user/ModalUser";
 import UserButton from "./user/UserButton";
+import ModalNumber from "./number/ModalNumber";
+import NumberButton from "./number/NumberButton";
 interface User {
   id: string;
   name: string;
@@ -72,7 +57,7 @@ interface ButtonProps {
   selectedPage: string;
 }
 export const commonClasses =
-    "w-[128px] h-[60px] md:w-[128px] md:h-[60px]  lg:w-[128px] lg:h-[60px]  xl:w-[128px] xl:h-[60px] xl2:w-[150px] xl2:h-[80px] rounded-lg border bg-border text-white shadow-sm p-1";
+  "w-[128px] h-[60px] md:w-[128px] md:h-[60px]  lg:w-[128px] lg:h-[60px]  xl:w-[128px] xl:h-[60px] xl2:w-[150px] xl2:h-[80px] rounded-lg border bg-border text-white shadow-sm p-1";
 
 export default function ButtonsComponent({
   button,
@@ -83,9 +68,6 @@ export default function ButtonsComponent({
 }: ButtonProps) {
   const { isAdmin } = useContext(AccountContext);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const language = useLanguage();
-  const { sensors } = useSensors();
-  const wss = useWebSocketData();
   const [isClicked, setIsClicked] = useState(false);
   // const { setOldValue, setNewValue, buttons, setButtons } = useButtons();
   const [selectedType, setSelectedType] = useState<string>("");
@@ -167,6 +149,15 @@ export default function ButtonsComponent({
             onClose={() => setIsDialogOpen(false)}
           />
         );
+      case "number":
+        return (
+          <ModalNumber
+            selectedPage={selectedPage}
+            selectedUser={selectedUser}
+            clickedPosition={clickedPosition}
+            onClose={() => setIsDialogOpen(false)}
+          />
+        );
       // Add other cases here as needed
       default:
         return null;
@@ -199,8 +190,8 @@ export default function ButtonsComponent({
                 <CardTitle>Criar Botão</CardTitle>
                 <CardDescription>Selecione um tipo de botão</CardDescription>
               </CardHeader>
-              <CardContent className="gap-4 py-4">
-                <div className="flex gap-4 items-center">
+              <CardContent className="gap-4">
+                <div className="grid grid-cols-5 items-center gap-4 mt-3 mb-3">
                   <Label
                     className="text-end"
                     htmlFor="framework"
@@ -209,7 +200,7 @@ export default function ButtonsComponent({
                     Tipo de botão
                   </Label>
                   <Select onValueChange={handleTypeSelected}>
-                    <SelectTrigger className="col-span-1" id="SelectTypeButton">
+                    <SelectTrigger className="col-span-3" id="SelectTypeButton">
                       <SelectValue placeholder="Selecione o tipo de Botão" />
                     </SelectTrigger>
                     <SelectContent position="popper">
@@ -229,49 +220,7 @@ export default function ButtonsComponent({
       default:
         break;
     }
-    // if (clickedPosition?.i === 1 && clickedPosition.j >= 1 && clickedPosition.j <= 5) {
-    //   return (
-    //     <ModalCombo
-    //       selectedPage={selectedPage}
-    //       selectedUser={selectedUser}
-    //       clickedPosition={clickedPosition}
-    //     />
-    //   );
-    // } else {
-    //   return (
-    //     <>
-    //       <Card className="border-none bg-transparent">
-    //         <CardHeader>
-    //           <CardTitle>Criar Botão</CardTitle>
-    //           <CardDescription>Selecione um tipo de botão</CardDescription>
-    //         </CardHeader>
-    //         <CardContent className="gap-4 py-4">
-    //           <div className="flex gap-4 items-center">
-    //             <Label className="text-end" htmlFor="framework" id="typeButton">
-    //               Tipo de botão
-    //             </Label>
-    //             <Select onValueChange={handleTypeSelected}>
-    //               <SelectTrigger className="col-span-1" id="SelectTypeButton">
-    //                 <SelectValue placeholder="Selecione o tipo de Botão" />
-    //               </SelectTrigger>
-    //               <SelectContent position="popper">
-    //                 <SelectItem value="alarm">Alarme</SelectItem>
-    //                 <SelectItem value="number">Número</SelectItem>
-    //                 <SelectItem value="user">Usuário</SelectItem>
-    //                 <SelectItem value="sensor">Sensor</SelectItem>
-    //                 <SelectItem value="action">Ação</SelectItem>
-    //               </SelectContent>
-    //             </Select>
-    //           </div>
-    //           <div>{renderModalByType()}</div>
-    //         </CardContent>
-    //       </Card>
-    //     </>
-    //   );
-    // }
   };
-
-  
 
   const renderButtonContent = () => {
     switch (button.button_type) {
@@ -329,19 +278,28 @@ export default function ButtonsComponent({
         );
       case "number":
         return (
-          <div
-            className={`${commonClasses} flex flex-col bg-buttonNumber`}
-            onClick={handleClick}
-          >
-            <div className="flex items-center bg gap-1 bg">
-              <Phone />
-              <p className="text-xs font-medium leading-none">
-                {button.button_name}{" "}
-              </p>
-            </div>
-            <div>
-              <p className="align-middle text-center">{button.button_prt}</p>
-            </div>
+          <div>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <div>
+                  <NumberButton button={button} onClick={handleClick} />
+                </div>
+              </DialogTrigger>
+              {isAdmin && (
+                <DialogContent>
+                  {
+                    <ModalNumber
+                      selectedPage={selectedPage}
+                      selectedUser={selectedUser}
+                      clickedPosition={clickedPosition}
+                      existingButton={button}
+                      isUpdate={true}
+                      onClose={() => setIsDialogOpen(false)}
+                    />
+                  }
+                </DialogContent>
+              )}
+            </Dialog>
           </div>
         );
       case "combo":

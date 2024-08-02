@@ -2,7 +2,8 @@ import { Input } from "@/components/ui/input";
 import * as React from "react";
 import ButtonsGridPages from "@/components/buttons/buttonsGrid/ButtonsGridPages";
 import LeftGrid from "@/components/leftGrid/LeftGrid";
-import InteractiveGrid from "@/components/InteractiveGrid/InteractiveGrid";
+
+import InteractiveGridCopy from "@/components/optBar/InteractiveGridCopy";
 import {
   ButtonInterface,
   useButtons,
@@ -144,7 +145,7 @@ export default function ButtonsPage() {
       <div className="flex item justify-center gap-1">
         <div>
          {/* DE CIMA  */}
-         <InteractiveGrid
+         <InteractiveGridCopy
             interactive="top"
             onKeyChange={handleOptChangeTop}
             buttons={buttons}
@@ -153,7 +154,7 @@ export default function ButtonsPage() {
           
           />
             {/* DE BAIXO  */}
-          <InteractiveGrid
+          <InteractiveGridCopy
             interactive="bottom"
             onKeyChange={handleOptChangeBottom}
             buttons={buttons}

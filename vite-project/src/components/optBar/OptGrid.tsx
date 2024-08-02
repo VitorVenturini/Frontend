@@ -1,4 +1,4 @@
-import { Separator } from "@/components/ui/separator";
+
 import {
   ButtonInterface,
   useButtons,
@@ -7,9 +7,6 @@ import { useEffect, useState } from "react";
 import OptComponent from "@/components/optBar/OptComponent";
 import { useAccount } from "@/components/account/AccountContext";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
-import Keyboard from "react-simple-keyboard";
-import "react-simple-keyboard/build/css/index.css";
-import TestKeyboard from "../testeKeyboard";
 import UserComponent from "../chat/OptUser";
 import { useUsers } from "../user/UserContext";
 
@@ -45,11 +42,12 @@ export default function OptGrid({
     i: number;
     j: number;
   } | null>(null);
-  const [isClicked, setIsClicked] = useState(false);
+  // const [isClicked, setIsClicked] = useState(false);
   const wss = useWebSocketData();
   const account = useAccount();
   const { users } = useUsers();
   const { setStopCombo } = useButtons();
+  const [comboStarted, setComboStarted] = useState(false);
 
   const handleClickedUser = (newUser: string | null) => {
     if (setClickedUser) {
@@ -57,12 +55,22 @@ export default function OptGrid({
     }
   };
 
-  useEffect(() => {
-    const buttonInCombo = buttons.find((button) => button.comboStart);
-    if (buttonInCombo) {
-      setClickedButtonId(buttonInCombo.id);
-    }
-  }, [buttons]); // useEffect para monitorar quando foi recebido um combo
+  // useEffect(() => {
+  //   const buttonInCombo = buttons.find((button) => button.comboStart);
+  //   if (buttonInCombo) {
+  //     setClickedButtonId(buttonInCombo.id); // setar o botão clicado atualmente 
+  //     if (buttonInCombo.button_type === "sensor" || buttonInCombo.button_type === "camera") {
+  //       wss?.sendMessage({
+  //         api: "user",
+  //         mt: "SelectDeviceHistory",
+  //         id: buttonInCombo.button_prt,
+  //       });
+  //     } // enviar mensagem para consultar sensores e cameras ao receber o combo
+  //   }
+
+  // }, [buttons]); // toda vez que carregar o grid , verificar se um dos botões tem um combo
+
+
 
   if (selectedOpt === "chat") {
     // quando for do TIPO CHAT O TRATAMENTO É DIFERENTE
@@ -71,7 +79,7 @@ export default function OptGrid({
       .fill(null)
       .map(() => Array(12).fill({ variant: "default" })); // Ajuste o número de colunas conforme necessário
 
-    users.forEach((user, index) => {
+    users?.forEach((user, index) => {
       const x = 1; // Sempre na primeira linha
       const y = index + 1; // Calcula a posição y
 
@@ -105,22 +113,27 @@ export default function OptGrid({
     const grid =
       interactive === "top"
         ? Array(1)
-            .fill(null)
-            .map(() => Array(12).fill({ variant: "default" }))
-        : Array(2)
-            .fill(null)
-            .map(() => Array(12).fill({ variant: "default" }));
+          .fill(null)
+          .map(() => Array(12).fill({ variant: "default" }))
+        : Array(1)
+          .fill(null)
+          .map(() => Array(12).fill({ variant: "default" }));
 
-    buttons.forEach((button) => {
+    buttons?.forEach((button) => {
       const x = Number(button.position_x);
       const y = Number(button.position_y);
 
       if (!isNaN(x) && !isNaN(y)) {
-        grid[y - 1][x - 1] = button;
+        if (interactive === "top" && y === 1) {
+          grid[0][x - 1] = button; // Grid de cima, linha 1
+        } else if (interactive !== "top" && y === 2) {
+          grid[0][x - 1] = button; // Grid de baixo, linha 2
+        }
       }
     });
+
     return (
-      <div className="overflow-x-auto">
+      <div className="">
         <div className="flex gap-1">
           {grid[0].map((button, j) => (
             <div key={`${0}-${j}`}>
@@ -132,7 +145,7 @@ export default function OptGrid({
                 isClicked={clickedButtonId === button.id} // true or false
                 onClick={() => {
                   if (account.isAdmin) {
-                    setClickedPosition({ i: 1, j: j + 1 });
+                    setClickedPosition({ i: interactive === "top" ? 1 : 2, j: j + 1 });
                     console.log(
                       `Clicked position state:`,
                       "i: " + clickedPosition?.i + " j: " + clickedPosition?.j
@@ -140,9 +153,9 @@ export default function OptGrid({
                   } else {
                     // usuario
                     if (
-                      (clickedButtonId !== button.id &&
-                        button.button_type === "sensor") ||
-                      button.button_type === "camera"
+                      clickedButtonId !== button.id &&
+                      (button.button_type === "sensor" ||
+                        button.button_type === "camera")
                     ) {
                       // enviar mensagem para consultar imagem da camera ou infos do sensor
                       wss?.sendMessage({
@@ -152,9 +165,18 @@ export default function OptGrid({
                       });
                     }
                     if (button.comboStart) {
-                      setStopCombo(button.id);
-                      // Atualizar o botão clicado
-                      setClickedButtonId(button.id);
+                      if (button.position_y === "1" && button.button_type === selectedOpt) {
+                        setStopCombo(button.id);
+                        setClickedButtonId(
+                          clickedButtonId === button.id ? null : button.id
+                        );
+                      } else if ((button.position_y === "2" && button.button_type === selectedOpt)) {
+                        setStopCombo(button.id);
+                        setClickedButtonId(
+                          clickedButtonId === button.id ? null : button.id
+                        );
+                      }
+
                     } else {
                       // Se o botão não inicia um combo, apenas atualiza o botão clicado
                       setClickedButtonId(
@@ -170,6 +192,6 @@ export default function OptGrid({
       </div>
     );
   }
-}
 
-// const clickedButton = buttons.filter(button => button.id === clickedButtonId)[0];
+
+}

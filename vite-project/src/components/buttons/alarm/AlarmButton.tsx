@@ -16,21 +16,11 @@ interface ButtonProps {
 
 export default function AlarmButton({ button, handleClick }: ButtonProps) {
   const [clickedClass, setClickedClass] = useState("");
-  const { buttons, setClickedButton, removeClickedButton, setButtonTriggered, setStopButtonTriggered } =
+  const {setClickedButton, removeClickedButton } =
     useButtons();
   const account = useAccount();
   const wss = useWebSocketData();
   const [initiatedByUser, setInitiatedByUser] = useState(false);
-  // fazer um isTriggered para quando for alarmado mudar de cor
-  // useEffect(() => {
-  //   if (button.triggered) {
-  //     setClickedClass("bg-red-800");
-  //     // handleClickAlarm()
-  //   } else {
-  //     setClickedClass("");
-  //   }
-  // }, [button.triggered]);
-  // //button.triggered
 
   useEffect(() => {
     if (!initiatedByUser) { // quando nao foi iniciado pelo usuario
@@ -90,7 +80,6 @@ export default function AlarmButton({ button, handleClick }: ButtonProps) {
       }
     }
   };
-  // active:bg-green-950
   return (
     <div
       className={`${commonClasses} flex flex-col cursor-pointer bg-green-700 ${clickedClass}`}
