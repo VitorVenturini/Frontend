@@ -65,14 +65,12 @@ export default function OptLayout({
       switch (clickedButton.button_type) {
         case "sensor":
           if (loading) {
-            return <div><Skeleton className="p-2 rounded-full" /> </div>;
+            return <div><Skeleton className="p-2 rounded-full w-full h-full " /> </div>;
           } 
           else {
             return (
-              <div className="w-full">
-                {!sensorKey && (
-                  <div>Selecione a informação que você visualizar</div>
-                )}
+              <div className="w-full flex h-[760px]">
+                
                 <SensorGrid
                   sensorInfo={filteredSensorInfo}
                   onKeyChange={handleKeyChange}
@@ -85,16 +83,6 @@ export default function OptLayout({
                     sensorKey={sensorKey}
                   />
                 )}
-
-                {/* <SensorGraph sensorInfo={filteredSensorInfo} /> */}
-                {/* {filteredSensorInfo.map((sensor) => (
-                <div>
-                  <div>Nome do Sensor: {sensor?.sensor_name}</div>
-                  <div>Bateria: {sensor?.battery}</div>
-                  <div>Temperatura: {sensor?.temperature}</div>
-                  <div>CO²: {sensor?.co2}</div>
-                </div>
-              ))} */}
               </div>
             );
           }
@@ -124,12 +112,12 @@ export default function OptLayout({
             );
           } else {
             return (
-              <div>
-              <TransformWrapper >
-                <TransformComponent>
-                  <img src={clickedButton.button_prt} alt="img"/>
-                </TransformComponent>
-              </TransformWrapper>
+              <div className="relative overflow-hidden w-full max-w-[740px] max-h-[330px] mx-auto items-center align-middle justify-center">
+                <TransformWrapper initialScale={0.5} minScale={0.1} maxScale={2}>
+                  <TransformComponent>
+                    <img src={clickedButton.button_prt} alt="img" className="object-contain w-full h-full" />
+                  </TransformComponent>
+                </TransformWrapper>
               </div>
             );
           }

@@ -1,7 +1,8 @@
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
-import { ButtonInterface } from "../buttonContext/ButtonsContext";
+import { ButtonInterface, useButtons } from "../buttonContext/ButtonsContext";
 import { Layers3 } from "lucide-react";
 import { useAccount } from "@/components/account/AccountContext";
+import { useEffect, useRef, useState } from "react";
 
 interface ComboProps {
   button: ButtonInterface;
@@ -11,10 +12,7 @@ interface ComboProps {
 export default function ComboButton({ button, handleClick }: ComboProps) {
   const wss = useWebSocketData();
   const account = useAccount();
-  
-  const { buttons, setClickedButton, removeClickedButton } =
-    useButtons();
-  
+
   const [isFocused, setIsFocused] = useState(false);
   const buttonRef = useRef<HTMLDivElement>(null);
 
@@ -49,9 +47,8 @@ export default function ComboButton({ button, handleClick }: ComboProps) {
   return (
     <div
       ref={buttonRef}
-      className={`${commonClasses} ${
-        isFocused ? "bg-cyan-900" : "bg-cyan-600"
-      } flex flex-col cursor-pointer`}
+      className={`${commonClasses} ${isFocused ? "bg-cyan-900" : "bg-cyan-600"
+        } flex flex-col cursor-pointer`}
       onClick={handleClickCombo}
     >
       <div className="flex items-center gap-1 cursor-pointer">

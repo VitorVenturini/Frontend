@@ -48,28 +48,28 @@ export default function OptBar({ onOptChange, clickedUser,selectedOpt }: OtpRowP
   }, [addChat]);
  
   return (
-    <div className="">
-      <TabsOpt value={selectedOpt} className=' h-full' onValueChange={handleOptChange}>
-        <TabsList className="flex-col  h-full h-max-[400px] justify-between">
-          <TabsTrigger value="floor" className='w-full flex-row gap-1' icon={Map}>
+    
+      <TabsOpt value={selectedOpt} className="h-full min-h-[390px] max-h-[390px]" onValueChange={handleOptChange}>
+        <TabsList className="flex-col h-full justify-between">
+          <TabsTrigger value="floor" className='w-full flex-row gap-1 h-full' icon={Map}>
             {texts[language].floorPlan}
           </TabsTrigger>
-          <TabsTrigger value="maps" className='w-full flex-row gap-1' icon={MapPin}>
+          <TabsTrigger value="maps" className='w-full flex-row gap-1 justify-start h-full' icon={MapPin}>
             {texts[language].map}
           </TabsTrigger>
-          <TabsTrigger value="sensor" className='w-full flex-row gap-1' icon={Rss}>
+          <TabsTrigger value="sensor" className='w-full flex-row gap-1 justify-start h-full' icon={Rss}>
             {texts[language].sensor}
           </TabsTrigger>
-          <TabsTrigger value="radio" className='w-full flex-row gap-1' icon={Radio}>
+          <TabsTrigger value="radio" className='w-full flex-row gap-1 justify-start h-full' icon={Radio}>
             {texts[language].radio}
           </TabsTrigger>
-          <TabsTrigger value="video" className='w-full flex-row gap-1' icon={Video}>
+          <TabsTrigger value="video" className='w-full flex-row gap-1 justify-start h-full' icon={Video}>
             {texts[language].video}
           </TabsTrigger>
-          <TabsTrigger value="h" className='w-full flex-row gap-1' icon={Video}>
+          <TabsTrigger value="history" className='w-full flex-row gap-1 justify-start h-full' icon={Video}>
             Historico
           </TabsTrigger>
-          <TabsTrigger value="chat" className='w-full flex-row gap-1' icon={MessageSquare}>
+          <TabsTrigger value="chat" className='w-full flex-row gap-1 justify-start h-full' icon={MessageSquare}>
             <div className="flex items-center">
               <span className="mr-1">{texts[language].chat}</span>
               {newMessageReceived ? (
@@ -84,6 +84,6 @@ export default function OptBar({ onOptChange, clickedUser,selectedOpt }: OtpRowP
         {/* <TabsContent value="account"></TabsContent>
         <TabsContent value="password"></TabsContent> */}
       </TabsOpt>
-    </div>
+
   );
 }
