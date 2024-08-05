@@ -20,7 +20,8 @@ import { UserProvider } from "./components/user/UserContext";
 import { ChatProvider } from "@/components/chat/ChatContext";
 import { GoogleApiKeyProvider } from "./components/options/ApiGoogle/GooglApiContext";
 import { GatewayProvider } from "./components/Gateways/GatewaysContext";
-import { CameraProvider } from "./components/cameras/CameraContext"
+import { CameraProvider } from "./components/cameras/CameraContext";
+import { DataProvider } from "./Reports/DataContext";
 
 export const host = "https://meet.wecom.com.br";
 
@@ -44,36 +45,40 @@ function App() {
     };
   }, []);
   return (
-
     <ThemeProvider>
       <LanguageProvider>
-      <GoogleApiKeyProvider>
-        <ChatProvider>
-          <HistoryProvider>
-            <ActionProvider>
-              <GatewayProvider>
-                <AccountProvider>
-                  <UserProvider>
-                    <ButtonProvider>
-                      <SensorProvider>
-                        <CameraProvider>
-                        <Routes>
-                          <Route path="/" element={<RootRoute />} />
-                          <Route path="/login" element={<LoginPage />} />
-                          <Route path="/admin/*" element={<AdminRoute />} />
-                          <Route path="/user/*" element={<UserRoute />} />
-                          <Route path="*" element={<NoPage />} />
-                        </Routes>
-                        <Toaster />
-                        </CameraProvider>
-                      </SensorProvider>
-                    </ButtonProvider>
-                  </UserProvider>
-                </AccountProvider>
-              </GatewayProvider>
-            </ActionProvider>
-          </HistoryProvider>
-        </ChatProvider>
+        <GoogleApiKeyProvider>
+          <ChatProvider>
+            <DataProvider>
+              <HistoryProvider>
+                <ActionProvider>
+                  <GatewayProvider>
+                    <AccountProvider>
+                      <UserProvider>
+                        <ButtonProvider>
+                          <SensorProvider>
+                            <CameraProvider>
+                              <Routes>
+                                <Route path="/" element={<RootRoute />} />
+                                <Route path="/login" element={<LoginPage />} />
+                                <Route
+                                  path="/admin/*"
+                                  element={<AdminRoute />}
+                                />
+                                <Route path="/user/*" element={<UserRoute />} />
+                                <Route path="*" element={<NoPage />} />
+                              </Routes>
+                              <Toaster />
+                            </CameraProvider>
+                          </SensorProvider>
+                        </ButtonProvider>
+                      </UserProvider>
+                    </AccountProvider>
+                  </GatewayProvider>
+                </ActionProvider>
+              </HistoryProvider>
+            </DataProvider>
+          </ChatProvider>
         </GoogleApiKeyProvider>
       </LanguageProvider>
     </ThemeProvider>

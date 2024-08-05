@@ -12,6 +12,7 @@ import {
 } from "@/components/buttons/buttonContext/ButtonsContext";
 import React, { useContext, useEffect } from "react";
 import { useState } from "react";
+
 import {
   WebSocketProvider,
   useWebSocketData,
@@ -36,7 +37,9 @@ import {
   useCameras,
 } from "@/components/cameras/CameraContext";
 import { useGoogleApiKey } from "@/components/options/ApiGoogle/GooglApiContext";
-import ColumnsReports from '@/Reports/collumnsReports';
+import ColumnsReports from "@/Reports/collumnsReports";
+import { Grafico } from "@/components/charts/lineChart";
+import { DataProvider, useData } from "@/Reports/DataContext";
 
 function AdminLayout() {
   const account = useAccount();
@@ -56,11 +59,13 @@ function AdminLayout() {
     useGateways();
   const { cameras, setCameras, updateCamera, deleteCamera, addCamera } =
     useCameras();
-    const [receivedFragments, setReceivedFragments] = useState<any[]>([]);
-    const [jsonData, setJsonData] = useState<any>(null);
-    const [jsonKeys, setJsonKeys] = useState<string[]>([]);
-    const [reportType, setReportType] = useState<string>('');
-    const [reportSrc, setSrc] = useState<string>('');
+  const [receivedFragments, setReceivedFragments] = useState<any[]>([]);
+  const [jsonData, setJsonData] = useState<any>(null);
+  const [jsonKeys, setJsonKeys] = useState<string[]>([]);
+  const [reportType, setReportType] = useState<string>("");
+  const [reportSrc, setSrc] = useState<string>("");
+  const [lineChart, setChartData] = useState<any>(null);
+  const { addDataReport, clearDataReport } = useData();
 
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
@@ -206,31 +211,39 @@ function AdminLayout() {
         });
         break;
       case "SelectFromReportsSuccess":
-        if (message.result === '[]') {
-          // Lógica para caso o resultado seja uma string vazia
+        if (message.result === "[]") {
+          toast({
+            description: "Relatório não gerado, revise seus parâmetros",
+          });
         } else {
-          const newFragments = [...receivedFragments, message.result];
-    
+          const newFragments = [
+            ...receivedFragments,
+            JSON.stringify(message.result),
+          ];
+
           if (message.lastFragment) {
-            const jsonData = newFragments.join('');
-            const parsedData = JSON.parse(jsonData);
-            const jsonKeys = Object.keys(parsedData[0]); // Supondo que o JSON seja um array de objetos
-            
-            setReceivedFragments([]); // Limpa o array
-            setJsonData(parsedData);
-            setJsonKeys(jsonKeys);
-            setSrc(message.src)
-    
-            if (message.src === "RptSensors") {
-              console.log("relatório tipo sensor", jsonData);
-              setReportType('sensor');
-            } else {
-              console.log("relatório tipo tabela", jsonData);
-              setReportType('table');
+            const jsonData = newFragments.join("");
+            let parsedData;
+            try {
+              parsedData = JSON.parse(jsonData);
+            } catch (error) {
+              console.error("Erro ao fazer o parse do JSON:", error);
+              break;
             }
+
+            clearDataReport(); // Limpa os dados anteriores
+            if (message.src === "RptSensors") {
+              console.log(jsonData, "REPORT SENSOR");
+              addDataReport(jsonData, "sensor");
+            } else {
+              console.log(jsonData, "REPORT TABLE");
+              addDataReport(jsonData, "table");
+            }
+
+            setReceivedFragments([]); // Limpa os fragmentos recebidos
+          } else {
+            setReceivedFragments(newFragments);
           }
-    
-          console.log('RELATÓRIO RECEBIDO', JSON.stringify(message.src));
         }
         break;
 
@@ -254,7 +267,7 @@ function AdminLayout() {
         <Route path="options" element={<Options />} />
         {/* Add more admin routes as needed */}
       </Routes>
-      {reportType === 'table' && jsonData && jsonKeys.length > 0 && (
+      {reportType === "table" && jsonData && jsonKeys.length > 0 && (
         <ColumnsReports data={jsonData} keys={jsonKeys} report={reportSrc} />
       )}
     </WebSocketProvider>
