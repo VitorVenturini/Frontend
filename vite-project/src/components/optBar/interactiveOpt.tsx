@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { ButtonInterface } from "@/components/buttons/buttonContext/ButtonsContext";
+import React, { useEffect, useState } from "react";
+import { ButtonInterface, useButtons } from "@/components/buttons/buttonContext/ButtonsContext";
 import OptGrid from "@/components/optBar/OptGrid";
 import OptLayoutCopy from "./OptLayout copy";
 import OptHistory from "./OptHistory";
@@ -36,13 +36,36 @@ export default function InteractiveOpt({
   clickedButtonIdBottom
 }: InteractiveOptProps) {
 
+  const { setStopCombo } = useButtons();
+  
+  const [comboButtonId, setComboButtonId] = useState<number | null>(null);
+
+  // atualiza comboButtonId apenas quando os botões mudam
   useEffect(() => {
+    const buttonInCombo = buttons.find(
+      (button) => button.comboStart && button.position_y === (interactive === "top" ? "1" : "2")
+    );
+    if (buttonInCombo) {
+      setComboButtonId(buttonInCombo.id);
+    } else {
+      setComboButtonId(null);
+    }
+  }, [buttons,interactive]);
+
+  // verifica e para o combo ao trocar de opção
+  useEffect(() => {
+    if (comboButtonId !== null) {
+      if ((interactive === "top" && clickedButtonIdTop === comboButtonId) ||
+        (interactive === "bottom" && clickedButtonIdBottom === comboButtonId)) {
+        setStopCombo(comboButtonId); // parar o combo do botão e fechar ele ao trocar de opt 
+      }
+    }
     if (interactive === "top") {
       setClickedButtonIdTop(null);
     } else {
       setClickedButtonIdBottom(null);
     }
-    setClickedUser(null); 
+    setClickedUser(null);
   }, [selectedOpt]);
 
   const setClickedButtonId = (id: number | null, grid: string) => {
@@ -54,7 +77,7 @@ export default function InteractiveOpt({
   };
 
   const clickedButtonId =
-  interactive === "top" ? clickedButtonIdTop : clickedButtonIdBottom;
+    interactive === "top" ? clickedButtonIdTop : clickedButtonIdBottom;
 
 
   if (selectedOpt === 'history') {

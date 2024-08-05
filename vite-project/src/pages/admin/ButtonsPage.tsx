@@ -148,7 +148,7 @@ export default function ButtonsPage() {
          <InteractiveGridCopy
             interactive="top"
             onKeyChange={handleOptChangeTop}
-            buttons={buttons}
+            buttons={filteredButtons}
             selectedUser={selectedUser}
             selectedOpt={selectedOptTop}
           
@@ -157,7 +157,7 @@ export default function ButtonsPage() {
           <InteractiveGridCopy
             interactive="bottom"
             onKeyChange={handleOptChangeBottom}
-            buttons={buttons}
+            buttons={filteredButtons}
             selectedUser={selectedUser}
             selectedOpt={selectedOptBottom}
           /> 
