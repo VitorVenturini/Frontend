@@ -106,6 +106,7 @@ function UserLayout() {
       case "SelectButtonsSuccess":
         const buttons: ButtonInterface[] = message.result;
         setButtons(buttons);
+        allBtn = buttons;
         setSensors([]);
         break;
       case "SelectDeviceHistoryResult":
@@ -221,7 +222,7 @@ function UserLayout() {
         break;
         case "ComboStartButton":
         comboStarted(message.btn_id);
-        const comboButtons = allBtn.filter((btn) => {
+        const comboButtons = allBtn?.filter((btn) => {
           return btn.id === message.btn_id
         })[0]
 
