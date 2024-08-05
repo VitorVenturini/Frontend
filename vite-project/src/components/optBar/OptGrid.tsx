@@ -15,7 +15,7 @@ interface OptGridProps {
   selectedUser: User | null;
   selectedOpt: string;
   interactive: string;
-  setClickedButtonId: (id: number | null) => void;
+  setClickedButtonId: (id: number | null, grid: string) => void; // Updated type
   clickedButtonId: number | null;
   clickedUser: string | null;
   setClickedUser: (newUser: string | null) => void;
@@ -47,7 +47,7 @@ export default function OptGrid({
   const account = useAccount();
   const { users } = useUsers();
   const { setStopCombo } = useButtons();
-  const [comboStarted, setComboStarted] = useState(false);
+  const [comboStarted, setComboStarted] = useState<number | null>(null);
 
   const handleClickedUser = (newUser: string | null) => {
     if (setClickedUser) {
@@ -55,20 +55,31 @@ export default function OptGrid({
     }
   };
 
-  // useEffect(() => {
-  //   const buttonInCombo = buttons.find((button) => button.comboStart);
-  //   if (buttonInCombo) {
-  //     setClickedButtonId(buttonInCombo.id); // setar o botão clicado atualmente 
-  //     if (buttonInCombo.button_type === "sensor" || buttonInCombo.button_type === "camera") {
-  //       wss?.sendMessage({
-  //         api: "user",
-  //         mt: "SelectDeviceHistory",
-  //         id: buttonInCombo.button_prt,
-  //       });
-  //     } // enviar mensagem para consultar sensores e cameras ao receber o combo
-  //   }
-
-  // }, [buttons]); // toda vez que carregar o grid , verificar se um dos botões tem um combo
+  // monitorar se o combo iniciou 
+  useEffect(() => {
+    const buttonInCombo = buttons.find(
+      (button) => button.comboStart && button.position_y === (interactive === "top" ? "1" : "2")
+    );
+    if (buttonInCombo && buttonInCombo.id !== comboStarted) {
+      setComboStarted(buttonInCombo.id);
+    }
+  }, [buttons]);
+  // se o combo iniciou , simular o clique no botão e enviar msg websocket caso necessário
+  useEffect(() => {
+    if (comboStarted) {
+      const buttonInCombo = buttons.find((button) => button.id === comboStarted);
+      if (buttonInCombo) {
+        setClickedButtonId(buttonInCombo.id, interactive); // setar o botão clicado atualmente
+        if (buttonInCombo.button_type === "sensor" || buttonInCombo.button_type === "camera") {
+          wss?.sendMessage({
+            api: "user",
+            mt: "SelectDeviceHistory",
+            id: buttonInCombo.button_prt,
+          });
+        }
+      }
+    }
+  }, [comboStarted]);
 
 
 
@@ -165,22 +176,15 @@ export default function OptGrid({
                       });
                     }
                     if (button.comboStart) {
-                      if (button.position_y === "1" && button.button_type === selectedOpt) {
-                        setStopCombo(button.id);
-                        setClickedButtonId(
-                          clickedButtonId === button.id ? null : button.id
-                        );
-                      } else if ((button.position_y === "2" && button.button_type === selectedOpt)) {
-                        setStopCombo(button.id);
-                        setClickedButtonId(
-                          clickedButtonId === button.id ? null : button.id
-                        );
-                      }
-
-                    } else {
-                      // Se o botão não inicia um combo, apenas atualiza o botão clicado
+                      setStopCombo(button.id); // parar o combo do botão
                       setClickedButtonId(
-                        clickedButtonId === button.id ? null : button.id
+                        clickedButtonId === button.id ? null : button.id,
+                        interactive
+                      );
+                    } else {
+                      setClickedButtonId(
+                        clickedButtonId === button.id ? null : button.id,
+                        interactive
                       );
                     }
                   }
