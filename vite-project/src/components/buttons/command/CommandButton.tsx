@@ -82,7 +82,7 @@ export default function CommandButton({ handleClick, button }: ButtonProps) {
   }, [commandValue]); // quando vier o novo valor do botão command ( quando vier o ControllerReceived)
 
   return (
-    <div className={commonClasses} onClick={handleClickCommand}>
+    <div className={`${commonClasses} bg-buttonSensor`} onClick={handleClickCommand}>
       <div className="flex items-center gap-1 cursor-pointer justify-between">
         <div>
           <p className="text-sm font-medium leading-none">
