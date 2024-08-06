@@ -99,7 +99,7 @@ export default function ModalCombo({
           mt: isUpdate ? "UpdateComboButton" : "InsertComboButton",
           ...(isUpdate && { id: existingButton?.id }),
           name: nameButton,
-          // value: numberAlarm,
+          value: "",
           guid: selectedUser?.guid,
           type: "combo",
           type1: combo1,
@@ -187,7 +187,7 @@ export default function ModalCombo({
               <SelectValue placeholder="Selecione o Botão" />
             </SelectTrigger>
             <SelectContent position="popper">
-              {userButtons.map((buttons) => (
+              {buttons.map((buttons) => (
                 <SelectItem key={buttons.id} value={buttons.id as any}>
                   {buttons.button_name}
                 </SelectItem>
@@ -204,7 +204,7 @@ export default function ModalCombo({
               <SelectValue placeholder="Selecione o Botão" />
             </SelectTrigger>
             <SelectContent position="popper">
-              {userButtons.map((buttons) => (
+              {buttons.map((buttons) => (
                 <SelectItem key={buttons.id} value={buttons.id as any}>
                   {buttons.button_name}
                 </SelectItem>
@@ -221,7 +221,7 @@ export default function ModalCombo({
               <SelectValue placeholder="Selecione o Botão" />
             </SelectTrigger>
             <SelectContent position="popper">
-              {userButtons.map((buttons) => (
+              {buttons.map((buttons) => (
                 <SelectItem key={buttons.id} value={buttons.id as any}>
                   {buttons.button_name}
                 </SelectItem>
@@ -238,7 +238,7 @@ export default function ModalCombo({
               <SelectValue placeholder="Selecione o Botão" />
             </SelectTrigger>
             <SelectContent position="popper">
-              {userButtons.map((buttons) => (
+              {buttons.map((buttons) => (
                 <SelectItem key={buttons.id} value={buttons.id as any}>
                   {buttons.button_name}
                 </SelectItem>
