@@ -322,12 +322,9 @@ function UserLayout() {
         </Button>
       )}
       <Logout />
-      <Sheet>
-        <SheetTrigger>Open</SheetTrigger>
-        <SheetContent>
-          {/* <ChatLayout userToChat={userToChat}/> */}
-        </SheetContent>
-      </Sheet>
+      <div className="text-[9px] sm:text-[15px] md:text-[20px] lg:text-[22px] xl:text-[35px] 2xl:text-[50px] ">
+        VE O TAMANHO AQUI O ANIMAL até o lg é tablet dps de 1290 xl é desktop
+      </div>
     </WebSocketProvider>
   );
 }

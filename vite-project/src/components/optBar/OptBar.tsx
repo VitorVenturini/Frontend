@@ -49,27 +49,27 @@ export default function OptBar({ onOptChange, clickedUser,selectedOpt }: OtpRowP
  
   return (
     
-      <TabsOpt value={selectedOpt} className="h-full min-h-[390px] max-h-[390px]" onValueChange={handleOptChange}>
+      <TabsOpt value={selectedOpt} className="h-full" onValueChange={handleOptChange}>
         <TabsList className="flex-col h-full justify-between">
-          <TabsTrigger value="floor" className='w-full flex-row gap-1 h-full' icon={Map}>
+          <TabsTrigger value="floor" className='w-full flex-row gap-1 h-full text-[0px] xl:text-sm' icon={Map}>
             {texts[language].floorPlan}
           </TabsTrigger>
-          <TabsTrigger value="maps" className='w-full flex-row gap-1 justify-start h-full' icon={MapPin}>
+          <TabsTrigger value="maps" className='w-full flex-row gap-1 justify-start h-full text-[0px] xl:text-sm' icon={MapPin}>
             {texts[language].map}
           </TabsTrigger>
-          <TabsTrigger value="sensor" className='w-full flex-row gap-1 justify-start h-full' icon={Rss}>
+          <TabsTrigger value="sensor" className='w-full flex-row gap-1 justify-start h-full text-[0px] xl:text-sm' icon={Rss}>
             {texts[language].sensor}
           </TabsTrigger>
-          <TabsTrigger value="radio" className='w-full flex-row gap-1 justify-start h-full' icon={Radio}>
+          <TabsTrigger value="radio" className='w-full flex-row gap-1 justify-start h-full text-[0px] xl:text-sm' icon={Radio}>
             {texts[language].radio}
           </TabsTrigger>
-          <TabsTrigger value="video" className='w-full flex-row gap-1 justify-start h-full' icon={Video}>
+          <TabsTrigger value="video" className='w-full flex-row gap-1 justify-start h-full text-[0px] xl:text-sm' icon={Video}>
             {texts[language].video}
           </TabsTrigger>
-          <TabsTrigger value="history" className='w-full flex-row gap-1 justify-start h-full' icon={Video}>
+          <TabsTrigger value="history" className='w-full flex-row gap-1 justify-start h-full text-[0px] xl:text-sm' icon={Video}>
             Historico
           </TabsTrigger>
-          <TabsTrigger value="chat" className='w-full flex-row gap-1 justify-start h-full' icon={MessageSquare}>
+          <TabsTrigger value="chat" className='w-full flex-row gap-1 justify-start h-full text-[0px] xl:text-sm' icon={MessageSquare}>
             <div className="flex items-center">
               <span className="mr-1">{texts[language].chat}</span>
               {newMessageReceived ? (
