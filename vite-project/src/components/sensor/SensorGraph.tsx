@@ -96,7 +96,7 @@ export default function SensorGraph({
             tickLine={false}
             axisLine={false}
             tickMargin={8}
-            tickFormatter={(value) => value.slice(0, 3)}
+            tickFormatter={(value) => value.slice(11,17)}
           />
           <ChartTooltip
             cursor={false}

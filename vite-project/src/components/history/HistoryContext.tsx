@@ -1,14 +1,14 @@
 import { createContext, useState, useContext, ReactNode } from "react";
 
 export interface HistoryInterface {
-  button_name: string;
+  message: string; // campo para mensagem personalizada
   date: string;
 }
 
 interface HistoryContextType {
   history: HistoryInterface[];
   addHistory: (newHistory: HistoryInterface) => void;
-  updateHistory: (updatedHistory: HistoryInterface) => void;
+ // updateHistory: (updatedHistory: HistoryInterface) => void;
   clearHistory: () => void;
 }
 
@@ -18,18 +18,18 @@ export const HistoryProvider = ({ children }: { children: ReactNode }) => {
   const [history, setHistoryState] = useState<HistoryInterface[]>([]);
 
   const addHistory = (newHistory: HistoryInterface) => {
-    setHistoryState((prevHistory) => [ newHistory, ...prevHistory]);
+    setHistoryState((prevHistory) => [newHistory, ...prevHistory]);
   };
 
-  const updateHistory = (updatedHistory: HistoryInterface) => {
-    setHistoryState((prevHistory) =>
-      prevHistory.map((hist) =>
-        hist.button_name === updatedHistory.button_name
-          ? { ...hist, ...updatedHistory }
-          : hist
-      )
-    );
-  };
+  // const updateHistory = (updatedHistory: HistoryInterface) => {
+  //   setHistoryState((prevHistory) =>
+  //     prevHistory.map((hist) =>
+  //       hist.button_name === updatedHistory.button_name
+  //         ? { ...hist, ...updatedHistory }
+  //         : hist
+  //     )
+  //   );
+  // };
 
   const clearHistory = () => {
     setHistoryState([]);
@@ -40,7 +40,7 @@ export const HistoryProvider = ({ children }: { children: ReactNode }) => {
       value={{
         history,
         addHistory,
-        updateHistory,
+       // updateHistory,
         clearHistory,
       }}
     >
