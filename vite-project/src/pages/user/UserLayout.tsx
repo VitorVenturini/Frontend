@@ -70,7 +70,7 @@ function UserLayout() {
   } = useButtons();
   const { setSensors, updateSensor, clearSensorsByName, addSensors } =
     useSensors();
-  const { addHistory, updateHistory } = useHistory();
+  const { addHistory } = useHistory();
   const { setApiKeyInfo } = useGoogleApiKey();
   const {
     setChat,
@@ -92,13 +92,14 @@ function UserLayout() {
   const navigate = useNavigate();
   const myAccountInfo = JSON.parse(localStorage.getItem("Account") || "{}");
   const [comboStart, setComboStart] = useState(false);
-  
+  const {users} = useUsers()
 
   const isAllowedButtonType = (type: string) => {
     const allowedTypes = ["floor", "maps", "video", "chat", "sensor","camera", "radio"];
     return allowedTypes.includes(type);
   };
   var allBtn: ButtonInterface[];
+  var allUsers: UserInterface[];
 
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
@@ -128,20 +129,23 @@ function UserLayout() {
       case "SensorReceived":
         const sensorDataReceived = message.value;
         updateSensor(sensorDataReceived);
-        addHistory({
-          button_name: message.value.sensor_name,
-          date: message.value.date
-            ? format(new Date(message.value.date), "dd/MM HH:mm")
-            : format(new Date(), "dd/MM HH:mm"),
-        });
+        // addHistory({
+        //   button_name: message.value.sensor_name,
+        //   date: message.value.date
+        //     ? format(new Date(message.value.date), "dd/MM HH:mm")
+        //     : format(new Date(), "dd/MM HH:mm"),
+        // }); // tratar inserção de dados no histório apenas se estourar o treshold
         break;
       case "AlarmReceived":
         setButtonTriggered(message.btn_id, true);
+        const userStartAlarm = allUsers.filter((user) =>{
+          return user.guid === message.src
+        })[0]
         addHistory({
-          button_name: "Alarm" + message.alarm,
           date: message.date
             ? format(new Date(message.date), "dd/MM HH:mm")
             : format(new Date(), "dd/MM HH:mm"),
+          message: `${userStartAlarm?.name} disparou o alarme ${message.alarm}`
         });
         toast({
           description: "Alarme Recebido" + message.alarm,
@@ -149,9 +153,14 @@ function UserLayout() {
         break;
       case "AlarmStopReceived":
         setStopButtonTriggered(message.alarm, false);
+        const userStopAlarm = allUsers.filter((user) =>{
+          return user.guid === message.src
+        })[0]
         addHistory({
-          button_name: "Alarm Parou" + message.alarm,
-          date: format(new Date(), "dd/MM HH:mm"),
+          date: message.date
+            ? format(new Date(message.date), "dd/MM HH:mm")
+            : format(new Date(), "dd/MM HH:mm"),
+          message: `${userStopAlarm?.name} parou o alarme ${message.alarm}`
         });
         toast({
           description: "Alarme Parou " + message.alarm,
@@ -171,6 +180,7 @@ function UserLayout() {
         break;
       case "TableUsersResult":
         const newUser: UserInterface[] = message.result;
+        allUsers = newUser
         setUsers(newUser);
         break;
       case "UserOnline":
