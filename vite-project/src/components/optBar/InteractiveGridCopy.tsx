@@ -58,7 +58,7 @@ export default function InteractiveGridCopy({
   };
 
   return (
-    <Card className="  flex items-center h-full max-h-[400px] w-full p-1 gap-1">
+    <Card className="flex items-center h-[280px] xl:h-[400px] w-full p-1 gap-1">
       {selectedUser && (
         <>
           <OptBar

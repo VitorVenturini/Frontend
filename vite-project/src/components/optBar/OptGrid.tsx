@@ -155,7 +155,7 @@ useEffect(() => {
     });
 
     return (
-      <div className="">
+      <div className="overflow-x-auto">
         <div className="flex gap-1">
           {grid[0].map((button, j) => (
             <div key={`${0}-${j}`}>
