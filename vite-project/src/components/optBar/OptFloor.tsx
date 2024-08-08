@@ -16,13 +16,13 @@ interface OptFloorProps {
 
 export default function OptFloor({ clickedButton }: OptFloorProps) {
   return (
-    <Card className="h-full">
-        <TransformWrapper initialScale={0.2} minScale={0.1} maxScale={2}>
-          <TransformComponent>
+    <Card className="h-full w-full relative">
+        <TransformWrapper >
+          <TransformComponent wrapperStyle={{ width: '100%', height: '100%' }}>
             <img
               src={clickedButton.button_prt}
               alt="img"
-              className="object-contain w-full h-full"
+              className="h-full w-full relative"
             />
           </TransformComponent>
         </TransformWrapper>
