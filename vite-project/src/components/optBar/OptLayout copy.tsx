@@ -89,7 +89,7 @@ export default function OptLayoutCopy(props: OptLayoutCopyProps) {
       return (
         <div>
           <OptChat userToChat={userToChat} />
-          <ChatLayout userToChat={userToChat} />
+          {/* <ChatLayout userToChat={userToChat} /> */}
         </div>
       );
     } else {

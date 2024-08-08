@@ -25,7 +25,7 @@ const useWebSocket = (
     const currentUrl = window.location.hostname;
     let wsUrl = "";
     if (window.location.protocol === "http:") {
-      wsUrl = "wss://meet.wecom.com.br:443/ws?token=" + token;
+      wsUrl = "wss://core.wecom.com.br:443/ws?token=" + token;
     } else {
       wsUrl = "wss://" + currentUrl + ":443/ws?token=" + token;
     }

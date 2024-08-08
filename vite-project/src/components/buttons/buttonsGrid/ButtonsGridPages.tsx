@@ -60,8 +60,8 @@ export default function ButtonsGridPages({
   return (
 
 
-    <Card className="p-1 flex flex-col gap-1">
-      <div className="w-full space-y-1">
+    <Card className="p-1 flex flex-col gap-1 justify-between">
+      <div className="w-full space-y-1 ">
         <ButtonsGrid
           buttons={buttonsInSelectedPage}
           selectedUser={selectedUser}

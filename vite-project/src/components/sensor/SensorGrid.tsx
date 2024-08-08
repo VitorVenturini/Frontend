@@ -22,8 +22,8 @@ export default function SensorGrid({
   console.log("Info Recebida via Prop" + JSON.stringify(sensorInfo))
 
   return (
-    <div className="max-h-[2px]">
-      <div className="grid grid-cols-1 gap-1 md:grid-cols-2 lg:grid-cols-3 p-2">
+    <div className="gap-1">
+      <div className="flex flex-col gap-1">
         {firstSensor &&
           Object.entries(firstSensor).map(
             ([key, value]) =>
