@@ -1,4 +1,4 @@
-import { Table } from "lucide-react";
+import { History, Table } from "lucide-react";
 import { useEffect, useState } from "react";
 import { TabsOpt, TabsList, TabsTrigger, TabsContent } from "./Opt";
 import { Map, MapPin, Rss, Radio, Video, MessageSquare } from "lucide-react";
@@ -10,12 +10,18 @@ import { useButtons } from "../buttons/buttonContext/ButtonsContext";
 type OnOptChange = (opt: string) => void;
 
 interface OtpRowProps {
+  interactive: string;
   onOptChange: OnOptChange;
   clickedUser?: string | null;
   selectedOpt: string;
 }
 
-export default function OptBar({ onOptChange, clickedUser,selectedOpt }: OtpRowProps) {
+export default function OptBar({
+  onOptChange,
+  clickedUser,
+  selectedOpt,
+  interactive,
+}: OtpRowProps) {
   const { language } = useLanguage();
   const { chat, addChat, addChatMessage } = useChat();
   const { buttons } = useButtons();
@@ -26,7 +32,7 @@ export default function OptBar({ onOptChange, clickedUser,selectedOpt }: OtpRowP
   const handleOptChange = (newOpt: string) => {
     onOptChange(newOpt);
   };
-  console.log(selectedOpt)
+  console.log(selectedOpt);
 
   useEffect(() => {
     // Verifica se há mensagens não lidas
@@ -46,30 +52,55 @@ export default function OptBar({ onOptChange, clickedUser,selectedOpt }: OtpRowP
     // Atualiza o estado de nova mensagem recebida
     setNewMessageReceived(hasUnreadMessage);
   }, [addChat]);
- 
+
   return (
-    
-      <TabsOpt value={selectedOpt} className="h-full" onValueChange={handleOptChange}>
-        <TabsList className="flex-col h-full justify-between">
-          <TabsTrigger value="floor" className='w-full flex-row gap-1 h-full text-[0px] xl:text-sm' icon={Map}>
-            {texts[language].floorPlan}
-          </TabsTrigger>
-          <TabsTrigger value="maps" className='w-full flex-row gap-1 justify-start h-full text-[0px] xl:text-sm' icon={MapPin}>
-            {texts[language].map}
-          </TabsTrigger>
-          <TabsTrigger value="sensor" className='w-full flex-row gap-1 justify-start h-full text-[0px] xl:text-sm' icon={Rss}>
-            {texts[language].sensor}
-          </TabsTrigger>
-          <TabsTrigger value="radio" className='w-full flex-row gap-1 justify-start h-full text-[0px] xl:text-sm' icon={Radio}>
-            {texts[language].radio}
-          </TabsTrigger>
-          <TabsTrigger value="video" className='w-full flex-row gap-1 justify-start h-full text-[0px] xl:text-sm' icon={Video}>
-            {texts[language].video}
-          </TabsTrigger>
-          <TabsTrigger value="history" className='w-full flex-row gap-1 justify-start h-full text-[0px] xl:text-sm' icon={Video}>
-            Historico
-          </TabsTrigger>
-          <TabsTrigger value="chat" className='w-full flex-row gap-1 justify-start h-full text-[0px] xl:text-sm' icon={MessageSquare}>
+    <TabsOpt
+      value={selectedOpt}
+      className="h-full"
+      onValueChange={handleOptChange}
+    >
+      <TabsList className="flex-col h-full justify-between">
+        <TabsTrigger
+          value="floor"
+          className="w-full flex-row gap-1 h-full text-[0px] xl:text-sm"
+          icon={Map}
+        >
+          {texts[language].floorPlan}
+        </TabsTrigger>
+        <TabsTrigger
+          value="maps"
+          className="w-full flex-row gap-1 justify-start h-full text-[0px] xl:text-sm"
+          icon={MapPin}
+        >
+          {texts[language].map}
+        </TabsTrigger>
+        <TabsTrigger
+          value="sensor"
+          className="w-full flex-row gap-1 justify-start h-full text-[0px] xl:text-sm"
+          icon={Rss}
+        >
+          {texts[language].sensor}
+        </TabsTrigger>
+        <TabsTrigger
+          value="radio"
+          className="w-full flex-row gap-1 justify-start h-full text-[0px] xl:text-sm"
+          icon={Radio}
+        >
+          {texts[language].radio}
+        </TabsTrigger>
+        <TabsTrigger
+          value="video"
+          className="w-full flex-row gap-1 justify-start h-full text-[0px] xl:text-sm"
+          icon={Video}
+        >
+          {texts[language].video}
+        </TabsTrigger>
+        {interactive === "top" ? (
+          <TabsTrigger
+            value="chat"
+            className="w-full flex-row gap-1 justify-start h-full text-[0px] xl:text-sm"
+            icon={MessageSquare}
+          >
             <div className="flex items-center">
               <span className="mr-1">{texts[language].chat}</span>
               {newMessageReceived ? (
@@ -80,10 +111,18 @@ export default function OptBar({ onOptChange, clickedUser,selectedOpt }: OtpRowP
               ) : null}
             </div>
           </TabsTrigger>
-        </TabsList>
-        {/* <TabsContent value="account"></TabsContent>
+        ) : (
+          <TabsTrigger
+            value="history"
+            className="w-full flex-row gap-1 justify-start h-full text-[0px] xl:text-sm"
+            icon={History}
+          >
+            Historico
+          </TabsTrigger>
+        )}
+      </TabsList>
+      {/* <TabsContent value="account"></TabsContent>
         <TabsContent value="password"></TabsContent> */}
-      </TabsOpt>
-
+    </TabsOpt>
   );
 }

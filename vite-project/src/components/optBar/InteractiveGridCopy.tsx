@@ -62,7 +62,7 @@ export default function InteractiveGridCopy({
       {selectedUser && (
         <>
           <OptBar
-          
+            interactive ={interactive}
             onOptChange={handleOptChange}
             selectedOpt={selectedOpt}
             clickedUser={clickedUser}
