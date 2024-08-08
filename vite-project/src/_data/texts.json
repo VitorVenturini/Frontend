@@ -40,8 +40,8 @@
     "headerButtons": "Buttons",
     "headerAccount": "Account",
     "headerActions": "Actions",
-    "headerOptions": "Options"
-    
+    "headerOptions": "Options",
+    "headerReports": "Reports"
   },
   "pt": {
     "cardCreateAccountTittle": "Create Accout",
@@ -85,8 +85,8 @@
     "headerButtons": "Botões",
     "headerAccount": "Conta",
     "headerActions": "Ações",
-    "headerOptions": "Opções"
-
+    "headerOptions": "Opções",
+    "headerReports": "Relatórios"
   },
   "es": {
     "cardCreateAccountTittle": "Create Accout",
@@ -129,6 +129,7 @@
     "headerButtons": "Botones",
     "headerAccount": "Cuenta",
     "headerActions": "Acciones",
-    "headerOptions": "Opciones"
+    "headerOptions": "Opciones",
+    "headerReports": "Relatórios"
   }
 }

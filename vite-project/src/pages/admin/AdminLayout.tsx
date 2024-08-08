@@ -40,6 +40,7 @@ import { useGoogleApiKey } from "@/components/options/ApiGoogle/GooglApiContext"
 import ColumnsReports from "@/Reports/collumnsReports";
 import { Grafico } from "@/components/charts/lineChart";
 import { DataProvider, useData } from "@/Reports/DataContext";
+import Reports from "./reports";
 
 function AdminLayout() {
   const account = useAccount();
@@ -59,13 +60,9 @@ function AdminLayout() {
     useGateways();
   const { cameras, setCameras, updateCamera, deleteCamera, addCamera } =
     useCameras();
-  const [receivedFragments, setReceivedFragments] = useState<any[]>([]);
-  const [jsonData, setJsonData] = useState<any>(null);
-  const [jsonKeys, setJsonKeys] = useState<string[]>([]);
-  const [reportType, setReportType] = useState<string>("");
-  const [reportSrc, setSrc] = useState<string>("");
-  const [lineChart, setChartData] = useState<any>(null);
-  const { addDataReport, clearDataReport } = useData();
+    const [receivedFragments, setReceivedFragments] = useState<any[]>([]);
+    const { addDataReport, clearDataReport } = useData();
+    
 
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
@@ -216,34 +213,36 @@ function AdminLayout() {
             description: "Relatório não gerado, revise seus parâmetros",
           });
         } else {
-          const newFragments = [
-            ...receivedFragments,
-            JSON.stringify(message.result),
-          ];
+          setReceivedFragments((prevFragments) => {
+            const newFragments = [...prevFragments, message.result];
+            if (message.lastFragment) {
+              const jsonData = newFragments.join("");
+              let parsedData;
+              let jsonKeys
+              try {
+                parsedData = JSON.parse(jsonData);
+                jsonKeys = Object.keys(parsedData[0])
+              } catch (error) {
+                console.error("Erro ao fazer o parse do JSON:", error);
+                return prevFragments;
+              }
 
-          if (message.lastFragment) {
-            const jsonData = newFragments.join("");
-            let parsedData;
-            try {
-              parsedData = JSON.parse(jsonData);
-            } catch (error) {
-              console.error("Erro ao fazer o parse do JSON:", error);
-              break;
-            }
+              clearDataReport(); // Limpa os dados anteriores
 
-            clearDataReport(); // Limpa os dados anteriores
-            if (message.src === "RptSensors") {
-              console.log(jsonData, "REPORT SENSOR");
-              addDataReport(jsonData, "sensor");
+              if (message.src === "RptSensors") {
+                console.log(parsedData, "REPORT SENSOR");
+                
+                addDataReport(parsedData, "sensor",jsonKeys, message.src);
+              } else {
+                console.log(parsedData, "REPORT TABLE");
+                addDataReport(parsedData, "table", jsonKeys, message.src);
+              }
+
+              return []; // Limpa os fragmentos recebidos
             } else {
-              console.log(jsonData, "REPORT TABLE");
-              addDataReport(jsonData, "table");
+              return newFragments;
             }
-
-            setReceivedFragments([]); // Limpa os fragmentos recebidos
-          } else {
-            setReceivedFragments(newFragments);
-          }
+          });
         }
         break;
 
@@ -265,11 +264,9 @@ function AdminLayout() {
         <Route path="buttons" element={<ButtonsPage />} />
         <Route path="actions" element={<ActionsPage />} />
         <Route path="options" element={<Options />} />
+        <Route path="reports" element={<Reports />} />
         {/* Add more admin routes as needed */}
       </Routes>
-      {reportType === "table" && jsonData && jsonKeys.length > 0 && (
-        <ColumnsReports data={jsonData} keys={jsonKeys} report={reportSrc} />
-      )}
     </WebSocketProvider>
   );
 }

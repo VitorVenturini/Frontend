@@ -1,13 +1,15 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState } from "react";
 
-interface DataInterface {
+export interface DataInterface {
   chart: any[];
   table: any[];
+  keys: any[];
+  src: any[];
 }
 
 interface DataContextProps {
   dataReport: DataInterface;
-  addDataReport: (newData: any, reportType: string) => void;
+  addDataReport: (newData: any, reportType: string, keys: any, src: any[] ) => void;
   clearDataReport: () => void;
 }
 
@@ -16,20 +18,25 @@ const DataContext = createContext<DataContextProps | undefined>(undefined);
 export const useData = () => {
   const context = useContext(DataContext);
   if (!context) {
-    throw new Error('useData must be used within a DataProvider');
+    throw new Error("useData must be used within a DataProvider");
   }
   return context;
 };
 
 export const DataProvider = ({ children }: { children: React.ReactNode }) => {
-  const [dataReport, setDataReport] = useState<DataInterface>({ chart: [], table: [] });
+  const [dataReport, setDataReport] = useState<DataInterface>({
+    chart: [],
+    table: [],
+    keys: [],
+    src: [],
+  });
 
-  const addDataReport = (newData: any, reportType: string) => {
+  const addDataReport = (newData: any[], reportType: string, keys: any[], src: any[]) => {
     setDataReport((prevData) => {
-      if (reportType === 'sensor') {
-        return { ...prevData, chart: [...prevData.chart, ...newData] };
-      } else if (reportType === 'table') {
-        return { ...prevData, table: [...prevData.table, ...newData] };
+      if (reportType === "sensor") {
+        return { ...prevData, chart: newData, keys: keys, src: src };
+      } else if (reportType === "table") {
+        return { ...prevData, table: newData, keys: keys, src: src };
       } else {
         return prevData;
       }
@@ -37,11 +44,13 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const clearDataReport = () => {
-    setDataReport({ chart: [], table: [] });
+    setDataReport({ chart: [], table: [], keys: [], src:[] });
   };
-  console.log('DATACONTEXT ', dataReport)
+
   return (
-    <DataContext.Provider value={{ dataReport, addDataReport, clearDataReport }}>
+    <DataContext.Provider
+      value={{ dataReport, addDataReport, clearDataReport }}
+    >
       {children}
     </DataContext.Provider>
   );

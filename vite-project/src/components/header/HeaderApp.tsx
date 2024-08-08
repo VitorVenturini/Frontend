@@ -44,6 +44,9 @@ export default function HeaderApp() {
   const handleOptionsClick = () => {
     navigate("/admin/options");
   };
+  const handleReportsClick = () => {
+    navigate("/admin/reports");
+  };
   const handleUserViewClick = () => {
     clearButtons()
     updateAccount({ isAdmin: false });
@@ -84,6 +87,9 @@ export default function HeaderApp() {
           </Button>
           <Button variant="ghost" onClick={handleOptionsClick}>
             {texts[language].headerOptions}
+          </Button>
+          <Button variant="ghost" onClick={handleReportsClick}>
+          {texts[language].headerReports}
           </Button>
           <Logout />
           <ModeToggle />

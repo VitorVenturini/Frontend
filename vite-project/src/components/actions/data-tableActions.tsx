@@ -2,14 +2,6 @@
 import React, { useState, useEffect, ChangeEvent } from "react";
 import CardCreateAction from "@/components/actions/CardCreateAction";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
