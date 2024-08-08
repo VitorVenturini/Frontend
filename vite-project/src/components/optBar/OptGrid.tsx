@@ -1,4 +1,3 @@
-
 import {
   ButtonInterface,
   useButtons,
@@ -56,43 +55,49 @@ export default function OptGrid({
     }
   };
 
-// Monitorar se o combo iniciou 
-useEffect(() => {
-  const buttonInCombo = buttons.find(
-    (button) => button.comboStart && button.position_y === (interactive === "top" ? "1" : "2")
-  );
-  if (buttonInCombo && buttonInCombo.id !== comboStartedRef.current) {
-    setComboStarted(buttonInCombo.id);
-    comboStartedRef.current = buttonInCombo.id;
-  }
-}, [buttons, interactive]);
+  // Monitorar se o combo iniciou
+  useEffect(() => {
+    const buttonInCombo = buttons.find(
+      (button) =>
+        button.comboStart &&
+        button.position_y === (interactive === "top" ? "1" : "2")
+    );
+    if (buttonInCombo && buttonInCombo.id !== comboStartedRef.current) {
+      setComboStarted(buttonInCombo.id);
+      comboStartedRef.current = buttonInCombo.id;
+    }
+  }, [buttons, interactive]);
 
-// Se o combo iniciou, simular o clique no botão e enviar msg websocket caso necessário
-useEffect(() => {
-  if (comboStarted) {
-    const buttonInCombo = buttons.find((button) => button.id === comboStarted);
-    if (buttonInCombo) {
-      setClickedButtonId(buttonInCombo.id, interactive); // setar o botão clicado atualmente
-      if (buttonInCombo.button_type === "sensor" || buttonInCombo.button_type === "camera") {
-        wss?.sendMessage({
-          api: "user",
-          mt: "SelectDeviceHistory",
-          id: buttonInCombo.button_prt,
-        });
+  // Se o combo iniciou, simular o clique no botão e enviar msg websocket caso necessário
+  useEffect(() => {
+    if (comboStarted) {
+      const buttonInCombo = buttons.find(
+        (button) => button.id === comboStarted
+      );
+      if (buttonInCombo) {
+        setClickedButtonId(buttonInCombo.id, interactive); // setar o botão clicado atualmente
+        if (
+          buttonInCombo.button_type === "sensor" ||
+          buttonInCombo.button_type === "camera"
+        ) {
+          wss?.sendMessage({
+            api: "user",
+            mt: "SelectDeviceHistory",
+            id: buttonInCombo.button_prt,
+          });
+        }
       }
     }
-  }
-}, [comboStarted]);
+  }, [comboStarted]);
 
-// resetar state comboStarted ao mudar de selectedOpt 
-// ou ao clicar para fechar o botão
-useEffect(() => {
-  if (comboStarted !== null) {
-    setComboStarted(null);
-    comboStartedRef.current = null;
-  }
-}, [selectedOpt,clickedButtonId]); 
-
+  // resetar state comboStarted ao mudar de selectedOpt
+  // ou ao clicar para fechar o botão
+  useEffect(() => {
+    if (comboStarted !== null) {
+      setComboStarted(null);
+      comboStartedRef.current = null;
+    }
+  }, [selectedOpt, clickedButtonId]);
 
   if (selectedOpt === "chat") {
     // quando for do TIPO CHAT O TRATAMENTO É DIFERENTE
@@ -112,7 +117,7 @@ useEffect(() => {
     });
 
     return (
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto hide-scrollbar">
         <div className="flex gap-1">
           {grid[0].map((user, j) => (
             <div key={`${0}-${j}`}>
@@ -135,11 +140,11 @@ useEffect(() => {
     const grid =
       interactive === "top"
         ? Array(1)
-          .fill(null)
-          .map(() => Array(12).fill({ variant: "default" }))
+            .fill(null)
+            .map(() => Array(12).fill({ variant: "default" }))
         : Array(1)
-          .fill(null)
-          .map(() => Array(12).fill({ variant: "default" }));
+            .fill(null)
+            .map(() => Array(12).fill({ variant: "default" }));
 
     buttons?.forEach((button) => {
       const x = Number(button.position_x);
@@ -155,7 +160,7 @@ useEffect(() => {
     });
 
     return (
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto hide-scrollbar">
         <div className="flex gap-1">
           {grid[0].map((button, j) => (
             <div key={`${0}-${j}`}>
@@ -167,7 +172,10 @@ useEffect(() => {
                 isClicked={clickedButtonId === button.id} // true or false
                 onClick={() => {
                   if (account.isAdmin) {
-                    setClickedPosition({ i: interactive === "top" ? 1 : 2, j: j + 1 });
+                    setClickedPosition({
+                      i: interactive === "top" ? 1 : 2,
+                      j: j + 1,
+                    });
                     console.log(
                       `Clicked position state:`,
                       "i: " + clickedPosition?.i + " j: " + clickedPosition?.j
@@ -207,6 +215,4 @@ useEffect(() => {
       </div>
     );
   }
-
-
 }

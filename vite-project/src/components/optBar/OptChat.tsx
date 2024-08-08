@@ -6,6 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Button } from "../ui/button";
 import {
   Sheet,
   SheetContent,
@@ -25,9 +26,13 @@ interface OptChatProps {
 export default function OptChat( { userToChat }: OptChatProps) {
   return (
     <Card className="h-full">
-      <Sheet>
-        <SheetTrigger>Open</SheetTrigger>
-        <SheetContent>
+      <Sheet >
+        <SheetTrigger>
+          <Button className="w-full h-full">
+            chat
+            </Button>
+        </SheetTrigger>
+        <SheetContent side="left">
           <ChatLayout userToChat={userToChat} />
         </SheetContent>
       </Sheet>

@@ -40,7 +40,7 @@ export default function SensorDisplay({
       <div className="text-sm">{SensorKey}</div>
       <div className="flex justify-between">
         <p className="text-md font-bold">{sensorValue}</p>
-        <CircleArrowUp size={20} color="red"/>
+    
       </div>
     </div>
   );
