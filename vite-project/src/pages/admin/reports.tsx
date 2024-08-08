@@ -48,7 +48,7 @@ export default function Reports({
         api: "admin",
         mt: "SelectFromReports",
         src: value,
-        deveui: '[]',
+        deveui: '24e124725d487636',
         guid: selectedUser,
         from: date?.from,
         to: date?.to,
