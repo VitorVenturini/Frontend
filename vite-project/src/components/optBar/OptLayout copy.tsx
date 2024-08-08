@@ -102,7 +102,7 @@ export default function OptLayoutCopy(props: OptLayoutCopyProps) {
   };
 
   return (
-    <Card className="rounded-none bg-transparent w-full h-full max-h-[330px] p-1">
+    <Card className="rounded-none bg-transparent w-full h-full max-h-[330px]">
       {renderContent()}
     </Card>
   );

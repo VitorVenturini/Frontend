@@ -6,6 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { SensorTest } from "../sensor/SensorTest";
 
 import SensorGraph from "@/components/sensor/SensorGraph";
 import { SensorInterface } from "../sensor/SensorContext";
@@ -35,7 +36,10 @@ export default function OptSensor({
       />
       {sensorKey && (
         <SensorGraph sensorInfo={filteredSensorInfo} sensorKey={sensorKey} />
+        
       )}
+      {/* teste do componente de sensor */}
+      {/* <SensorTest/> */}
     </Card>
   );
 }

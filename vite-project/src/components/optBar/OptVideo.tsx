@@ -15,7 +15,7 @@ interface OptVideoProps {
 }
 export default function OptVideo({ clickedButton }: OptVideoProps) {
   return (
-    <Card className="h-full p-1">
+    <Card className="h-full p-1 relative">
       <VideoPlayer url={clickedButton.button_prt} />
     </Card>
   );
