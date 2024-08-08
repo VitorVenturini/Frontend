@@ -8,7 +8,6 @@ import RadioCard from "@/components/options/RadioCard";
 import TelephonePBXCard from "@/components/options/TelephonePBXCard";
 import APIGoogleCard from "@/components/options/ApiGoogle/APIGoogleCard";
 import IotCameraCard from "@/components/options/IotCameraCard";
-import Reports from "@/components/options/reports";
 
 export default function MenuOptions() {
   const [activeButton, setActiveButton] = useState<string | null>(null);
@@ -35,8 +34,6 @@ export default function MenuOptions() {
         return <APIGoogleCard />;
       case "IotCamera":
         return <IotCameraCard />;
-      case "reports":
-        return <Reports />
       default:
         return null;
     }
