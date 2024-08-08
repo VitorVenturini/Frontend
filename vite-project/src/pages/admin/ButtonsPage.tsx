@@ -143,25 +143,26 @@ export default function ButtonsPage() {
         <div></div>
       )}
       <div className="flex item justify-center gap-1">
-        <div>
-         {/* DE CIMA  */}
-         <InteractiveGridCopy
-            interactive="top"
-            onKeyChange={handleOptChangeTop}
-            buttons={filteredButtons}
-            selectedUser={selectedUser}
-            selectedOpt={selectedOptTop}
-          
-          />
+        {selectedUser && (
+          <div>
+            {/* DE CIMA  */}
+            <InteractiveGridCopy
+              interactive="top"
+              onKeyChange={handleOptChangeTop}
+              buttons={filteredButtons}
+              selectedUser={selectedUser}
+              selectedOpt={selectedOptTop}
+            />
             {/* DE BAIXO  */}
-          <InteractiveGridCopy
-            interactive="bottom"
-            onKeyChange={handleOptChangeBottom}
-            buttons={filteredButtons}
-            selectedUser={selectedUser}
-            selectedOpt={selectedOptBottom}
-          /> 
-        </div>
+            <InteractiveGridCopy
+              interactive="bottom"
+              onKeyChange={handleOptChangeBottom}
+              buttons={filteredButtons}
+              selectedUser={selectedUser}
+              selectedOpt={selectedOptBottom}
+            />
+          </div>
+        )}
         <div className=" flex flex-col min-w-[644px] gap-2">
           {/* Renderize as informações do usuário selecionado aqui */}
           {selectedUser && (
