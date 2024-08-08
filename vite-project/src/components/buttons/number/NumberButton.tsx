@@ -29,7 +29,7 @@ export default function NumberButton({ button,
       onClick()  // para setar a posição na hora de criar botão
       if(!account.isAdmin){
           //wss.sendMessage({
-          // api: "user" , mt: "TriggerCall"
+          // api: "user" , mt: "TriggerCall" btn_id: button.id
         //})
         setStatusClass("bg-red-800")
       }
