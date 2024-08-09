@@ -44,7 +44,7 @@ import Reports from "./reports";
 
 function AdminLayout() {
   const account = useAccount();
-  const { setUsers } = useUsers();
+  const { setUsers, updateUserStauts } = useUsers();
   const { setApiKeyInfo } = useGoogleApiKey();
   const wss = useWebSocketData();
   const { buttons, setButtons, addButton, updateButton, deleteButton } =
@@ -60,9 +60,9 @@ function AdminLayout() {
     useGateways();
   const { cameras, setCameras, updateCamera, deleteCamera, addCamera } =
     useCameras();
-    const [receivedFragments, setReceivedFragments] = useState<any[]>([]);
-    const { addDataReport, clearDataReport } = useData();
-    
+  const [receivedFragments, setReceivedFragments] = useState<any[]>([]);
+  const { addDataReport, clearDataReport } = useData();
+  const myAccountInfo = JSON.parse(localStorage.getItem("Account") || "{}");
 
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
@@ -207,6 +207,18 @@ function AdminLayout() {
           description: "Camera deletada com sucesso",
         });
         break;
+      case "UserOnline":
+        if (message.guid !== myAccountInfo.guid) {
+          // nao atualizar o meu próprio status
+          updateUserStauts(message.guid, "online");
+        }
+        break;
+      case "UserOffline":
+        if (message.guid !== myAccountInfo.guid) {
+          // nao atualizar o meu próprio status
+          updateUserStauts(message.guid, "offline");
+        }
+        break;
       case "SelectFromReportsSuccess":
         if (message.result === "[]") {
           toast({
@@ -218,10 +230,10 @@ function AdminLayout() {
             if (message.lastFragment) {
               const jsonData = newFragments.join("");
               let parsedData;
-              let jsonKeys
+              let jsonKeys;
               try {
                 parsedData = JSON.parse(jsonData);
-                jsonKeys = Object.keys(parsedData[0])
+                jsonKeys = Object.keys(parsedData[0]);
               } catch (error) {
                 console.error("Erro ao fazer o parse do JSON:", error);
                 return prevFragments;
@@ -231,8 +243,8 @@ function AdminLayout() {
 
               if (message.src === "RptSensors") {
                 console.log(parsedData, "REPORT SENSOR");
-                
-                addDataReport(parsedData, "sensor",jsonKeys, message.src);
+
+                addDataReport(parsedData, "sensor", jsonKeys, message.src);
               } else {
                 console.log(parsedData, "REPORT TABLE");
                 addDataReport(parsedData, "table", jsonKeys, message.src);

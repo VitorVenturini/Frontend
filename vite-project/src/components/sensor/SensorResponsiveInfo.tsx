@@ -14,7 +14,7 @@ export default function SensorResponsiveInfo({
   oldValue,
   newValue,
 }: ButtonProps) {
-  const { sensors } = useSensors();
+  const { buttonSensors } = useSensors();
   const account = useAccount();
 
   function getWindDirection(degrees: number) {
@@ -133,7 +133,7 @@ export default function SensorResponsiveInfo({
 
   return (
     <div>
-      {sensors
+      {buttonSensors
         .filter((sensor) => sensor.deveui === button?.button_prt)
         .slice(0, 1) // Pega apenas o primeiro sensor filtrado
         .map((sensor, index) => {

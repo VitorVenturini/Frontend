@@ -59,32 +59,129 @@ export interface SensorInterface {
 
 interface SensorContextType {
   sensors: SensorInterface[];
+  buttonSensors: SensorInterface[];
+  graphSensors: SensorInterface[];
   setSensors: React.Dispatch<React.SetStateAction<SensorInterface[]>>;
-  updateSensor: (sensor: SensorInterface) => void;
+  addSensors: (sensors: SensorInterface[]) => void;
+  addSensorsButton: (sensors: SensorInterface[]) => void;
+  updateSensorButton: (sensor: SensorInterface) => void;
+  updateGraphSensor: (sensor: SensorInterface) => void;
   replaceLatestSensor: (sensor: SensorInterface) => void;
   clearSensorsByName: (sensorName: string) => void;
-  addSensors: (sensors: SensorInterface[]) => void;
   addSensorName: (sensors: []) => void;
   clearSensors: () => void;
+  clearGraphSensors: () => void;
 }
 
 const SensorContext = createContext<SensorContextType | undefined>(undefined);
 
 export const SensorProvider = ({ children }: { children: ReactNode }) => {
   const [sensors, setSensors] = useState<SensorInterface[]>([]);
+  const [buttonSensors, setButtonSensors] = useState<SensorInterface[]>([]);
+  const [graphSensors, setGraphSensors] = useState<SensorInterface[]>([]);
 
   const addSensors = (newSensors: SensorInterface[]) => {
-    setSensors((prevSensors) => {
-      const sensorMap = new Map(
-        prevSensors.map((sensor) => [sensor.sensor_name + sensor.date, sensor])
+    setGraphSensors((prevGraphSensors) => [...prevGraphSensors, ...newSensors]);
+  };
+  
+  // const updateGraphSensor = (sensor: SensorInterface) => {
+  //   setGraphSensors((prevGraphSensors) => {
+  //     const sensorGraphData = prevGraphSensors.filter(
+  //       (s) => s.sensor_name === sensor.sensor_name
+  //     );
+  
+  //     const lastGraphSensor = sensorGraphData[0]; // O mais recente
+  
+  //     if (lastGraphSensor && lastGraphSensor.date === sensor.date) {
+  //       return prevGraphSensors; // Sem mudança, já que é a mesma data
+  //     } else {
+  //       return [sensor, ...prevGraphSensors];
+  //     }
+  //   });
+  // };
+  const updateGraphSensor = (sensor: SensorInterface) => {
+    setGraphSensors((prevGraphSensors) => {
+      // Filtra os dados existentes do sensor específico em graphSensors
+      const sensorSpecificData = prevGraphSensors.filter(
+        (s) => s.sensor_name === sensor.sensor_name
       );
-      newSensors.forEach((sensor) => {
-        sensorMap.set(sensor.sensor_name + sensor.date, sensor); // Atualiza ou adiciona o sensor
-      });
-
-      console.log("Contexto Atualizado");
-      return Array.from(sensorMap.values());
+  
+      // Verifica se o novo dado é idêntico ao mais recente já existente
+      const lastGraphSensor = sensorSpecificData[0]; // O mais recente
+  
+      const isDuplicate = lastGraphSensor && 
+        Object.keys(sensor).every(
+          (key) => sensor[key as keyof SensorInterface] === lastGraphSensor[key as keyof SensorInterface]
+        );
+  
+      // Se o dado for duplicado, não faz nada
+      if (isDuplicate) {
+        return prevGraphSensors;
+      }
+  
+      // Adiciona o novo dado do sensor no início da lista
+      sensorSpecificData.unshift(sensor);
+  
+      // Garante que o sensor específico tenha no máximo 10 registros
+      if (sensorSpecificData.length > 10) {
+        sensorSpecificData.pop(); // Remove o último elemento do sensor específico
+      }
+  
+      // Substitui os dados do sensor específico no graphSensors com os atualizados
+      return [
+        ...prevGraphSensors.filter(
+          (s) => s.sensor_name !== sensor.sensor_name
+        ),
+        ...sensorSpecificData,
+      ];
     });
+  };
+  
+  
+  const addSensorsButton = (newSensors: SensorInterface[]) => {
+    setButtonSensors(newSensors); // Alimenta diretamente o buttonSensors com 1 registro de cada sensors 
+  };
+
+  const updateSensorButton = (sensor: SensorInterface) => {
+    setButtonSensors((prevButtonSensors) => {
+      const updatedButtonSensors = prevButtonSensors.filter(
+        (s) => s.sensor_name !== sensor.sensor_name
+      );// pega a lista atualizada com todos os sensores exclue o valor antigo de cada sensors e atualiza um valor novo 
+      
+      updatedButtonSensors.unshift(sensor); // Adiciona o sensor ao início
+      return updatedButtonSensors;
+    });
+  };
+
+  const replaceLatestSensor = (sensor: SensorInterface) => {
+    setSensors((prevSensors) => {
+      const sensorIndex = prevSensors.findIndex(
+        (s) => s.sensor_name === sensor.sensor_name
+      );
+      if (sensorIndex !== -1) {
+        const updatedSensors = [...prevSensors];
+        updatedSensors[sensorIndex] = sensor;
+        return updatedSensors;
+      } else {
+        return [...prevSensors, sensor];
+      }
+    });
+  };
+
+  const clearSensorsByName = (sensorName: string) => {
+    setGraphSensors((prevSensors) =>
+      prevSensors.filter((sensor) => sensor.sensor_name !== sensorName)
+    );
+  };
+
+  const clearSensors = () => {
+    setSensors([]);
+    setButtonSensors([]);
+    setGraphSensors([]);
+  };
+
+  const clearGraphSensors = () => {
+    setGraphSensors([]);
   };
 
   const addSensorName = (
@@ -121,81 +218,22 @@ export const SensorProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  const updateSensor = (sensor: SensorInterface) => {
-    setSensors((prevSensors) => {
-      const existingSensorIndex = prevSensors.findIndex(
-        (s) => s.sensor_name === sensor.sensor_name
-      );
-
-      if (existingSensorIndex !== -1) {
-        const existingSensor = prevSensors[existingSensorIndex];
-        const isDifferent = Object.keys(sensor).some(
-          (key) =>
-            existingSensor[key as keyof SensorInterface] !==
-            sensor[key as keyof SensorInterface]
-        );
-
-        if (isDifferent) {
-          const updatedSensors = [sensor, ...prevSensors];
-
-          // Manter apenas os últimos 10 sensores
-          if (updatedSensors.length > 10) {
-            updatedSensors.pop();
-          }
-
-          return updatedSensors;
-        } else {
-          return prevSensors;
-        }
-      } else {
-        const updatedSensors = [sensor, ...prevSensors];
-
-        // Manter apenas os últimos 10 sensores
-        if (updatedSensors.length > 10) {
-          updatedSensors.pop();
-        }
-
-        return updatedSensors;
-      }
-    });
-  };
-
-  const replaceLatestSensor = (sensor: SensorInterface) => {
-    setSensors((prevSensors) => {
-      const sensorIndex = prevSensors.findIndex(
-        (s) => s.sensor_name === sensor.sensor_name
-      );
-      if (sensorIndex !== -1) {
-        const updatedSensors = [...prevSensors];
-        updatedSensors[sensorIndex] = sensor;
-        return updatedSensors;
-      } else {
-        return [...prevSensors, sensor];
-      }
-    });
-  };
-
-  const clearSensorsByName = (sensorName: string) => {
-    setSensors((prevSensors) =>
-      prevSensors.filter((sensor) => sensor.sensor_name !== sensorName)
-    );
-  };
-
-  const clearSensors = () => {
-    setSensors([]);
-  };
-
   return (
     <SensorContext.Provider
       value={{
         sensors,
-        clearSensors,
+        buttonSensors,
+        graphSensors,
         setSensors,
-        updateSensor,
+        addSensors,
+        addSensorsButton,
+        updateSensorButton,
+        updateGraphSensor,
         replaceLatestSensor,
         clearSensorsByName,
-        addSensors,
         addSensorName,
+        clearSensors,
+        clearGraphSensors,
       }}
     >
       {children}

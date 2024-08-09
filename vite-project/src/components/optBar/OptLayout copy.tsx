@@ -32,7 +32,7 @@ interface OptLayoutCopyProps {
 export default function OptLayoutCopy(props: OptLayoutCopyProps) {
   const { clickedButtonId, clickedUser } = props;
   const { buttons } = useButtons();
-  const { sensors } = useSensors();
+  const { graphSensors } = useSensors();
   const [sensorKey, setSensorKey] = useState<string>("");
   const [clickedKey, setClickedKey] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -41,7 +41,7 @@ export default function OptLayoutCopy(props: OptLayoutCopyProps) {
   const clickedButton = buttons.find((button) => button.id === clickedButtonId);
   const userToChat = users.find((user) => user.guid === clickedUser);
 
-  const filteredSensorInfo = sensors.filter(
+  const filteredSensorInfo = graphSensors.filter(
     (sensor) => sensor.deveui === clickedButton?.button_prt
   );
 
@@ -53,7 +53,7 @@ export default function OptLayoutCopy(props: OptLayoutCopyProps) {
         setLoading(true);
       }
     }
-  }, [clickedButton, sensors]);
+  }, [clickedButton, graphSensors]);
 
   const handleKeyChange = (key: string) => {
     setSensorKey(key);
