@@ -150,7 +150,7 @@ export default function Reports({
               <TabsTrigger value="RptMensages">Mensagens</TabsTrigger>
             </TabsList>
             <TabsContent value="RptSensors" className="gap-4 py-4 ">
-              <div className="flex items-center gap-4 ">
+              <div className="flex items-center gap-4 h-[10px]">
                 <div className="flex justify-end gap-1">
                   <Label htmlFor="name">Sensor</Label>
                 </div>
