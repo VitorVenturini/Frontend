@@ -82,35 +82,7 @@ export function Grafico({ chartData }: GraficoProps) {
     <Card>
       <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6">
-          <CardTitle>
-            <div className="flex items-center gap-4 ">
-              <div className="flex justify-end gap-1">
-                <Label
-                  htmlFor="name"
-                >
-                  Sensor
-                </Label>
-              </div>
-              <Select value={actionExecDevice} onValueChange={handleExecDevice}>
-                <SelectTrigger className="col-span-1">
-                  <SelectValue placeholder="Selecione um Sensor" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Sensores</SelectLabel>
-                    {sensors.map((sensor) => (
-                      <SelectItem
-                        key={sensor.sensor_name}
-                        value={sensor?.deveui as string}
-                      >
-                        {sensor.sensor_name}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-          </CardTitle>
+          <CardTitle>Dados do Sensor</CardTitle>
           <CardDescription>Descrição do sensor</CardDescription>
         </div>
         <div className="flex">
