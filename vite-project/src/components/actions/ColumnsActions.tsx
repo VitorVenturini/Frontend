@@ -7,7 +7,7 @@ import CardCreateAction from "@/components/actions/CardCreateAction";
 import { ActionsInteface } from "@/components/actions/ActionsContext";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { useState } from "react";
-import { useUsers } from "@/components/user/UserContext";
+import { useUsers } from "@/components/users/UserContext";
 import { MessageCircleWarning } from "lucide-react";
 import NotifyActions from "@/components/actions/CardNotificationAction";
 

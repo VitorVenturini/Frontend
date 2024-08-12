@@ -30,7 +30,7 @@ import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { useSensors } from "@/components/sensor/SensorContext";
 import { ActionsInteface } from "./ActionsContext";
 import { useButtons } from "../buttons/buttonContext/ButtonsContext";
-import { useUsers } from "../user/UserContext";
+import { useUsers } from "../users/usersCore/UserContext";
 interface User {
   id: string;
   name: string;

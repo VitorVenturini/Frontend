@@ -32,7 +32,7 @@ import {
     AlertDialogTrigger,
   } from "@/components/ui/alert-dialog";
 import { useToast } from "../ui/use-toast";
-import { useUsers } from "../user/UserContext";
+import { useUsers } from "../users/usersCore/UserContext";
   interface DeleteUsersProps {
     id: number;
   }

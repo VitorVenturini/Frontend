@@ -34,7 +34,7 @@ import { useHistory } from "@/components/history/HistoryContext";
 import { useEffect } from "react";
 import { format } from "date-fns";
 import { useToast } from "@/components/ui/use-toast";
-import { UserInterface, useUsers } from "@/components/user/UserContext";
+import { UserInterface, useUsers } from "@/components/users/usersCore/UserContext"
 import {
   ChatInterface,
   ChatProvider,
@@ -327,7 +327,7 @@ function UserLayout() {
         </div>
 
         <ButtonsGridPage
-          buttons={buttons}
+          buttonsGrid={buttons}
           selectedUser={account}
           // selectedOpt={selectedOpt}
           // onOptChange={handleOptChange}
