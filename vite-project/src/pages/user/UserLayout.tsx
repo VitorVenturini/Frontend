@@ -68,8 +68,14 @@ function UserLayout() {
     comboStarted,
     buttons,
   } = useButtons();
-  const { setSensors, updateSensor, clearSensorsByName, addSensors } =
-    useSensors();
+  const {
+    setSensors,
+    updateSensorButton,
+    updateGraphSensor,
+    clearSensorsByName,
+    addSensors,
+    addSensorsButton,
+  } = useSensors();
   const { addHistory } = useHistory();
   const { setApiKeyInfo } = useGoogleApiKey();
   const {
@@ -92,10 +98,18 @@ function UserLayout() {
   const navigate = useNavigate();
   const myAccountInfo = JSON.parse(localStorage.getItem("Account") || "{}");
   const [comboStart, setComboStart] = useState(false);
-  const {users} = useUsers()
+  const { users } = useUsers();
 
   const isAllowedButtonType = (type: string) => {
-    const allowedTypes = ["floor", "maps", "video", "chat", "sensor","camera", "radio"];
+    const allowedTypes = [
+      "floor",
+      "maps",
+      "video",
+      "chat",
+      "sensor",
+      "camera",
+      "radio",
+    ];
     return allowedTypes.includes(type);
   };
   var allBtn: ButtonInterface[];
@@ -123,29 +137,25 @@ function UserLayout() {
         addSensors(camArray);
         break;
       case "SelectAllSensorInfoResultSrc":
-        const allSensors: SensorInterface[] = JSON.parse(message.result);
-        addSensors(allSensors);
+        const allSensors = JSON.parse(message.result);
+        // allSensors.forEach((sensor: SensorInterface) => updateSensorButton(sensor));
+        addSensorsButton(allSensors); // info dos sensores para ser exibido nos botões
         break;
       case "SensorReceived":
         const sensorDataReceived = message.value;
-        updateSensor(sensorDataReceived);
-        // addHistory({
-        //   button_name: message.value.sensor_name,
-        //   date: message.value.date
-        //     ? format(new Date(message.value.date), "dd/MM HH:mm")
-        //     : format(new Date(), "dd/MM HH:mm"),
-        // }); // tratar inserção de dados no histório apenas se estourar o treshold
+        updateSensorButton(sensorDataReceived);
+        updateGraphSensor(sensorDataReceived);
         break;
       case "AlarmReceived":
         setButtonTriggered(message.btn_id, true);
-        const userStartAlarm = allUsers.filter((user) =>{
-          return user.guid === message.src
-        })[0]
+        const userStartAlarm = allUsers.filter((user) => {
+          return user.guid === message.src;
+        })[0];
         addHistory({
           date: message.date
             ? format(new Date(message.date), "dd/MM HH:mm")
             : format(new Date(), "dd/MM HH:mm"),
-          message: `${userStartAlarm?.name} disparou o alarme ${message.alarm}`
+          message: `${userStartAlarm?.name} disparou o alarme ${message.alarm}`,
         });
         toast({
           description: "Alarme Recebido" + message.alarm,
@@ -153,14 +163,14 @@ function UserLayout() {
         break;
       case "AlarmStopReceived":
         setStopButtonTriggered(message.alarm, false);
-        const userStopAlarm = allUsers.filter((user) =>{
-          return user.guid === message.src
-        })[0]
+        const userStopAlarm = allUsers.filter((user) => {
+          return user.guid === message.src;
+        })[0];
         addHistory({
           date: message.date
             ? format(new Date(message.date), "dd/MM HH:mm")
             : format(new Date(), "dd/MM HH:mm"),
-          message: `${userStopAlarm?.name} parou o alarme ${message.alarm}`
+          message: `${userStopAlarm?.name} parou o alarme ${message.alarm}`,
         });
         toast({
           description: "Alarme Parou " + message.alarm,
@@ -180,7 +190,7 @@ function UserLayout() {
         break;
       case "TableUsersResult":
         const newUser: UserInterface[] = message.result;
-        allUsers = newUser
+        allUsers = newUser;
         setUsers(newUser);
         break;
       case "UserOnline":
@@ -230,11 +240,11 @@ function UserLayout() {
       case "ConfigResult":
         setApiKeyInfo(message.result);
         break;
-        case "ComboStartButton":
+      case "ComboStartButton":
         comboStarted(message.btn_id);
         const comboButtons = allBtn?.filter((btn) => {
-          return btn.id === message.btn_id
-        })[0]
+          return btn.id === message.btn_id;
+        })[0];
 
         if (comboButtons) {
           if (comboButtons.position_y === "1") {
@@ -313,7 +323,6 @@ function UserLayout() {
             selectedOpt={selectedOptBottom}
             clickedUser={clickedUserBottom}
             setClickedUser={handleClickedUserBottom}
-            
           />
         </div>
 

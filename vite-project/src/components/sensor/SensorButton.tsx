@@ -16,7 +16,7 @@ interface ButtonProps {
 }
 
 export default function SensorButton({ handleClick, button }: ButtonProps) {
-  const { sensors } = useSensors();
+  const { buttonSensors,sensors } = useSensors();
   const { setOldValue, setNewValue, buttons } = useButtons();
   const account = useAccount();
 
@@ -25,7 +25,7 @@ export default function SensorButton({ handleClick, button }: ButtonProps) {
   const oldValue = buttonState?.oldValue;
   const newValue = buttonState?.newValue;
 
-  const filteredSensor = sensors.find(
+  const filteredSensor = (account.isAdmin ? sensors : buttonSensors).find(
     (sensor) => sensor.deveui === button?.button_prt
   );
 
@@ -133,7 +133,7 @@ export default function SensorButton({ handleClick, button }: ButtonProps) {
     return `${commonClasses} flex flex-col cursor-pointer active:bg-red-900 bg-buttonSensor`;
   };
 
-  const sensorModel = sensors.filter((sensor) => {
+  const sensorModel = (account.isAdmin ? sensors : buttonSensors).filter((sensor) => {
     return sensor.deveui === button.button_prt;
   })[0];
 
