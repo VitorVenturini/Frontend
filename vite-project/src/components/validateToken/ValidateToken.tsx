@@ -24,6 +24,8 @@ const ValidadeToken = (Component: React.ComponentType) => {
           if (!response.ok) {
             // navigate('/Login');
             console.error("Erro ao verificar token:", response.statusText);
+            navigate('/login') 
+            // redirecionar para login caso token nao esteja validado (testar e rever)
           }
         }
       };

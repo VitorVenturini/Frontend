@@ -5,7 +5,7 @@ import CardClearDB from "@/components/options/CardClearDB";
 import Gateways from "@/components/options/Gateways";
 import ContaCard from "@/components/options/ContaCard";
 import RadioCard from "@/components/options/RadioCard";
-import TelephonePBXCard from "@/components/options/TelephonePBXCard";
+import PbxConfigCard from "@/components/options/Pbx/PbxConfigCard";
 import APIGoogleCard from "@/components/options/ApiGoogle/APIGoogleCard";
 import IotCameraCard from "@/components/options/IotCameraCard";
 
@@ -29,7 +29,7 @@ export default function MenuOptions() {
       case "Radio":
         return <RadioCard />;
       case "TelephonePBX":
-        return <TelephonePBXCard />;
+        return <PbxConfigCard />;
       case "APIGoogle":
         return <APIGoogleCard />;
       case "IotCamera":

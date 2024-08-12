@@ -17,7 +17,7 @@ import { Grafico } from "@/components/charts/lineChart";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ColumnsReports from "@/Reports/collumnsReports";
 
-import { useUsers } from "@/components/user/UserContext";
+import { useUsers } from "@/components/users/UserContext";
 import { useData } from "@/Reports/DataContext";
 
 import { Card } from "@/components/ui/card";

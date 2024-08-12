@@ -1,7 +1,7 @@
 import { Send } from "lucide-react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { UserInterface, useUsers } from "../user/UserContext";
+import { UserInterface, useUsers } from "../users/usersCore/UserContext";
 import { useWebSocketData } from "../websocket/WebSocketProvider";
 import { useEffect, useState } from "react";
 import { ChatInterface, useChat } from "./ChatContext";

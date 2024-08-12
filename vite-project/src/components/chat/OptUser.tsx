@@ -8,7 +8,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-import { UserInterface } from "../user/UserContext";
+import { UserInterface } from "../users/usersCore/UserContext";
 import { useChat } from "./ChatContext";
 import { useState, useEffect } from "react";
 

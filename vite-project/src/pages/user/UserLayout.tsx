@@ -34,7 +34,7 @@ import { useHistory } from "@/components/history/HistoryContext";
 import { useEffect } from "react";
 import { format } from "date-fns";
 import { useToast } from "@/components/ui/use-toast";
-import { UserInterface, useUsers } from "@/components/user/UserContext";
+import { UserInterface, useUsers } from "@/components/users/usersCore/UserContext"
 import {
   ChatInterface,
   ChatProvider,
@@ -327,7 +327,7 @@ function UserLayout() {
         </div>
 
         <ButtonsGridPage
-          buttons={buttons}
+          buttonsGrid={buttons}
           selectedUser={account}
           // selectedOpt={selectedOpt}
           // onOptChange={handleOptChange}
@@ -341,9 +341,9 @@ function UserLayout() {
         </Button>
       )}
       <Logout />
-      <div className="text-[9px] sm:text-[15px] md:text-[20px] lg:text-[22px] xl:text-[35px] 2xl:text-[50px] ">
+    {/*   <div className="text-[9px] sm:text-[15px] md:text-[20px] lg:text-[22px] xl:text-[35px] 2xl:text-[50px] ">
         VE O TAMANHO AQUI O ANIMAL até o lg é tablet dps de 1290 xl é desktop
-      </div>
+      </div> */}
     </WebSocketProvider>
   );
 }

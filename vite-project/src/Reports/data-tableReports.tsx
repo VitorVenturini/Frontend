@@ -27,7 +27,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useUsers } from "@/components/user/UserContext";
+import { useUsers } from "@/components/users/usersCore/UserContext";
 import texts from "@/_data/texts.json";
 import { useLanguage } from "@/components/language/LanguageContext";
 import { Label } from "@/components/ui/label";

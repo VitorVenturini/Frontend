@@ -3,7 +3,7 @@ import DeleteUsers from "@/components/account/DeleteUsers";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { UserInterface } from "@/components/user/UserContext";
+import { UserInterface } from "@/components/users/UserContext";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { useState } from "react";
 import { Pencil

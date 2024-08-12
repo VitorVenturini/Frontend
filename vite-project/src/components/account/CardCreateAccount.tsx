@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/card";
 import texts from "../../_data/texts.json";
 import { useLanguage } from "@/components/language/LanguageContext";
-import { UserInterface, useUsers } from "../user/UserContext";
+import { UserInterface, useUsers } from "../users/usersCore/UserContext";
 import { host } from "@/App";
 import {
   useWebSocketData,

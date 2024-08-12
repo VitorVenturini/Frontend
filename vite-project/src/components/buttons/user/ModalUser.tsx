@@ -45,7 +45,7 @@ import React, { useEffect, useState, ChangeEvent } from "react";
 import { Loader2 } from "lucide-react";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { ButtonInterface } from "@/components/buttons/buttonContext/ButtonsContext";
-import { useUsers } from "@/components/user/UserContext";
+import { useUsers } from "@/components/users/usersCore/UserContext";
 
 interface User {
   id: string;

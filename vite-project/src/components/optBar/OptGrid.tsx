@@ -7,7 +7,7 @@ import OptComponent from "@/components/optBar/OptComponent";
 import { useAccount } from "@/components/account/AccountContext";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import UserComponent from "../chat/OptUser";
-import { useUsers } from "../user/UserContext";
+import { useUsers } from "../users/usersCore/UserContext";
 
 interface OptGridProps {
   buttons: ButtonInterface[];
