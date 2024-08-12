@@ -1,14 +1,3 @@
-// {
-//     "id": "36",
-//     "name": "Erick",
-//     "guid": "5918469579912990686",
-//     "email": "erick@wecom.com.br",
-//     "sip": "wecom.com.br",
-//     "password": "$2a$15$3M7moib1NAdK.lfe27qBkeb9gIS.iyMlAVCsA/Imqi15soNtJsMCO",
-//     "createdAt": "2024-06-04 12:35:00.000 +00:00",
-//     "updatedAt": "2024-06-04 12:35:51.658 +00:00",
-//     "type": "admin"
-// }
 
 import React, { createContext, useState, useContext, ReactNode } from "react";
 

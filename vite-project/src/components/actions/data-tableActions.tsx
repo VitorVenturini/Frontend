@@ -24,7 +24,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
-import { useUsers } from "@/components/user/UserContext";
+import { useUsers } from "@/components/users/usersCore/UserContext";
 
 interface User {
   id: string;

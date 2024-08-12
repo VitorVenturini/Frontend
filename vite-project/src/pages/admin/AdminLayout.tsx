@@ -30,8 +30,7 @@ import {
   useGateways,
 } from "@/components/Gateways/GatewaysContext";
 
-import { useUsers } from "@/components/user/UserContext";
-import { UserInterface } from "@/components/user/UserContext";
+import { useUsers,UserInterface } from "@/components/users/usersCore/UserContext";
 import {
   CamerasInterface,
   useCameras,

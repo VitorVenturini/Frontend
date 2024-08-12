@@ -9,7 +9,7 @@ import { useWebSocketData } from "../websocket/WebSocketProvider";
 import React, { Component } from "react";
 import { Skeleton } from "@/components/ui/skeleton"
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
-import { useUsers } from "../user/UserContext";
+import { useUsers } from "../users/usersCore/UserContext";
 import ChatLayout from "../chat/ChatLayout";
 import { useChat } from "../chat/ChatContext";
 import { useGoogleApiKey } from "../options/ApiGoogle/GooglApiContext";

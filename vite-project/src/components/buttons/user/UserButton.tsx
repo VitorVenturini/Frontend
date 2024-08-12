@@ -7,7 +7,7 @@ import { User } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { useAccount } from "@/components/account/AccountContext";
-import { useUsers } from "@/components/user/UserContext";
+import { useUsers } from "@/components/users/usersCore/UserContext"
 import { commonClasses } from "../ButtonsComponent";
 
 interface ButtonProps {

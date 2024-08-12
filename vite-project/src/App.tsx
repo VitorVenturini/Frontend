@@ -16,12 +16,14 @@ import LanguageProvider from "./components/language/LanguageContext";
 import { ThemeProvider } from "./components/theme-provider";
 import { HistoryProvider } from "./components/history/HistoryContext";
 import { Toaster } from "./components/ui/toaster";
-import { UserProvider } from "./components/user/UserContext";
+import { UserProvider } from "./components/users/usersCore/UserContext";
 import { ChatProvider } from "@/components/chat/ChatContext";
 import { GoogleApiKeyProvider } from "./components/options/ApiGoogle/GooglApiContext";
 import { GatewayProvider } from "./components/Gateways/GatewaysContext";
 import { CameraProvider } from "./components/cameras/CameraContext";
 import { DataProvider } from "./Reports/DataContext";
+import { UserPbxProvider } from "./components/users/usersPbx/UsersPbxContext";
+import { PbxProvider } from "./components/options/Pbx/PbxContext";
 
 export const host = "https://meet.wecom.com.br";
 
@@ -47,39 +49,49 @@ function App() {
   return (
     <ThemeProvider>
       <LanguageProvider>
-        <GoogleApiKeyProvider>
-          <ChatProvider>
-            <DataProvider>
-              <HistoryProvider>
-                <ActionProvider>
-                  <GatewayProvider>
-                    <AccountProvider>
-                      <UserProvider>
-                        <ButtonProvider>
-                          <SensorProvider>
-                            <CameraProvider>
-                              <Routes>
-                                <Route path="/" element={<RootRoute />} />
-                                <Route path="/login" element={<LoginPage />} />
-                                <Route
-                                  path="/admin/*"
-                                  element={<AdminRoute />}
-                                />
-                                <Route path="/user/*" element={<UserRoute />} />
-                                <Route path="*" element={<NoPage />} />
-                              </Routes>
-                              <Toaster />
-                            </CameraProvider>
-                          </SensorProvider>
-                        </ButtonProvider>
-                      </UserProvider>
-                    </AccountProvider>
-                  </GatewayProvider>
-                </ActionProvider>
-              </HistoryProvider>
-            </DataProvider>
-          </ChatProvider>
-        </GoogleApiKeyProvider>
+        <PbxProvider>
+          <GoogleApiKeyProvider>
+            <ChatProvider>
+              <DataProvider>
+                <HistoryProvider>
+                  <ActionProvider>
+                    <GatewayProvider>
+                      <AccountProvider>
+                        <UserProvider>
+                          <UserPbxProvider>
+                            <ButtonProvider>
+                              <SensorProvider>
+                                <CameraProvider>
+                                  <Routes>
+                                    <Route path="/" element={<RootRoute />} />
+                                    <Route
+                                      path="/login"
+                                      element={<LoginPage />}
+                                    />
+                                    <Route
+                                      path="/admin/*"
+                                      element={<AdminRoute />}
+                                    />
+                                    <Route
+                                      path="/user/*"
+                                      element={<UserRoute />}
+                                    />
+                                    <Route path="*" element={<NoPage />} />
+                                  </Routes>
+                                  <Toaster />
+                                </CameraProvider>
+                              </SensorProvider>
+                            </ButtonProvider>
+                          </UserPbxProvider>
+                        </UserProvider>
+                      </AccountProvider>
+                    </GatewayProvider>
+                  </ActionProvider>
+                </HistoryProvider>
+              </DataProvider>
+            </ChatProvider>
+          </GoogleApiKeyProvider>
+        </PbxProvider>
       </LanguageProvider>
     </ThemeProvider>
   );

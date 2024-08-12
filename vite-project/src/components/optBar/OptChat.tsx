@@ -15,7 +15,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { UserInterface } from "../user/UserContext";
+import { UserInterface } from "../users/usersCore/UserContext";
 import ChatLayout from "../chat/ChatLayout";
 
 

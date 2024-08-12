@@ -169,7 +169,7 @@ export default function ButtonsPage() {
             <div>
               {
                 <ButtonsGridPages
-                  buttons={filteredButtons}
+                  buttonsGrid = {filteredButtons}
                   selectedUser={selectedUser}
                   //onOptChange={handleOptChange}
                 />
