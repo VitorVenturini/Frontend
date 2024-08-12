@@ -19,15 +19,15 @@ interface ButtonProps {
 
 export default function CommandButton({ handleClick, button }: ButtonProps) {
   const { sensors } = useSensors();
-  const { buttons, setStopCombo } = useButtons();
+  const { buttons,setButtonLoading, setStopCombo } = useButtons();
   const account = useAccount();
   const wss = useWebSocketData();
-  const [isLoading, setIsLoading] = useState(false);
+  //const [isLoading, setIsLoading] = useState(false);
   const [initiatedByUser, setInitiatedByUser] = useState(false);
   const [clickedClass, setClickedClass] = useState("");
 
   const handleClickCommand = () => {
-    if (isLoading) return; // impede novos cliques enquanto está carregando
+    if (button.loading) return; // impede novos cliques enquanto está carregando
     handleClick();
     setInitiatedByUser(true);
     if (!account.isAdmin) {
@@ -37,7 +37,7 @@ export default function CommandButton({ handleClick, button }: ButtonProps) {
         btn_id: button.id,
       });
     }
-    setIsLoading(true);
+    setButtonLoading(button.id,true);
     // //const isClicked = button.clicked;
     // if (button.triggered) {
     //   removeClickedButton(button.id);
@@ -56,7 +56,7 @@ export default function CommandButton({ handleClick, button }: ButtonProps) {
 
   useEffect(() => {
     if (!initiatedByUser) { // nao foi iniciado por um usuario
-      if (isLoading) return; // se estiver carregando entao nao deixa ativar o commando 
+      if (button.loading) return; // se estiver carregando entao nao deixa ativar o commando 
       if (button.comboStart) { // RECEBEU UM COMBO
         //setClickedClass("bg-red-800");
         wss?.sendMessage({
@@ -64,7 +64,7 @@ export default function CommandButton({ handleClick, button }: ButtonProps) {
           mt: "TriggerCommand",
           btn_id: button.id,
         });
-        setIsLoading(true);
+        setButtonLoading(button.id,true);
       }
     } else {
       setInitiatedByUser(false);
@@ -75,7 +75,7 @@ export default function CommandButton({ handleClick, button }: ButtonProps) {
   const commandValue = buttonState?.commandValue;
 
   useEffect(() => {
-    setIsLoading(false);
+    setButtonLoading(button.id,false);
     if (button.comboStart) { // parar o combo se ele tiver ativo 
       setStopCombo(button.id) // pois precisamos ver se o valor do button.comboStart mudou para ativar o UseEffect acima 
     }
@@ -95,7 +95,7 @@ export default function CommandButton({ handleClick, button }: ButtonProps) {
             {commandValue}
             {!account.isAdmin && (
               <div>
-                {isLoading ? (
+                {button.loading ? (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 ) : (
                   <Switch className="h-5" checked={commandValue === "on"} />

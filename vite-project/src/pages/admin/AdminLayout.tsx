@@ -30,7 +30,10 @@ import {
   useGateways,
 } from "@/components/Gateways/GatewaysContext";
 
-import { useUsers,UserInterface } from "@/components/users/usersCore/UserContext";
+import {
+  useUsers,
+  UserInterface,
+} from "@/components/users/usersCore/UserContext";
 import {
   CamerasInterface,
   useCameras,
@@ -40,11 +43,17 @@ import ColumnsReports from "@/Reports/collumnsReports";
 import { Grafico } from "@/components/charts/lineChart";
 import { DataProvider, useData } from "@/Reports/DataContext";
 import Reports from "./reports";
+import { usePbx } from "@/components/options/Pbx/PbxContext";
+import {
+  UserPbxInterface,
+  useUsersPbx,
+} from "@/components/users/usersPbx/UsersPbxContext";
 
 function AdminLayout() {
   const account = useAccount();
   const { setUsers, updateUserStauts } = useUsers();
   const { setApiKeyInfo } = useGoogleApiKey();
+  const { setPbxInfo } = usePbx();
   const wss = useWebSocketData();
   const { buttons, setButtons, addButton, updateButton, deleteButton } =
     useButtons();
@@ -52,6 +61,7 @@ function AdminLayout() {
   const { toast } = useToast();
   const { actions, setActions, updateActions, deleteAction, addActions } =
     useActions();
+  const { setUsersPbx } = useUsersPbx();
   const { updateAccount } = useAccount();
   const [isAdminVerified, setIsAdminVerified] = useState(false);
   const navigate = useNavigate();
@@ -94,12 +104,9 @@ function AdminLayout() {
         const newUser: UserInterface[] = message.result;
         setUsers(newUser);
         break;
-
-      // case "SelectSensorNameResult":
-      //   //Lógica antiga vamos deixar comentado por enquanto
-      //   // const firstSensors: SensorInterface[] = JSON.parse(message.result);
-      //   // setSensors(firstSensors);
-      //   // console.log(message.result);
+      // case "PbxTableUsersResult":
+      //   const pbxUser: UserPbxInterface[] = message.result;
+      //   setUsersPbx(pbxUser);
       //   break;
       case "SelectSensorsResult":
         const result = message.result;
@@ -152,7 +159,16 @@ function AdminLayout() {
         });
         break;
       case "ConfigResult":
-        setApiKeyInfo(message.result);
+        const apiKeyEntries = message.result.filter(
+          (item: any) => item.entry === "googleApiKey"
+        );
+        setApiKeyInfo(apiKeyEntries);
+        const pbxEntries = message.result.filter(
+          (item: any) => item.entry === "urlPbxTableUsers"
+        );
+        setPbxInfo(pbxEntries);
+        break;
+        // asjutar isso , armazenar nos outros contextos
         break;
       case "SelectGatewaysSuccess":
         const allGateways: GatewaysInterface[] = message.result;
