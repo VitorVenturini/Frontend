@@ -13,17 +13,6 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { useSensors } from "@/components/sensor/SensorContext";
-import { Label } from "@/components/ui/label";
 
 type ChartConfig = {
   [key: string]: {
@@ -40,8 +29,7 @@ export function Grafico({ chartData }: GraficoProps) {
   const [activeChart, setActiveChart] = useState<string | null>(null);
   const [dataChartConfig, setDataChartConfig] = useState<ChartConfig>({});
   const [keys, setKeys] = useState<string[]>([]);
-  const [actionExecDevice, setActionExecDevice] = useState("");
-  const { sensors } = useSensors();
+  const [minMaxValues, setMinMaxValues] = useState<[number, number] | null>(null);
 
   // Função para gerar uma cor baseada em um índice
   const generateColor = (index: number): string => {
@@ -57,7 +45,6 @@ export function Grafico({ chartData }: GraficoProps) {
           key !== "date" &&
           key !== "sensor_name" &&
           key !== "deveui" &&
-          key !== "battery" &&
           key !== "id"
       );
       setKeys(keys);
@@ -75,42 +62,21 @@ export function Grafico({ chartData }: GraficoProps) {
       setActiveChart(keys[0] || null); // Definir a primeira chave como o gráfico ativo
     }
   }, [chartData]);
-  const handleExecDevice = (value: string) => {
-    setActionExecDevice(value);
-  };
+
+  useEffect(() => {
+    if (activeChart && chartData.length > 0) {
+      const values = chartData.map((item) => item[activeChart]);
+      const min = Math.min(...values);
+      const max = Math.max(...values);
+      setMinMaxValues([min, max]);
+    }
+  }, [activeChart, chartData]);
+
   return (
     <Card>
       <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6">
-          <CardTitle>
-            <div className="flex items-center gap-4 ">
-              <div className="flex justify-end gap-1">
-                <Label
-                  htmlFor="name"
-                >
-                  Sensor
-                </Label>
-              </div>
-              <Select value={actionExecDevice} onValueChange={handleExecDevice}>
-                <SelectTrigger className="col-span-1">
-                  <SelectValue placeholder="Selecione um Sensor" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Sensores</SelectLabel>
-                    {sensors.map((sensor) => (
-                      <SelectItem
-                        key={sensor.sensor_name}
-                        value={sensor?.deveui as string}
-                      >
-                        {sensor.sensor_name}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-          </CardTitle>
+          <CardTitle>Dados do Sensor</CardTitle>
           <CardDescription>Descrição do sensor</CardDescription>
         </div>
         <div className="flex">
@@ -130,19 +96,18 @@ export function Grafico({ chartData }: GraficoProps) {
           })}
         </div>
       </CardHeader>
-      <CardContent className="px-2 sm:p-2">
+      <CardContent className="px-2 sm:p-6">
         <ChartContainer
           config={dataChartConfig}
-          className="aspect-auto h-[350px] w-full"
+          className="aspect-auto h-[400px] w-full"
         >
           <LineChart
-            accessibilityLayer
             data={chartData}
             margin={{
+              top: 20,
+              bottom: 20,
               left: 12,
               right: 12,
-              top: 25,
-              bottom: 25,
             }}
           >
             <CartesianGrid vertical={false} />
@@ -150,8 +115,8 @@ export function Grafico({ chartData }: GraficoProps) {
               dataKey="date"
               tickLine={false}
               axisLine={false}
-              tickMargin={8}
-              minTickGap={32}
+              tickMargin={12}
+              minTickGap={12}
               tickFormatter={(value) => {
                 const date = new Date(value);
                 return date.toLocaleDateString("pt-BR", {
@@ -160,7 +125,11 @@ export function Grafico({ chartData }: GraficoProps) {
                 });
               }}
             />
-
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              domain={minMaxValues ? [minMaxValues[0], minMaxValues[1]] : ['auto', 'auto']} // Define os limites do Y dinamicamente
+            />
             <ChartTooltip
               content={
                 <ChartTooltipContent
@@ -183,6 +152,7 @@ export function Grafico({ chartData }: GraficoProps) {
                 stroke={dataChartConfig[activeChart]?.color}
                 strokeWidth={2}
                 dot={false}
+                clipPath="url(#clip)" // Adiciona o clipPath
               />
             )}
           </LineChart>

@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, ReactNode } from "react";
+import React, { useState, ChangeEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 
@@ -50,9 +50,19 @@ export default function Reports({
   const [selectedUser, setSelectedUser] = useState("");
   const [actionExecDevice, setActionExecDevice] = useState("");
   const { sensors } = useSensors();
-  console.log("datas selecionadas", date);
+  const [startHour, setStartHour] = useState("");
+  const [endHour, setEndHour] = useState("");
+
+  const handleStartHour = (event: ChangeEvent<HTMLInputElement>) => {
+    setStartHour(event.target.value);
+  };
+  const handleEndHour = (event: ChangeEvent<HTMLInputElement>) => {
+    setEndHour(event.target.value);
+  };
+
+  console.log("datas selecionadas", date?.from, startHour);
   const handleExecDevice = (value: string) => {
-    clearDataReport()
+    clearDataReport();
     setActionExecDevice(value);
     wss?.sendMessage({
       api: "admin",
@@ -113,7 +123,6 @@ export default function Reports({
                     <span>Pick a date</span>
                   )}
                 </Button>
-                
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
                 <Calendar
@@ -124,14 +133,13 @@ export default function Reports({
                   onSelect={setDate}
                   numberOfMonths={2}
                 />
-                <div className="flex  align-middle items-center w-[300px] justify-between"> 
-                <Label>Hora inicial</Label>
-                <Input type="time"/>
-                <Label>Hora Final</Label>
-                <Input type="time"/>
+                <div className="flex align-middle items-center w-full p-2 justify-between">
+                  <Label>Hora inicial</Label>
+                  <Input className="w-[150px]" type="time" onChange={handleStartHour} />
+                  <Label>Hora Final</Label>
+                  <Input className="w-[150px]" type="time" onChange={handleEndHour} />
                 </div>
               </PopoverContent>
-              
             </Popover>
             <TabsList>
               <TabsTrigger value="RptAvailability">Disponibilidade</TabsTrigger>
@@ -142,13 +150,11 @@ export default function Reports({
               <TabsTrigger value="RptMensages">Mensagens</TabsTrigger>
             </TabsList>
             <TabsContent value="RptSensors" className="gap-4 py-4 ">
-              <div className="flex items-center gap-4 ">
+              <div className="flex items-center gap-4 h-[10px]">
                 <div className="flex justify-end gap-1">
                   <Label htmlFor="name">Sensor</Label>
                 </div>
-                <Select
-                  onValueChange={handleExecDevice}
-                >
+                <Select onValueChange={handleExecDevice}>
                   <SelectTrigger className="col-span-1">
                     <SelectValue placeholder="Selecione um Sensor" />
                   </SelectTrigger>
@@ -191,6 +197,15 @@ export default function Reports({
             )}
           </TabsContent>
           <TabsContent value="RptMensages" className="gap-4 py-4">
+            {dataReport?.table[0] && (
+              <ColumnsReports
+                data={dataReport.table}
+                keys={dataReport.keys}
+                report={dataReport.src}
+              />
+            )}
+          </TabsContent>
+          <TabsContent value="RptCalls" className="gap-4 py-4">
             {dataReport?.table[0] && (
               <ColumnsReports
                 data={dataReport.table}
