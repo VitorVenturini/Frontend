@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import {
   ColumnDef,
   useReactTable,
@@ -31,6 +31,7 @@ import { useUsers } from "@/components/user/UserContext";
 import texts from "@/_data/texts.json";
 import { useLanguage } from "@/components/language/LanguageContext";
 import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
 interface DataTableProps<TData> {
   columns: ColumnDef<TData, any>[];
   data: TData[];
@@ -41,6 +42,7 @@ export function DataTable<TData>({ columns, data }: DataTableProps<TData>) {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
+  const [loading, setLoading] = useState<boolean>(true);
   const { language } = useLanguage();
   const { users } = useUsers();
   const table = useReactTable({
@@ -56,6 +58,13 @@ export function DataTable<TData>({ columns, data }: DataTableProps<TData>) {
       columnFilters,
     },
   });
+  useEffect(() => {
+    if (data && data.length > 0) {
+      setLoading(false);
+    } else {
+      setLoading(true);
+    }
+  }, [data]);
   const [selectedUser, setSelectedUser] = useState("");
   const handleUserSelect = (value: string) => {
     
@@ -121,7 +130,16 @@ export function DataTable<TData>({ columns, data }: DataTableProps<TData>) {
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="h-24 text-center">
-                No results.
+              {loading && (
+                  <div className="flex flex-col gap-8">
+                    <div className="flex items-center space-x-4">
+                      <Skeleton className="h-4 w-[20%]" />
+                      <Skeleton className="h-4 w-[20%]" />
+                      <Skeleton className="h-4 w-[20%]" />
+                      <Skeleton className="h-4 w-[20%]" />
+                    </div>
+                  </div>
+                )}
               </TableCell>
             </TableRow>
           )}

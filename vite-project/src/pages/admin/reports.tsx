@@ -4,7 +4,7 @@ import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 
 import { addDays, format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
-import { DateRange } from "react-day-picker";
+
 
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
@@ -31,6 +31,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+
+
+type DateRange = {
+  from: Date;
+  to: Date;
+};
 import { useSensors } from "@/components/sensor/SensorContext";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -38,7 +44,7 @@ export default function Reports({
   className,
 }: React.HTMLAttributes<HTMLDivElement>) {
   const wss = useWebSocketData();
-  const [date, setDate] = React.useState<DateRange | undefined>({
+  const [date, setDate] = React.useState<DateRange>({
     from: addDays(new Date(), -10),
     to: new Date(),
   });
@@ -59,34 +65,51 @@ export default function Reports({
   const handleEndHour = (event: ChangeEvent<HTMLInputElement>) => {
     setEndHour(event.target.value);
   };
+  const formatDateTime = (date: Date, time: string, defaultTime: string): string => {
+    const formattedDate = format(date, 'yyyy-MM-dd'); // Formata a data no padrão 'YYYY-MM-DD'
+    const finalTime = time || defaultTime; // Usa o valor padrão se 'time' estiver em branco
+    return `${formattedDate} ${finalTime}:00`; // Retorna a data e hora no formato 'YYYY-MM-DD HH:mm:ss'
+  };
 
-  console.log("datas selecionadas", date?.from, startHour);
+  console.log("datas selecionadas", date, startHour);
   const handleExecDevice = (value: string) => {
+
     clearDataReport();
-    setActionExecDevice(value);
-    wss?.sendMessage({
-      api: "admin",
-      mt: "SelectFromReports",
-      src: "RptSensors",
-      deveui: value,
-      from: date?.from,
-      to: date?.to,
-    });
+    setActionExecDevice(value); 
+    if (value) {
+      const fromDateTimeUTC = formatDateTime(date.from, startHour, "00:00:00");
+      const toDateTimeUTC = formatDateTime(date.to ? date.to : date.from, endHour, "23:59:59");
+      wss?.sendMessage({
+        api: "admin",
+        mt: "SelectFromReports",
+        src: "RptSensors",
+        deveui: value,
+        from: fromDateTimeUTC,
+        to: toDateTimeUTC,
+      });
+    }
   };
   const handleMenu = (value: string) => {
+    clearDataReport()
     if (date && value !== "RptSensors") {
+      const fromDateTimeUTC = formatDateTime(date.from, startHour, "00:00:00");
+      const toDateTimeUTC = formatDateTime(date.to ? date.to : date.from, endHour, "23:59:59");
       console.log(`ENVIO AO BACKEND RELATÓRIO`);
       wss?.sendMessage({
         api: "admin",
         mt: "SelectFromReports",
         src: value,
         guid: selectedUser,
-        from: date?.from,
-        to: date?.to,
+        from: fromDateTimeUTC,
+        to: toDateTimeUTC,
+      });
+    } else if (value !== "RptSensors") {
+      toast({
+        description: "Relatório não gerado, revise seus parâmetros",
       });
     } else {
       toast({
-        description: "Relatório não gerado, revise seus parâmetros",
+        description: "Selecione um Sensor para gerar o gráfico",
       });
     }
   };
@@ -130,14 +153,24 @@ export default function Reports({
                   mode="range"
                   defaultMonth={date?.from}
                   selected={date}
-                  onSelect={setDate}
+                  onSelect={setDate || undefined}
                   numberOfMonths={2}
                 />
                 <div className="flex align-middle items-center w-full p-2 justify-between">
                   <Label>Hora inicial</Label>
-                  <Input className="w-[150px]" type="time" onChange={handleStartHour} />
+                  <Input
+                    className="w-[150px]"
+                    type="time"
+                    onChange={(e) => setStartHour(e.target.value)}
+                    value={startHour}
+                  />
                   <Label>Hora Final</Label>
-                  <Input className="w-[150px]" type="time" onChange={handleEndHour} />
+                  <Input
+                    className="w-[150px]"
+                    type="time"
+                    value={endHour}
+                    onChange={(e) => setEndHour(e.target.value)}
+                  />
                 </div>
               </PopoverContent>
             </Popover>
