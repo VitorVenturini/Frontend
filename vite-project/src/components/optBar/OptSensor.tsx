@@ -7,8 +7,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { SensorTest } from "../sensor/SensorTest";
+import { Grafico } from "../charts/lineChart";
 
-import SensorGraph from "@/components/sensor/SensorGraph";
+import { SensorGraph } from "../sensor/SensorGraph";
 import { SensorInterface } from "../sensor/SensorContext";
 import SensorGrid from "../sensor/SensorGrid";
 interface OptSensorProps {
@@ -27,19 +28,9 @@ export default function OptSensor({
 }: OptSensorProps) {
   return (
     <Card className="h-full flex">
+      <SensorGraph chartData={filteredSensorInfo}/>
+      
 
-      <SensorGrid
-        sensorInfo={filteredSensorInfo}
-        onKeyChange={handleKeyChange}
-        clickedKey={clickedKey}
-        setClickedKey={setClickedKey}
-      />
-      {sensorKey && (
-        <SensorGraph sensorInfo={filteredSensorInfo} sensorKey={sensorKey} />
-        
-      )}
-      {/* teste do componente de sensor */}
-      {/* <SensorTest/> */}
     </Card>
   );
 }

@@ -1,128 +1,163 @@
-import React, { PureComponent } from "react";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  LabelList,
-} from "recharts";
+"use client";
+import React, { useState, useEffect } from "react";
+import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { SensorInterface } from "@/components/sensor/SensorContext";
 import {
-  ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useSensors } from "@/components/sensor/SensorContext";
+import { Label } from "@/components/ui/label";
 
-import { TrendingUp } from "lucide-react";
-import { Value } from "@radix-ui/react-select";
-
-const chartConfig = {
-  desktop: {
-    label: "Desktop",
-    color: "hsl(var(--chart-1))",
-  },
-  mobile: {
-    label: "Mobile",
-    color: "hsl(var(--chart-2))",
-  },
-} satisfies ChartConfig;
+type ChartConfig = {
+  [key: string]: {
+    label: string;
+    color: string;
+  };
+};
 
 interface SensorGraphProps {
-  sensorInfo: SensorInterface[];
-  sensorKey: string;
+  chartData: any[];
 }
 
-function formatUTCDateToLocal(dateString: string | undefined): string {
-  if (!dateString) {
-    return "Invalid Date";
-  }
+export function SensorGraph({ chartData }: SensorGraphProps) {
+  const [activeChart, setActiveChart] = useState<string | null>(null);
+  const [dataChartConfig, setDataChartConfig] = useState<ChartConfig>({});
+  const [keys, setKeys] = useState<string[]>([]);
+  const [actionExecDevice, setActionExecDevice] = useState("");
+  const { sensors } = useSensors();
 
-  const date = new Date(dateString);
+  // Função para gerar uma cor baseada em um índice
+  const generateColor = (index: number): string => {
+    const hue = (index * 137.5) % 360; // Distribui cores de forma uniforme
+    return `hsl(${hue}, 70%, 50%)`;
+  };
 
-  // Formatar a data para o fuso horário local
-  const formattedDate = new Intl.DateTimeFormat(navigator.language, {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: false,
-  }).format(date);
-  console.log("formattedDate" + formattedDate);
-  return formattedDate;
-}
+  useEffect(() => {
+    if (chartData.length > 0) {
+      const firstItem = chartData[0];
+      const keys = Object.keys(firstItem).filter(
+        (key) =>
+          key !== "date" &&
+          key !== "sensor_name" &&
+          key !== "deveui" &&
+          key !== "battery" &&
+          key !== "id"
+      );
+      setKeys(keys);
 
-export default function SensorGraph({
-  sensorInfo,
-  sensorKey,
-}: SensorGraphProps) {
-  const sensorDate = sensorInfo[0]?.date;
-  const data = sensorInfo
-    .map((sensor) => ({
-      date: formatUTCDateToLocal(sensorDate),
-      value: parseInt((sensor as any)[sensorKey], 10),
-    }))
-    .reverse();
-  console.log("data" + JSON.stringify(data));
+      // Construir o chartConfig dinamicamente
+      const newChartConfig: ChartConfig = keys.reduce((acc, key, index) => {
+        acc[key] = {
+          label: key.charAt(0).toUpperCase() + key.slice(1), // Capitaliza a primeira letra
+          color: generateColor(index), // Gera uma cor com base no índice
+        };
+        return acc;
+      }, {} as ChartConfig);
+
+      setDataChartConfig(newChartConfig);
+      setActiveChart(keys[0] || null); // Definir a primeira chave como o gráfico ativo
+    }
+  }, [chartData]);
+  const handleExecDevice = (value: string) => {
+    setActionExecDevice(value);
+  };
   return (
-    <Card className="w-[440px] h-[330px]">
-      <CardContent>
-      <ChartContainer config={chartConfig}>
-        <LineChart
-          accessibilityLayer
-          data={data}
-          margin={{
-            top: 20,
-            left: 12,
-            right: 12,
-          }}
+    <Card className="w-full h-full ">
+      <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
+        <div className="flex flex-1 flex justify-center gap-1 px-2 py-2 ">
+      
+          {keys.map((key) => {
+            return (
+              <button
+                key={key}
+                data-active={activeChart === key}
+                className="flex flex-1 flex-col justify-center gap-1 border-t p-2  text-left  data-[active=true]:bg-muted/50"
+                onClick={() => setActiveChart(key)}
+              >
+                <span className="text-xs text-muted-foreground">
+                  {dataChartConfig[key]?.label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+       
+        
+      </CardHeader>
+      <CardContent className="h-full w-full">
+        <ChartContainer
+          config={dataChartConfig}
+          className="aspect-auto h-full w-full"
         >
-          <CartesianGrid vertical={false} />
-          <XAxis
-            dataKey="date"
-            tickLine={false}
-            axisLine={false}
-            tickMargin={8}
-            tickFormatter={(value) => value.slice(11,17)}
-          />
-          <ChartTooltip
-            cursor={false}
-            content={<ChartTooltipContent indicator="line" />}
-          />
-          <Line
-            dataKey="value"
-            type="natural"
-            stroke="var(--color-desktop)"
-            strokeWidth={2}
-            dot={{
-              fill: "var(--color-desktop)",
-            }}
-            activeDot={{
-              r: 6,
+          <LineChart
+            accessibilityLayer
+            data={chartData}
+            margin={{
+              left: 12,
+              right: 12,
+              top: 25,
+              bottom: 25,
             }}
           >
-            <LabelList
-              position="top"
-              offset={12}
-              className="fill-foreground"
-              fontSize={12}
+            <CartesianGrid vertical={false} />
+            <XAxis
+              dataKey="date"
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              minTickGap={32}
+              tickFormatter={(value) => {
+                const date = new Date(value);
+                return date.toLocaleDateString("pt-BR", {
+                  month: "short",
+                  day: "numeric",
+                });
+              }}
             />
-          </Line>
-        </LineChart>
-      </ChartContainer>
+
+            <ChartTooltip
+              content={
+                <ChartTooltipContent
+                  className="w-[150px]"
+                  nameKey="views"
+                  labelFormatter={(value) => {
+                    return new Date(value).toLocaleDateString("pt-BR", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    });
+                  }}
+                />
+              }
+            />
+            {activeChart && (
+              <Line
+                dataKey={activeChart}
+                type="monotone"
+                stroke={dataChartConfig[activeChart]?.color}
+                strokeWidth={2}
+                dot={false}
+              />
+            )}
+          </LineChart>
+        </ChartContainer>
       </CardContent>
     </Card>
   );
