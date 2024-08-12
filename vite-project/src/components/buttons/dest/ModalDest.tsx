@@ -210,8 +210,8 @@ export default function ModalDest({
             <TabsTrigger value="Siren">
               <Siren />
             </TabsTrigger>
-            <TabsTrigger value="Waves">
-              <Waves />
+            <TabsTrigger value="Phone">
+              <Phone />
             </TabsTrigger>
             <TabsTrigger value="Home">
               <Home />
