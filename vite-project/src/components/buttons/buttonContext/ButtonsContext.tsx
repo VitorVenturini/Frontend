@@ -25,6 +25,7 @@ export interface ButtonInterface {
   oldValue?: number; // propriedade adicional para sensores
   newValue?: number; // propriedade adicional para sensores
   clicked?: boolean; // adicionado para rastrear se o botão foi clicado
+  loading?: boolean;
   triggered: boolean;
   commandValue?: string;
   comboStart?: boolean;
@@ -52,6 +53,7 @@ interface ButtonContextType {
   setStopButtonTriggered: (alarm: string, triggered: boolean) => void;
   setStopWarningTreshold : (id: number, triggered: boolean) => void;
   setCommandValue: (btn_id: number, prt: string, value: string) => void;
+  setButtonLoading : (id: number, loading: boolean) => void;
   comboStarted: (comboId: number) => void; 
   setStopCombo: (id: number) => void;
   deleteButton: (id: number) => void;
@@ -127,6 +129,14 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
+  const setButtonLoading = (id: number, loading: boolean) => {
+    setButtons((prevButtons) =>
+      prevButtons.map((button) =>
+        button.id === id ? { ...button, loading: loading } : button
+      )
+    );
+  };
+
   const removeClickedButton = (id: number) => {
     setButtons((prevButtons) =>
       prevButtons.map((button) =>
@@ -196,6 +206,7 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
         setOldValue,
         setNewValue,
         setClickedButton,
+        setButtonLoading,
         removeClickedButton,
         setButtonTriggered,
         setStopButtonTriggered,
