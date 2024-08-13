@@ -7,8 +7,9 @@ import { User } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { useAccount } from "@/components/account/AccountContext";
-import { useUsers } from "@/components/users/usersCore/UserContext"
+import { useUsers } from "@/components/users/usersCore/UserContext";
 import { commonClasses } from "../ButtonsComponent";
+import { useUsersPbx } from "@/components/users/usersPbx/UsersPbxContext";
 
 interface ButtonProps {
   button: ButtonInterface;
@@ -16,8 +17,8 @@ interface ButtonProps {
 }
 
 export default function UserButton({ button, handleClick }: ButtonProps) {
-  const { users } = useUsers();
-  const filteredUser = users.filter((user) => {
+  const { usersPbx } = useUsersPbx();
+  const filteredUser = usersPbx.filter((user) => {
     return user.guid === button.button_prt;
   })[0];
   const [statusClass, setStatusClass] = useState("");
@@ -27,11 +28,20 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
       case "online":
         setStatusClass("bg-green-900");
         break;
+      case "on-the-phone":
+        setStatusClass("bg-red-600");
+        break;
       case "ringing":
+        setStatusClass("bg-orange-500");
+        break;
+      case "away":
         setStatusClass("bg-orange-500");
         break;
       case "busy":
         setStatusClass("bg-red-600");
+        break;
+      case "dnd":
+        setStatusClass("bg-purple-600");
         break;
       case "offline":
         setStatusClass("bg-neutral-900");
@@ -39,7 +49,7 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
       default: // default sempre offline
         setStatusClass("bg-neutral-900");
     }
-  }, [users]); // monitorar as alterações no contexto de usuario
+  }, [usersPbx]); // monitorar as alterações no contexto de usuario
 
   return (
     <div
@@ -51,7 +61,10 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
         <p className="text-sm leading-none">{button.button_name}</p>
       </div>
       <div className="text-sm flex justify-center">
-        <p>{filteredUser?.name}</p>
+        <p>{filteredUser?.cn}</p>
+      </div>
+      <div className="text-sm flex justify-center">
+        <p>{filteredUser?.note}</p>
       </div>
     </div>
   );

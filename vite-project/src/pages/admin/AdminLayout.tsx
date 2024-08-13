@@ -52,6 +52,7 @@ import {
 function AdminLayout() {
   const account = useAccount();
   const { setUsers, updateUserStauts } = useUsers();
+  const { updateUserPbxStauts } = useUsersPbx();
   const { setApiKeyInfo } = useGoogleApiKey();
   const { setPbxInfo } = usePbx();
   const wss = useWebSocketData();
@@ -223,16 +224,14 @@ function AdminLayout() {
         });
         break;
       case "UserOnline":
-        if (message.guid !== myAccountInfo.guid) {
-          // nao atualizar o meu próprio status
-          updateUserStauts(message.guid, "online");
-        }
+        // nao atualizar o meu próprio status
+        updateUserPbxStauts(message.guid, message.color, message.note);
+
         break;
       case "UserOffline":
-        if (message.guid !== myAccountInfo.guid) {
-          // nao atualizar o meu próprio status
-          updateUserStauts(message.guid, "offline");
-        }
+        // nao atualizar o meu próprio status
+        updateUserPbxStauts(message.guid, "offline");
+
         break;
       case "SelectFromReportsSuccess":
         if (message.result === "[]") {

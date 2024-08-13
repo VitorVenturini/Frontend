@@ -45,6 +45,10 @@ import {
 } from "@/components/chat/ChatContext";
 import { useGoogleApiKey } from "@/components/options/ApiGoogle/GooglApiContext";
 import InteractiveGridCopy from "@/components/optBar/InteractiveGridCopy";
+import {
+  UserPbxInterface,
+  useUsersPbx,
+} from "@/components/users/usersPbx/UsersPbxContext";
 
 interface User {
   id: string;
@@ -57,7 +61,8 @@ function UserLayout() {
   const account = useAccount();
   const { toast } = useToast();
   const { updateAccount } = useAccount();
-  const { setUsers, updateUserStauts } = useUsers();
+  const { setUsers } = useUsers();
+  const { updateUserPbxStauts } = useUsersPbx();
   // const webSocket = useWebSocket(account.accessToken)
   // console.log("MENSAGEM DO WEBSOCKET" + webSocket.data)
   const {
@@ -82,6 +87,7 @@ function UserLayout() {
     addSensorsButton,
     updateGalleryImages,
   } = useSensors();
+  const { setUsersPbx } = useUsersPbx();
   const { addHistory } = useHistory();
   const { setApiKeyInfo } = useGoogleApiKey();
   const {
@@ -134,11 +140,13 @@ function UserLayout() {
         const sensorsArray: SensorInterface[] = JSON.parse(message.result);
         if (sensorsArray.length > 0) {
           const sensorEUI = sensorsArray[0].deveui;
-          if (!sensorsArray[0].image ||sensorsArray[0].image === null ) { // quando nao for camera
-            clearSensorsByEUI(sensorEUI as string) // limpa todas infos do sensor
+          if (!sensorsArray[0].image || sensorsArray[0].image === null) {
+            // quando nao for camera
+            clearSensorsByEUI(sensorEUI as string); // limpa todas infos do sensor
             addSensors(sensorsArray); //adiciona novas infos
-          } else { // quando for camera 
-            clearCamByEUI(sensorEUI as string) // limpa todas infos do sensor
+          } else {
+            // quando for camera
+            clearCamByEUI(sensorEUI as string); // limpa todas infos do sensor
             addImages(sensorsArray); //adiciona novas infos
           }
         }
@@ -204,17 +212,16 @@ function UserLayout() {
         allUsers = newUser;
         setUsers(newUser);
         break;
+      case "PbxTableUsersResult":
+        const pbxUser: UserPbxInterface[] = message.result;
+        setUsersPbx(pbxUser);
+        break;
       case "UserOnline":
-        if (message.guid !== myAccountInfo.guid) {
-          // nao atualizar o meu próprio status
-          updateUserStauts(message.guid, "online");
-        }
+          updateUserPbxStauts(message.guid, message.color, message.note);
         break;
       case "UserOffline":
-        if (message.guid !== myAccountInfo.guid) {
           // nao atualizar o meu próprio status
-          updateUserStauts(message.guid, "offline");
-        }
+          updateUserPbxStauts(message.guid, "offline");
         break;
       case "Message": // mensagem do cara
         const newMsgFrom: ChatInterface = message.result[0];
