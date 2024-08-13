@@ -22,7 +22,32 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
     return user.guid === button.button_prt;
   })[0];
   const [statusClass, setStatusClass] = useState("");
+  const [clickedButton, setClickedButton] = useState(false);
+  const account = useAccount();
+  const wss = useWebSocketData();
 
+  const handleClickCall = () => {
+    handleClick(); // para setar a posição na hora de criar botão
+    if (!account.isAdmin) {
+      if (!clickedButton) { // ligar
+        wss?.sendMessage({
+          api: "user",
+          mt: "TriggerCall",
+          btn_id: button.id,
+        });
+        setStatusClass("bg-red-800");
+        setClickedButton(true)
+      }else{ // desligar
+        wss?.sendMessage({
+          api: "user",
+          mt: "EndCall",
+          btn_id: button.id,
+        });
+        setStatusClass("bg-green-800");
+        setClickedButton(false)
+      }
+    }
+  };
   useEffect(() => {
     switch (filteredUser?.status) {
       case "online":
@@ -54,7 +79,7 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
   return (
     <div
       className={`${commonClasses} flex flex-col cursor-pointer ${statusClass} `}
-      onClick={handleClick}
+      onClick={handleClickCall}
     >
       <div className="flex items-center gap-1 cursor-pointer">
         <User />
