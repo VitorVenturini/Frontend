@@ -61,13 +61,17 @@ interface SensorContextType {
   sensors: SensorInterface[];
   buttonSensors: SensorInterface[];
   graphSensors: SensorInterface[];
+  cameraImages: SensorInterface[];
   setSensors: React.Dispatch<React.SetStateAction<SensorInterface[]>>;
   addSensors: (sensors: SensorInterface[]) => void;
+  addImages: (newImgs: SensorInterface[]) => void;
   addSensorsButton: (sensors: SensorInterface[]) => void;
   updateSensorButton: (sensor: SensorInterface) => void;
   updateGraphSensor: (sensor: SensorInterface) => void;
+  updateGalleryImages: (camera: SensorInterface) => void;
   replaceLatestSensor: (sensor: SensorInterface) => void;
-  clearSensorsByName: (sensorName: string) => void;
+  clearSensorsByEUI: (eui: string) => void;
+  clearCamByEUI: (eui: string) => void;
   addSensorName: (sensors: []) => void;
   clearSensors: () => void;
   clearGraphSensors: () => void;
@@ -79,6 +83,7 @@ export const SensorProvider = ({ children }: { children: ReactNode }) => {
   const [sensors, setSensors] = useState<SensorInterface[]>([]);
   const [buttonSensors, setButtonSensors] = useState<SensorInterface[]>([]);
   const [graphSensors, setGraphSensors] = useState<SensorInterface[]>([]);
+  const [cameraImages, setCameraImages] = useState<SensorInterface[]>([]); 
 
   const addSensors = (newSensors: SensorInterface[]) => {
     setGraphSensors((prevGraphSensors) => [...prevGraphSensors, ...newSensors]);
@@ -136,8 +141,23 @@ export const SensorProvider = ({ children }: { children: ReactNode }) => {
       ];
     });
   };
-  
-  
+
+  const addImages = (newImgs: SensorInterface[]) => {
+    setCameraImages((prevCamImages) => [...prevCamImages, ...newImgs]);
+  };
+
+  const updateGalleryImages = (image: SensorInterface) => {
+    setCameraImages((prevCameraImages) => {
+      const updatedImages = [image, ...prevCameraImages];
+
+      if (updatedImages.length > 10) {
+        updatedImages.pop(); 
+      }
+
+      return updatedImages;
+    });
+  };
+
   const addSensorsButton = (newSensors: SensorInterface[]) => {
     setButtonSensors(newSensors); // Alimenta diretamente o buttonSensors com 1 registro de cada sensors 
   };
@@ -168,9 +188,15 @@ export const SensorProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  const clearSensorsByName = (sensorName: string) => {
+  const clearSensorsByEUI = (eui: string) => {
     setGraphSensors((prevSensors) =>
-      prevSensors.filter((sensor) => sensor.sensor_name !== sensorName)
+      prevSensors.filter((sensor) => sensor.deveui !== eui)
+    );
+  };
+
+  const clearCamByEUI = (eui: string) => {
+    setCameraImages((prevCams) =>
+      prevCams.filter((cams) => cams.deveui !== eui)
     );
   };
 
@@ -178,6 +204,7 @@ export const SensorProvider = ({ children }: { children: ReactNode }) => {
     setSensors([]);
     setButtonSensors([]);
     setGraphSensors([]);
+    setCameraImages([]); 
   };
 
   const clearGraphSensors = () => {
@@ -222,15 +249,19 @@ export const SensorProvider = ({ children }: { children: ReactNode }) => {
     <SensorContext.Provider
       value={{
         sensors,
+        cameraImages,
         buttonSensors,
         graphSensors,
         setSensors,
         addSensors,
+        addImages,
         addSensorsButton,
         updateSensorButton,
         updateGraphSensor,
+        updateGalleryImages,
         replaceLatestSensor,
-        clearSensorsByName,
+        clearSensorsByEUI,
+        clearCamByEUI,
         addSensorName,
         clearSensors,
         clearGraphSensors,

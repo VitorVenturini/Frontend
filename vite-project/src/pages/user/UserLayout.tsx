@@ -34,7 +34,10 @@ import { useHistory } from "@/components/history/HistoryContext";
 import { useEffect } from "react";
 import { format } from "date-fns";
 import { useToast } from "@/components/ui/use-toast";
-import { UserInterface, useUsers } from "@/components/users/usersCore/UserContext"
+import {
+  UserInterface,
+  useUsers,
+} from "@/components/users/usersCore/UserContext";
 import {
   ChatInterface,
   ChatProvider,
@@ -72,9 +75,12 @@ function UserLayout() {
     setSensors,
     updateSensorButton,
     updateGraphSensor,
-    clearSensorsByName,
+    clearSensorsByEUI,
+    clearCamByEUI,
     addSensors,
+    addImages,
     addSensorsButton,
+    updateGalleryImages,
   } = useSensors();
   const { addHistory } = useHistory();
   const { setApiKeyInfo } = useGoogleApiKey();
@@ -127,14 +133,19 @@ function UserLayout() {
       case "SelectDeviceHistoryResult":
         const sensorsArray: SensorInterface[] = JSON.parse(message.result);
         if (sensorsArray.length > 0) {
-          const sensorName = sensorsArray[0].sensor_name;
-          clearSensorsByName(sensorName);
-          addSensors(sensorsArray);
+          const sensorEUI = sensorsArray[0].deveui;
+          if (!sensorsArray[0].image ||sensorsArray[0].image === null ) { // quando nao for camera
+            clearSensorsByEUI(sensorEUI as string) // limpa todas infos do sensor
+            addSensors(sensorsArray); //adiciona novas infos
+          } else { // quando for camera 
+            clearCamByEUI(sensorEUI as string) // limpa todas infos do sensor
+            addImages(sensorsArray); //adiciona novas infos
+          }
         }
         break;
       case "ImageReceived":
         const camArray: SensorInterface[] = message.result;
-        addSensors(camArray);
+        camArray.forEach((image) => updateGalleryImages(image));
         break;
       case "SelectAllSensorInfoResultSrc":
         const allSensors = JSON.parse(message.result);
@@ -341,7 +352,7 @@ function UserLayout() {
         </Button>
       )}
       <Logout />
-    {/*   <div className="text-[9px] sm:text-[15px] md:text-[20px] lg:text-[22px] xl:text-[35px] 2xl:text-[50px] ">
+      {/*   <div className="text-[9px] sm:text-[15px] md:text-[20px] lg:text-[22px] xl:text-[35px] 2xl:text-[50px] ">
         VE O TAMANHO AQUI O ANIMAL até o lg é tablet dps de 1290 xl é desktop
       </div> */}
     </WebSocketProvider>

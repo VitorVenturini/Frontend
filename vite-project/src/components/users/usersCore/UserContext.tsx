@@ -13,6 +13,8 @@ export interface UserInterface {
   updatedAt?: string;
   type?: string;
   status?: string;
+  note?: string;
+  color?: string;
 }
 
 interface UserContextType {

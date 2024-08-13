@@ -22,6 +22,8 @@ export interface DeviceInterface {
     updatedAt?: string;
     type?: string;
     status?: string;
+    note?: string;
+    color?: string;
   }
 
 interface UserPbxContextType {
