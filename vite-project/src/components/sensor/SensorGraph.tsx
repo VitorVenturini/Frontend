@@ -141,6 +141,7 @@ export function SensorGraph({ chartData }: SensorGraphProps) {
               tickFormatter={(value) => {
                 const date = new Date(value);
                 return date.toLocaleDateString("pt-BR", {
+                  hour: "2-digit",
                   minute: "2-digit",
                   second: "2-digit",
                 });

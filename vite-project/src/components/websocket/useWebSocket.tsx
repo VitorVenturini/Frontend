@@ -51,7 +51,7 @@ const useWebSocket = (
 
       ws.current.onclose = (event) => {
         console.log("WebSocket connection closed:", event.code, event.reason);
-        if (!account.isLogged) {
+        if (account.isLogged) {
           timer.current = setTimeout(() => {
             console.log("Reconnecting WebSocket...");
             connect();
@@ -60,7 +60,7 @@ const useWebSocket = (
       };
       ws.current.onerror = (event) => {
         console.error("WebSocket error:", event);
-        if (!account.isLogged) {
+        if (account.isLogged) {
           timer.current = setTimeout(() => {
             console.log("Reconnecting WebSocket...");
             connect();

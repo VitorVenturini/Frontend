@@ -73,7 +73,7 @@ export default function ModalCombo({
   const { buttons } = useButtons();
 
   const userButtons = buttons.filter((btn) => {
-    return btn.button_user === selectedUser?.guid;
+    return btn.button_user === selectedUser?.guid && btn.page === selectedPage;
   });
 
   const [nameButton, setNameButton] = useState(
