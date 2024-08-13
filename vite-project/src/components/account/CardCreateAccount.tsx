@@ -256,12 +256,12 @@ export default function CardCreateAccount({
       <CardContent>
         <div className="flex justify-center grid-cols-2">
           <div className="grid gap-4 py-4 ">
-            <div className="grid grid-cols-6 items-center gap-4">
+            <div className="grid grid-cols-5 items-center gap-4">
               <Label className="text-end" htmlFor="name">
                 Nome
               </Label>
               <Input
-                className="col-span-4"
+                className="col-span-3"
                 id="name"
                 placeholder="Nome"
                 type="text"
@@ -269,12 +269,12 @@ export default function CardCreateAccount({
                 onChange={handleNameChange}
               />
             </div>
-            <div className="grid grid-cols-6 items-center gap-4">
+            <div className="grid grid-cols-5 items-center gap-4">
               <Label className="text-end" htmlFor="email">
                 Email
               </Label>
               <Input
-                className="col-span-4"
+                className="col-span-3"
                 id="email"
                 placeholder="Email"
                 type="email"
@@ -283,12 +283,12 @@ export default function CardCreateAccount({
               />
             </div>
 
-            <div className="grid grid-cols-6 items-center gap-4">
+            <div className="grid grid-cols-5 items-center gap-4">
               <Label className="text-end" htmlFor="password">
                 Senha
               </Label>
               <Input
-                className="col-span-4"
+                className="col-span-3"
                 id="password"
                 type="password"
                 placeholder="Senha"
@@ -296,12 +296,12 @@ export default function CardCreateAccount({
                 onChange={handlePasswordChange}
               />
             </div>
-            <div className="grid grid-cols-6 items-center gap-4">
+            <div className="grid grid-cols-5 items-center gap-4">
               <Label className="text-end" htmlFor="type">
                 Tipo de conta
               </Label>
               <Select value={type} onValueChange={handleTypeChange}>
-                <SelectTrigger className="col-span-4" id="type">
+                <SelectTrigger className="col-span-3" id="type">
                   <SelectValue placeholder="Selecione o tipo de conta" />
                 </SelectTrigger>
                 <SelectContent position="popper">
@@ -311,12 +311,12 @@ export default function CardCreateAccount({
               </Select>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
-          <Label className="text-end" htmlFor="type">
+          <div className="grid grid-cols-5 items-center gap-4">
+          <Label className="text-end " htmlFor="type">
                 SIP
               </Label>
-          <Select value={e164} onValueChange={handleSetE164}>
-            <SelectTrigger className="w-[280px]">
+          <Select  value={e164} onValueChange={handleSetE164} >
+            <SelectTrigger className="col-span-3" id="type">
               <SelectValue placeholder="Select a SIP" />
             </SelectTrigger>
             <SelectContent>

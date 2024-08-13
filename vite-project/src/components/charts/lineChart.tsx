@@ -137,9 +137,8 @@ export function Grafico({ chartData }: GraficoProps) {
                   nameKey="views"
                   labelFormatter={(value) => {
                     return new Date(value).toLocaleDateString("pt-BR", {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
+                      hour: '2-digit',
+                      minute: '2-digit',
                     });
                   }}
                 />
