@@ -74,7 +74,7 @@ export function DataTable<TData, TValue>({
           <DialogTrigger>
             <Button>Criar Conta</Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="max-w-5xl">
             <CardCreateAccount onSuccess={() => setIsDialogOpen(false)} />
           </DialogContent>
         </Dialog>
