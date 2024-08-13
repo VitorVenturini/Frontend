@@ -104,10 +104,10 @@ function AdminLayout() {
         const newUser: UserInterface[] = message.result;
         setUsers(newUser);
         break;
-      // case "PbxTableUsersResult":
-      //   const pbxUser: UserPbxInterface[] = message.result;
-      //   setUsersPbx(pbxUser);
-      //   break;
+      case "PbxTableUsersResult":
+        const pbxUser: UserPbxInterface[] = message.result;
+        setUsersPbx(pbxUser);
+        break;
       case "SelectSensorsResult":
         const result = message.result;
         const sensorData = result.map((gatewayData: any) => {

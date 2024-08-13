@@ -11,7 +11,7 @@ export interface DeviceInterface {
   
   export interface UserPbxInterface {
     id: number;
-    name: string;
+    cn: string;
     guid: string;
     email: string;
     sip: string;

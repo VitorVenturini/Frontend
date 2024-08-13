@@ -46,6 +46,7 @@ import { Loader2 } from "lucide-react";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { ButtonInterface } from "@/components/buttons/buttonContext/ButtonsContext";
 import { useUsers } from "@/components/users/usersCore/UserContext";
+import { useUsersPbx } from "@/components/users/usersPbx/UsersPbxContext";
 
 interface User {
   id: string;
@@ -83,7 +84,7 @@ export default function ModalUser({
   const [isCreating, setIsCreating] = useState(false);
   const { toast } = useToast();
   const wss = useWebSocketData();
-  const { users } = useUsers();
+  const { usersPbx } = useUsersPbx()
 
   const handleNameButton = (event: ChangeEvent<HTMLInputElement>) => {
     setNameButton(event.target.value);
@@ -177,9 +178,9 @@ export default function ModalUser({
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>Usuários</SelectLabel>
-                {users.map((user) => (
+                {usersPbx.map((user) => (
                   <SelectItem key={user.guid} value={user.guid as string}>
-                    {user.name}
+                    {user.cn}
                   </SelectItem>
                 ))}
               </SelectGroup>
