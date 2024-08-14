@@ -49,6 +49,7 @@ import {
   UserPbxInterface,
   useUsersPbx,
 } from "@/components/users/usersPbx/UsersPbxContext";
+import { PbxInterface } from "@/components/options/Pbx/PbxContext";
 
 interface User {
   id: string;
@@ -126,7 +127,7 @@ function UserLayout() {
   };
   var allBtn: ButtonInterface[];
   var allUsers: UserInterface[];
-
+  var pbxUser: UserPbxInterface[]
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
     switch (message.mt) {
@@ -213,15 +214,19 @@ function UserLayout() {
         setUsers(newUser);
         break;
       case "PbxTableUsersResult":
-        const pbxUser: UserPbxInterface[] = message.result;
-        setUsersPbx(pbxUser);
+        const PbxUsers: UserPbxInterface[] = message.result;
+        setUsersPbx(PbxUsers);
+        pbxUser = PbxUsers
         break;
       case "UserOnline":
+        if (pbxUser.length > 0) {
           updateUserPbxStauts(message.guid, message.color, message.note);
+        }
         break;
       case "UserOffline":
-          // nao atualizar o meu próprio status
+        if (pbxUser.length > 0) {
           updateUserPbxStauts(message.guid, "offline");
+        }
         break;
       case "Message": // mensagem do cara
         const newMsgFrom: ChatInterface = message.result[0];

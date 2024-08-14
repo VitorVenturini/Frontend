@@ -3,7 +3,6 @@ import { useButtons } from "../buttons/buttonContext/ButtonsContext";
 import { useSensors } from "../sensor/SensorContext";
 import { useWebSocketData } from "../websocket/WebSocketProvider";
 import { useUsers } from "../users/usersCore/UserContext";
-import { CarouselImages } from "../cameras/Carousel/CarouselImages";
 import { SensorInterface } from "../sensor/SensorContext";
 import ChatLayout from "../chat/ChatLayout";
 import OptFloor from "./OptFloor";

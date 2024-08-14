@@ -229,7 +229,7 @@ export default function CardCreateAccount({
   const handleSearch = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
-  const filteredUsers = usersPbx.filter((user) => user.e164 === searchTerm);
+  const filteredUsers = usersPbx?.filter((user) => user.e164 === searchTerm);
   const handleSetE164 = (value: string) => {
     setE164(value);
   };
@@ -320,7 +320,7 @@ export default function CardCreateAccount({
               <SelectValue placeholder="Select a SIP" />
             </SelectTrigger>
             <SelectContent>
-              {usersPbx.map((row) => (
+              {usersPbx?.map((row) => (
                 <SelectItem value={row.guid}>{row.e164}</SelectItem>
               ))}
             </SelectContent>

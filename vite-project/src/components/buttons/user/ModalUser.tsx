@@ -84,7 +84,7 @@ export default function ModalUser({
   const handleButtonDevice = (value: string) => {
     setButtonDevice(value);
   };
-  const filteredDevices = usersPbx.filter((u) => {
+  const filteredDevices = usersPbx?.filter((u) => {
     return u.guid === selectedUser?.sip;
   })[0];
   const handleCreateButton = () => {
@@ -169,7 +169,7 @@ export default function ModalUser({
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>Usuários</SelectLabel>
-                {usersPbx.map((user) => (
+                {usersPbx?.map((user) => (
                   <SelectItem key={user.guid} value={user.guid as string}>
                     {user.cn}
                   </SelectItem>
@@ -189,7 +189,7 @@ export default function ModalUser({
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>Dispositivos</SelectLabel>
-                {filteredDevices.devices.map((dev, index) => (
+                {filteredDevices?.devices.map((dev, index) => (
                   <SelectItem key={index} value={dev.hw as string}>
                     {dev.text}
                   </SelectItem>
