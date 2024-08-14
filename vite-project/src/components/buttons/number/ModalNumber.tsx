@@ -101,7 +101,7 @@ export default function ModalNumber({
   const handleIconButton = (newIcon: string) => {
     setIconButton(newIcon);
   };
-  const filteredDevices = usersPbx.filter((u) => {
+  const filteredDevices = usersPbx?.filter((u) => {
     return u.guid === selectedUser?.sip;
   })[0];
 
@@ -203,7 +203,7 @@ export default function ModalNumber({
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>Dispositivos</SelectLabel>
-                {filteredDevices.devices.map((dev, index) => (
+                {filteredDevices?.devices.map((dev, index) => (
                   <SelectItem key={index} value={dev.hw as string}>
                     {dev.text}
                   </SelectItem>

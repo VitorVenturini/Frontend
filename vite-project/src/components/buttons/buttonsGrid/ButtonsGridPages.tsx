@@ -15,7 +15,7 @@ import { useLanguage } from "@/components/language/LanguageContext";
 import texts from "@/_data/texts.json";
 import { checkButtonWarning } from "@/components/utils/utilityFunctions";
 import { useSensors } from "@/components/sensor/SensorContext";
-import { AccountContext } from "@/components/account/AccountContext";
+import { AccountContext, useAccount } from "@/components/account/AccountContext";
 
 interface User {
   id: string;
@@ -104,7 +104,7 @@ const isPageWarning = (pageNumber: string) => {
           {["1", "2", "3", "4", "5"].map((pageNumber) => (
             <TabsTrigger key={pageNumber} value={pageNumber} className="w-full">
               {texts[language].page} {pageNumber}
-              {isPageWarning(pageNumber) ? (
+              {isPageWarning(pageNumber) && !isAdmin ? (
                 <span className="relative flex h-3 w-3 m-1 ">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>

@@ -74,6 +74,7 @@ function AdminLayout() {
   const { addDataReport, clearDataReport } = useData();
   const myAccountInfo = JSON.parse(localStorage.getItem("Account") || "{}");
 
+  var pbxUser: UserPbxInterface[]
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
     switch (message.mt) {
@@ -106,8 +107,9 @@ function AdminLayout() {
         setUsers(newUser);
         break;
       case "PbxTableUsersResult":
-        const pbxUser: UserPbxInterface[] = message.result;
-        setUsersPbx(pbxUser);
+        const PbxUsers: UserPbxInterface[] = message.result;
+        setUsersPbx(PbxUsers);
+        pbxUser = PbxUsers
         break;
       case "SelectSensorsResult":
         const result = message.result;
@@ -224,14 +226,14 @@ function AdminLayout() {
         });
         break;
       case "UserOnline":
-        // nao atualizar o meu próprio status
-        updateUserPbxStauts(message.guid, message.color, message.note);
-
+        if (pbxUser.length > 0) {
+          updateUserPbxStauts(message.guid, message.color, message.note);
+        }
         break;
       case "UserOffline":
-        // nao atualizar o meu próprio status
-        updateUserPbxStauts(message.guid, "offline");
-
+        if (pbxUser.length > 0) {
+          updateUserPbxStauts(message.guid, "offline");
+        }
         break;
       case "SelectFromReportsSuccess":
         if (message.result === "[]") {

@@ -10,6 +10,8 @@ import { useAccount } from "@/components/account/AccountContext";
 import { useUsers } from "@/components/users/usersCore/UserContext";
 import { commonClasses } from "../ButtonsComponent";
 import { useUsersPbx } from "@/components/users/usersPbx/UsersPbxContext";
+import texts from "@/_data/texts.json";
+import { useLanguage } from "@/components/language/LanguageContext";
 
 interface ButtonProps {
   button: ButtonInterface;
@@ -18,33 +20,46 @@ interface ButtonProps {
 
 export default function UserButton({ button, handleClick }: ButtonProps) {
   const { usersPbx } = useUsersPbx();
-  const filteredUser = usersPbx.filter((user) => {
+  const { language } = useLanguage();
+  
+  const filteredUser = usersPbx?.filter((user) => {
     return user.guid === button.button_prt;
   })[0];
+
   const [statusClass, setStatusClass] = useState("");
   const [clickedButton, setClickedButton] = useState(false);
   const account = useAccount();
   const wss = useWebSocketData();
 
+  //função para o typeScript parar de encher o saco 
+  const getText = (key: string | undefined, languageTexts: typeof texts[typeof language]): string  =>{
+    if (key && key in languageTexts) {
+      return languageTexts[key as keyof typeof languageTexts];
+    }
+    return key || ''; // ou outra mensagem padrão
+  }
+  
   const handleClickCall = () => {
     handleClick(); // para setar a posição na hora de criar botão
     if (!account.isAdmin) {
-      if (!clickedButton) { // ligar
+      if (!clickedButton) {
+        // ligar
         wss?.sendMessage({
           api: "user",
           mt: "TriggerCall",
           btn_id: button.id,
         });
-        setStatusClass("bg-red-800");
-        setClickedButton(true)
-      }else{ // desligar
+        //setStatusClass("bg-red-800");
+        setClickedButton(true);
+      } else {
+        // desligar
         wss?.sendMessage({
           api: "user",
           mt: "EndCall",
           btn_id: button.id,
         });
-        setStatusClass("bg-green-800");
-        setClickedButton(false)
+        //setStatusClass("bg-green-800");
+        setClickedButton(false);
       }
     }
   };
@@ -78,7 +93,9 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
 
   return (
     <div
-      className={`${commonClasses} flex flex-col cursor-pointer ${statusClass} `}
+      className={`${commonClasses} flex flex-col cursor-pointer ${
+        clickedButton ? "bg-red-800" : statusClass
+      } `}
       onClick={handleClickCall}
     >
       <div className="flex items-center gap-1 cursor-pointer">
@@ -89,7 +106,7 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
         <p>{filteredUser?.cn}</p>
       </div>
       <div className="text-sm flex justify-center">
-        <p>{filteredUser?.note}</p>
+      {getText(filteredUser?.note, texts[language])}
       </div>
     </div>
   );
