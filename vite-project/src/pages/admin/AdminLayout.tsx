@@ -12,7 +12,6 @@ import {
 } from "@/components/buttons/buttonContext/ButtonsContext";
 import React, { useContext, useEffect } from "react";
 import { useState } from "react";
-
 import {
   WebSocketProvider,
   useWebSocketData,
@@ -247,9 +246,11 @@ function AdminLayout() {
               const jsonData = newFragments.join("");
               let parsedData;
               let jsonKeys;
+
               try {
                 parsedData = JSON.parse(jsonData);
                 jsonKeys = Object.keys(parsedData[0]);
+                // Formatar datas no formato desejado
               } catch (error) {
                 console.error("Erro ao fazer o parse do JSON:", error);
                 return prevFragments;
@@ -263,6 +264,69 @@ function AdminLayout() {
                 addDataReport(parsedData, "sensor", jsonKeys, message.src);
               } else {
                 console.log(parsedData, "REPORT TABLE");
+                // Função auxiliar para formatação de datas
+                function formatDate(dateString: string): string {
+                  const date = new Date(dateString);
+                  return new Intl.DateTimeFormat("pt-BR", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: false,
+                    timeZoneName: "short",
+                  })
+                    .format(date)
+                    .replace(",", " -") // Substitui a vírgula por " -"
+                    .replace("GMT", "") // Remove qualquer menção ao GMT
+                    .trim(); // Remove espaços em branco ao redor
+                }
+
+                parsedData = parsedData.map((item: any) => {
+                  // Formatar a coluna 'date', se existir
+                  if (item.date) {
+                    item.date = formatDate(item.date);
+                  }
+
+                  // Formatar colunas que começam com 'call' e possuem valor
+                  Object.keys(item).forEach((key) => {
+                    if (key.startsWith("call") && item[key]) {
+                      item[key] = formatDate(item[key]);
+                    }
+                  });
+                  if (item.status) {
+                    switch (item.status) {
+                      case 3:
+                        item.status = "Conectado";
+                        break;
+                      case 1:
+                        item.status = "Não Conectado";
+                        break;
+                      case "stop":
+                        item.status = "Interrompido";
+                        break;
+                      case "start":
+                        item.status = "Iniciado";
+                        break;
+                      case "out":
+                        item.status = "Saída"; 
+                        break;
+                      case "inc":
+                        item.status = "Entrada";
+                        break;
+                      case "Login":
+                        item.status = "Logado"; 
+                        break;
+                      case "Logout":
+                        item.status = "Deslogado"; 
+                        break;
+                      default:
+                        break;
+                    }
+                  }
+                  return item;
+                });
+
                 addDataReport(parsedData, "table", jsonKeys, message.src);
               }
 

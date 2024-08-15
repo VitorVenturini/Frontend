@@ -86,7 +86,7 @@ export function DataTable<TData>({ columns, data }: DataTableProps<TData>) {
             <SelectGroup>
               <SelectLabel>{texts[language].users}</SelectLabel>
               {users.map((user) => (
-                <SelectItem key={user.id} value={user.guid}>
+                <SelectItem key={user.id} value={table.getColumn("from") ? user.name : user.guid}>
                   {user.name}
                 </SelectItem>
               ))}
