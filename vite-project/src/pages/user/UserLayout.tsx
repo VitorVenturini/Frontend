@@ -69,6 +69,7 @@ function UserLayout() {
   const {
     setButtons,
     setButtonTriggered,
+    setButtonCallStatus,
     setStopButtonTriggered,
     addButton,
     deleteButton,
@@ -127,7 +128,7 @@ function UserLayout() {
   };
   var allBtn: ButtonInterface[];
   var allUsers: UserInterface[];
-  var pbxUser: UserPbxInterface[]
+  var pbxUser: UserPbxInterface[];
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
     switch (message.mt) {
@@ -216,7 +217,16 @@ function UserLayout() {
       case "PbxTableUsersResult":
         const PbxUsers: UserPbxInterface[] = message.result;
         setUsersPbx(PbxUsers);
-        pbxUser = PbxUsers
+        pbxUser = PbxUsers;
+        break;
+      case "CallRinging":
+        setButtonCallStatus(message.btn_id, "callRinging");
+        break;
+      case "CallConnected":
+        setButtonCallStatus(message.btn_id, "callConnected");
+        break;
+      case "CallDisconnected":
+        setButtonCallStatus(message.btn_id, "callDisconnected");
         break;
       case "UserOnline":
         if (pbxUser.length > 0) {

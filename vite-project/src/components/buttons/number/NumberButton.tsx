@@ -1,6 +1,6 @@
 import { ButtonInterface } from "@/components/buttons/buttonContext/ButtonsContext";
 import * as Icons from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { commonClasses } from "../ButtonsComponent";
 import { useAccount } from "@/components/account/AccountContext";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
@@ -40,7 +40,27 @@ export default function NumberButton({ button, onClick }: NumberProps) {
         setClickedButton(false)
       }
     }
+    //console.log("Button" + JSON.stringify(button))
+   
+
   };
+
+  useEffect(() => {
+    // setStatusClass("bg-red-900");
+    switch (button.callStatus) {
+      case "callConnected":
+        setStatusClass("bg-red-600");
+        break;
+      case "callRinging":
+        setStatusClass("bg-orange-500");
+        break;
+      case "callDisconnected":
+        setStatusClass("bg-green-800")
+        setClickedButton(false)
+        break;
+    }
+  }, [button.callStatus]); // monitorar o status da chamada 
+
   return (
     <div
       className={`${commonClasses} flex flex-col cursor-pointer ${statusClass}  `}

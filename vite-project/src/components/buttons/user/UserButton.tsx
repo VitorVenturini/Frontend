@@ -21,28 +21,32 @@ interface ButtonProps {
 export default function UserButton({ button, handleClick }: ButtonProps) {
   const { usersPbx } = useUsersPbx();
   const { language } = useLanguage();
-  
+
   const filteredUser = usersPbx?.filter((user) => {
     return user.guid === button.button_prt;
   })[0];
 
   const [statusClass, setStatusClass] = useState("");
+  const [callStatusClass, setCallStatusClass] = useState("");
   const [clickedButton, setClickedButton] = useState(false);
   const account = useAccount();
   const wss = useWebSocketData();
 
-  //função para o typeScript parar de encher o saco 
-  const getText = (key: string | undefined, languageTexts: typeof texts[typeof language]): string  =>{
+  //função para o typeScript parar de encher o saco
+  const getText = (
+    key: string | undefined,
+    languageTexts: (typeof texts)[typeof language]
+  ): string => {
     if (key && key in languageTexts) {
       return languageTexts[key as keyof typeof languageTexts];
     }
-    return key || ''; // ou outra mensagem padrão
-  }
-  
+    return key || ""; // ou outra mensagem padrão
+  };
+
   const handleClickCall = () => {
     handleClick(); // para setar a posição na hora de criar botão
     if (!account.isAdmin) {
-      if (!clickedButton) {
+      if (!clickedButton && filteredUser.status !== "offline") {
         // ligar
         wss?.sendMessage({
           api: "user",
@@ -51,7 +55,7 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
         });
         //setStatusClass("bg-red-800");
         setClickedButton(true);
-      } else {
+      } else if (clickedButton && filteredUser.status !== "offline") {
         // desligar
         wss?.sendMessage({
           api: "user",
@@ -91,10 +95,26 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
     }
   }, [usersPbx]); // monitorar as alterações no contexto de usuario
 
+  useEffect(() => {
+    setCallStatusClass("bg-red-900");
+    switch (button.callStatus) {
+      case "callConnected":
+        setCallStatusClass("bg-red-600");
+        break;
+      case "callRinging":
+        setStatusClass("bg-orange-500")
+        setCallStatusClass("bg-orange-500");
+        break;
+      case "callDisconnected":
+        setClickedButton(false)
+        break;
+    }
+  }, [button.callStatus]); // monitorar o status da chamada 
+
   return (
     <div
       className={`${commonClasses} flex flex-col cursor-pointer ${
-        clickedButton ? "bg-red-800" : statusClass
+        clickedButton ? callStatusClass : statusClass
       } `}
       onClick={handleClickCall}
     >
@@ -106,7 +126,7 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
         <p>{filteredUser?.cn}</p>
       </div>
       <div className="text-sm flex justify-center">
-      {getText(filteredUser?.note, texts[language])}
+        {getText(filteredUser?.note, texts[language])}
       </div>
     </div>
   );

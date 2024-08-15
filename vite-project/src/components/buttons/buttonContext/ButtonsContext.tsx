@@ -29,6 +29,7 @@ export interface ButtonInterface {
   triggered: boolean;
   commandValue?: string;
   comboStart?: boolean;
+  callStatus?: string;
 }
 
 interface ButtonContextType {
@@ -50,11 +51,12 @@ interface ButtonContextType {
   removeClickedButton: (id: number) => void;
   clearButtons: () => void;
   setButtonTriggered: (id: number, triggered: boolean) => void;
+  setButtonCallStatus: (id: number, callStauts: string) => void;
   setStopButtonTriggered: (alarm: string, triggered: boolean) => void;
-  setStopWarningTreshold : (id: number, triggered: boolean) => void;
+  setStopWarningTreshold: (id: number, triggered: boolean) => void;
   setCommandValue: (btn_id: number, prt: string, value: string) => void;
-  setButtonLoading : (id: number, loading: boolean) => void;
-  comboStarted: (comboId: number) => void; 
+  setButtonLoading: (id: number, loading: boolean) => void;
+  comboStarted: (comboId: number) => void;
   setStopCombo: (id: number) => void;
   deleteButton: (id: number) => void;
 }
@@ -149,6 +151,14 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
     setButtons([]);
   };
 
+  const setButtonCallStatus = (id: number, callStatus: string) => {
+    setButtons((prevButtons) =>
+      prevButtons.map((button) =>
+        button.id === id ? { ...button, callStatus } : button
+      )
+    );
+  };
+
   const setButtonTriggered = (id: number, triggered: boolean) => {
     setButtons((prevButtons) =>
       prevButtons.map((button) =>
@@ -177,7 +187,7 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
   const comboStarted = (comboId: number) => {
     setButtons((prevButtons) =>
       prevButtons.map((button) =>
-        button.id === comboId 
+        button.id === comboId
           ? { ...button, triggered: true, clicked: true, comboStart: true }
           : button
       )
@@ -191,7 +201,6 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
       )
     );
   };
-
 
   return (
     <ButtonContext.Provider
@@ -209,10 +218,11 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
         setButtonLoading,
         removeClickedButton,
         setButtonTriggered,
+        setButtonCallStatus,
         setStopButtonTriggered,
         setStopWarningTreshold,
         comboStarted,
-        setStopCombo
+        setStopCombo,
       }}
     >
       {children}
