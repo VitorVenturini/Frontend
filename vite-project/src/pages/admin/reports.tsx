@@ -5,7 +5,6 @@ import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { addDays, format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 
-
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -17,7 +16,7 @@ import { Grafico } from "@/components/charts/lineChart";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ColumnsReports from "@/Reports/collumnsReports";
 
-import { useUsers } from "@/components/users/UserContext";
+import { useUsers } from "@/components/users/usersCore/UserContext";
 import { useData } from "@/Reports/DataContext";
 
 import { Card } from "@/components/ui/card";
@@ -32,7 +31,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-
 type DateRange = {
   from: Date;
   to: Date;
@@ -43,8 +41,9 @@ import { Input } from "@/components/ui/input";
 export default function Reports({
   className,
 }: React.HTMLAttributes<HTMLDivElement>) {
+  const { users } = useUsers();
   const wss = useWebSocketData();
-  const [date, setDate] = React.useState<DateRange>({
+  const [date, setDate] = React.useState<DateRange >({
     from: addDays(new Date(), -10),
     to: new Date(),
   });
@@ -52,7 +51,7 @@ export default function Reports({
   const { dataReport } = useData();
   const { clearDataReport } = useData();
   const { toast } = useToast();
-  const [reportSrc, setSrc] = useState<string>("");
+  const reportSrc = dataReport.src as any
   const [selectedUser, setSelectedUser] = useState("");
   const [actionExecDevice, setActionExecDevice] = useState("");
   const { sensors } = useSensors();
@@ -65,20 +64,66 @@ export default function Reports({
   const handleEndHour = (event: ChangeEvent<HTMLInputElement>) => {
     setEndHour(event.target.value);
   };
-  const formatDateTime = (date: Date, time: string, defaultTime: string): string => {
-    const formattedDate = format(date, 'yyyy-MM-dd'); // Formata a data no padrão 'YYYY-MM-DD'
+  const formatDateTime = (
+    date: Date,
+    time: string,
+    defaultTime: string
+  ): string => {
+    const formattedDate = format(date, "yyyy-MM-dd"); // Formata a data no padrão 'YYYY-MM-DD'
     const finalTime = time || defaultTime; // Usa o valor padrão se 'time' estiver em branco
     return `${formattedDate} ${finalTime}:00`; // Retorna a data e hora no formato 'YYYY-MM-DD HH:mm:ss'
   };
-
-  console.log("datas selecionadas", date, startHour);
+  let ajustData = []
+  if (reportSrc !== "RptAvailability" && reportSrc !== "RptSensors") {
+    ajustData = dataReport.table.map((item: any) => {
+      if (item) {
+        if (reportSrc === "RptActivities") {
+          console.log('RptActivities')
+          // Substituir 'guid' pelo nome do usuário
+          const userByGuid = users.find((user: any) => user.guid === item.guid);
+          if (userByGuid) {
+            item.guid = userByGuid.name;
+          }
+  
+          // Substituir 'from' pelo nome do usuário
+          const userByFrom = users.find((user: any) => user.guid === item.from);
+          if (userByFrom) {
+            item.from = userByFrom.name;
+          }
+  
+          return item;
+        } else {
+          // Para outros tipos de relatório, adicione a key 'name'
+          console.log('RptOters')
+          const user = users.find((user: any) => user.guid === item.guid);
+          if (user) {
+            return {
+              ...item,
+              name: user.name, // Supondo que 'name' seja a key que contém o nome do usuário
+            };
+          }
+        }
+      }
+      return item; // Retorne o item original se for undefined ou null
+    });
+  
+    console.log('Dados ajustados:', ajustData);
+  
+    // Aqui você pode usar 'ajustData' conforme necessário, como atualizando o estado ou enviando para outro componente.
+  }
+  
+  
+  console.log("USUARIOS", users);
   const handleExecDevice = (value: string) => {
-
     clearDataReport();
-    setActionExecDevice(value); 
+    setActionExecDevice(value);
     if (value) {
       const fromDateTimeUTC = formatDateTime(date.from, startHour, "00:00:00");
-      const toDateTimeUTC = formatDateTime(date.to ? date.to : date.from, endHour, "23:59:59");
+      const toDateTimeUTC = formatDateTime(
+        date.to ? date.to : date.from,
+        endHour,
+        "23:59:59"
+      );
       wss?.sendMessage({
         api: "admin",
         mt: "SelectFromReports",
@@ -90,10 +135,14 @@ export default function Reports({
     }
   };
   const handleMenu = (value: string) => {
-    clearDataReport()
+    clearDataReport();
     if (date && value !== "RptSensors") {
       const fromDateTimeUTC = formatDateTime(date.from, startHour, "00:00:00");
-      const toDateTimeUTC = formatDateTime(date.to ? date.to : date.from, endHour, "23:59:59");
+      const toDateTimeUTC = formatDateTime(
+        date.to ? date.to : date.from,
+        endHour,
+        "23:59:59"
+      );
       console.log(`ENVIO AO BACKEND RELATÓRIO`);
       wss?.sendMessage({
         api: "admin",
@@ -153,7 +202,7 @@ export default function Reports({
                   mode="range"
                   defaultMonth={date?.from}
                   selected={date}
-                  onSelect={setDate || undefined}
+                  onSelect={setDate as any}
                   numberOfMonths={2}
                 />
                 <div className="flex align-middle items-center w-full p-2 justify-between">
@@ -223,7 +272,7 @@ export default function Reports({
           <TabsContent value="RptActivities" className="gap-4 py-4">
             {dataReport?.table[0] && (
               <ColumnsReports
-                data={dataReport.table}
+                data={ajustData}
                 keys={dataReport.keys}
                 report={dataReport.src}
               />
