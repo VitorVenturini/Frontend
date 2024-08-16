@@ -89,8 +89,8 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
       case "offline":
         setStatusClass("bg-neutral-900");
         break;
-      default: // default sempre offline
-        setStatusClass("bg-neutral-900");
+      // default: // default sempre offline
+      //   setStatusClass("bg-neutral-900");
     }
   }, [usersPbx]); // monitorar as alterações no contexto de usuario
 

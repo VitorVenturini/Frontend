@@ -224,15 +224,15 @@ function AdminLayout() {
           description: "Camera deletada com sucesso",
         });
         break;
-      case "UserOnline":
-        if (pbxUser.length > 0) {
-          updateUserPbxStauts(message.guid, message.color, message.note);
-        }
-        break;
-      case "UserOffline":
-        if (pbxUser.length > 0) {
-          updateUserPbxStauts(message.guid, "offline");
-        }
+        case "UserOnline":
+          if (pbxUser.length > 0) {
+            updateUserPbxStauts(message.guid, message.color, message.note);
+          }
+          break;
+        case "UserOffline":
+          if (pbxUser.length > 0) {
+            updateUserPbxStauts(message.guid, "offline", "offline");
+          }
         break;
       case "SelectFromReportsSuccess":
         if (message.result === "[]") {
