@@ -1,6 +1,8 @@
 import { ButtonInterface } from "../buttons/buttonContext/ButtonsContext";
 import { SensorInterface } from "../sensor/SensorContext";
 import { useButtons } from "../buttons/buttonContext/ButtonsContext";
+import texts from "@/_data/texts.json";
+import { useLanguage } from "@/components/language/LanguageContext";
 
 function getDegreeRange(direction: string) {
   switch (direction) {
@@ -97,3 +99,13 @@ export function checkButtonWarning(
   return false;
 }
 
+  //função para o typeScript parar de encher o saco
+ export const getText = (
+    key: string | undefined,
+    languageTexts: {}
+  ): string => {
+    if (key && key in languageTexts) {
+      return languageTexts[key as keyof typeof languageTexts];
+    }
+    return key || ""; // ou outra mensagem padrão
+  };

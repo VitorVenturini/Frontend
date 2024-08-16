@@ -12,6 +12,7 @@ import { commonClasses } from "../ButtonsComponent";
 import { useUsersPbx } from "@/components/users/usersPbx/UsersPbxContext";
 import texts from "@/_data/texts.json";
 import { useLanguage } from "@/components/language/LanguageContext";
+import { getText } from "@/components/utils/utilityFunctions";
 
 interface ButtonProps {
   button: ButtonInterface;
@@ -32,16 +33,16 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
   const account = useAccount();
   const wss = useWebSocketData();
 
-  //função para o typeScript parar de encher o saco
-  const getText = (
-    key: string | undefined,
-    languageTexts: (typeof texts)[typeof language]
-  ): string => {
-    if (key && key in languageTexts) {
-      return languageTexts[key as keyof typeof languageTexts];
-    }
-    return key || ""; // ou outra mensagem padrão
-  };
+  // //função para o typeScript parar de encher o saco
+  // const getText = (
+  //   key: string | undefined,
+  //   languageTexts: (typeof texts)[typeof language]
+  // ): string => {
+  //   if (key && key in languageTexts) {
+  //     return languageTexts[key as keyof typeof languageTexts];
+  //   }
+  //   return key || ""; // ou outra mensagem padrão
+  // };
 
   const handleClickCall = () => {
     handleClick(); // para setar a posição na hora de criar botão
@@ -75,9 +76,6 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
       case "on-the-phone":
         setStatusClass("bg-red-600");
         break;
-      case "ringing":
-        setStatusClass("bg-orange-500");
-        break;
       case "away":
         setStatusClass("bg-orange-500");
         break;
@@ -97,35 +95,37 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
 
   useEffect(() => {
     setCallStatusClass("bg-red-900");
-    switch (button.callStatus) {
+    switch (button.clickedStatus) {
       case "callConnected":
-        setCallStatusClass("bg-red-600");
+        setCallStatusClass("bg-red-900");
         break;
       case "callRinging":
-        setStatusClass("bg-orange-500")
-        setCallStatusClass("bg-orange-500");
+        //setStatusClass("bg-orange-500")
+        setCallStatusClass("bg-orange-700");
         break;
       case "callDisconnected":
         setClickedButton(false)
         break;
     }
-  }, [button.callStatus]); // monitorar o status da chamada 
+  }, [button.clickedStatus]); // monitorar o status da chamada 
 
   return (
     <div
-      className={`${commonClasses} flex flex-col cursor-pointer ${
-        clickedButton ? callStatusClass : statusClass
+      className={`${commonClasses} flex flex-col justify-between h-full cursor-pointer ${
+        clickedButton ? callStatusClass : (filteredUser?.status === "offline" ? "bg-neutral-900" : "bg-green-800")
       } `}
       onClick={handleClickCall}
     >
-      <div className="flex items-center gap-1 cursor-pointer">
-        <User />
-        <p className="text-sm leading-none">{button.button_name}</p>
+      <div className="flex-grow">
+        <div className="flex items-center gap-1 cursor-pointer">
+          <User />
+          <p className="text-sm leading-none">{button.button_name}</p>
+        </div>
+        <div className="text-sm flex justify-center">
+          <p>{filteredUser?.cn}</p>
+        </div>
       </div>
-      <div className="text-sm flex justify-center">
-        <p>{filteredUser?.cn}</p>
-      </div>
-      <div className="text-sm flex justify-center">
+      <div className={`text-sm flex justify-center mt-auto w-full ${statusClass}`}>
         {getText(filteredUser?.note, texts[language])}
       </div>
     </div>

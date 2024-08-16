@@ -29,7 +29,9 @@ export interface ButtonInterface {
   triggered: boolean;
   commandValue?: string;
   comboStart?: boolean;
+  clickedStatus?: string;
   callStatus?: string;
+  note?: string;
 }
 
 interface ButtonContextType {
@@ -51,7 +53,8 @@ interface ButtonContextType {
   removeClickedButton: (id: number) => void;
   clearButtons: () => void;
   setButtonTriggered: (id: number, triggered: boolean) => void;
-  setButtonCallStatus: (id: number, callStauts: string) => void;
+  setButtonClickedStatus: (id: number, clickedStatus: string) => void;
+  setButtonNumberCallStatus: (number: string, callStatus: string, note: string) => void;
   setStopButtonTriggered: (alarm: string, triggered: boolean) => void;
   setStopWarningTreshold: (id: number, triggered: boolean) => void;
   setCommandValue: (btn_id: number, prt: string, value: string) => void;
@@ -151,12 +154,20 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
     setButtons([]);
   };
 
-  const setButtonCallStatus = (id: number, callStatus: string) => {
+  const setButtonClickedStatus = (id: number, clickedStatus: string, note?: string) => {
     setButtons((prevButtons) =>
       prevButtons.map((button) =>
-        button.id === id ? { ...button, callStatus } : button
+        button.id === id ? { ...button, clickedStatus, note } : button
       )
-    );
+    );  
+  };
+
+  const setButtonNumberCallStatus = (number: string, callStatus: string, note: string) => {
+    setButtons((prevButtons) =>
+      prevButtons.map((button) =>
+        button.button_prt === number ? { ...button, callStatus, note } : button
+      )
+    );  
   };
 
   const setButtonTriggered = (id: number, triggered: boolean) => {
@@ -218,7 +229,8 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
         setButtonLoading,
         removeClickedButton,
         setButtonTriggered,
-        setButtonCallStatus,
+        setButtonClickedStatus,
+        setButtonNumberCallStatus,
         setStopButtonTriggered,
         setStopWarningTreshold,
         comboStarted,

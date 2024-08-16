@@ -69,7 +69,8 @@ function UserLayout() {
   const {
     setButtons,
     setButtonTriggered,
-    setButtonCallStatus,
+    setButtonClickedStatus,
+    setButtonNumberCallStatus,
     setStopButtonTriggered,
     addButton,
     deleteButton,
@@ -220,13 +221,19 @@ function UserLayout() {
         pbxUser = PbxUsers;
         break;
       case "CallRinging":
-        setButtonCallStatus(message.btn_id, "callRinging");
+        setButtonClickedStatus(message.btn_id, "callRinging");
         break;
       case "CallConnected":
-        setButtonCallStatus(message.btn_id, "callConnected");
+        setButtonClickedStatus(message.btn_id, "callConnected");
         break;
       case "CallDisconnected":
-        setButtonCallStatus(message.btn_id, "callDisconnected");
+        setButtonClickedStatus(message.btn_id, "callDisconnected");
+        break;
+      case "NumberOnline":
+        setButtonNumberCallStatus(message.number,message.color,message.note)
+        break;
+      case "NumberBusy":
+        setButtonNumberCallStatus(message.number,message.color,message.note)
         break;
       case "UserOnline":
         if (pbxUser.length > 0) {
@@ -235,9 +242,10 @@ function UserLayout() {
         break;
       case "UserOffline":
         if (pbxUser.length > 0) {
-          updateUserPbxStauts(message.guid, "offline");
+          updateUserPbxStauts(message.guid, "offline", "offline");
         }
         break;
+
       case "Message": // mensagem do cara
         const newMsgFrom: ChatInterface = message.result[0];
         addChatMessage(newMsgFrom);
