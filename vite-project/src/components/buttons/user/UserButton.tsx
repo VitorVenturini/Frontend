@@ -72,7 +72,7 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
   useEffect(() => {
     switch (filteredUser?.status) {
       case "online":
-        setStatusClass("bg-green-900");
+        setStatusClass("bg-green-600");
         break;
       case "on-the-phone":
         setStatusClass("bg-red-600");
