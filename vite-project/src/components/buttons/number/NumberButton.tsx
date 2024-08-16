@@ -51,6 +51,8 @@ export default function NumberButton({ button, onClick }: NumberProps) {
     //console.log("Button" + JSON.stringify(button))
   };
 
+  // CORES PARA TODO BOTÃO 
+
   useEffect(() => {
     // setStatusClass("bg-red-900");
     switch (button.clickedStatus) {
@@ -67,6 +69,7 @@ export default function NumberButton({ button, onClick }: NumberProps) {
     }
   }, [button.clickedStatus]); // monitorar o status de click
 
+  // CORES PARA PARTE DE BAIXO DO BOTÃO (LISTRINHA)
   useEffect(() => {
     // setStatusClass("bg-red-900");
     switch (button.callStatus) {

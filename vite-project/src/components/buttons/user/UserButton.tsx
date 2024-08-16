@@ -68,6 +68,7 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
       }
     }
   };
+  //CORES PARA PARTE DE BAIXO DO BOTÃO (LISTRINHA)
   useEffect(() => {
     switch (filteredUser?.status) {
       case "online":
@@ -93,6 +94,7 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
     }
   }, [usersPbx]); // monitorar as alterações no contexto de usuario
 
+  //CORES PARA O BOTÃO INTEIRO
   useEffect(() => {
     setCallStatusClass("bg-red-900");
     switch (button.clickedStatus) {
