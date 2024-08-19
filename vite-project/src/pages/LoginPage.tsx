@@ -13,7 +13,6 @@ export default function LoginPage() {
         <CardLogin/>
       </div>
       <div className=" basis-1/2  w-full h-[100vh] bg-card flex justify-start align-middle py-60 px-12">
-        <img src={icone} alt="Logo" />
       </div>
     </div>
   );

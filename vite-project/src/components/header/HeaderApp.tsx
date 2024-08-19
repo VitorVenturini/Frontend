@@ -56,12 +56,7 @@ export default function HeaderApp() {
   return (
     <header className="flex justify-between items-center p-2 mb-3">
       <div className="flex items-center gap-5">
-        <img
-          src={logo} // Use o logo importado aqui
-          alt="Logo"
-          width={200}
-          height={200}
-        />
+
         <div>
           <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
             {account?.name || "Usuário"}
