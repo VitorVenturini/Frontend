@@ -64,7 +64,7 @@ export default function MessageList({
   const avatarBase64 = generateAvatar(initials);
 
   return (
-    <div onClick={onClick}>
+    <div onClick={onClick} >
       <ChatList
         id={user.id}
         className="chat-list text-black"
@@ -75,9 +75,10 @@ export default function MessageList({
             avatar: avatarBase64,
             alt: "",
             title: user.name || "Usuário sem nome",
-            subtitle: lastestMessage ? lastestMessage[0]?.msg : "",
-            date: lastestMessage ? new Date(lastestMessage[0]?.date || '') : undefined,
-            unread: lastestMessage && lastestMessage[0]?.read === null ? lastestMessage.length : undefined,
+            //const lastMessage = lastestMessage ? lastestMessage[lastestMessage.length - 1]?.msg : "";
+            subtitle: lastestMessage ? lastestMessage[lastestMessage.length - 1]?.msg : "",
+            date: lastestMessage ? new Date(lastestMessage[lastestMessage.length - 1]?.date || '') : undefined,
+            unread: lastestMessage && lastestMessage[lastestMessage.length - 1]?.read === null ? lastestMessage.length : undefined,
           },
         ]}
       />
