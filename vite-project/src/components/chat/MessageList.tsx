@@ -14,71 +14,55 @@ import { useState, useEffect } from "react";
 import { ChatList } from "react-chat-elements";
 import { User } from "lucide-react";
 import { getInitials, generateAvatar } from "../utils/utilityFunctions";
+
 interface OptProps {
   user: UserInterface;
   onClick: () => void;
-  // clickedUser: string | null; // para verificar se está aberto o chat
-  // selectedOpt: string;
 }
 
 export default function MessageList({
   user,
   onClick,
-  // clickedUser,
-  // selectedOpt,
 }: OptProps) {
-  const commonClasses =
-    "w-[60px] h-[40px]  xl:w-[60px] xl:h-[60px] 2xl:w-[80px] rounded-lg border bg-border text-card-foreground shadow-sm p-1 flex items-center justify-center";
-
   const [lastestMessage, setLastestMessage] = useState<ChatInterface[]>();
-  const handleClick = () => {
-    onClick();
-    setIsClicked(true);
-  };
-  const { chat, addChat } = useChat();
+  const { chat } = useChat();
   const myAccountInfo = JSON.parse(localStorage.getItem("Account") || "{}");
-  const [isClicked, setIsClicked] = useState<boolean>(false);
 
   useEffect(() => {
-    // Filtra as mensagens recebidas do usuário atual
+    // Filtra as mensagens relacionadas ao usuário atual e ao usuário passado como prop
     const userMessages = chat.filter(
       (message) =>
-        message.to_guid === myAccountInfo.guid && // condição para quando a mensagem for para mim
-        message.from_guid === user.guid
-      // && message.read === null
+        (message.to_guid === myAccountInfo.guid && message.from_guid === user.guid) ||
+        (message.from_guid === myAccountInfo.guid && message.to_guid === user.guid)
     );
-    setLastestMessage(userMessages);
-    // // Verifica se há mensagens não lidas
-    // if (unreadMessages.length > 0) {
-    //   if (clickedUser !== user.guid) {
-    //     setNewMessageReceived(true); // Marca que há novas mensagens recebidas
-    //   } else {
-    //     setNewMessageReceived(false); // Se o chat do usuário estiver aberto, marca como lida
-    //   }
-    // } else {
-    //   setNewMessageReceived(false); // Se não houver mensagens não lidas, desmarca
-    // }
+
+    // ordena as mensagens por data
+    const sortedMessages = userMessages.sort((a, b) => 
+      new Date(a.date || '').getTime() - new Date(b.date || '').getTime()
+    );
+
+    setLastestMessage(sortedMessages);
   }, [chat]);
 
   const initials = getInitials(user.name || "Usuário");
   const avatarBase64 = generateAvatar(initials);
 
   return (
-    <div onClick={onClick} >
+    <div onClick={onClick}>
       <ChatList
         id={user.id}
         className="chat-list text-black"
-        lazyLoadingImage=""  // Adicione isso se necessário para evitar erros, pode ser um caminho para uma imagem de carregamento
+        lazyLoadingImage=""
         dataSource={[
           {
             id: user.id as number,
             avatar: avatarBase64,
             alt: "",
             title: user.name || "Usuário sem nome",
-            //const lastMessage = lastestMessage ? lastestMessage[lastestMessage.length - 1]?.msg : "";
             subtitle: lastestMessage ? lastestMessage[lastestMessage.length - 1]?.msg : "",
             date: lastestMessage ? new Date(lastestMessage[lastestMessage.length - 1]?.date || '') : undefined,
-            unread: lastestMessage && lastestMessage[lastestMessage.length - 1]?.read === null ? lastestMessage.length : undefined,
+            unread: lastestMessage && lastestMessage[lastestMessage.length - 1]?.read === null 
+            && lastestMessage[lastestMessage.length - 1]?.from_guid === user.guid ? lastestMessage.length : undefined,
           },
         ]}
       />

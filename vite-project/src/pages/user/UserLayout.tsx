@@ -96,6 +96,7 @@ function UserLayout() {
   const {
     setChat,
     allMessages,
+    addLastestMessage,
     addChat,
     addChatMessage,
     chatDelivered,
@@ -139,6 +140,16 @@ function UserLayout() {
         allBtn = buttons;
         setSensors([]);
         break;
+      case "SelectAllMessagesSrcResult":
+        const latestMessage = JSON.parse(message.result);
+        // latestMessage.forEach((chat: ChatInterface) => addLastestMessage(chat));
+        addLastestMessage(latestMessage); // info dos chats para ser exibido no chat list
+        break;
+      case "SelectMessageHistoryResultSrc":
+        const allMsg: ChatInterface[] = message.result;
+        allMessages(allMsg); // receber todas conversas
+        break;
+
       case "SelectDeviceHistoryResult":
         const sensorsArray: SensorInterface[] = JSON.parse(message.result);
         if (sensorsArray.length > 0) {
@@ -230,10 +241,10 @@ function UserLayout() {
         setButtonClickedStatus(message.btn_id, "callDisconnected");
         break;
       case "NumberOnline":
-        setButtonNumberCallStatus(message.number,message.color,message.note)
+        setButtonNumberCallStatus(message.number, message.color, message.note);
         break;
       case "NumberBusy":
-        setButtonNumberCallStatus(message.number,message.color,message.note)
+        setButtonNumberCallStatus(message.number, message.color, message.note);
         break;
       case "UserOnline":
         if (pbxUser.length > 0) {
@@ -245,7 +256,6 @@ function UserLayout() {
           updateUserPbxStauts(message.guid, "offline", "offline");
         }
         break;
-
       case "Message": // mensagem do cara
         const newMsgFrom: ChatInterface = message.result[0];
         addChatMessage(newMsgFrom);
@@ -255,10 +265,6 @@ function UserLayout() {
         addChat(newMsgTo);
         break;
 
-      case "SelectMessageHistoryResultSrc":
-        const allMsg: ChatInterface[] = message.result;
-        allMessages(allMsg); // receber todas conversas
-        break;
       case "ChatDelivered":
         const msg_id = message.result[0].id;
         const deliveredDate = message.result[0].delivered;

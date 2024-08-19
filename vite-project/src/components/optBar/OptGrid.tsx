@@ -50,6 +50,7 @@ export default function OptGrid({
   const { setStopCombo } = useButtons();
   const [comboStarted, setComboStarted] = useState<number | null>(null);
   const comboStartedRef = useRef<number | null>(null);
+  const myAccountInfo = JSON.parse(localStorage.getItem("Account") || "{}");
 
   const handleClickedUser = (newUser: string | null) => {
     if (setClickedUser) {
@@ -110,16 +111,19 @@ export default function OptGrid({
     return (
       <div className="overflow-x-auto hide-scrollbar">
         <div className="gap-2">
-          {users?.map((user) => (
-            <MessageList
-              user={user}
-              onClick={() => {
-                handleClickedUser(clickedUser === user.guid ? null : user.guid);
-              }}
-             // clickedUser={clickedUser}
-              //selectedOpt={selectedOpt}
-            />
-          ))}
+          {users
+            ?.filter((user) => user.guid !== myAccountInfo.guid) 
+            .map((user) => (
+              <MessageList
+                key={user.guid} 
+                user={user}
+                onClick={() => {
+                  handleClickedUser(
+                    clickedUser === user.guid ? null : user.guid
+                  );
+                }}
+              />
+            ))}
         </div>
       </div>
     );

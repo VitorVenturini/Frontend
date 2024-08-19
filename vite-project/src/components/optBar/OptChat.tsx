@@ -18,8 +18,16 @@ export default function OptChat({ userToChat }: OptChatProps) {
     }
   }, [userToChat]);
 
+  const handleOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen); // Atualiza o estado de abertura
+    if (!isOpen) {
+      console.log("O SheetContent foi fechado");
+      // Aqui você pode adicionar qualquer ação que deseja executar ao fechar o Sheet
+    }
+  };
+
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
+    <Sheet open={open} onOpenChange={handleOpenChange}>
       <SheetContent side="left" className="!block">
         <ChatLayout userToChat={userToChat} />
       </SheetContent>

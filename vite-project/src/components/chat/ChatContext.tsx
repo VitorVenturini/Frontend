@@ -23,6 +23,7 @@ interface ChatContextType {
   setChat: React.Dispatch<React.SetStateAction<ChatInterface[]>>;
   addChat: (chat: ChatInterface) => void;
   addChatMessage: (chat: ChatInterface) => void;
+  addLastestMessage : (newChat: ChatInterface[]) => void;
   chatDelivered: (msg_id: number, deliveredDate: string) => void;
   chatRead: (msg_id: number, deliveredDate: string, readDate: string) => void;
   allMessages: (newMessage: ChatInterface[]) => void;
@@ -40,6 +41,10 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
   const addChatMessage = (newMessage: ChatInterface) => {
     setChat((prevChat) => [...prevChat, newMessage]);
+  };
+
+  const addLastestMessage = (newChat: ChatInterface[]) => {
+    setChat(newChat); 
   };
 
   const allMessages = (newMessages: ChatInterface[]) => {
@@ -90,6 +95,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         chat,
         setChat,
         allMessages,
+        addLastestMessage,
         addChat,
         addChatMessage,
         chatDelivered,
