@@ -1,15 +1,4 @@
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-
-import {
-  Card,
   CardContent,
   CardDescription,
   CardFooter,
@@ -41,16 +30,17 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import { useToast } from "@/components/ui/use-toast";
-import React, { useEffect, useState, ChangeEvent } from "react";
+import { useState, ChangeEvent } from "react";
 import { Loader2 } from "lucide-react";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { ButtonInterface } from "@/components/buttons/buttonContext/ButtonsContext";
-import { useUsers } from "@/components/users/usersCore/UserContext";
+import { useUsersPbx } from "@/components/users/usersPbx/UsersPbxContext";
 
 interface User {
   id: string;
   name: string;
   guid: string;
+  sip: string;
 }
 
 interface ButtonProps {
@@ -68,7 +58,7 @@ export default function ModalUser({
   clickedPosition,
   existingButton,
   isUpdate = false,
-  onClose
+  onClose,
 }: ButtonProps) {
   const [buttonValue, setButtonValue] = useState(
     existingButton?.button_prt || ""
@@ -83,7 +73,7 @@ export default function ModalUser({
   const [isCreating, setIsCreating] = useState(false);
   const { toast } = useToast();
   const wss = useWebSocketData();
-  const { users } = useUsers();
+  const { usersPbx } = useUsersPbx();
 
   const handleNameButton = (event: ChangeEvent<HTMLInputElement>) => {
     setNameButton(event.target.value);
@@ -94,7 +84,9 @@ export default function ModalUser({
   const handleButtonDevice = (value: string) => {
     setButtonDevice(value);
   };
-
+  const filteredDevices = usersPbx?.filter((u) => {
+    return u.guid === selectedUser?.sip;
+  })[0];
   const handleCreateButton = () => {
     try {
       if (nameButton && buttonValue && buttonDevice) {
@@ -114,7 +106,7 @@ export default function ModalUser({
         };
         wss?.sendMessage(message);
         setIsCreating(false);
-        onClose?.()
+        onClose?.();
       } else {
         toast({
           variant: "destructive",
@@ -134,7 +126,7 @@ export default function ModalUser({
         mt: "DeleteButtons",
         id: existingButton?.id,
       });
-      onClose?.()
+      onClose?.();
     } catch (e) {
       console.error(e);
     }
@@ -177,9 +169,9 @@ export default function ModalUser({
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>Usuários</SelectLabel>
-                {users.map((user) => (
+                {usersPbx?.map((user) => (
                   <SelectItem key={user.guid} value={user.guid as string}>
-                    {user.name}
+                    {user.cn}
                   </SelectItem>
                 ))}
               </SelectGroup>
@@ -197,7 +189,11 @@ export default function ModalUser({
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>Dispositivos</SelectLabel>
-                <SelectItem value="softphone">Softphone</SelectItem>
+                {filteredDevices?.devices.map((dev, index) => (
+                  <SelectItem key={index} value={dev.hw as string}>
+                    {dev.text}
+                  </SelectItem>
+                ))}
               </SelectGroup>
             </SelectContent>
           </Select>

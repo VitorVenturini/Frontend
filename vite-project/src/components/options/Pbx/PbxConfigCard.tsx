@@ -14,6 +14,15 @@ import { ChangeEvent } from "react";
 import { Loader2 } from "lucide-react";
 import { useToast } from "../../ui/use-toast";
 import { usePbx, PbxInterface } from "./PbxContext";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 // import * from React
 
@@ -23,7 +32,7 @@ export default function PbxConfigCard() {
   const { toast } = useToast();
   const wss = useWebSocketData();
   const { pbxInfo, setPbxInfo } = usePbx();
-
+  const [selectPbx, setSelectPbx] = useState('')
   const filteredPbxInfo = pbxInfo.filter((url) => {
     return url.entry === "urlPbxTableUsers";
   })[0];
@@ -33,10 +42,19 @@ export default function PbxConfigCard() {
   const handleUrlPbx = (event: ChangeEvent<HTMLInputElement>) => {
     setUrlPbx(event.target.value);
   };
+  const handleSelect = (value: string) => {
+    setSelectPbx(value);
 
+  };
   const handleSendPbxUrl = () => {
     setIsLoading(true);
     if (urlPbx) {
+      wss?.sendMessage({
+        api: "admin",
+        mt: "UpdateConfig",
+        entry: "pbxType",
+        vl: selectPbx,
+      });
       wss?.sendMessage({
         api: "admin",
         mt: "UpdateConfig",
@@ -47,6 +65,7 @@ export default function PbxConfigCard() {
         {
           entry: "urlPbxTableUsers",
           value: urlPbx,
+
         },
       ] as PbxInterface[]);
       // adicionar no contexto caso o admin troca de aba para manter o valor no input
@@ -66,10 +85,32 @@ export default function PbxConfigCard() {
     <Card className="w-[50%] h-fit">
       <CardHeader>
         <CardTitle>PBX</CardTitle>
-        <CardDescription>Url do pbx</CardDescription>
+        <CardDescription>Modelo e URL do pbx</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="w-full flex flex-col gap-5">
+        <div className="flex items-center justify-between gap-3 w-full">
+            <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
+              Modelo
+            </h4>
+            <Select onValueChange={handleSelect}>
+                  <SelectTrigger className="col-span-1">
+                    <SelectValue placeholder="Selecione um PBX" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>PBX</SelectLabel>
+                      
+                        <SelectItem value={"INNOVAPHONE"}>
+                        Innovaphone
+                        </SelectItem>
+                        <SelectItem value={"EPYGI"}>
+                        Epygi
+                        </SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+          </div>
           <div className="flex items-center justify-between gap-3 w-full">
             <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
               URL

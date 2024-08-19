@@ -7,11 +7,14 @@ export interface UserInterface {
   guid: string;
   email: string;
   sip: string;
+  device?: string;
   password?: string;
   createdAt?: string; // o ? significa que o valor nao precisa ser presente , se for nulo nao tem problema
   updatedAt?: string;
   type?: string;
   status?: string;
+  note?: string;
+  color?: string;
 }
 
 interface UserContextType {
@@ -19,7 +22,7 @@ interface UserContextType {
   setUsers: React.Dispatch<React.SetStateAction<UserInterface[]>>;
   addUsers: (user: UserInterface) => void;
   updateUser: (user: UserInterface) => void;
-  updateUserStauts: (guid: string, status: string) => void;
+  updateUserStauts: (guid: string, status: string, note?: string) => void;
   deleteUser: (id: number) => void;
 }
 
@@ -38,9 +41,9 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       )
     );
   };
-  const updateUserStauts = (guid: string, status: string) => {
+  const updateUserStauts = (guid: string, status: string, note?: string) => {
     setUsers((prevUsers) =>
-      prevUsers.map((user) => (user.guid === guid ? { ...user, status } : user))
+      prevUsers.map((user) => (user.guid === guid ? { ...user, status, note } : user))
     );
   };
   const deleteUser = (id: number) => {

@@ -98,13 +98,7 @@ export default function MenuOptions() {
         >
           Iot Câmeras
         </Button>
-        <Button
-          className="focus:bg-accent"
-          variant={"ghost"}
-          onClick={() => handleClick("reports")}
-        >
-          Relatórios
-        </Button>
+
       </div>
       <div className="flex align-middle justify-center items-center w-full">
         {renderActiveComponent()}

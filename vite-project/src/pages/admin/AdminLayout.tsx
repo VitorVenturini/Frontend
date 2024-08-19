@@ -12,7 +12,6 @@ import {
 } from "@/components/buttons/buttonContext/ButtonsContext";
 import React, { useContext, useEffect } from "react";
 import { useState } from "react";
-
 import {
   WebSocketProvider,
   useWebSocketData,
@@ -30,7 +29,10 @@ import {
   useGateways,
 } from "@/components/Gateways/GatewaysContext";
 
-import { useUsers,UserInterface } from "@/components/users/usersCore/UserContext";
+import {
+  useUsers,
+  UserInterface,
+} from "@/components/users/usersCore/UserContext";
 import {
   CamerasInterface,
   useCameras,
@@ -40,11 +42,18 @@ import ColumnsReports from "@/Reports/collumnsReports";
 import { Grafico } from "@/components/charts/lineChart";
 import { DataProvider, useData } from "@/Reports/DataContext";
 import Reports from "./reports";
+import { usePbx } from "@/components/options/Pbx/PbxContext";
+import {
+  UserPbxInterface,
+  useUsersPbx,
+} from "@/components/users/usersPbx/UsersPbxContext";
 
 function AdminLayout() {
   const account = useAccount();
   const { setUsers, updateUserStauts } = useUsers();
+  const { updateUserPbxStauts } = useUsersPbx();
   const { setApiKeyInfo } = useGoogleApiKey();
+  const { setPbxInfo } = usePbx();
   const wss = useWebSocketData();
   const { buttons, setButtons, addButton, updateButton, deleteButton } =
     useButtons();
@@ -52,6 +61,7 @@ function AdminLayout() {
   const { toast } = useToast();
   const { actions, setActions, updateActions, deleteAction, addActions } =
     useActions();
+  const { setUsersPbx } = useUsersPbx();
   const { updateAccount } = useAccount();
   const [isAdminVerified, setIsAdminVerified] = useState(false);
   const navigate = useNavigate();
@@ -63,6 +73,7 @@ function AdminLayout() {
   const { addDataReport, clearDataReport } = useData();
   const myAccountInfo = JSON.parse(localStorage.getItem("Account") || "{}");
 
+  var pbxUser: UserPbxInterface[]
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
     switch (message.mt) {
@@ -94,13 +105,11 @@ function AdminLayout() {
         const newUser: UserInterface[] = message.result;
         setUsers(newUser);
         break;
-
-      // case "SelectSensorNameResult":
-      //   //Lógica antiga vamos deixar comentado por enquanto
-      //   // const firstSensors: SensorInterface[] = JSON.parse(message.result);
-      //   // setSensors(firstSensors);
-      //   // console.log(message.result);
-      //   break;
+      case "PbxTableUsersResult":
+        const PbxUsers: UserPbxInterface[] = message.result;
+        setUsersPbx(PbxUsers);
+        pbxUser = PbxUsers
+        break;
       case "SelectSensorsResult":
         const result = message.result;
         const sensorData = result.map((gatewayData: any) => {
@@ -152,7 +161,16 @@ function AdminLayout() {
         });
         break;
       case "ConfigResult":
-        setApiKeyInfo(message.result);
+        const apiKeyEntries = message.result.filter(
+          (item: any) => item.entry === "googleApiKey"
+        );
+        setApiKeyInfo(apiKeyEntries);
+        const pbxEntries = message.result.filter(
+          (item: any) => item.entry === "urlPbxTableUsers"
+        );
+        setPbxInfo(pbxEntries);
+        break;
+        // asjutar isso , armazenar nos outros contextos
         break;
       case "SelectGatewaysSuccess":
         const allGateways: GatewaysInterface[] = message.result;
@@ -206,17 +224,15 @@ function AdminLayout() {
           description: "Camera deletada com sucesso",
         });
         break;
-      case "UserOnline":
-        if (message.guid !== myAccountInfo.guid) {
-          // nao atualizar o meu próprio status
-          updateUserStauts(message.guid, "online");
-        }
-        break;
-      case "UserOffline":
-        if (message.guid !== myAccountInfo.guid) {
-          // nao atualizar o meu próprio status
-          updateUserStauts(message.guid, "offline");
-        }
+        case "UserOnline":
+          if (pbxUser.length > 0) {
+            updateUserPbxStauts(message.guid, message.color, message.note);
+          }
+          break;
+        case "UserOffline":
+          if (pbxUser.length > 0) {
+            updateUserPbxStauts(message.guid, "offline", "offline");
+          }
         break;
       case "SelectFromReportsSuccess":
         if (message.result === "[]") {
@@ -230,9 +246,11 @@ function AdminLayout() {
               const jsonData = newFragments.join("");
               let parsedData;
               let jsonKeys;
+
               try {
                 parsedData = JSON.parse(jsonData);
                 jsonKeys = Object.keys(parsedData[0]);
+                // Formatar datas no formato desejado
               } catch (error) {
                 console.error("Erro ao fazer o parse do JSON:", error);
                 return prevFragments;
@@ -246,6 +264,69 @@ function AdminLayout() {
                 addDataReport(parsedData, "sensor", jsonKeys, message.src);
               } else {
                 console.log(parsedData, "REPORT TABLE");
+                // Função auxiliar para formatação de datas
+                function formatDate(dateString: string): string {
+                  const date = new Date(dateString);
+                  return new Intl.DateTimeFormat("pt-BR", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: false,
+                    timeZoneName: "short",
+                  })
+                    .format(date)
+                    .replace(",", " -") // Substitui a vírgula por " -"
+                    .replace("GMT", "") // Remove qualquer menção ao GMT
+                    .trim(); // Remove espaços em branco ao redor
+                }
+
+                parsedData = parsedData.map((item: any) => {
+                  // Formatar a coluna 'date', se existir
+                  if (item.date) {
+                    item.date = formatDate(item.date);
+                  }
+
+                  // Formatar colunas que começam com 'call' e possuem valor
+                  Object.keys(item).forEach((key) => {
+                    if (key.startsWith("call") && item[key]) {
+                      item[key] = formatDate(item[key]);
+                    }
+                  });
+                  if (item.status) {
+                    switch (item.status) {
+                      case 3:
+                        item.status = "Finalizado";
+                        break;
+                      case 1:
+                        item.status = "Em andamento";
+                        break;
+                      case "stop":
+                        item.status = "Interrompido";
+                        break;
+                      case "start":
+                        item.status = "Iniciado";
+                        break;
+                      case "out":
+                        item.status = "Saída"; 
+                        break;
+                      case "inc":
+                        item.status = "Entrada";
+                        break;
+                      case "Login":
+                        item.status = "Logado"; 
+                        break;
+                      case "Logout":
+                        item.status = "Deslogado"; 
+                        break;
+                      default:
+                        break;
+                    }
+                  }
+                  return item;
+                });
+
                 addDataReport(parsedData, "table", jsonKeys, message.src);
               }
 

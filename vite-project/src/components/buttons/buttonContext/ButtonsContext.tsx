@@ -25,9 +25,13 @@ export interface ButtonInterface {
   oldValue?: number; // propriedade adicional para sensores
   newValue?: number; // propriedade adicional para sensores
   clicked?: boolean; // adicionado para rastrear se o botão foi clicado
+  loading?: boolean;
   triggered: boolean;
   commandValue?: string;
   comboStart?: boolean;
+  clickedStatus?: string;
+  callStatus?: string;
+  note?: string;
 }
 
 interface ButtonContextType {
@@ -49,10 +53,13 @@ interface ButtonContextType {
   removeClickedButton: (id: number) => void;
   clearButtons: () => void;
   setButtonTriggered: (id: number, triggered: boolean) => void;
+  setButtonClickedStatus: (id: number, clickedStatus: string) => void;
+  setButtonNumberCallStatus: (number: string, callStatus: string, note: string) => void;
   setStopButtonTriggered: (alarm: string, triggered: boolean) => void;
-  setStopWarningTreshold : (id: number, triggered: boolean) => void;
+  setStopWarningTreshold: (id: number, triggered: boolean) => void;
   setCommandValue: (btn_id: number, prt: string, value: string) => void;
-  comboStarted: (comboId: number) => void; 
+  setButtonLoading: (id: number, loading: boolean) => void;
+  comboStarted: (comboId: number) => void;
   setStopCombo: (id: number) => void;
   deleteButton: (id: number) => void;
 }
@@ -127,6 +134,14 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
+  const setButtonLoading = (id: number, loading: boolean) => {
+    setButtons((prevButtons) =>
+      prevButtons.map((button) =>
+        button.id === id ? { ...button, loading: loading } : button
+      )
+    );
+  };
+
   const removeClickedButton = (id: number) => {
     setButtons((prevButtons) =>
       prevButtons.map((button) =>
@@ -137,6 +152,22 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
 
   const clearButtons = () => {
     setButtons([]);
+  };
+
+  const setButtonClickedStatus = (id: number, clickedStatus: string, note?: string) => {
+    setButtons((prevButtons) =>
+      prevButtons.map((button) =>
+        button.id === id ? { ...button, clickedStatus, note } : button
+      )
+    );  
+  };
+
+  const setButtonNumberCallStatus = (number: string, callStatus: string, note: string) => {
+    setButtons((prevButtons) =>
+      prevButtons.map((button) =>
+        button.button_prt === number ? { ...button, callStatus, note } : button
+      )
+    );  
   };
 
   const setButtonTriggered = (id: number, triggered: boolean) => {
@@ -167,7 +198,7 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
   const comboStarted = (comboId: number) => {
     setButtons((prevButtons) =>
       prevButtons.map((button) =>
-        button.id === comboId 
+        button.id === comboId
           ? { ...button, triggered: true, clicked: true, comboStart: true }
           : button
       )
@@ -182,7 +213,6 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
-
   return (
     <ButtonContext.Provider
       value={{
@@ -196,12 +226,15 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
         setOldValue,
         setNewValue,
         setClickedButton,
+        setButtonLoading,
         removeClickedButton,
         setButtonTriggered,
+        setButtonClickedStatus,
+        setButtonNumberCallStatus,
         setStopButtonTriggered,
         setStopWarningTreshold,
         comboStarted,
-        setStopCombo
+        setStopCombo,
       }}
     >
       {children}

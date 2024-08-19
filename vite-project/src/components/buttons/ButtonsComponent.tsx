@@ -46,6 +46,7 @@ interface User {
   id: string;
   name: string;
   guid: string;
+  sip: string;
   // Adicione aqui outros campos se necessário
 }
 

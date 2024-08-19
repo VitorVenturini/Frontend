@@ -20,17 +20,27 @@ interface OptSensorProps {
   clickedKey: string | null;
 }
 export default function OptSensor({
-  sensorKey,
   filteredSensorInfo,
-  handleKeyChange,
-  setClickedKey,
-  clickedKey,
 }: OptSensorProps) {
+
+  const sortObjectKeys = (obj: any) => {
+    return Object.keys(obj)
+      .sort() // Ordena as chaves em ordem alfabética
+      .reduce((result: any, key) => {
+        result[key] = obj[key]; // Reconstroi o objeto com as chaves ordenadas
+        return result;
+      }, {});
+  };
+
+  const sortArrayOfObjects = (arr: any[]) => {
+    return arr.map((item) => sortObjectKeys(item));
+  };
+  // passar o array ordenado para o gráfico .
+  const sortedChartData = sortArrayOfObjects(filteredSensorInfo)
+  console.log("sortedChartData" + JSON.stringify(sortedChartData))
   return (
     <Card className="h-full flex">
-      <SensorGraph chartData={filteredSensorInfo}/>
-      
-
+      <SensorGraph chartData={sortedChartData.reverse()} />
     </Card>
   );
 }

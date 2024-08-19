@@ -34,7 +34,10 @@ import { useHistory } from "@/components/history/HistoryContext";
 import { useEffect } from "react";
 import { format } from "date-fns";
 import { useToast } from "@/components/ui/use-toast";
-import { UserInterface, useUsers } from "@/components/users/usersCore/UserContext"
+import {
+  UserInterface,
+  useUsers,
+} from "@/components/users/usersCore/UserContext";
 import {
   ChatInterface,
   ChatProvider,
@@ -42,6 +45,11 @@ import {
 } from "@/components/chat/ChatContext";
 import { useGoogleApiKey } from "@/components/options/ApiGoogle/GooglApiContext";
 import InteractiveGridCopy from "@/components/optBar/InteractiveGridCopy";
+import {
+  UserPbxInterface,
+  useUsersPbx,
+} from "@/components/users/usersPbx/UsersPbxContext";
+import { PbxInterface } from "@/components/options/Pbx/PbxContext";
 
 interface User {
   id: string;
@@ -54,12 +62,15 @@ function UserLayout() {
   const account = useAccount();
   const { toast } = useToast();
   const { updateAccount } = useAccount();
-  const { setUsers, updateUserStauts } = useUsers();
+  const { setUsers } = useUsers();
+  const { updateUserPbxStauts } = useUsersPbx();
   // const webSocket = useWebSocket(account.accessToken)
   // console.log("MENSAGEM DO WEBSOCKET" + webSocket.data)
   const {
     setButtons,
     setButtonTriggered,
+    setButtonClickedStatus,
+    setButtonNumberCallStatus,
     setStopButtonTriggered,
     addButton,
     deleteButton,
@@ -72,10 +83,14 @@ function UserLayout() {
     setSensors,
     updateSensorButton,
     updateGraphSensor,
-    clearSensorsByName,
+    clearSensorsByEUI,
+    clearCamByEUI,
     addSensors,
+    addImages,
     addSensorsButton,
+    updateGalleryImages,
   } = useSensors();
+  const { setUsersPbx } = useUsersPbx();
   const { addHistory } = useHistory();
   const { setApiKeyInfo } = useGoogleApiKey();
   const {
@@ -114,7 +129,7 @@ function UserLayout() {
   };
   var allBtn: ButtonInterface[];
   var allUsers: UserInterface[];
-
+  var pbxUser: UserPbxInterface[];
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
     switch (message.mt) {
@@ -127,14 +142,21 @@ function UserLayout() {
       case "SelectDeviceHistoryResult":
         const sensorsArray: SensorInterface[] = JSON.parse(message.result);
         if (sensorsArray.length > 0) {
-          const sensorName = sensorsArray[0].sensor_name;
-          clearSensorsByName(sensorName);
-          addSensors(sensorsArray);
+          const sensorEUI = sensorsArray[0].deveui;
+          if (!sensorsArray[0].image || sensorsArray[0].image === null) {
+            // quando nao for camera
+            clearSensorsByEUI(sensorEUI as string); // limpa todas infos do sensor
+            addSensors(sensorsArray); //adiciona novas infos
+          } else {
+            // quando for camera
+            clearCamByEUI(sensorEUI as string); // limpa todas infos do sensor
+            addImages(sensorsArray); //adiciona novas infos
+          }
         }
         break;
       case "ImageReceived":
         const camArray: SensorInterface[] = message.result;
-        addSensors(camArray);
+        camArray.forEach((image) => updateGalleryImages(image));
         break;
       case "SelectAllSensorInfoResultSrc":
         const allSensors = JSON.parse(message.result);
@@ -193,18 +215,37 @@ function UserLayout() {
         allUsers = newUser;
         setUsers(newUser);
         break;
+      case "PbxTableUsersResult":
+        const PbxUsers: UserPbxInterface[] = message.result;
+        setUsersPbx(PbxUsers);
+        pbxUser = PbxUsers;
+        break;
+      case "CallRinging":
+        setButtonClickedStatus(message.btn_id, "callRinging");
+        break;
+      case "CallConnected":
+        setButtonClickedStatus(message.btn_id, "callConnected");
+        break;
+      case "CallDisconnected":
+        setButtonClickedStatus(message.btn_id, "callDisconnected");
+        break;
+      case "NumberOnline":
+        setButtonNumberCallStatus(message.number,message.color,message.note)
+        break;
+      case "NumberBusy":
+        setButtonNumberCallStatus(message.number,message.color,message.note)
+        break;
       case "UserOnline":
-        if (message.guid !== myAccountInfo.guid) {
-          // nao atualizar o meu próprio status
-          updateUserStauts(message.guid, "online");
+        if (pbxUser.length > 0) {
+          updateUserPbxStauts(message.guid, message.color, message.note);
         }
         break;
       case "UserOffline":
-        if (message.guid !== myAccountInfo.guid) {
-          // nao atualizar o meu próprio status
-          updateUserStauts(message.guid, "offline");
+        if (pbxUser.length > 0) {
+          updateUserPbxStauts(message.guid, "offline", "offline");
         }
         break;
+
       case "Message": // mensagem do cara
         const newMsgFrom: ChatInterface = message.result[0];
         addChatMessage(newMsgFrom);
@@ -341,7 +382,7 @@ function UserLayout() {
         </Button>
       )}
       <Logout />
-    {/*   <div className="text-[9px] sm:text-[15px] md:text-[20px] lg:text-[22px] xl:text-[35px] 2xl:text-[50px] ">
+      {/*   <div className="text-[9px] sm:text-[15px] md:text-[20px] lg:text-[22px] xl:text-[35px] 2xl:text-[50px] ">
         VE O TAMANHO AQUI O ANIMAL até o lg é tablet dps de 1290 xl é desktop
       </div> */}
     </WebSocketProvider>

@@ -3,7 +3,6 @@ import { useButtons } from "../buttons/buttonContext/ButtonsContext";
 import { useSensors } from "../sensor/SensorContext";
 import { useWebSocketData } from "../websocket/WebSocketProvider";
 import { useUsers } from "../users/usersCore/UserContext";
-import { CarouselImages } from "../cameras/Carousel/CarouselImages";
 import { SensorInterface } from "../sensor/SensorContext";
 import ChatLayout from "../chat/ChatLayout";
 import OptFloor from "./OptFloor";
@@ -32,7 +31,7 @@ interface OptLayoutCopyProps {
 export default function OptLayoutCopy(props: OptLayoutCopyProps) {
   const { clickedButtonId, clickedUser } = props;
   const { buttons } = useButtons();
-  const { graphSensors } = useSensors();
+  const { graphSensors,cameraImages } = useSensors();
   const [sensorKey, setSensorKey] = useState<string>("");
   const [clickedKey, setClickedKey] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -42,6 +41,10 @@ export default function OptLayoutCopy(props: OptLayoutCopyProps) {
   const userToChat = users.find((user) => user.guid === clickedUser);
 
   const filteredSensorInfo = graphSensors.filter(
+    (sensor) => sensor.deveui === clickedButton?.button_prt
+  );
+
+  const filteredCamInfo = cameraImages.filter(
     (sensor) => sensor.deveui === clickedButton?.button_prt
   );
 
@@ -81,7 +84,7 @@ export default function OptLayoutCopy(props: OptLayoutCopyProps) {
             />
           );
         case "camera":
-          return <OptCamera filteredSensorInfo={filteredSensorInfo} />;
+          return <OptCamera filteredSensorInfo={filteredCamInfo} />;
         default:
           return <div>Selecione uma opção</div>;
       }

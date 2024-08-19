@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
+import { CartesianGrid, LabelList, Line, LineChart, XAxis,YAxis } from "recharts"
+
 import {
   Card,
   CardContent,
@@ -42,12 +43,14 @@ export function SensorGraph({ chartData }: SensorGraphProps) {
   const [keys, setKeys] = useState<string[]>([]);
   const [actionExecDevice, setActionExecDevice] = useState("");
   const { sensors } = useSensors();
+  const [minMaxValues, setMinMaxValues] = useState<[number, number] | null>(null);
 
   // Função para gerar uma cor baseada em um índice
   const generateColor = (index: number): string => {
     const hue = (index * 137.5) % 360; // Distribui cores de forma uniforme
     return `hsl(${hue}, 70%, 50%)`;
   };
+
 
   useEffect(() => {
     if (chartData.length > 0) {
@@ -72,9 +75,21 @@ export function SensorGraph({ chartData }: SensorGraphProps) {
       }, {} as ChartConfig);
 
       setDataChartConfig(newChartConfig);
-      setActiveChart(keys[0] || null); // Definir a primeira chave como o gráfico ativo
+      // Manter a seleção atual, se possível
+      if (!keys.includes(activeChart!)) {
+        setActiveChart(keys[0] || null); // Definir a primeira chave como o gráfico ativo apenas se a seleção atual não for válida
+      }
     }
   }, [chartData]);
+
+  useEffect(() => {
+    if (activeChart && chartData.length > 0) {
+      const values = chartData.map((item) => item[activeChart]);
+      const min = Math.min(...values);
+      const max = Math.max(...values);
+      setMinMaxValues([min, max]);
+    }
+  }, [activeChart, chartData]);
   const handleExecDevice = (value: string) => {
     setActionExecDevice(value);
   };
@@ -126,10 +141,16 @@ export function SensorGraph({ chartData }: SensorGraphProps) {
               tickFormatter={(value) => {
                 const date = new Date(value);
                 return date.toLocaleDateString("pt-BR", {
-                  month: "short",
-                  day: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  second: "2-digit",
                 });
               }}
+            />
+                        <YAxis
+              tickLine={false}
+              axisLine={false}
+              domain={minMaxValues ? [minMaxValues[0], minMaxValues[1]] : ['auto', 'auto']} // Define os limites do Y dinamicamente
             />
 
             <ChartTooltip
@@ -139,9 +160,10 @@ export function SensorGraph({ chartData }: SensorGraphProps) {
                   nameKey="views"
                   labelFormatter={(value) => {
                     return new Date(value).toLocaleDateString("pt-BR", {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
+                      hour: "numeric",
+                     minute: "numeric",
+                     second: "numeric",
+
                     });
                   }}
                 />
@@ -153,8 +175,21 @@ export function SensorGraph({ chartData }: SensorGraphProps) {
                 type="monotone"
                 stroke={dataChartConfig[activeChart]?.color}
                 strokeWidth={2}
-                dot={false}
+                dot={{
+                  fill: "var(--color-desktop)",
+                }}
+                activeDot={{
+                  r: 6,
+                }}>
+                  <LabelList
+                position="top"
+                offset={12}
+                className="fill-foreground"
+                fontSize={12}
               />
+                </Line>
+              
+              
             )}
           </LineChart>
         </ChartContainer>

@@ -4,7 +4,9 @@ import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -27,7 +29,19 @@ import {
   useWebSocketData,
   WebSocketProvider,
 } from "../websocket/WebSocketProvider";
-
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { useUsersPbx } from "../users/usersPbx/UsersPbxContext";
+import { UserPbxInterface } from "../users/usersPbx/UsersPbxContext";
+import { Toggle } from "@/components/ui/toggle";
+import { ScrollArea } from "@radix-ui/react-scroll-area";
+import { IN } from "country-flag-icons/react/3x2";
 interface CreateAccountProps {
   user?: UserInterface;
   isUpdate?: boolean;
@@ -45,6 +59,9 @@ export default function CardCreateAccount({
   const [sip, setSip] = useState(user?.sip || "");
   const [type, setType] = useState<string>(user?.type || "");
   const [isCreating, setIsCreating] = useState(false);
+  const { usersPbx } = useUsersPbx();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [e164, setE164] = useState(user?.sip || "");
   const { language } = useLanguage();
   const { toast } = useToast();
   const { addUsers } = useUsers();
@@ -77,7 +94,7 @@ export default function CardCreateAccount({
       isValid = false;
     }
 
-    if (!sip) {
+    if (!e164) {
       toast({
         variant: "destructive",
         description: "SIP é obrigatório",
@@ -151,7 +168,7 @@ export default function CardCreateAccount({
       email: email,
       password: password,
       name: name,
-      sip: sip,
+      sip: e164,
       type: type,
       ...(isUpdate && { id: user?.id }),
     };
@@ -209,14 +226,21 @@ export default function CardCreateAccount({
     setIsCreating(false);
   };
 
+  const handleSearch = (event: ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+  };
+  const filteredUsers = usersPbx?.filter((user) => user.e164 === searchTerm);
+  const handleSetE164 = (value: string) => {
+    setE164(value);
+  };
   const handleFormSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    event.stopPropagation()
+    event.stopPropagation();
     handleCreateUser();
   };
   return (
-      <form onSubmit={handleFormSubmit}>
-      <CardHeader>
+    <form onSubmit={handleFormSubmit}>
+      <CardHeader className="flex">
         <CardTitle>
           {isUpdate
             ? "Update Account"
@@ -228,15 +252,16 @@ export default function CardCreateAccount({
             : texts[language].cardCreateAccountDescription}
         </CardDescription>
       </CardHeader>
-    
-        <CardContent>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-3 items-center gap-4">
+
+      <CardContent>
+        <div className="flex justify-center grid-cols-2">
+          <div className="grid gap-4 py-4 ">
+            <div className="grid grid-cols-5 items-center gap-4">
               <Label className="text-end" htmlFor="name">
                 Nome
               </Label>
               <Input
-                className="col-span-2"
+                className="col-span-3"
                 id="name"
                 placeholder="Nome"
                 type="text"
@@ -244,12 +269,12 @@ export default function CardCreateAccount({
                 onChange={handleNameChange}
               />
             </div>
-            <div className="grid grid-cols-3 items-center gap-4">
+            <div className="grid grid-cols-5 items-center gap-4">
               <Label className="text-end" htmlFor="email">
                 Email
               </Label>
               <Input
-                className="col-span-2"
+                className="col-span-3"
                 id="email"
                 placeholder="Email"
                 type="email"
@@ -257,12 +282,13 @@ export default function CardCreateAccount({
                 onChange={handleEmailChange}
               />
             </div>
-            <div className="grid grid-cols-3 items-center gap-4">
+
+            <div className="grid grid-cols-5 items-center gap-4">
               <Label className="text-end" htmlFor="password">
                 Senha
               </Label>
               <Input
-                className="col-span-2"
+                className="col-span-3"
                 id="password"
                 type="password"
                 placeholder="Senha"
@@ -270,24 +296,12 @@ export default function CardCreateAccount({
                 onChange={handlePasswordChange}
               />
             </div>
-            <div className="grid grid-cols-3 items-center gap-4">
-              <Label className="text-end" htmlFor="sip">
-                SIP
-              </Label>
-              <Input
-                className="col-span-2"
-                id="sip"
-                placeholder="SIP"
-                value={sip}
-                onChange={handleSipChange}
-              />
-            </div>
-            <div className="grid grid-cols-3 items-center gap-4">
+            <div className="grid grid-cols-5 items-center gap-4">
               <Label className="text-end" htmlFor="type">
                 Tipo de conta
               </Label>
               <Select value={type} onValueChange={handleTypeChange}>
-                <SelectTrigger className="col-span-2" id="type">
+                <SelectTrigger className="col-span-3" id="type">
                   <SelectValue placeholder="Selecione o tipo de conta" />
                 </SelectTrigger>
                 <SelectContent position="popper">
@@ -297,20 +311,36 @@ export default function CardCreateAccount({
               </Select>
             </div>
           </div>
-        </CardContent>
-        <CardFooter className="flex justify-end">
-          {!isCreating && (
-            <Button type="submit" onSubmit={handleFormSubmit}>
-              {isUpdate ? "Atualizar " : "Criar "} Conta
-            </Button>
-          )}
-          {isCreating && (
-            <Button disabled>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              {isUpdate ? "Atualizar " : "Criar "} Conta
-            </Button>
-          )}
-        </CardFooter>
-        </form>
+          <div className="grid grid-cols-5 items-center gap-4">
+          <Label className="text-end " htmlFor="type">
+                SIP
+              </Label>
+          <Select  value={e164} onValueChange={handleSetE164} >
+            <SelectTrigger className="col-span-3" id="type">
+              <SelectValue placeholder="Select a SIP" />
+            </SelectTrigger>
+            <SelectContent>
+              {usersPbx?.map((row) => (
+                <SelectItem value={row.guid}>{row.e164}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          </div>
+        </div>
+      </CardContent>
+      <CardFooter className="flex justify-end">
+        {!isCreating && (
+          <Button type="submit" onSubmit={handleFormSubmit}>
+            {isUpdate ? "Atualizar " : "Criar "} Conta
+          </Button>
+        )}
+        {isCreating && (
+          <Button disabled>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            {isUpdate ? "Atualizar " : "Criar "} Conta
+          </Button>
+        )}
+      </CardFooter>
+    </form>
   );
 }
