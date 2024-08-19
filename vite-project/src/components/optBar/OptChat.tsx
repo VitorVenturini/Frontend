@@ -1,41 +1,28 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "../ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { UserInterface } from "../users/usersCore/UserContext";
 import ChatLayout from "../chat/ChatLayout";
-
+import { useEffect, useState } from "react";
 
 interface OptChatProps {
   userToChat: UserInterface;
 }
 
-export default function OptChat( { userToChat }: OptChatProps) {
+export default function OptChat({ userToChat }: OptChatProps) {
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (userToChat) {
+      setOpen(true); // Abre o SheetContent quando `userToChat` estiver definido
+    } else {
+      setOpen(false); // Fecha o SheetContent quando `userToChat` estiver undefined
+    }
+  }, [userToChat]);
+
   return (
-    <Card className="h-full">
-      <Sheet >
-        <SheetTrigger>
-          <Button className="w-full h-full">
-            chat
-            </Button>
-        </SheetTrigger>
-        <SheetContent side="left">
-          <ChatLayout userToChat={userToChat} />
-        </SheetContent>
-      </Sheet>
-    </Card>
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetContent side="left" className="!block">
+        <ChatLayout userToChat={userToChat} />
+      </SheetContent>
+    </Sheet>
   );
 }

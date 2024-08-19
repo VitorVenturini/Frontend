@@ -6,8 +6,10 @@ import { useEffect, useRef, useState } from "react";
 import OptComponent from "@/components/optBar/OptComponent";
 import { useAccount } from "@/components/account/AccountContext";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
-import UserComponent from "../chat/OptUser";
+import UserComponent from "../chat/MessageList";
 import { useUsers } from "../users/usersCore/UserContext";
+import OptUser from "../chat/MessageList";
+import MessageList from "../chat/MessageList";
 
 interface OptGridProps {
   buttons: ButtonInterface[];
@@ -76,6 +78,11 @@ export default function OptGrid({
       );
       if (buttonInCombo) {
         setClickedButtonId(buttonInCombo.id, interactive); // setar o botão clicado atualmente
+        wss?.sendMessage({
+          api: "user",
+          mt: "TriggerStartOpt",
+          btn_id: buttonInCombo.id,
+        });
         if (
           buttonInCombo.button_type === "sensor" ||
           buttonInCombo.button_type === "camera"
@@ -100,38 +107,18 @@ export default function OptGrid({
   }, [selectedOpt, clickedButtonId]);
 
   if (selectedOpt === "chat") {
-    // quando for do TIPO CHAT O TRATAMENTO É DIFERENTE
-    // precisamos melhorar isso ~vitor ~pietro
-    const grid = Array(1) // Alterado para uma única linha
-      .fill(null)
-      .map(() => Array(12).fill({ variant: "default" })); // Ajuste o número de colunas conforme necessário
-
-    users?.forEach((user, index) => {
-      const x = 1; // Sempre na primeira linha
-      const y = index + 1; // Calcula a posição y
-
-      if (y <= 12) {
-        // Ajuste o número de colunas conforme necessário
-        grid[x - 1][y - 1] = user;
-      }
-    });
-
     return (
       <div className="overflow-x-auto hide-scrollbar">
-        <div className="flex gap-1">
-          {grid[0].map((user, j) => (
-            <div key={`${0}-${j}`}>
-              <UserComponent
-                user={user}
-                onClick={() => {
-                  handleClickedUser(
-                    clickedUser === user.guid ? null : user.guid
-                  );
-                }}
-                clickedUser={clickedUser}
-                selectedOpt={selectedOpt}
-              />
-            </div>
+        <div className="gap-2">
+          {users?.map((user) => (
+            <MessageList
+              user={user}
+              onClick={() => {
+                handleClickedUser(clickedUser === user.guid ? null : user.guid);
+              }}
+             // clickedUser={clickedUser}
+              //selectedOpt={selectedOpt}
+            />
           ))}
         </div>
       </div>
@@ -205,6 +192,13 @@ export default function OptGrid({
                         clickedButtonId === button.id ? null : button.id,
                         interactive
                       );
+                      if (clickedButtonId === null) {
+                        wss?.sendMessage({
+                          api: "user",
+                          mt: "TriggerStartOpt",
+                          btn_id: button.id,
+                        });
+                      }
                     }
                   }
                 }}

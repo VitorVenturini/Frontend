@@ -44,7 +44,7 @@
     "chooseUser": "Choose a user",
     "headerUser": "User",
     "headerButtons": "Buttons",
-    "headerAccount": "Account",
+    "headerAccount": "Accounts",
     "headerActions": "Actions",
     "headerOptions": "Options",
     "headerReports": "Reports"
@@ -96,7 +96,7 @@
     "logout": "Sair",
     "headerUser": "Usuário",
     "headerButtons": "Botões",
-    "headerAccount": "Conta",
+    "headerAccount": "Contas",
     "headerActions": "Ações",
     "headerOptions": "Opções",
     "headerReports": "Relatórios"
@@ -140,7 +140,7 @@
     "logout": "Salir",
     "headerUser": "Usuario",
     "headerButtons": "Botones",
-    "headerAccount": "Cuenta",
+    "headerAccount": "Cuentas",
     "headerActions": "Acciones",
     "headerOptions": "Opciones",
     "headerReports": "Relatórios"
