@@ -46,6 +46,7 @@ import { Loader2 } from "lucide-react";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { ButtonInterface } from "@/components/buttons/buttonContext/ButtonsContext";
 import { useSensors } from "./SensorContext";
+import { limitButtonName } from "../utils/utilityFunctions";
 
 interface User {
   id: string;
@@ -103,7 +104,8 @@ export default function ModalSensor({
   };
 
   const handleNameButton = (event: ChangeEvent<HTMLInputElement>) => {
-    setNameButton(event.target.value);
+    const limitedName = limitButtonName(event.target.value);
+    setNameButton(limitedName);
   };
   const handleTypeMeasure = (value: string) => {
     setTypeMeasure(value);

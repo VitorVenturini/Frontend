@@ -82,15 +82,15 @@ export default function AlarmButton({ button, handleClick }: ButtonProps) {
   };
   return (
     <div
-      className={`${commonClasses} flex flex-col cursor-pointer bg-green-700 ${clickedClass}`}
+      className={`${commonClasses} flex flex-col justify-between cursor-pointer bg-green-700 ${clickedClass}`}
       onClick={handleClickAlarm}
     >
       <div className="flex items-center gap-1 cursor-pointer">
-        <OctagonAlert />
+        <OctagonAlert size={17}/>
         <p className="text-sm font-medium leading-none">{button.button_name}</p>
       </div>
-      <div>
-        <p>{button.button_prt}</p>
+      <div className="flex font-extrabold text-xl justify-end">
+        {button.button_prt}
       </div>
     </div>
   );
