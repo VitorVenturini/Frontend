@@ -297,10 +297,10 @@ function AdminLayout() {
                   if (item.status) {
                     switch (item.status) {
                       case 3:
-                        item.status = "Conectado";
+                        item.status = "Finalizado";
                         break;
                       case 1:
-                        item.status = "Não Conectado";
+                        item.status = "Em andamento";
                         break;
                       case "stop":
                         item.status = "Interrompido";
