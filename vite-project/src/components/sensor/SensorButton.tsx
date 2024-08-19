@@ -17,10 +17,9 @@ interface ButtonProps {
 }
 
 export default function SensorButton({ handleClick, button }: ButtonProps) {
-  const { buttonSensors,sensors } = useSensors();
+  const { buttonSensors, sensors } = useSensors();
   const { setOldValue, setNewValue, buttons } = useButtons();
   const account = useAccount();
-
 
   const buttonState = buttons.find((b) => b.id === button.id);
 
@@ -41,11 +40,11 @@ export default function SensorButton({ handleClick, button }: ButtonProps) {
     }
   }, [filteredSensor, button?.sensor_type, newValue]);
 
-
-
-  const sensorModel = (account.isAdmin ? sensors : buttonSensors).filter((sensor) => {
-    return sensor.deveui === button.button_prt;
-  })[0];
+  const sensorModel = (account.isAdmin ? sensors : buttonSensors).filter(
+    (sensor) => {
+      return sensor.deveui === button.button_prt;
+    }
+  )[0];
 
   const getButtonClassName = () => {
     return checkButtonWarning(button, newValue)
@@ -57,31 +56,28 @@ export default function SensorButton({ handleClick, button }: ButtonProps) {
     <div
       className={
         account.isAdmin
-          ? `${commonClasses} flex flex-col cursor-pointer active:bg-red-900 bg-buttonSensor`
+          ? `${commonClasses} flex flex-col justify-between cursor-pointer active:bg-red-900 bg-buttonSensor`
           : getButtonClassName()
       }
       onClick={handleClick}
     >
-      <div className="flex items-center gap-1 cursor-pointer justify-between">
-        <div>
-          <p className="text-sm font-medium leading-none">
-            {button.button_name}
-          </p>
-          <p className="text-[10px] font-medium leading-none text-muted-foreground">
-            {sensorModel ? sensorModel.sensor_name : ""}
-          </p>
-        </div>
+      <div className="flex items-center  gap-1 cursor-pointer ">
         <ResponsivePng
           sensorModel={
             account.isAdmin ? sensorModel?.description : (button.img as any)
           }
         />
+        <p className=" flex text-sm font-medium leading-none">{button.button_name}</p>
       </div>
-      <SensorResponsiveInfo
+      <p className="text-[9px] font-medium leading-none text-muted-foreground">
+        {sensorModel ? sensorModel.sensor_name : ""}
+      </p>
+      <SensorResponsiveInfo 
         button={button}
         oldValue={oldValue}
         newValue={newValue}
       />
+
     </div>
   );
 }

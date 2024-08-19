@@ -130,14 +130,14 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
     >
       <div className="flex-grow">
         <div className="flex items-center gap-1 cursor-pointer">
-          <User />
+          <User size={16}/>
           <p className="text-sm leading-none">{button.button_name}</p>
         </div>
-        <div className="text-sm flex justify-center">
+        <div className="text-sm flex font-extrabold justify-end">
           <p>{filteredUser?.cn}</p>
         </div>
       </div>
-      <div className={`text-sm flex justify-center mt-auto w-full ${statusClass}`}>
+      <div className={`text-sm text-foreground/55 flex justify-center mt-auto w-full ${statusClass}`}>
         {getText(filteredUser?.note, texts[language])}
       </div>
     </div>
