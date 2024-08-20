@@ -5,31 +5,36 @@ import { useEffect, useState } from "react";
 
 interface OptChatProps {
   userToChat: UserInterface;
+  onClick: () => void;
 }
 
-export default function OptChat({ userToChat }: OptChatProps) {
+export default function OptChat({ userToChat,onClick }: OptChatProps) {
   const [open, setOpen] = useState(false);
-
+  const [userToChatState, setUserToChat] = useState<UserInterface | null>(null);
+  
   useEffect(() => {
     if (userToChat) {
-      setOpen(true); // Abre o SheetContent quando `userToChat` estiver definido
+      setUserToChat(userToChat);
+      setOpen(true); 
     } else {
-      setOpen(false); // Fecha o SheetContent quando `userToChat` estiver undefined
+      setOpen(false); 
+      setUserToChat(null);
     }
   }, [userToChat]);
 
   const handleOpenChange = (isOpen: boolean) => {
-    setOpen(isOpen); // Atualiza o estado de abertura
+    //setOpen(isOpen); // Atualiza o estado de abertura
     if (!isOpen) {
       console.log("O SheetContent foi fechado");
-      // Aqui você pode adicionar qualquer ação que deseja executar ao fechar o Sheet
+      setUserToChat(null);
+      onClick() // limpar o usuario selecionado para entrar no useEffect acima 
     }
   };
 
   return (
     <Sheet open={open} onOpenChange={handleOpenChange}>
       <SheetContent side="left" className="!block">
-        <ChatLayout userToChat={userToChat} />
+        {userToChatState && <ChatLayout userToChat={userToChatState} />}
       </SheetContent>
     </Sheet>
   );

@@ -105,7 +105,7 @@ export default function InteractiveOpt({
         clickedButtonId={clickedButtonId}
       />
 
-      {(clickedButtonId || clickedUser) && (
+      {(clickedButtonId) && (
         <OptLayoutCopy
           //selectedOpt = {selectedOpt}
           clickedButtonId={clickedButtonId}

@@ -117,6 +117,7 @@ export default function OptGrid({
               <MessageList
                 key={user.guid} 
                 user={user}
+                clickedUser = {clickedUser}
                 onClick={() => {
                   handleClickedUser(
                     clickedUser === user.guid ? null : user.guid
