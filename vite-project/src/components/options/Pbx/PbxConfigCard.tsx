@@ -146,7 +146,7 @@ export default function PbxConfigCard() {
             <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
               Status
             </h4>
-            {pbxStatus[0].status === "200" ? (
+            {pbxStatus[0]?.status === "200" ? (
               <div className="flex items-center gap-1">
                 <h4>Online</h4>
                 <span className="relative inline-flex rounded-full h-4 w-4 bg-green-500"></span>
