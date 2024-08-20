@@ -7,9 +7,10 @@ interface ColumnsReportsProps {
   report: any[];
   data: any[];
   keys: string[];
+  filter: string;
 }
 
-const ColumnsReports: React.FC<ColumnsReportsProps> = ({ report, data, keys }) => {
+const ColumnsReports: React.FC<ColumnsReportsProps> = ({ report, data, keys, filter }) => {
   console.log("DATA COLLUMNS REPORT",data, keys)
   const columns: ColumnDef<any>[] = useMemo(() => {
     return keys.map((key) => ({
@@ -21,7 +22,7 @@ const ColumnsReports: React.FC<ColumnsReportsProps> = ({ report, data, keys }) =
   return (
     <div>
       <h2 className="flex justify-center font-bold">Relatório {report}</h2>
-      <DataTable columns={columns} data={data} />
+      <DataTable columns={columns} data={data} filter={filter}/>
     </div>
   );
 };

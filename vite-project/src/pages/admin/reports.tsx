@@ -309,6 +309,7 @@ export default function Reports({
                 data={dataReport.table}
                 keys={dataReport.keys}
                 report={dataReport.src}
+                filter={'user'}
               />
             )}
           </TabsContent>
@@ -318,6 +319,7 @@ export default function Reports({
                 data={ajustData}
                 keys={dataReport.keys}
                 report={dataReport.src}
+                filter={'user'}
               />
             )}
           </TabsContent>
@@ -327,6 +329,7 @@ export default function Reports({
                 data={dataReport.table}
                 keys={dataReport.keys}
                 report={dataReport.src}
+                filter={'user'}
               />
             )}
           </TabsContent>
@@ -336,6 +339,7 @@ export default function Reports({
                 data={dataReport.table}
                 keys={dataReport.keys}
                 report={dataReport.src}
+                filter={'user'}
               />
             )}
           </TabsContent>

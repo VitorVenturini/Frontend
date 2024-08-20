@@ -38,8 +38,8 @@ export default function MenuOptions() {
   };
 
   return (
-    <div className="flex w-full justify-between">
-      <div className="flex flex-col justify-end gap-4 m-4">
+    <div className="flex w-full h-full justify-between">
+      <div className="flex flex-col justify-start gap-4 m-4">
         <Button
           className="focus:bg-accent"
           variant={"ghost"}

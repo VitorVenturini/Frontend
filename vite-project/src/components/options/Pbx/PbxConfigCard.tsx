@@ -6,6 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "../../ui/input";
 import { useState } from "react";
@@ -23,29 +24,42 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useAppConfig } from "../ConfigContext";
 
 // import * from React
 
 export default function PbxConfigCard() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
+  const { pbxStatus } = useAppConfig();
   const { toast } = useToast();
   const wss = useWebSocketData();
   const { pbxInfo, setPbxInfo } = usePbx();
-  const [selectPbx, setSelectPbx] = useState('')
+
   const filteredPbxInfo = pbxInfo.filter((url) => {
     return url.entry === "urlPbxTableUsers";
   })[0];
-
+  const filteredPbxType = pbxInfo.filter((url) => {
+    return url.entry === "pbxType";
+  })[0];
+  const [selectPbx, setSelectPbx] = useState(
+    filteredPbxType?.value.toUpperCase() || ""
+  );
   const [urlPbx, setUrlPbx] = useState(filteredPbxInfo?.value || "");
 
+  console.log("PBXCONFIG", pbxStatus);
   const handleUrlPbx = (event: ChangeEvent<HTMLInputElement>) => {
     setUrlPbx(event.target.value);
   };
   const handleSelect = (value: string) => {
     setSelectPbx(value);
-
   };
+  useEffect(() => {
+    wss?.sendMessage({
+      api: "admin",
+      mt: "PbxStatus",
+    });
+  }, []);
+
   const handleSendPbxUrl = () => {
     setIsLoading(true);
     if (urlPbx) {
@@ -65,7 +79,6 @@ export default function PbxConfigCard() {
         {
           entry: "urlPbxTableUsers",
           value: urlPbx,
-
         },
       ] as PbxInterface[]);
       // adicionar no contexto caso o admin troca de aba para manter o valor no input
@@ -84,32 +97,38 @@ export default function PbxConfigCard() {
   return (
     <Card className="w-[50%] h-fit">
       <CardHeader>
-        <CardTitle>PBX</CardTitle>
+        <div className="flex align-middle justify-between items-center">
+          <CardTitle>PBX</CardTitle>
+
+          {!isLoading && <Button onClick={handleSendPbxUrl}>Salvar</Button>}
+          {isLoading && (
+            <Button disabled>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Salvar
+            </Button>
+          )}
+        </div>
         <CardDescription>Modelo e URL do pbx</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="w-full flex flex-col gap-5">
-        <div className="flex items-center justify-between gap-3 w-full">
+          <div className="flex items-center justify-between gap-3 w-full">
             <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
               Modelo
             </h4>
-            <Select onValueChange={handleSelect}>
-                  <SelectTrigger className="col-span-1">
-                    <SelectValue placeholder="Selecione um PBX" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>PBX</SelectLabel>
-                      
-                        <SelectItem value={"INNOVAPHONE"}>
-                        Innovaphone
-                        </SelectItem>
-                        <SelectItem value={"EPYGI"}>
-                        Epygi
-                        </SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
+            <Select onValueChange={handleSelect} value={selectPbx}>
+              <SelectTrigger className="col-span-1">
+                <SelectValue placeholder="Selecione um PBX" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>PBX</SelectLabel>
+
+                  <SelectItem value={"INNOVAPHONE"}>Innovaphone</SelectItem>
+                  <SelectItem value={"EPYGI"}>Epygi</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </div>
           <div className="flex items-center justify-between gap-3 w-full">
             <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
@@ -123,17 +142,24 @@ export default function PbxConfigCard() {
               value={urlPbx}
             />
           </div>
+          <div className="flex items-center justify-between gap-3 w-full">
+            <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
+              Status
+            </h4>
+            {pbxStatus[0].status === "200" ? (
+              <div className="flex items-center gap-1">
+                <h4>Online</h4>
+                <span className="relative inline-flex rounded-full h-4 w-4 bg-green-500"></span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-1">
+                <h4>Offline</h4>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+              </div>
+            )}
+          </div>
         </div>
       </CardContent>
-      <CardFooter className="flex justify-end">
-        {!isLoading && <Button onClick={handleSendPbxUrl}>Salvar</Button>}
-        {isLoading && (
-          <Button disabled>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Salvar
-          </Button>
-        )}
-      </CardFooter>
     </Card>
   );
 }
