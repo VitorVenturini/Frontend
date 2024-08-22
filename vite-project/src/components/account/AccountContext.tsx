@@ -13,6 +13,7 @@ interface Account {
   accessToken: string;
   isAdmin: boolean; // pra saber se vai logar como admin ou user
   isLogged: boolean; // pra saber se está logado
+  session: string;
 }
 export const initialState: Account = {
   createdAt: '',
@@ -27,6 +28,7 @@ export const initialState: Account = {
   accessToken: '',
   isAdmin: false,
   isLogged: false,
+  session: '',
 };
 
 type AccountContextData = Account & {
@@ -47,14 +49,14 @@ export const AccountProvider: React.FC<AccountProviderProps> = ({ children }) =>
   const [Account, setAccount] = useState<Account>(initialState);
 
   useEffect(() => {
-    const storedAccount = localStorage.getItem('Account');
+    const storedAccount = localStorage.getItem(Account.session);
     if (storedAccount) {
       setAccount(JSON.parse(storedAccount));
     }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('Account', JSON.stringify(Account));
+    localStorage.setItem(Account.session, JSON.stringify(Account));
   }, [Account]);
 
   // Função para atualizar a conta
