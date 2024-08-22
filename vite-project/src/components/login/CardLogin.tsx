@@ -50,7 +50,7 @@ export default function CardLogin() {
   const account = useAccount();
   const { language } = useLanguage();
   //const ws = useWebSocketData();
-  localStorage.clear()
+ // localStorage.clear()
   const handleEmailChange = (event: ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
   };

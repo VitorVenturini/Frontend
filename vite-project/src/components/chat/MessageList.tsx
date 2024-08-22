@@ -15,6 +15,7 @@ import { ChatList } from "react-chat-elements";
 import { User } from "lucide-react";
 import { getInitials, generateAvatar } from "../utils/utilityFunctions";
 import OptChat from "../optBar/OptChat";
+import { useAccount } from "../account/AccountContext";
 
 interface OptProps {
   user: UserInterface;
@@ -25,7 +26,8 @@ interface OptProps {
 export default function MessageList({ user, onClick, clickedUser }: OptProps) {
   const [lastestMessage, setLastestMessage] = useState<ChatInterface[]>();
   const { chat } = useChat();
-  const myAccountInfo = JSON.parse(localStorage.getItem("Account") || "{}");
+  const account = useAccount()
+  const myAccountInfo = JSON.parse(localStorage.getItem(account.session) || "{}");
   const userToChat = user.guid === clickedUser ? user : null;
 
   useEffect(() => {
@@ -67,13 +69,13 @@ export default function MessageList({ user, onClick, clickedUser }: OptProps) {
               subtitle: lastestMessage
                 ? lastestMessage[lastestMessage.length - 1]?.msg
                 : "",
-              // dateString: lastestMessage ? lastestMessage[lastestMessage.length - 1]?.date as string : "2024",
-              // statusColor: "bg-butonSensor",
-              date: lastestMessage
-                ? new Date(
-                    lastestMessage[lastestMessage.length - 1]?.date || ""
-                  )
-                : undefined,
+              dateString: lastestMessage ? lastestMessage[lastestMessage.length - 1]?.date as string : "2024-08-22",
+              statusColor: userToChat?.status === "online" ? "#16A34A" : "#DB2424",
+              // date: lastestMessage
+              //   ? new Date(
+              //       lastestMessage[lastestMessage.length - 1]?.date || ""
+              //     )
+              //   : undefined,
               unread: lastestMessage
                 ? lastestMessage.filter(
                     (message) =>

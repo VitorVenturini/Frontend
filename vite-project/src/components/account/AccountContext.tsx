@@ -16,24 +16,24 @@ interface Account {
   session: string;
 }
 export const initialState: Account = {
-  createdAt: '',
-  email: '',
-  guid: '',
-  id: '',
-  name: '',
-  password: '',
-  sip: '',
-  type: '',
-  updatedAt: '',
-  accessToken: '',
+  createdAt: "",
+  email: "",
+  guid: "",
+  id: "",
+  name: "",
+  password: "",
+  sip: "",
+  type: "",
+  updatedAt: "",
+  accessToken: "",
   isAdmin: false,
   isLogged: false,
-  session: '',
+  session: "",
 };
 
 type AccountContextData = Account & {
   updateAccount: (newAccountData: Partial<Account> | Account) => void;
-}
+};
 
 interface AccountProviderProps {
   children: React.ReactNode;
@@ -44,27 +44,31 @@ export const AccountContext = createContext<AccountContextData>({
   updateAccount: () => {},
 });
 
-export const AccountProvider: React.FC<AccountProviderProps> = ({ children }) => {
+export const AccountProvider: React.FC<AccountProviderProps> = ({
+  children,
+}) => {
 
-  const [Account, setAccount] = useState<Account>(initialState);
-
-  useEffect(() => {
-    const storedAccount = localStorage.getItem(Account.session);
-    if (storedAccount) {
-      setAccount(JSON.parse(storedAccount));
+  const [Account, setAccount] = useState<Account>(() => {
+    const initialSession = localStorage.getItem("currentSession");
+    if (initialSession) {
+      const storedAccount = localStorage.getItem(initialSession);
+      return storedAccount ? JSON.parse(storedAccount) : initialState;
     }
-  }, []);
+    return initialState;
+  });
 
   useEffect(() => {
-    localStorage.setItem(Account.session, JSON.stringify(Account));
+    if (Account.session) {
+      localStorage.setItem("currentSession", Account.session); 
+      localStorage.setItem(Account.session, JSON.stringify(Account)); 
+    }
   }, [Account]);
 
   // Função para atualizar a conta
   const updateAccount = (newAccountData: Partial<Account> | Account) => {
-    setAccount(prevAccount => ({ ...prevAccount, ...newAccountData }));
-  }
+    setAccount((prevAccount) => ({ ...prevAccount, ...newAccountData }));
+  };
   return (
-
     <AccountContext.Provider value={{ ...Account, updateAccount }}>
       {children}
     </AccountContext.Provider>
