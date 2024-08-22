@@ -27,6 +27,7 @@ import { PbxProvider } from "./components/options/Pbx/PbxContext";
 import { AppConfigProvider } from "./components/options/ConfigContext";
 
 export const host = "https://meet.wecom.com.br";
+//const currentUrl = window.location.hostname;
 
 function App() {
   useEffect(() => {

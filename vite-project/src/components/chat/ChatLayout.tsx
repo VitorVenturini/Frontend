@@ -11,7 +11,7 @@ import "react-chat-elements/dist/main.css"; // CSS da biblioteca de chat
 import { useRef } from "react";
 import { format } from "date-fns";
 import { toast } from "../ui/use-toast";
-
+import { useAccount } from "../account/AccountContext";
 interface ChatProps {
   userToChat: UserInterface;
 }
@@ -21,8 +21,8 @@ export default function ChatLayout({ userToChat }: ChatProps) {
   const [message, setMessage] = useState("");
   const { chat, addChat, chatRead } = useChat();
   const { users } = useUsers();
-
-  const myAccountInfo = JSON.parse(localStorage.getItem("Account") || "{}");
+  const account = useAccount()
+  const myAccountInfo = JSON.parse(localStorage.getItem(account.session) || "{}");
   const messageListRef = useRef<any>(null);
   const endOfMessagesRef = useRef<HTMLDivElement>(null);
   const [isHistoryLoaded, setIsHistoryLoaded] = useState(false);

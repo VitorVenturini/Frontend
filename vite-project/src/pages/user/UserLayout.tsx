@@ -6,7 +6,7 @@ import {
   useAccount,
 } from "@/components/account/AccountContext";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 import Logout from "@/components/logout/Logout";
 import { WebSocketProvider } from "@/components/websocket/WebSocketProvider";
@@ -91,6 +91,7 @@ function UserLayout() {
     updateGalleryImages,
   } = useSensors();
   const { setUsersPbx } = useUsersPbx();
+  const { updateUserStauts } = useUsers();
   const { addHistory } = useHistory();
   const { setApiKeyInfo } = useGoogleApiKey();
   const {
@@ -101,6 +102,7 @@ function UserLayout() {
     addChatMessage,
     chatDelivered,
     chatRead,
+    clearChat,
   } = useChat();
 
   const [selectedOptTop, setSelectedOptTop] = useState<string>("floor"); // default for top
@@ -112,7 +114,7 @@ function UserLayout() {
   //const [clickedUser , setClickedUser] = useState<UserInterface[]>([])
 
   const navigate = useNavigate();
-  const myAccountInfo = JSON.parse(localStorage.getItem("Account") || "{}");
+  const { guid } = useContext(AccountContext);
   const [comboStart, setComboStart] = useState(false);
   const { users } = useUsers();
 
@@ -142,12 +144,14 @@ function UserLayout() {
         break;
       case "SelectAllMessagesSrcResult":
         const latestMessage = JSON.parse(message.result);
+        clearChat()
         // latestMessage.forEach((chat: ChatInterface) => addLastestMessage(chat));
         addLastestMessage(latestMessage); // info dos chats para ser exibido no chat list
         break;
       case "SelectMessageHistoryResultSrc":
         const allMsg: ChatInterface[] = message.result;
-        allMessages(allMsg); // receber todas conversas
+        console.log("MyGuid" + guid);
+        allMessages(allMsg, guid); // receber todas conversas
         break;
 
       case "SelectDeviceHistoryResult":
@@ -246,13 +250,19 @@ function UserLayout() {
       case "NumberBusy":
         setButtonNumberCallStatus(message.number, message.color, message.note);
         break;
+      case "CoreUserOnline":
+        updateUserStauts(message.guid, "online");
+        break;
+      case "CoreUserOfline":
+        updateUserStauts(message.guid, "offline");
+        break;
       case "UserOnline":
-        if (pbxUser.length > 0) {
+        if (pbxUser?.length > 0) {
           updateUserPbxStauts(message.guid, message.color, message.note);
         }
         break;
       case "UserOffline":
-        if (pbxUser.length > 0) {
+        if (pbxUser?.length > 0) {
           updateUserPbxStauts(message.guid, "offline", "offline");
         }
         break;

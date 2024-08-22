@@ -50,7 +50,7 @@ export default function OptGrid({
   const { setStopCombo } = useButtons();
   const [comboStarted, setComboStarted] = useState<number | null>(null);
   const comboStartedRef = useRef<number | null>(null);
-  const myAccountInfo = JSON.parse(localStorage.getItem("Account") || "{}");
+  const myAccountInfo = JSON.parse(localStorage.getItem(account.session) || "{}");
 
   const handleClickedUser = (newUser: string | null) => {
     if (setClickedUser) {
