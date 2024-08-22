@@ -1,4 +1,6 @@
 import React, { useState, useEffect, ChangeEvent } from "react";
+import ReactAudioPlayer from "react-audio-player";
+import { AudioPlayer } from "react-audio-player-component";
 import { Button } from "@/components/ui/button";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { addDays, format } from "date-fns";
@@ -26,7 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
+import { host } from "@/App";
 type DateRange = {
   from: Date;
   to: Date;
@@ -53,7 +55,7 @@ export default function Reports({
   const { sensors } = useSensors();
   const [startHour, setStartHour] = useState("");
   const [endHour, setEndHour] = useState("");
-  const [setRpt] = useState('')
+  const [setRpt] = useState("");
 
   const handleStartHour = (event: ChangeEvent<HTMLInputElement>) => {
     setStartHour(event.target.value);
@@ -73,11 +75,7 @@ export default function Reports({
     return `${formattedDate} ${finalTime}:00`; // Retorna a data e hora no formato 'YYYY-MM-DD HH:mm:ss'
   };
 
-  const replaceData = (
-    users: any[],
-    item: any,
-    columnName: string
-  ): any => {
+  const replaceData = (users: any[], item: any, columnName: string): any => {
     const user = users.find(
       (user: any) =>
         user.guid === item[columnName] || user.sip === item[columnName]
@@ -124,8 +122,9 @@ export default function Reports({
   const handleExecDevice = (value: string) => {
     clearDataReport();
     setActionExecDevice(value);
-    
-    if (value && date?.from) {  // Verificação se 'date' e 'date.from' estão definidos
+
+    if (value && date?.from) {
+      // Verificação se 'date' e 'date.from' estão definidos
       const fromDateTimeUTC = formatDateTime(date.from, startHour, "00:00:00");
       const toDateTimeUTC = formatDateTime(
         date.to ? date.to : date.from,
@@ -144,7 +143,6 @@ export default function Reports({
       console.error("Data não definida corretamente.");
     }
   };
-  
 
   const handleMenu = (value: string) => {
     clearDataReport();
@@ -186,7 +184,8 @@ export default function Reports({
         endHour,
         "23:59:59"
       );
-    } else if (reportSrc && date?.from) {  // Verificação adicional para garantir que 'date.from' está definido
+    } else if (reportSrc && date?.from) {
+      // Verificação adicional para garantir que 'date.from' está definido
       const fromDateTimeUTC = formatDateTime(date.from, startHour, "00:00:00");
       const toDateTimeUTC = formatDateTime(
         date.to ? date.to : date.from,
@@ -272,8 +271,49 @@ export default function Reports({
               <TabsTrigger value="RptSensors">Sensores</TabsTrigger>
               <TabsTrigger value="RptMensages">Mensagens</TabsTrigger>
             </TabsList>
-            {  <div>
-              </div>}
+            {/* <AudioPlayer
+              src={
+                host +
+                "/api/innovaphone/recordings/7fccefbd2dc766012d0d0050560ec001-0090334c62ca-42--pietro.wav"
+              }
+              minimal={true}
+              width={300}
+              trackHeight={20}
+              barWidth={1}
+              gap={1}
+              visualise={true}
+              backgroundColor="#FFF8DE"
+              barColor="#C1D0B5"
+              barPlayedColor="#99A98F"
+              skipDuration={2}
+              showLoopOption={true}
+              showVolumeControl={true}
+
+              // seekBarColor="purple"
+              // volumeControlColor="blue"
+              // hideSeekBar={true}
+              // hideTrackKnobWhenPlaying={true}
+            />
+            <ReactAudioPlayer
+              src={
+                host +
+                "/api/innovaphone/recordings/7fccefbd2dc766012d0d0050560ec001-0090334c62ca-42--pietro.wav"
+              }
+              controls
+            />
+            <a
+              href={
+                host +
+                "/api/innovaphone/recordings/7fccefbd2dc766012d0d0050560ec001-0090334c62ca-42--pietro.wav"
+              }
+              download={
+                host +
+                "/api/innovaphone/recordings/7fccefbd2dc766012d0d0050560ec001-0090334c62ca-42--pietro.wav"
+              }
+            >
+              download
+            </a> */}
+
             <TabsContent value="RptSensors" className="gap-4 py-4 ">
               <div className="flex items-center gap-4 h-[10px]">
                 <div className="flex justify-end gap-1">
@@ -309,7 +349,7 @@ export default function Reports({
                 data={dataReport.table}
                 keys={dataReport.keys}
                 report={dataReport.src}
-                filter={'user'}
+                filter={"user"}
               />
             )}
           </TabsContent>
@@ -319,7 +359,7 @@ export default function Reports({
                 data={ajustData}
                 keys={dataReport.keys}
                 report={dataReport.src}
-                filter={'user'}
+                filter={"user"}
               />
             )}
           </TabsContent>
@@ -329,18 +369,20 @@ export default function Reports({
                 data={dataReport.table}
                 keys={dataReport.keys}
                 report={dataReport.src}
-                filter={'user'}
+                filter={"user"}
               />
             )}
           </TabsContent>
           <TabsContent value="RptCalls" className="gap-4 py-4">
             {dataReport?.table[0] && (
-              <ColumnsReports
-                data={dataReport.table}
-                keys={dataReport.keys}
-                report={dataReport.src}
-                filter={'user'}
-              />
+              <div>
+                <ColumnsReports
+                  data={dataReport.table}
+                  keys={dataReport.keys}
+                  report={dataReport.src}
+                  filter={"user"}
+                />
+              </div>
             )}
           </TabsContent>
         </Tabs>

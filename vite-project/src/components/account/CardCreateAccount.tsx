@@ -150,7 +150,9 @@ export default function CardCreateAccount({
   const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
   };
-
+  const encryptPassword = (plainTextPassword: string) => {
+    return btoa(plainTextPassword); // Codifica a senha em Base64
+  };
   const handleCreateUser = async () => {
     setIsCreating(true);
 
@@ -166,7 +168,7 @@ export default function CardCreateAccount({
     //enviar a senha criptografada depois
     const obj = {
       email: email,
-      password: password,
+      password: encryptPassword(password),
       name: name,
       sip: e164,
       type: type,
@@ -184,8 +186,9 @@ export default function CardCreateAccount({
           },
           body: JSON.stringify(obj),
         }
+        
       );
-
+      console.log('ACCONT UPDATE', obj)
       const data = await response.json();
 
       if (!response.ok) {
