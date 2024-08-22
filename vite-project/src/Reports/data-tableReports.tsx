@@ -76,6 +76,7 @@ export function DataTable<TData>({
     table.getColumn("guid")?.setFilterValue(value);
     setSelectedUser(value);
   };
+  
   console.log("TABELA FILTER", useFilter);
   return (
     <div className="rounded-md w-full border">

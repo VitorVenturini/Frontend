@@ -172,7 +172,7 @@ export default function CardCreateAccount({
       name: name,
       sip: e164,
       type: type,
-      ...(isUpdate && { id: user?.id }),
+      ...(isUpdate && { id: user?.id })
     };
 
     try {

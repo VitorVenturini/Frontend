@@ -1,6 +1,5 @@
 import React, { useState, useEffect, ChangeEvent } from "react";
 import ReactAudioPlayer from "react-audio-player";
-import { AudioPlayer } from "react-audio-player-component";
 import { Button } from "@/components/ui/button";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { addDays, format } from "date-fns";
@@ -271,49 +270,6 @@ export default function Reports({
               <TabsTrigger value="RptSensors">Sensores</TabsTrigger>
               <TabsTrigger value="RptMensages">Mensagens</TabsTrigger>
             </TabsList>
-            {/* <AudioPlayer
-              src={
-                host +
-                "/api/innovaphone/recordings/7fccefbd2dc766012d0d0050560ec001-0090334c62ca-42--pietro.wav"
-              }
-              minimal={true}
-              width={300}
-              trackHeight={20}
-              barWidth={1}
-              gap={1}
-              visualise={true}
-              backgroundColor="#FFF8DE"
-              barColor="#C1D0B5"
-              barPlayedColor="#99A98F"
-              skipDuration={2}
-              showLoopOption={true}
-              showVolumeControl={true}
-
-              // seekBarColor="purple"
-              // volumeControlColor="blue"
-              // hideSeekBar={true}
-              // hideTrackKnobWhenPlaying={true}
-            />
-            <ReactAudioPlayer
-              src={
-                host +
-                "/api/innovaphone/recordings/7fccefbd2dc766012d0d0050560ec001-0090334c62ca-42--pietro.wav"
-              }
-              controls
-            />
-            <a
-              href={
-                host +
-                "/api/innovaphone/recordings/7fccefbd2dc766012d0d0050560ec001-0090334c62ca-42--pietro.wav"
-              }
-              download={
-                host +
-                "/api/innovaphone/recordings/7fccefbd2dc766012d0d0050560ec001-0090334c62ca-42--pietro.wav"
-              }
-            >
-              download
-            </a> */}
-
             <TabsContent value="RptSensors" className="gap-4 py-4 ">
               <div className="flex items-center gap-4 h-[10px]">
                 <div className="flex justify-end gap-1">
@@ -348,7 +304,7 @@ export default function Reports({
               <ColumnsReports
                 data={dataReport.table}
                 keys={dataReport.keys}
-                report={dataReport.src}
+                report={dataReport.src as any}
                 filter={"user"}
               />
             )}
@@ -358,7 +314,7 @@ export default function Reports({
               <ColumnsReports
                 data={ajustData}
                 keys={dataReport.keys}
-                report={dataReport.src}
+                report={dataReport.src as any}
                 filter={"user"}
               />
             )}
@@ -368,7 +324,7 @@ export default function Reports({
               <ColumnsReports
                 data={dataReport.table}
                 keys={dataReport.keys}
-                report={dataReport.src}
+                report={dataReport.src as any}
                 filter={"user"}
               />
             )}
@@ -379,7 +335,7 @@ export default function Reports({
                 <ColumnsReports
                   data={dataReport.table}
                   keys={dataReport.keys}
-                  report={dataReport.src}
+                  report={dataReport.src as any}
                   filter={"user"}
                 />
               </div>
