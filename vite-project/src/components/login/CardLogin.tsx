@@ -77,7 +77,7 @@ export default function CardLogin() {
 
     const formData = {
       email: email,
-      password: password,
+      password: btoa(password),
     };
 
     try {
@@ -131,6 +131,10 @@ export default function CardLogin() {
             console.error("Erro: Senha inválida.");
             toast({ description: "Senha inválida" });
             break;
+          case "incorrectPassword":
+            console.error("Erro: Senha inválida.");
+            toast({ description: "Senha inválida" });
+            break;
           case "rejected":
             console.error("Erro: Rejeitado.");
             toast({ description: "Revise suas credenciais" });
@@ -140,7 +144,7 @@ export default function CardLogin() {
             toast({ description: "Contate o adm de Redes" });
             break;
           case "duplicatedLogin":
-            setOpen(true)
+            setOpen(true);
             //abrir o modal que mostra a mensagem de sessão duplicada
             break;
           default:
@@ -233,7 +237,7 @@ export default function CardLogin() {
           </CardFooter>
         </form>
       </Card>
-      
+
       {/* coloquei o card de login duplicado aqui , ele so vai ficar visivel quando o cara tentar 
       logar e chegar o error duplicatedLogin
       */}
