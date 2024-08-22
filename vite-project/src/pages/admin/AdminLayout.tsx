@@ -55,7 +55,7 @@ function AdminLayout() {
   const { updateUserPbxStauts } = useUsersPbx();
   const { setApiKeyInfo } = useGoogleApiKey();
   const { setPbxInfo } = usePbx();
-  const { updateLicense, setPbxStatus  } = useAppConfig();
+  const { updateLicense, setPbxStatus } = useAppConfig();
   const wss = useWebSocketData();
   const { buttons, setButtons, addButton, updateButton, deleteButton } =
     useButtons();
@@ -271,6 +271,12 @@ function AdminLayout() {
           updateUserPbxStauts(message.guid, "offline", "offline");
         }
         break;
+      case "CoreUserOnline":
+        updateUserStauts(message.guid, "online");
+        break;
+      case "CoreUserOffline":
+        updateUserStauts(message.guid, "offline");
+        break;
       case "SelectFromReportsSuccess":
         if (message.result === "[]") {
           toast({
@@ -374,12 +380,12 @@ function AdminLayout() {
           });
         }
         break;
-        case "PbxStatusResult":
-          if(message.result){
-            const status = String(message.result)
-            setPbxStatus([{status}])
-          }
-          break;
+      case "PbxStatusResult":
+        if (message.result) {
+          const status = String(message.result);
+          setPbxStatus([{ status }]);
+        }
+        break;
       default:
         console.log("Unknown message type:", message);
         break;

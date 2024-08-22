@@ -10,6 +10,7 @@ import UserComponent from "../chat/MessageList";
 import { useUsers } from "../users/usersCore/UserContext";
 import OptUser from "../chat/MessageList";
 import MessageList from "../chat/MessageList";
+import { useChat } from "../chat/ChatContext";
 
 interface OptGridProps {
   buttons: ButtonInterface[];
@@ -50,8 +51,10 @@ export default function OptGrid({
   const { setStopCombo } = useButtons();
   const [comboStarted, setComboStarted] = useState<number | null>(null);
   const comboStartedRef = useRef<number | null>(null);
-  const myAccountInfo = JSON.parse(localStorage.getItem(account.session) || "{}");
-
+  const myAccountInfo = JSON.parse(
+    localStorage.getItem(account.session) || "{}"
+  );
+  const { chat } = useChat();
   const handleClickedUser = (newUser: string | null) => {
     if (setClickedUser) {
       setClickedUser(newUser);
@@ -108,16 +111,46 @@ export default function OptGrid({
   }, [selectedOpt, clickedButtonId]);
 
   if (selectedOpt === "chat") {
+    const usersWithLastMessage = users.map((user) => {
+      const userMessages = chat.filter(
+        (message) =>
+          (message.to_guid === myAccountInfo.guid &&
+            message.from_guid === user.guid) ||
+          (message.from_guid === myAccountInfo.guid &&
+            message.to_guid === user.guid)
+      );
+
+      const lastMessage = userMessages.sort(
+        (a, b) =>
+          new Date(b.date || "").getTime() - new Date(a.date || "").getTime()
+      )[0];
+
+      return {
+        ...user,
+        lastMessage: lastMessage || null,
+      };
+    });
+
+    const sortedUsers = usersWithLastMessage.sort((a, b) => {
+      const dateA = a.lastMessage
+        ? new Date(a.lastMessage.date as Date).getTime()
+        : 0;
+      const dateB = b.lastMessage
+        ? new Date(b.lastMessage.date as Date).getTime()
+        : 0;
+      return dateB - dateA;
+    });
+
     return (
       <div className="overflow-x-auto hide-scrollbar">
         <div className="gap-2">
-          {users
-            ?.filter((user) => user.guid !== myAccountInfo.guid) 
+          {sortedUsers
+            ?.filter((user) => user.guid !== myAccountInfo.guid)
             .map((user) => (
               <MessageList
-                key={user.guid} 
+                key={user.guid}
                 user={user}
-                clickedUser = {clickedUser}
+                clickedUser={clickedUser}
                 onClick={() => {
                   handleClickedUser(
                     clickedUser === user.guid ? null : user.guid

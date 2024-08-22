@@ -253,7 +253,7 @@ function UserLayout() {
       case "CoreUserOnline":
         updateUserStauts(message.guid, "online");
         break;
-      case "CoreUserOfline":
+      case "CoreUserOffline":
         updateUserStauts(message.guid, "offline");
         break;
       case "UserOnline":
