@@ -360,8 +360,8 @@ function UserLayout() {
       token={account.accessToken}
       onMessage={handleWebSocketMessage}
     >
-      <div className="flex justify-center gap-1 p-1 w-full h-full">
-        <div className="gap-1 space-y-1 w-full h-full">
+      <div className="flex justify-center gap-1 p-1">
+        <div className="gap-1 space-y-1">
           {/* DE CIMA  */}
           <InteractiveGridCopy
             interactive="top"
