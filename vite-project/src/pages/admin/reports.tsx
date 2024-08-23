@@ -99,6 +99,10 @@ export default function Reports({
             item = replaceData(users, item, "guid");
             item = replaceData(users, item, "number");
             return item;
+          case "RptMessages":
+            item = replaceData(users, item, "from_guid");
+            item = replaceData(users, item, "to_guid");
+            return item;
 
           default:
             item = replaceData(users, item, "guid");
@@ -268,7 +272,7 @@ export default function Reports({
               <TabsTrigger value="RptCalls">Chamadas</TabsTrigger>
               <TabsTrigger value="RptActivities">Atividade</TabsTrigger>
               <TabsTrigger value="RptSensors">Sensores</TabsTrigger>
-              <TabsTrigger value="RptMensages">Mensagens</TabsTrigger>
+              <TabsTrigger value="RptMessages">Mensagens</TabsTrigger>
             </TabsList>
             <TabsContent value="RptSensors" className="gap-4 py-4 ">
               <div className="flex items-center gap-4 h-[10px]">
@@ -319,7 +323,7 @@ export default function Reports({
               />
             )}
           </TabsContent>
-          <TabsContent value="RptMensages" className="gap-4 py-4">
+          <TabsContent value="RptMessages" className="gap-4 py-4">
             {dataReport?.table[0] && (
               <ColumnsReports
                 data={dataReport.table}

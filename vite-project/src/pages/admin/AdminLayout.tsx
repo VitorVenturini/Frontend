@@ -326,9 +326,15 @@ function AdminLayout() {
                 }
 
                 parsedData = parsedData.map((item: any) => {
-                  // Formatar a coluna 'date', se existir
+                  // Formatar a coluna 'date' ou outras que armazenam datas, se existirem
                   if (item.date) {
                     item.date = formatDate(item.date);
+                  }
+                  if (item.delivered) {
+                    item.delivered = formatDate(item.delivered);
+                  }
+                  if (item.read) {
+                    item.read = formatDate(item.read);
                   }
 
                   // Formatar colunas que começam com 'call' e possuem valor

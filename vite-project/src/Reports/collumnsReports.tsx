@@ -45,15 +45,15 @@ const ColumnsReports: React.FC<ColumnsReportsProps> = ({
                 width={300}
                 trackHeight={20}
                 barWidth={1}
-                gap={1}
+                gap={2}
                 visualise={true}
-                backgroundColor="hsl(var(--border))"
-                barColor="#C1D0B5"
-                barPlayedColor="#99A98F"
+                backgroundColor="#1e293b"
+                barColor="#1e293b"
+                barPlayedColor="#ffffff"
                 skipDuration={2}
-                showLoopOption={true}
-                showVolumeControl={true}
-                autoplay
+                showLoopOption={false}
+                showVolumeControl={false}
+                
               />
               <a
                 href={`${host}${recordLink}`}
@@ -84,7 +84,9 @@ const ColumnsReports: React.FC<ColumnsReportsProps> = ({
                   }
                 }}
               >
-                <Download />
+                <Download                 className={`cursor-pointer ${
+                  !isLinkAvailable && "opacity-50 cursor-not-allowed"
+                }`}/>
               </a>
             </div>
           );
