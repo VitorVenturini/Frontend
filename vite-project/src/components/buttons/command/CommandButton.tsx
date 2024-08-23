@@ -12,7 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { commonClasses } from "../ButtonsComponent";
-import LogoCore from "../../../assets/Vector.svg"
+import LogoCore from "../../../assets/Vector.svg";
 
 interface ButtonProps {
   handleClick: () => void;
@@ -21,7 +21,7 @@ interface ButtonProps {
 
 export default function CommandButton({ handleClick, button }: ButtonProps) {
   const { sensors } = useSensors();
-  const { buttons,setButtonLoading, setStopCombo } = useButtons();
+  const { buttons, setButtonLoading, setStopCombo } = useButtons();
   const account = useAccount();
   const wss = useWebSocketData();
   //const [isLoading, setIsLoading] = useState(false);
@@ -39,7 +39,7 @@ export default function CommandButton({ handleClick, button }: ButtonProps) {
         btn_id: button.id,
       });
     }
-    setButtonLoading(button.id,true);
+    setButtonLoading(button.id, true);
     // //const isClicked = button.clicked;
     // if (button.triggered) {
     //   removeClickedButton(button.id);
@@ -57,55 +57,54 @@ export default function CommandButton({ handleClick, button }: ButtonProps) {
   };
 
   useEffect(() => {
-    if (!initiatedByUser) { // nao foi iniciado por um usuario
-      if (button.loading) return; // se estiver carregando entao nao deixa ativar o commando 
-      if (button.comboStart) { // RECEBEU UM COMBO
+    if (!initiatedByUser) {
+      // nao foi iniciado por um usuario
+      if (button.loading) return; // se estiver carregando entao nao deixa ativar o commando
+      if (button.comboStart) {
+        // RECEBEU UM COMBO
         //setClickedClass("bg-red-800");
         wss?.sendMessage({
           api: "user",
           mt: "TriggerCommand",
           btn_id: button.id,
         });
-        setButtonLoading(button.id,true);
+        setButtonLoading(button.id, true);
       }
     } else {
       setInitiatedByUser(false);
     }
-  }, [button.comboStart]); // so vai ativar quando tiver troca de valor 
+  }, [button.comboStart]); // so vai ativar quando tiver troca de valor
 
   const buttonState = buttons.find((b) => b.id === button.id);
   const commandValue = buttonState?.commandValue;
 
   useEffect(() => {
-    setButtonLoading(button.id,false);
-    if (button.comboStart) { // parar o combo se ele tiver ativo 
-      setStopCombo(button.id) // pois precisamos ver se o valor do button.comboStart mudou para ativar o UseEffect acima 
+    setButtonLoading(button.id, false);
+    if (button.comboStart) {
+      // parar o combo se ele tiver ativo
+      setStopCombo(button.id); // pois precisamos ver se o valor do button.comboStart mudou para ativar o UseEffect acima
     }
   }, [commandValue]); // quando vier o novo valor do botão command ( quando vier o ControllerReceived)
 
   return (
-    <div className={`${commonClasses} bg-buttonSensor`} onClick={handleClickCommand}>
-      <div className="flex items-center gap-1 cursor-pointer justify-between">
-        <div>
-          <p className="text-sm font-medium leading-none">
-            {button.button_name}
-          </p>
-          <p className="text-[10px] font-medium leading-none text-muted-foreground">
-            {button.button_prt}
-          </p>
-          <p className=" text-sm font-medium leading-none capitalize mt-1 items-center flex">
-            {commandValue}
-            {!account.isAdmin && (
-              <div>
-                {button.loading ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
-                  <Switch className="h-5" checked={commandValue === "on"} />
-                )}
-              </div>
+    <div
+      className={`${commonClasses} bg-buttonSensor flex flex-col w-full`}
+      onClick={handleClickCommand}
+    >
+      <div>
+      <p className="text-sm font-medium leading-none">{button.button_name}</p>
+      <p className="text-[10px] font-medium leading-none text-muted-foreground">{button.button_prt}</p>
+      </div>
+      <div className="flex justify-end">
+        {!account.isAdmin && (
+          <div>
+            {button.loading ? (
+              <img src={LogoCore} className="mr-2 h-8 animate-spin" />
+            ) : (
+              <Switch checked={commandValue === "on"} />
             )}
-          </p>
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );
