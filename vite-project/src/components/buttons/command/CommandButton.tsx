@@ -12,6 +12,8 @@ import { Switch } from "@/components/ui/switch";
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { commonClasses } from "../ButtonsComponent";
+import LogoCore from "../../../assets/Vector.svg"
+
 interface ButtonProps {
   handleClick: () => void;
   button: ButtonInterface;
