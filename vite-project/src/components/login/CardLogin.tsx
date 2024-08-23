@@ -74,7 +74,7 @@ export default function CardLogin() {
 
     const formData = {
       email: email,
-      password: password,
+      password: btoa(password),
     };
 
     try {

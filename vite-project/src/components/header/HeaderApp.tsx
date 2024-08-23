@@ -15,6 +15,7 @@ import { LanguageToggle } from "@/components/language/LanguageToggle";
 import texts from "../../_data/texts.json";
 import { useLanguage } from "../language/LanguageContext";
 import { useButtons } from "../buttons/buttonContext/ButtonsContext";
+import LogoCore from "../../assets/LogoCore.svg"
 
 export default function HeaderApp() {
   const account = useAccount();
@@ -56,6 +57,7 @@ export default function HeaderApp() {
   return (
     <header className="flex justify-between items-center p-2 mb-3">
       <div className="flex items-center gap-5">
+        <img src={LogoCore} alt="Logo" className="w- h-16" />
 
         <div>
           <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
