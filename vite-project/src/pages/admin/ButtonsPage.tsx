@@ -34,6 +34,7 @@ import { useState, useEffect } from "react";
 import { useAccount } from "@/components/account/AccountContext";
 import texts from "@/_data/texts.json";
 import { useLanguage } from "@/components/language/LanguageContext";
+import { host } from "@/App";
 
 interface User {
   id: string;
@@ -63,7 +64,7 @@ export default function ButtonsPage() {
     const fetchUsers = async () => {
       try {
         const response = await fetch(
-          "https://meet.wecom.com.br/api/listUsers",
+          `${host}/api/listUsers`,
           {
             method: "GET",
             headers: {

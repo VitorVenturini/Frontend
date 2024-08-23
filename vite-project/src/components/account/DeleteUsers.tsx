@@ -33,6 +33,7 @@ import {
   } from "@/components/ui/alert-dialog";
 import { useToast } from "../ui/use-toast";
 import { useUsers } from "../users/usersCore/UserContext";
+import { host } from "@/App";
   interface DeleteUsersProps {
     id: number;
   }
@@ -46,7 +47,7 @@ import { useUsers } from "../users/usersCore/UserContext";
           id: id,
         };
         try {
-          const response = await fetch("https://meet.wecom.com.br/api/deleteUser", {
+          const response = await fetch(`${host}/api/deleteUser`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
