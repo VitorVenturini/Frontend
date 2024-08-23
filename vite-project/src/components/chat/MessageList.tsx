@@ -71,7 +71,7 @@ export default function MessageList({ user, onClick, clickedUser }: OptProps) {
                 : "",
                 avatarSize: "large",
               date: lastestMessage ? lastestMessage[lastestMessage.length - 1]?.date as Date : undefined,
-              statusColor: user?.status === "online" ? "#16A34A" : "#DB2424",
+              statusColor: user?.status === "online" ? "#16A34A" : "#A9A9A9 ",
               // date: lastestMessage
               //   ? new Date(
               //       lastestMessage[lastestMessage.length - 1]?.date || ""
