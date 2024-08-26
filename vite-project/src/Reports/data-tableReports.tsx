@@ -100,7 +100,7 @@ export function DataTable<TData>({
                 {users.map((user) => (
                   <SelectItem
                     key={user.id}
-                    value={table.getColumn("from") ? user.name : user.guid}
+                    value={table.getColumn("from") || table.getColumn("number") ? user.name : user.guid}
                   >
                     {user.name}
                   </SelectItem>

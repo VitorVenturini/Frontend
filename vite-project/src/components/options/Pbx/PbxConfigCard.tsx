@@ -58,6 +58,10 @@ export default function PbxConfigCard() {
       api: "admin",
       mt: "PbxStatus",
     });
+    wss?.sendMessage({
+      api: "admin",
+      mt: "TableUsers",
+    });
   }, []);
 
   const handleSendPbxUrl = () => {
