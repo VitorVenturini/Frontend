@@ -92,8 +92,8 @@ export default function CommandButton({ handleClick, button }: ButtonProps) {
       onClick={handleClickCommand}
     >
       <div>
-      <p className="text-sm font-medium leading-none">{button.button_name}</p>
-      <p className="text-[10px] font-medium leading-none text-muted-foreground">{button.button_prt}</p>
+      <p className="text-sm font-medium leading-none xl3:text-2xl">{button.button_name}</p>
+      <p className="text-[10px] font-medium leading-none text-muted-foreground xl3:text-md">{button.button_prt}</p>
       </div>
       <div className="flex justify-end">
         {!account.isAdmin && (

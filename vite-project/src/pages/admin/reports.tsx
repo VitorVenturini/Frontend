@@ -335,14 +335,12 @@ export default function Reports({
           </TabsContent>
           <TabsContent value="RptCalls" className="gap-4 py-4">
             {dataReport?.table[0] && (
-              <div>
                 <ColumnsReports
                   data={dataReport.table}
                   keys={dataReport.keys}
                   report={dataReport.src as any}
                   filter={"user"}
                 />
-              </div>
             )}
           </TabsContent>
         </Tabs>

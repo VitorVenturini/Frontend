@@ -117,10 +117,10 @@ export default function NumberButton({ button, onClick }: NumberProps) {
     >
       <div className="flex items-center gap-1 cursor-pointer">
         {IconComponent  && <IconComponent size={17} />}
-        <p className="text-sm leading-none">{button.button_name}</p>
+        <p className="text-sm leading-none xl3:text-2xl">{button.button_name}</p>
       </div>
       <div className="text-sm flex justify-end font-extrabold">
-        <p>{button.button_prt}</p>
+        <p className="xl3:text-2xl">{button.button_prt}</p>
       </div>
       <div
         className={`text-sm flex justify-center text-foreground/75 mt-auto w-full ${button.callStatus ? callStatusClass : "bg-green-600"}`}

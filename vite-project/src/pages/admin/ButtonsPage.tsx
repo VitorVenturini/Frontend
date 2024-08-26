@@ -110,7 +110,7 @@ export default function ButtonsPage() {
 
   return (
     <div className="flex flex-col justify-center gap-3">
-      <div className="flex justify-between gap-3 items-center lg:mx-[500px]">
+      <div className="flex justify-between gap-3 items-center lg:mx-20">
         <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
           {texts[language].headerUser}:
         </h3>
