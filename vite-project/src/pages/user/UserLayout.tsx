@@ -1,7 +1,7 @@
 import { Routes, Route, useNavigate } from "react-router-dom";
 import ValidadeToken from "@/components/validateToken/ValidateToken";
 import { ThemeProvider } from "@/components/theme-provider";
-import LogoCore from "../../assets/LogoCore.svg"
+import LogoCore from "../../assets/LogoCore.svg";
 import {
   AccountContext,
   useAccount,
@@ -145,7 +145,7 @@ function UserLayout() {
         break;
       case "SelectAllMessagesSrcResult":
         const latestMessage = JSON.parse(message.result);
-        clearChat()
+        clearChat();
         // latestMessage.forEach((chat: ChatInterface) => addLastestMessage(chat));
         addLastestMessage(latestMessage); // info dos chats para ser exibido no chat list
         break;
@@ -241,6 +241,12 @@ function UserLayout() {
         break;
       case "CallConnected":
         setButtonClickedStatus(message.btn_id, "callConnected");
+        break;
+      case "CallHeld":
+        //tratar aqui
+        break;
+      case "CallRetrieved":
+        //tratar aqui
         break;
       case "CallDisconnected":
         setButtonClickedStatus(message.btn_id, "callDisconnected");
@@ -393,16 +399,15 @@ function UserLayout() {
         />
       </div>
       <div className="flex gap-5">
-      {account.type === "admin" && (
-        <Button variant="ghost" onClick={handleAdminToggle}>
-          {" "}
-         <img src={LogoCore} alt="Logo" className="h-8" />
-        </Button>
-      )}
-      <Logout />
+        {account.type === "admin" && (
+          <Button variant="ghost" onClick={handleAdminToggle}>
+            {" "}
+            <img src={LogoCore} alt="Logo" className="h-8" />
+          </Button>
+        )}
+        <Logout />
       </div>
-      
-      
+
       {/*   <div className="text-[9px] sm:text-[15px] md:text-[20px] lg:text-[22px] xl:text-[35px] 2xl:text-[50px] ">
         VE O TAMANHO AQUI O ANIMAL até o lg é tablet dps de 1290 xl é desktop
       </div> */}
