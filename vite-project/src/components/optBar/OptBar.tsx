@@ -6,6 +6,7 @@ import texts from "@/_data/texts.json";
 import { useLanguage } from "@/components/language/LanguageContext";
 import { ChatInterface, useChat } from "../chat/ChatContext";
 import { useButtons } from "../buttons/buttonContext/ButtonsContext";
+import { useAccount } from "../account/AccountContext";
 
 type OnOptChange = (opt: string) => void;
 
@@ -26,7 +27,8 @@ export default function OptBar({
   const { chat, addChat, addChatMessage } = useChat();
   const { buttons } = useButtons();
   const [newMessageReceived, setNewMessageReceived] = useState(false);
-  const myAccountInfo = JSON.parse(localStorage.getItem("Account") || "{}");
+  const account = useAccount()
+  const myAccountInfo = JSON.parse(localStorage.getItem(account.session) || "{}");
   const [initiatedByUser, setInitiatedByUser] = useState(false);
 
   const handleOptChange = (newOpt: string) => {

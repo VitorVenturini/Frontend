@@ -24,15 +24,17 @@ import { Loader2 } from "lucide-react";
 //import { useWebSocketData } from './WebSocketProvider';// Importe o useWebSocketData
 
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogClose,
-} from "@/components/ui/dialog";
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
 ("use client");
 
 import { useToast } from "@/components/ui/use-toast";
@@ -49,8 +51,9 @@ export default function CardLogin() {
   const navigate = useNavigate();
   const account = useAccount();
   const { language } = useLanguage();
+  const [open, setOpen] = useState(false);
   //const ws = useWebSocketData();
-
+  // localStorage.clear()
   const handleEmailChange = (event: ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
   };
@@ -95,7 +98,7 @@ export default function CardLogin() {
         updateAccount(accountData);
 
         toast({ description: "Login efetuado com sucesso." });
-        
+
         localStorage.setItem("isLogged", "true");
         updateAccount({ isLogged: true });
         console.log({ ...account, updateAccount: undefined });
@@ -128,6 +131,10 @@ export default function CardLogin() {
             console.error("Erro: Senha inválida.");
             toast({ description: "Senha inválida" });
             break;
+          case "incorrectPassword":
+            console.error("Erro: Senha inválida.");
+            toast({ description: "Senha inválida" });
+            break;
           case "rejected":
             console.error("Erro: Rejeitado.");
             toast({ description: "Revise suas credenciais" });
@@ -135,6 +142,10 @@ export default function CardLogin() {
           case "SequelizeConnectionRefusedError":
             console.error("Erro: Backend.");
             toast({ description: "Contate o adm de Redes" });
+            break;
+          case "duplicatedLogin":
+            setOpen(true);
+            //abrir o modal que mostra a mensagem de sessão duplicada
             break;
           default:
             console.error(
@@ -163,67 +174,89 @@ export default function CardLogin() {
   };
 
   return (
-    <Card className="xl:w-[600px] lg:w-[500px] md:[400px] sm:w-[300px] h-fit">
-      <form onSubmit={handleFormSubmit}>
-        <CardHeader>
-          <CardTitle>
-            <div>
-              <div className="flex justify-between">
-                {texts[language].login}
+    <div>
+      <Card className="xl:w-[600px] lg:w-[500px] md:[400px] sm:w-[300px] h-fit">
+        <form onSubmit={handleFormSubmit}>
+          <CardHeader>
+            <CardTitle>
+              <div>
+                <div className="flex justify-between">
+                  {texts[language].login}
+                </div>
               </div>
-            </div>
-          </CardTitle>
-          <CardDescription>
-            {texts[language].enterEmail} e {texts[language].enterPassword}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="grid gap-4 py-9">
-          <div className="grid w-full items-center gap-6">
-            <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="email" className="text-end">
-                {texts[language].enterEmail}
-              </Label>
-              <Input
-                id="email"
-                type="email"
-                className="col-span-2"
-                placeholder={texts[language].enterEmail}
-                value={email}
-                required
-                onChange={handleEmailChange}
-              />
-            </div>
-            <div className="flex flex-col space-y-1.5">
+            </CardTitle>
+            <CardDescription>
+              {texts[language].enterEmail} e {texts[language].enterPassword}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-4 py-9">
+            <div className="grid w-full items-center gap-6">
               <div className="grid grid-cols-3 items-center gap-4">
-                <Label htmlFor="password" className="text-end">
-                  {texts[language].enterPassword}
+                <Label htmlFor="email" className="text-end">
+                  {texts[language].enterEmail}
                 </Label>
                 <Input
-                  id="password"
-                  type="password"
-                  required
+                  id="email"
+                  type="email"
                   className="col-span-2"
-                  placeholder={texts[language].enterPassword}
-                  value={password}
-                  onChange={handlePasswordChange}
+                  placeholder={texts[language].enterEmail}
+                  value={email}
+                  required
+                  onChange={handleEmailChange}
                 />
               </div>
+              <div className="flex flex-col space-y-1.5">
+                <div className="grid grid-cols-3 items-center gap-4">
+                  <Label htmlFor="password" className="text-end">
+                    {texts[language].enterPassword}
+                  </Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    required
+                    className="col-span-2"
+                    placeholder={texts[language].enterPassword}
+                    value={password}
+                    onChange={handlePasswordChange}
+                  />
+                </div>
+              </div>
             </div>
-          </div>
-        </CardContent>
-        <CardFooter className="flex justify-end my-4">
-          <Button type="submit" disabled={isLoading}>
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Login
-              </>
-            ) : (
-              "Login"
-            )}
-          </Button>
-        </CardFooter>
-      </form>
-    </Card>
+          </CardContent>
+          <CardFooter className="flex justify-end my-4">
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Login
+                </>
+              ) : (
+                "Login"
+              )}
+            </Button>
+          </CardFooter>
+        </form>
+      </Card>
+
+      {/* coloquei o card de login duplicado aqui , ele so vai ficar visivel quando o cara tentar 
+      logar e chegar o error duplicatedLogin
+      */}
+      <AlertDialog open={open} onOpenChange={setOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Login Duplicado</AlertDialogTitle>
+            <AlertDialogDescription>
+              Você já está conectado em outra sessão. Por favor, encerre a
+              sessão anterior para poder realizar o login nesta.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setOpen(false)}>
+              Entendido
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
   );
 }

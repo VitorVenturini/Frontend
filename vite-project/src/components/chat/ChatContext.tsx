@@ -23,12 +23,13 @@ interface ChatContextType {
   setChat: React.Dispatch<React.SetStateAction<ChatInterface[]>>;
   addChat: (chat: ChatInterface) => void;
   addChatMessage: (chat: ChatInterface) => void;
+  addLastestMessage : (newChat: ChatInterface[]) => void;
   chatDelivered: (msg_id: number, deliveredDate: string) => void;
   chatRead: (msg_id: number, deliveredDate: string, readDate: string) => void;
-  allMessages: (newMessage: ChatInterface[]) => void;
+  allMessages: (newMessage: ChatInterface[], myGuid: string) => void;
+  clearChat: () => void;
 }
 
-const myAccountInfo = JSON.parse(localStorage.getItem("Account") || "{}");
 const chatContext = createContext<ChatContextType | undefined>(undefined);
 
 export const ChatProvider = ({ children }: { children: ReactNode }) => {
@@ -42,10 +43,16 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     setChat((prevChat) => [...prevChat, newMessage]);
   };
 
-  const allMessages = (newMessages: ChatInterface[]) => {
+  const addLastestMessage = (newChat: ChatInterface[]) => {
+    setChat(newChat); 
+  };
+  const clearChat = () =>{
+    setChat([])
+  }
+  const allMessages = (newMessages: ChatInterface[], myGuid: string) => {
     setChat((prevChat) => {
       // Filtra as mensagens que não pertencem ao usuário específico
-      const myAccountInfoGuid = myAccountInfo.guid ; // Substitua pelo GUID do seu usuário
+      const myAccountInfoGuid = myGuid ; // Substitua pelo GUID do seu usuário
       const otherUserGuid = newMessages.length > 0 ? newMessages[0].from_guid === myAccountInfoGuid ? newMessages[0].to_guid : newMessages[0].from_guid : null;
   
       if (!otherUserGuid) return prevChat; // Caso não tenha novas mensagens, retorna o estado anterior
@@ -89,7 +96,9 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       value={{
         chat,
         setChat,
+        clearChat,
         allMessages,
+        addLastestMessage,
         addChat,
         addChatMessage,
         chatDelivered,

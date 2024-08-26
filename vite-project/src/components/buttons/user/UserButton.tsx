@@ -22,6 +22,7 @@ interface ButtonProps {
 export default function UserButton({ button, handleClick }: ButtonProps) {
   const { usersPbx } = useUsersPbx();
   const { language } = useLanguage();
+  const {setStopCombo} = useButtons()
 
   const filteredUser = usersPbx?.filter((user) => {
     return user.guid === button.button_prt;
@@ -33,16 +34,24 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
   const account = useAccount();
   const wss = useWebSocketData();
 
-  // //função para o typeScript parar de encher o saco
-  // const getText = (
-  //   key: string | undefined,
-  //   languageTexts: (typeof texts)[typeof language]
-  // ): string => {
-  //   if (key && key in languageTexts) {
-  //     return languageTexts[key as keyof typeof languageTexts];
-  //   }
-  //   return key || ""; // ou outra mensagem padrão
-  // };
+ // combo ligação 
+  useEffect(() => {
+    if (button.comboStart) {
+      if (!account.isAdmin) {
+        if (!clickedButton && filteredUser.status !== "offline") {
+          // ligar
+          wss?.sendMessage({
+            api: "user",
+            mt: "TriggerCall",
+            btn_id: button.id,
+          });
+          setClickedButton(true);
+          setStopCombo(button.id)
+        }
+      }
+    }
+  }, [button.comboStart]);
+
 
   const handleClickCall = () => {
     handleClick(); // para setar a posição na hora de criar botão
@@ -65,6 +74,7 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
         });
         //setStatusClass("bg-green-800");
         setClickedButton(false);
+        setStopCombo(button.id)
       }
     }
   };

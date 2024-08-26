@@ -6,8 +6,11 @@ import { useEffect, useRef, useState } from "react";
 import OptComponent from "@/components/optBar/OptComponent";
 import { useAccount } from "@/components/account/AccountContext";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
-import UserComponent from "../chat/OptUser";
+import UserComponent from "../chat/MessageList";
 import { useUsers } from "../users/usersCore/UserContext";
+import OptUser from "../chat/MessageList";
+import MessageList from "../chat/MessageList";
+import { useChat } from "../chat/ChatContext";
 
 interface OptGridProps {
   buttons: ButtonInterface[];
@@ -48,7 +51,10 @@ export default function OptGrid({
   const { setStopCombo } = useButtons();
   const [comboStarted, setComboStarted] = useState<number | null>(null);
   const comboStartedRef = useRef<number | null>(null);
-
+  const myAccountInfo = JSON.parse(
+    localStorage.getItem(account.session) || "{}"
+  );
+  const { chat } = useChat();
   const handleClickedUser = (newUser: string | null) => {
     if (setClickedUser) {
       setClickedUser(newUser);
@@ -76,6 +82,11 @@ export default function OptGrid({
       );
       if (buttonInCombo) {
         setClickedButtonId(buttonInCombo.id, interactive); // setar o botão clicado atualmente
+        wss?.sendMessage({
+          api: "user",
+          mt: "TriggerStartOpt",
+          btn_id: buttonInCombo.id,
+        });
         if (
           buttonInCombo.button_type === "sensor" ||
           buttonInCombo.button_type === "camera"
@@ -100,39 +111,53 @@ export default function OptGrid({
   }, [selectedOpt, clickedButtonId]);
 
   if (selectedOpt === "chat") {
-    // quando for do TIPO CHAT O TRATAMENTO É DIFERENTE
-    // precisamos melhorar isso ~vitor ~pietro
-    const grid = Array(1) // Alterado para uma única linha
-      .fill(null)
-      .map(() => Array(12).fill({ variant: "default" })); // Ajuste o número de colunas conforme necessário
+    const usersWithLastMessage = users.map((user) => {
+      const userMessages = chat.filter(
+        (message) =>
+          (message.to_guid === myAccountInfo.guid &&
+            message.from_guid === user.guid) ||
+          (message.from_guid === myAccountInfo.guid &&
+            message.to_guid === user.guid)
+      );
 
-    users?.forEach((user, index) => {
-      const x = 1; // Sempre na primeira linha
-      const y = index + 1; // Calcula a posição y
+      const lastMessage = userMessages.sort(
+        (a, b) =>
+          new Date(b.date || "").getTime() - new Date(a.date || "").getTime()
+      )[0];
 
-      if (y <= 12) {
-        // Ajuste o número de colunas conforme necessário
-        grid[x - 1][y - 1] = user;
-      }
+      return {
+        ...user,
+        lastMessage: lastMessage || null,
+      };
+    });
+
+    const sortedUsers = usersWithLastMessage.sort((a, b) => {
+      const dateA = a.lastMessage
+        ? new Date(a.lastMessage.date as Date).getTime()
+        : 0;
+      const dateB = b.lastMessage
+        ? new Date(b.lastMessage.date as Date).getTime()
+        : 0;
+      return dateB - dateA;
     });
 
     return (
       <div className="overflow-x-auto hide-scrollbar">
-        <div className="flex gap-1">
-          {grid[0].map((user, j) => (
-            <div key={`${0}-${j}`}>
-              <UserComponent
+        <div className="gap-2">
+          {sortedUsers
+            ?.filter((user) => user.guid !== myAccountInfo.guid)
+            .map((user) => (
+              <MessageList
+                key={user.guid}
                 user={user}
+                clickedUser={clickedUser}
                 onClick={() => {
                   handleClickedUser(
                     clickedUser === user.guid ? null : user.guid
                   );
                 }}
-                clickedUser={clickedUser}
-                selectedOpt={selectedOpt}
               />
-            </div>
-          ))}
+            ))}
         </div>
       </div>
     );
@@ -205,6 +230,13 @@ export default function OptGrid({
                         clickedButtonId === button.id ? null : button.id,
                         interactive
                       );
+                      if (clickedButtonId === null) {
+                        wss?.sendMessage({
+                          api: "user",
+                          mt: "TriggerStartOpt",
+                          btn_id: button.id,
+                        });
+                      }
                     }
                   }
                 }}

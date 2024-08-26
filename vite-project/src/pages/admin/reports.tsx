@@ -1,4 +1,5 @@
 import React, { useState, useEffect, ChangeEvent } from "react";
+import ReactAudioPlayer from "react-audio-player";
 import { Button } from "@/components/ui/button";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { addDays, format } from "date-fns";
@@ -26,7 +27,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
+import { host } from "@/App";
 type DateRange = {
   from: Date;
   to: Date;
@@ -53,7 +54,7 @@ export default function Reports({
   const { sensors } = useSensors();
   const [startHour, setStartHour] = useState("");
   const [endHour, setEndHour] = useState("");
-  const [setRpt] = useState('')
+  const [setRpt] = useState("");
 
   const handleStartHour = (event: ChangeEvent<HTMLInputElement>) => {
     setStartHour(event.target.value);
@@ -73,11 +74,7 @@ export default function Reports({
     return `${formattedDate} ${finalTime}:00`; // Retorna a data e hora no formato 'YYYY-MM-DD HH:mm:ss'
   };
 
-  const replaceData = (
-    users: any[],
-    item: any,
-    columnName: string
-  ): any => {
+  const replaceData = (users: any[], item: any, columnName: string): any => {
     const user = users.find(
       (user: any) =>
         user.guid === item[columnName] || user.sip === item[columnName]
@@ -102,6 +99,10 @@ export default function Reports({
             item = replaceData(users, item, "guid");
             item = replaceData(users, item, "number");
             return item;
+          case "RptMessages":
+            item = replaceData(users, item, "from_guid");
+            item = replaceData(users, item, "to_guid");
+            return item;
 
           default:
             item = replaceData(users, item, "guid");
@@ -124,8 +125,9 @@ export default function Reports({
   const handleExecDevice = (value: string) => {
     clearDataReport();
     setActionExecDevice(value);
-    
-    if (value && date?.from) {  // Verificação se 'date' e 'date.from' estão definidos
+
+    if (value && date?.from) {
+      // Verificação se 'date' e 'date.from' estão definidos
       const fromDateTimeUTC = formatDateTime(date.from, startHour, "00:00:00");
       const toDateTimeUTC = formatDateTime(
         date.to ? date.to : date.from,
@@ -144,7 +146,6 @@ export default function Reports({
       console.error("Data não definida corretamente.");
     }
   };
-  
 
   const handleMenu = (value: string) => {
     clearDataReport();
@@ -186,7 +187,8 @@ export default function Reports({
         endHour,
         "23:59:59"
       );
-    } else if (reportSrc && date?.from) {  // Verificação adicional para garantir que 'date.from' está definido
+    } else if (reportSrc && date?.from) {
+      // Verificação adicional para garantir que 'date.from' está definido
       const fromDateTimeUTC = formatDateTime(date.from, startHour, "00:00:00");
       const toDateTimeUTC = formatDateTime(
         date.to ? date.to : date.from,
@@ -270,10 +272,8 @@ export default function Reports({
               <TabsTrigger value="RptCalls">Chamadas</TabsTrigger>
               <TabsTrigger value="RptActivities">Atividade</TabsTrigger>
               <TabsTrigger value="RptSensors">Sensores</TabsTrigger>
-              <TabsTrigger value="RptMensages">Mensagens</TabsTrigger>
+              <TabsTrigger value="RptMessages">Mensagens</TabsTrigger>
             </TabsList>
-            {  <div>
-              </div>}
             <TabsContent value="RptSensors" className="gap-4 py-4 ">
               <div className="flex items-center gap-4 h-[10px]">
                 <div className="flex justify-end gap-1">
@@ -308,7 +308,8 @@ export default function Reports({
               <ColumnsReports
                 data={dataReport.table}
                 keys={dataReport.keys}
-                report={dataReport.src}
+                report={dataReport.src as any}
+                filter={"user"}
               />
             )}
           </TabsContent>
@@ -317,26 +318,29 @@ export default function Reports({
               <ColumnsReports
                 data={ajustData}
                 keys={dataReport.keys}
-                report={dataReport.src}
+                report={dataReport.src as any}
+                filter={"user"}
               />
             )}
           </TabsContent>
-          <TabsContent value="RptMensages" className="gap-4 py-4">
+          <TabsContent value="RptMessages" className="gap-4 py-4">
             {dataReport?.table[0] && (
               <ColumnsReports
                 data={dataReport.table}
                 keys={dataReport.keys}
-                report={dataReport.src}
+                report={dataReport.src as any}
+                filter={"user"}
               />
             )}
           </TabsContent>
           <TabsContent value="RptCalls" className="gap-4 py-4">
             {dataReport?.table[0] && (
-              <ColumnsReports
-                data={dataReport.table}
-                keys={dataReport.keys}
-                report={dataReport.src}
-              />
+                <ColumnsReports
+                  data={dataReport.table}
+                  keys={dataReport.keys}
+                  report={dataReport.src as any}
+                  filter={"user"}
+                />
             )}
           </TabsContent>
         </Tabs>

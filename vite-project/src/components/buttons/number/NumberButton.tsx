@@ -1,4 +1,4 @@
-import { ButtonInterface } from "@/components/buttons/buttonContext/ButtonsContext";
+import { ButtonInterface, useButtons } from "@/components/buttons/buttonContext/ButtonsContext";
 import * as Icons from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { commonClasses } from "../ButtonsComponent";
@@ -25,6 +25,28 @@ export default function NumberButton({ button, onClick }: NumberProps) {
   const { language } = useLanguage();
   const wss = useWebSocketData();
   const [clickedButton, setClickedButton] = useState(false);
+  const {setStopCombo} = useButtons()
+
+  //combo ligação
+  useEffect(() => {
+    if (button.comboStart) {
+      if (!account.isAdmin) {
+        if (!clickedButton) {
+          // ligar
+          wss?.sendMessage({
+            api: "user",
+            mt: "TriggerCall",
+            btn_id: button.id,
+          });
+          setClickedButton(true);
+          setClickedStatusClass("bg-red-800");
+          setStopCombo(button.id)
+        }
+      }
+    }
+  }, [button.comboStart]);
+
+  
   const handleClick = () => {
     onClick(); // para setar a posição na hora de criar botão
     if (!account.isAdmin) {
@@ -45,7 +67,8 @@ export default function NumberButton({ button, onClick }: NumberProps) {
           btn_id: button.id,
         });
         setClickedStatusClass("bg-green-800");
-        setClickedButton(false);
+        setClickedButton(false)
+        setStopCombo(button.id)
       }
     }
     //console.log("Button" + JSON.stringify(button))

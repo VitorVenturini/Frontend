@@ -3,6 +3,7 @@ import icone from "@/assets/icone.svg";
 import CardLogin from "@/components/login/CardLogin";
 import { LanguageToggle } from "@/components/language/LanguageToggle";
 import LogoCore from "../assets/LogoCore.svg";
+import LogoWecom from "../assets/WecomLogo.svg";
 
 export default function LoginPage() {
   return (
@@ -17,6 +18,7 @@ export default function LoginPage() {
           <p className=" flex text-2xl font-extrabold tracking-tight lg:text-3xl w-full justify-center align-middle">
             CONTROL OPERATION RESPONSIVE ENVIRONMENT
           </p>
+          <img src={LogoWecom} alt="logow" className="h-9" />
         </div>
       </div>
     </div>
