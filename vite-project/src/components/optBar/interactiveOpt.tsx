@@ -4,6 +4,7 @@ import OptGrid from "@/components/optBar/OptGrid";
 import OptLayoutCopy from "./OptLayout copy";
 import OptHistory from "./OptHistory";
 import { useWebSocketData } from "../websocket/WebSocketProvider";
+import OptCall from "./OptCall";
 
 interface User {
   id: string;
@@ -89,6 +90,8 @@ export default function InteractiveOpt({
 
   if (selectedOpt === 'history') {
     return <OptHistory />; // nao carrega o grid 
+  }else if(selectedOpt === 'call'){
+    return <OptCall/>
   }
   return (
     <div className="flex flex-col gap-1 justify-start h-full w-[500px] xl:w-[700px] xl3:w-[1000px] align-top">

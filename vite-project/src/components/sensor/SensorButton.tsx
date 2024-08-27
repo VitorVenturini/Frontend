@@ -10,6 +10,7 @@ import ResponsivePng from "./ResponsivePng";
 import { useAccount } from "../account/AccountContext";
 import { commonClasses } from "../buttons/ButtonsComponent";
 import { checkButtonWarning } from "../utils/utilityFunctions";
+import { useWebSocketData } from "../websocket/WebSocketProvider";
 
 interface ButtonProps {
   handleClick: () => void;
@@ -20,7 +21,17 @@ export default function SensorButton({ handleClick, button }: ButtonProps) {
   const { buttonSensors, sensors } = useSensors();
   const { setOldValue, setNewValue, buttons } = useButtons();
   const account = useAccount();
-
+  const wss = useWebSocketData()
+  
+  const handleClickButton =  () => {
+    handleClick() // handleClick utilizado no admin para setar a posição do botão
+    wss?.sendMessage({
+      api: "user",
+      mt: "UpdateButton",
+      btn_id: button.id,
+      muted: true
+    })
+  }
   const buttonState = buttons.find((b) => b.id === button.id);
 
   const oldValue = buttonState?.oldValue;
@@ -59,7 +70,7 @@ export default function SensorButton({ handleClick, button }: ButtonProps) {
           ? `${commonClasses} flex flex-col justify-between cursor-pointer active:bg-red-900 bg-buttonSensor`
           : getButtonClassName()
       }
-      onClick={handleClick}
+      onClick={handleClickButton}
     >
       <div className="flex items-center  gap-1 cursor-pointer ">
         <ResponsivePng
