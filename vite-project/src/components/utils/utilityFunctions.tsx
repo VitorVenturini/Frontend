@@ -1,6 +1,8 @@
 import { ButtonInterface } from "../buttons/buttonContext/ButtonsContext";
 import { SensorInterface } from "../sensor/SensorContext";
 import { useButtons } from "../buttons/buttonContext/ButtonsContext";
+import texts from "@/_data/texts.json";
+import { useLanguage } from "@/components/language/LanguageContext";
 
 function getDegreeRange(direction: string) {
   switch (direction) {
@@ -24,6 +26,9 @@ function getDegreeRange(direction: string) {
       return { min: 0, max: 0 };
   }
 }
+export function limitButtonName  (name: string) {
+  return name.slice(0, 9);
+};
 
 function isWithinRange(value: number, min: number, max: number) {
   if (min <= max) {
@@ -33,7 +38,7 @@ function isWithinRange(value: number, min: number, max: number) {
     return value >= min || value <= max;
   }
 }
-// função para verificar os botões que estão alarmados 
+// função para verificar os botões que estão alarmados
 export function checkButtonWarning(
   button: ButtonInterface,
   newValue: number | undefined
@@ -95,5 +100,42 @@ export function checkButtonWarning(
     }
   }
   return false;
+}
+//função para o typeScript parar de encher o saco
+export const getText = (key: string | undefined, languageTexts: {}): string => {
+  if (key && key in languageTexts) {
+    return languageTexts[key as keyof typeof languageTexts];
+  }
+  return key || ""; // ou outra mensagem padrão
+};
+
+export function generateAvatar(initials: string, size: number = 64): string {
+  const canvas = document.createElement('canvas');
+  const context = canvas.getContext('2d');
+
+  canvas.width = size;
+  canvas.height = size;
+
+  // Define o fundo do ícone (cor clara)
+  context!.fillStyle = '#F0F0F0';
+  context!.fillRect(0, 0, size, size);
+
+  // Define a cor do texto (cor escura) e o estilo
+  context!.fillStyle = '#333333';
+  context!.font = `${size / 2}px Arial`;
+  context!.textAlign = 'center';
+  context!.textBaseline = 'middle';
+
+  // Desenha as iniciais no centro da imagem
+  context!.fillText(initials, size / 2, size / 2);
+
+  // Converte o canvas em uma imagem base64
+  return canvas.toDataURL();
+}
+
+export function getInitials(name: string): string {
+  const nameParts = name.split(' ');
+  const initials = nameParts.map(part => part.charAt(0).toUpperCase()).join('');
+  return initials.substring(0, 2); // Retorna apenas as primeiras duas letras
 }
 

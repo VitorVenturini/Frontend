@@ -12,6 +12,7 @@ import { commonClasses } from "../ButtonsComponent";
 import { useUsersPbx } from "@/components/users/usersPbx/UsersPbxContext";
 import texts from "@/_data/texts.json";
 import { useLanguage } from "@/components/language/LanguageContext";
+import { getText } from "@/components/utils/utilityFunctions";
 
 interface ButtonProps {
   button: ButtonInterface;
@@ -21,6 +22,7 @@ interface ButtonProps {
 export default function UserButton({ button, handleClick }: ButtonProps) {
   const { usersPbx } = useUsersPbx();
   const { language } = useLanguage();
+  const {setStopCombo} = useButtons()
 
   const filteredUser = usersPbx?.filter((user) => {
     return user.guid === button.button_prt;
@@ -32,16 +34,24 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
   const account = useAccount();
   const wss = useWebSocketData();
 
-  //função para o typeScript parar de encher o saco
-  const getText = (
-    key: string | undefined,
-    languageTexts: (typeof texts)[typeof language]
-  ): string => {
-    if (key && key in languageTexts) {
-      return languageTexts[key as keyof typeof languageTexts];
+ // combo ligação 
+  useEffect(() => {
+    if (button.comboStart) {
+      if (!account.isAdmin) {
+        if (!clickedButton && filteredUser.status !== "offline") {
+          // ligar
+          wss?.sendMessage({
+            api: "user",
+            mt: "TriggerCall",
+            btn_id: button.id,
+          });
+          setClickedButton(true);
+          setStopCombo(button.id)
+        }
+      }
     }
-    return key || ""; // ou outra mensagem padrão
-  };
+  }, [button.comboStart]);
+
 
   const handleClickCall = () => {
     handleClick(); // para setar a posição na hora de criar botão
@@ -64,19 +74,18 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
         });
         //setStatusClass("bg-green-800");
         setClickedButton(false);
+        setStopCombo(button.id)
       }
     }
   };
+  //CORES PARA PARTE DE BAIXO DO BOTÃO (LISTRINHA)
   useEffect(() => {
     switch (filteredUser?.status) {
       case "online":
-        setStatusClass("bg-green-900");
+        setStatusClass("bg-green-600");
         break;
       case "on-the-phone":
         setStatusClass("bg-red-600");
-        break;
-      case "ringing":
-        setStatusClass("bg-orange-500");
         break;
       case "away":
         setStatusClass("bg-orange-500");
@@ -90,42 +99,45 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
       case "offline":
         setStatusClass("bg-neutral-900");
         break;
-      default: // default sempre offline
-        setStatusClass("bg-neutral-900");
+      // default: // default sempre offline
+      //   setStatusClass("bg-neutral-900");
     }
   }, [usersPbx]); // monitorar as alterações no contexto de usuario
 
+  //CORES PARA O BOTÃO INTEIRO
   useEffect(() => {
     setCallStatusClass("bg-red-900");
-    switch (button.callStatus) {
+    switch (button.clickedStatus) {
       case "callConnected":
-        setCallStatusClass("bg-red-600");
+        setCallStatusClass("bg-red-900");
         break;
       case "callRinging":
-        setStatusClass("bg-orange-500")
-        setCallStatusClass("bg-orange-500");
+        //setStatusClass("bg-orange-500")
+        setCallStatusClass("bg-orange-700");
         break;
       case "callDisconnected":
         setClickedButton(false)
         break;
     }
-  }, [button.callStatus]); // monitorar o status da chamada 
+  }, [button.clickedStatus]); // monitorar o status da chamada 
 
   return (
     <div
-      className={`${commonClasses} flex flex-col cursor-pointer ${
-        clickedButton ? callStatusClass : statusClass
+      className={`${commonClasses} flex flex-col justify-between h-full cursor-pointer ${
+        clickedButton ? callStatusClass : (filteredUser?.status === "offline" ? "bg-neutral-900" : "bg-green-800")
       } `}
       onClick={handleClickCall}
     >
-      <div className="flex items-center gap-1 cursor-pointer">
-        <User />
-        <p className="text-sm leading-none">{button.button_name}</p>
+      <div className="flex-grow">
+        <div className="flex items-center gap-1 cursor-pointer">
+          <User size={16}/>
+          <p className="text-sm leading-none xl3:text-2xl">{button.button_name}</p>
+        </div>
+        <div className="text-sm flex font-extrabold justify-end">
+          <p className="xl3:text-2xl">{filteredUser?.cn}</p>
+        </div>
       </div>
-      <div className="text-sm flex justify-center">
-        <p>{filteredUser?.cn}</p>
-      </div>
-      <div className="text-sm flex justify-center">
+      <div className={`text-sm text-foreground/55 flex justify-center mt-auto w-full ${statusClass}`}>
         {getText(filteredUser?.note, texts[language])}
       </div>
     </div>

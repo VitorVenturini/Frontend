@@ -46,6 +46,7 @@ interface User {
   id: string;
   name: string;
   guid: string;
+  sip: string;
   // Adicione aqui outros campos se necessário
 }
 
@@ -57,7 +58,7 @@ interface ButtonProps {
   selectedPage: string;
 }
 export const commonClasses =
-  "w-[128px] h-[66px] xl:w-[128px] xl:h-[60px] xl2:w-[150px] xl2:h-[80px] rounded-lg border bg-border text-white shadow-sm p-1";
+  "w-[128px] h-[66px] xl:w-[128px] xl:h-[60px] xl2:w-[150px] xl2:h-[80px] xl3:w-[230px] xl3:h-[120px] rounded-lg border bg-border text-white shadow-sm p-1 justify-between";
 
 export default function ButtonsComponent({
   button,

@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { useAccount } from "@/components/account/AccountContext";
 import { initialState } from "@/components/account/AccountContext";
 import { useNavigate } from "react-router-dom";
@@ -19,14 +19,18 @@ import texts from "@/_data/texts.json";
 import { useLanguage } from "@/components/language/LanguageContext";
 
 export default function Logout() {
-  const { updateAccount } = useAccount();
+  const { updateAccount} = useAccount();
+  const account = useAccount()
   const navigate = useNavigate();
   const ws = useWebSocketData();
   const { language } = useLanguage();
-
+  console.log("LOGOUT",account, localStorage)
   const handleLogout = () => {
-    localStorage.clear();
-    updateAccount(initialState);
+
+    console.log("EXIT LOGOUT", account.session , localStorage)
+   // localStorage.removeItem(account.session);
+   localStorage.clear()
+    
     if (ws) {
       ws.closeConnection(); // Fecha a conexão WebSocket
     }

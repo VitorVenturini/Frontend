@@ -24,8 +24,6 @@ export default function MenuOptions() {
         return <CardClearDB />;
       case "Gateways":
         return <Gateways />;
-      case "Conta":
-        return <ContaCard />;
       case "Radio":
         return <RadioCard />;
       case "TelephonePBX":
@@ -40,8 +38,8 @@ export default function MenuOptions() {
   };
 
   return (
-    <div className="flex w-full justify-between">
-      <div className="flex flex-col justify-end gap-4 m-4">
+    <div className="flex w-full h-full justify-between">
+      <div className="flex flex-col justify-start gap-4 m-4">
         <Button
           className="focus:bg-accent"
           variant={"ghost"}
@@ -59,20 +57,6 @@ export default function MenuOptions() {
         <Button
           className="focus:bg-accent"
           variant={"ghost"}
-          onClick={() => handleClick("Gateways")}
-        >
-          Gateways
-        </Button>
-        <Button
-          className="focus:bg-accent"
-          variant={"ghost"}
-          onClick={() => handleClick("Conta")}
-        >
-          Conta
-        </Button>
-        <Button
-          className="focus:bg-accent"
-          variant={"ghost"}
           onClick={() => handleClick("Radio")}
         >
           Radio
@@ -82,7 +66,7 @@ export default function MenuOptions() {
           variant={"ghost"}
           onClick={() => handleClick("TelephonePBX")}
         >
-          Telephone PBX
+          PBX
         </Button>
         <Button
           className="focus:bg-accent"
@@ -101,9 +85,9 @@ export default function MenuOptions() {
         <Button
           className="focus:bg-accent"
           variant={"ghost"}
-          onClick={() => handleClick("reports")}
+          onClick={() => handleClick("Gateways")}
         >
-          Relatórios
+          Iot Gateways
         </Button>
       </div>
       <div className="flex align-middle justify-center items-center w-full">

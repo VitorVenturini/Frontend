@@ -24,8 +24,10 @@ import { CameraProvider } from "./components/cameras/CameraContext";
 import { DataProvider } from "./Reports/DataContext";
 import { UserPbxProvider } from "./components/users/usersPbx/UsersPbxContext";
 import { PbxProvider } from "./components/options/Pbx/PbxContext";
+import { AppConfigProvider } from "./components/options/ConfigContext";
 
-export const host = "https://meet.wecom.com.br";
+export const host = "https://core.wecom.com.br";
+//const currentUrl = window.location.hostname;
 
 function App() {
   useEffect(() => {
@@ -51,6 +53,7 @@ function App() {
       <LanguageProvider>
         <PbxProvider>
           <GoogleApiKeyProvider>
+            <AppConfigProvider>
             <ChatProvider>
               <DataProvider>
                 <HistoryProvider>
@@ -90,6 +93,7 @@ function App() {
                 </HistoryProvider>
               </DataProvider>
             </ChatProvider>
+            </AppConfigProvider>
           </GoogleApiKeyProvider>
         </PbxProvider>
       </LanguageProvider>

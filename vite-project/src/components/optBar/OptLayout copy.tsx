@@ -91,7 +91,7 @@ export default function OptLayoutCopy(props: OptLayoutCopyProps) {
     } else if (userToChat) {
       return (
         <div>
-          <OptChat userToChat={userToChat} />
+          {/*<OptChat userToChat={userToChat} />
           {/* <ChatLayout userToChat={userToChat} /> */}
         </div>
       );
@@ -105,7 +105,7 @@ export default function OptLayoutCopy(props: OptLayoutCopyProps) {
   };
 
   return (
-    <Card className="rounded-none bg-transparent w-full h-full max-h-[330px]">
+    <Card className="rounded-none bg-transparent w-full h-full sm:h-[330px] xl3:h-[500px]">
       {renderContent()}
     </Card>
   );

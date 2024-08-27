@@ -3,6 +3,7 @@ import { ButtonInterface, useButtons } from "@/components/buttons/buttonContext/
 import OptGrid from "@/components/optBar/OptGrid";
 import OptLayoutCopy from "./OptLayout copy";
 import OptHistory from "./OptHistory";
+import { useWebSocketData } from "../websocket/WebSocketProvider";
 
 interface User {
   id: string;
@@ -39,7 +40,7 @@ export default function InteractiveOpt({
   const { setStopCombo } = useButtons();
   
   const [comboButtonId, setComboButtonId] = useState<number | null>(null);
-
+  const wss = useWebSocketData()
   // atualiza comboButtonId apenas quando os botões mudam
   useEffect(() => {
     const buttonInCombo = buttons.find(
@@ -62,6 +63,12 @@ export default function InteractiveOpt({
     }
     if (interactive === "top") {
       setClickedButtonIdTop(null);
+      if(selectedOpt === "chat"){
+        wss?.sendMessage({
+          api: "user",
+          mt: "SelectAllMessagesSrc"
+        })
+      }
     } else {
       setClickedButtonIdBottom(null);
     }
@@ -84,7 +91,7 @@ export default function InteractiveOpt({
     return <OptHistory />; // nao carrega o grid 
   }
   return (
-    <div className="flex flex-col gap-1 justify-start h-full w-[500px] xl:w-[700px] align-top">
+    <div className="flex flex-col gap-1 justify-start h-full w-[500px] xl:w-[700px] xl3:w-[1000px] align-top">
       <OptGrid
         interactive={interactive}
         buttons={buttons}
@@ -98,7 +105,7 @@ export default function InteractiveOpt({
         clickedButtonId={clickedButtonId}
       />
 
-      {(clickedButtonId || clickedUser) && (
+      {(clickedButtonId) && (
         <OptLayoutCopy
           //selectedOpt = {selectedOpt}
           clickedButtonId={clickedButtonId}

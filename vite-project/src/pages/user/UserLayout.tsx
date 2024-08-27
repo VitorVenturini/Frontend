@@ -1,12 +1,13 @@
 import { Routes, Route, useNavigate } from "react-router-dom";
 import ValidadeToken from "@/components/validateToken/ValidateToken";
 import { ThemeProvider } from "@/components/theme-provider";
+import LogoCore from "../../assets/LogoCore.svg";
 import {
   AccountContext,
   useAccount,
 } from "@/components/account/AccountContext";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 import Logout from "@/components/logout/Logout";
 import { WebSocketProvider } from "@/components/websocket/WebSocketProvider";
@@ -69,7 +70,8 @@ function UserLayout() {
   const {
     setButtons,
     setButtonTriggered,
-    setButtonCallStatus,
+    setButtonClickedStatus,
+    setButtonNumberCallStatus,
     setStopButtonTriggered,
     addButton,
     deleteButton,
@@ -90,15 +92,18 @@ function UserLayout() {
     updateGalleryImages,
   } = useSensors();
   const { setUsersPbx } = useUsersPbx();
+  const { updateUserStauts } = useUsers();
   const { addHistory } = useHistory();
   const { setApiKeyInfo } = useGoogleApiKey();
   const {
     setChat,
     allMessages,
+    addLastestMessage,
     addChat,
     addChatMessage,
     chatDelivered,
     chatRead,
+    clearChat,
   } = useChat();
 
   const [selectedOptTop, setSelectedOptTop] = useState<string>("floor"); // default for top
@@ -110,7 +115,7 @@ function UserLayout() {
   //const [clickedUser , setClickedUser] = useState<UserInterface[]>([])
 
   const navigate = useNavigate();
-  const myAccountInfo = JSON.parse(localStorage.getItem("Account") || "{}");
+  const { guid } = useContext(AccountContext);
   const [comboStart, setComboStart] = useState(false);
   const { users } = useUsers();
 
@@ -138,6 +143,18 @@ function UserLayout() {
         allBtn = buttons;
         setSensors([]);
         break;
+      case "SelectAllMessagesSrcResult":
+        const latestMessage = JSON.parse(message.result);
+        clearChat();
+        // latestMessage.forEach((chat: ChatInterface) => addLastestMessage(chat));
+        addLastestMessage(latestMessage); // info dos chats para ser exibido no chat list
+        break;
+      case "SelectMessageHistoryResultSrc":
+        const allMsg: ChatInterface[] = message.result;
+        console.log("MyGuid" + guid);
+        allMessages(allMsg, guid); // receber todas conversas
+        break;
+
       case "SelectDeviceHistoryResult":
         const sensorsArray: SensorInterface[] = JSON.parse(message.result);
         if (sensorsArray.length > 0) {
@@ -220,22 +237,40 @@ function UserLayout() {
         pbxUser = PbxUsers;
         break;
       case "CallRinging":
-        setButtonCallStatus(message.btn_id, "callRinging");
+        setButtonClickedStatus(message.btn_id, "callRinging");
         break;
       case "CallConnected":
-        setButtonCallStatus(message.btn_id, "callConnected");
+        setButtonClickedStatus(message.btn_id, "callConnected");
+        break;
+      case "CallHeld":
+        //tratar aqui
+        break;
+      case "CallRetrieved":
+        //tratar aqui
         break;
       case "CallDisconnected":
-        setButtonCallStatus(message.btn_id, "callDisconnected");
+        setButtonClickedStatus(message.btn_id, "callDisconnected");
+        break;
+      case "NumberOnline":
+        setButtonNumberCallStatus(message.number, message.color, message.note);
+        break;
+      case "NumberBusy":
+        setButtonNumberCallStatus(message.number, message.color, message.note);
+        break;
+      case "CoreUserOnline":
+        updateUserStauts(message.guid, "online");
+        break;
+      case "CoreUserOffline":
+        updateUserStauts(message.guid, "offline");
         break;
       case "UserOnline":
-        if (pbxUser.length > 0) {
+        if (pbxUser?.length > 0) {
           updateUserPbxStauts(message.guid, message.color, message.note);
         }
         break;
       case "UserOffline":
-        if (pbxUser.length > 0) {
-          updateUserPbxStauts(message.guid, "offline");
+        if (pbxUser?.length > 0) {
+          updateUserPbxStauts(message.guid, "offline", "offline");
         }
         break;
       case "Message": // mensagem do cara
@@ -247,10 +282,6 @@ function UserLayout() {
         addChat(newMsgTo);
         break;
 
-      case "SelectMessageHistoryResultSrc":
-        const allMsg: ChatInterface[] = message.result;
-        allMessages(allMsg); // receber todas conversas
-        break;
       case "ChatDelivered":
         const msg_id = message.result[0].id;
         const deliveredDate = message.result[0].delivered;
@@ -367,13 +398,16 @@ function UserLayout() {
           // clickedUser={clickedUser}
         />
       </div>
-      {account.type === "admin" && (
-        <Button variant="ghost" onClick={handleAdminToggle}>
-          {" "}
-          Visão de admin
-        </Button>
-      )}
-      <Logout />
+      <div className="flex gap-5">
+        {account.type === "admin" && (
+          <Button variant="ghost" onClick={handleAdminToggle}>
+            {" "}
+            <img src={LogoCore} alt="Logo" className="h-8" />
+          </Button>
+        )}
+        <Logout />
+      </div>
+
       {/*   <div className="text-[9px] sm:text-[15px] md:text-[20px] lg:text-[22px] xl:text-[35px] 2xl:text-[50px] ">
         VE O TAMANHO AQUI O ANIMAL até o lg é tablet dps de 1290 xl é desktop
       </div> */}

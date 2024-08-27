@@ -34,6 +34,7 @@ import { useState, useEffect } from "react";
 import { useAccount } from "@/components/account/AccountContext";
 import texts from "@/_data/texts.json";
 import { useLanguage } from "@/components/language/LanguageContext";
+import { host } from "@/App";
 
 interface User {
   id: string;
@@ -63,7 +64,7 @@ export default function ButtonsPage() {
     const fetchUsers = async () => {
       try {
         const response = await fetch(
-          "https://meet.wecom.com.br/api/listUsers",
+          `${host}/api/listUsers`,
           {
             method: "GET",
             headers: {
@@ -109,7 +110,7 @@ export default function ButtonsPage() {
 
   return (
     <div className="flex flex-col justify-center gap-3">
-      <div className="flex justify-between gap-3 items-center lg:mx-[500px]">
+      <div className="flex justify-between gap-3 items-center lg:mx-20">
         <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
           {texts[language].headerUser}:
         </h3>

@@ -47,6 +47,7 @@ import {
   UserPbxInterface,
   useUsersPbx,
 } from "@/components/users/usersPbx/UsersPbxContext";
+import { useAppConfig } from "@/components/options/ConfigContext";
 
 function AdminLayout() {
   const account = useAccount();
@@ -54,6 +55,7 @@ function AdminLayout() {
   const { updateUserPbxStauts } = useUsersPbx();
   const { setApiKeyInfo } = useGoogleApiKey();
   const { setPbxInfo } = usePbx();
+  const { updateLicense, setPbxStatus } = useAppConfig();
   const wss = useWebSocketData();
   const { buttons, setButtons, addButton, updateButton, deleteButton } =
     useButtons();
@@ -73,7 +75,7 @@ function AdminLayout() {
   const { addDataReport, clearDataReport } = useData();
   const myAccountInfo = JSON.parse(localStorage.getItem("Account") || "{}");
 
-  var pbxUser: UserPbxInterface[]
+  var pbxUser: UserPbxInterface[];
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
     switch (message.mt) {
@@ -108,7 +110,7 @@ function AdminLayout() {
       case "PbxTableUsersResult":
         const PbxUsers: UserPbxInterface[] = message.result;
         setUsersPbx(PbxUsers);
-        pbxUser = PbxUsers
+        pbxUser = PbxUsers;
         break;
       case "SelectSensorsResult":
         const result = message.result;
@@ -161,16 +163,51 @@ function AdminLayout() {
         });
         break;
       case "ConfigResult":
+        // Filtra as entradas para a Google API Key
         const apiKeyEntries = message.result.filter(
           (item: any) => item.entry === "googleApiKey"
         );
         setApiKeyInfo(apiKeyEntries);
+
+        console.log("adminPBXUSer", message.result);
+
+        // Filtra as entradas para pbxEntries e pbxType
         const pbxEntries = message.result.filter(
           (item: any) => item.entry === "urlPbxTableUsers"
         );
-        setPbxInfo(pbxEntries);
+        const pbxType = message.result.filter(
+          (item: any) => item.entry === "pbxType"
+        );
+
+        // Combina pbxEntries e pbxType em um único array
+        const pbxData = [...pbxEntries, ...pbxType];
+
+        // Envia a informação combinada ao contexto
+        setPbxInfo(pbxData);
+
         break;
-        // asjutar isso , armazenar nos outros contextos
+      case "ConfigLicenseResult":
+        console.log("Received ConfigLicenseResult message:", message);
+
+        const licenseKey = message.licenseKey;
+        const licenseFile = message.licenseFile;
+        const licenseActive = JSON.parse(message.licenseActive);
+        const licenseInstallDate = message.licenseInstallDate;
+
+        console.log("Updating license with:", {
+          licenseKey,
+          licenseFile,
+          licenseActive,
+          licenseInstallDate,
+        });
+
+        updateLicense(
+          licenseKey,
+          licenseFile,
+          licenseActive,
+          licenseInstallDate
+        );
+
         break;
       case "SelectGatewaysSuccess":
         const allGateways: GatewaysInterface[] = message.result;
@@ -231,8 +268,14 @@ function AdminLayout() {
         break;
       case "UserOffline":
         if (pbxUser.length > 0) {
-          updateUserPbxStauts(message.guid, "offline");
+          updateUserPbxStauts(message.guid, "offline", "offline");
         }
+        break;
+      case "CoreUserOnline":
+        updateUserStauts(message.guid, "online");
+        break;
+      case "CoreUserOffline":
+        updateUserStauts(message.guid, "offline");
         break;
       case "SelectFromReportsSuccess":
         if (message.result === "[]") {
@@ -283,9 +326,15 @@ function AdminLayout() {
                 }
 
                 parsedData = parsedData.map((item: any) => {
-                  // Formatar a coluna 'date', se existir
+                  // Formatar a coluna 'date' ou outras que armazenam datas, se existirem
                   if (item.date) {
                     item.date = formatDate(item.date);
+                  }
+                  if (item.delivered) {
+                    item.delivered = formatDate(item.delivered);
+                  }
+                  if (item.read) {
+                    item.read = formatDate(item.read);
                   }
 
                   // Formatar colunas que começam com 'call' e possuem valor
@@ -297,10 +346,10 @@ function AdminLayout() {
                   if (item.status) {
                     switch (item.status) {
                       case 3:
-                        item.status = "Conectado";
+                        item.status = "Finalizado";
                         break;
                       case 1:
-                        item.status = "Não Conectado";
+                        item.status = "Em andamento";
                         break;
                       case "stop":
                         item.status = "Interrompido";
@@ -309,16 +358,16 @@ function AdminLayout() {
                         item.status = "Iniciado";
                         break;
                       case "out":
-                        item.status = "Saída"; 
+                        item.status = "Saída";
                         break;
                       case "inc":
                         item.status = "Entrada";
                         break;
                       case "Login":
-                        item.status = "Logado"; 
+                        item.status = "Logado";
                         break;
                       case "Logout":
-                        item.status = "Deslogado"; 
+                        item.status = "Deslogado";
                         break;
                       default:
                         break;
@@ -337,7 +386,12 @@ function AdminLayout() {
           });
         }
         break;
-
+      case "PbxStatusResult":
+        if (message.result) {
+          const status = String(message.result);
+          setPbxStatus([{ status }]);
+        }
+        break;
       default:
         console.log("Unknown message type:", message);
         break;

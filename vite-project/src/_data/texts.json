@@ -44,7 +44,7 @@
     "chooseUser": "Choose a user",
     "headerUser": "User",
     "headerButtons": "Buttons",
-    "headerAccount": "Account",
+    "headerAccount": "Accounts",
     "headerActions": "Actions",
     "headerOptions": "Options",
     "headerReports": "Reports"
@@ -53,9 +53,10 @@
     "dnd": "Não Perturbe",
     "away": "Ausente",
     "busy": "Ocupado",
-    "on-the-phone": "No Telefone",
+    "on-the-phone": "Ao Telefone",
     "offline":  "Indisponível",
     "online": "Disponível",
+    "ringing": "Chamando",
     "cardCreateAccountTittle": "Create Accout",
     "cardCreateAccountDescription": "Create Accout Description",
     "cardCreateAccountTrigger": "Create Accout",
@@ -95,7 +96,7 @@
     "logout": "Sair",
     "headerUser": "Usuário",
     "headerButtons": "Botões",
-    "headerAccount": "Conta",
+    "headerAccount": "Contas",
     "headerActions": "Ações",
     "headerOptions": "Opções",
     "headerReports": "Relatórios"
@@ -139,7 +140,7 @@
     "logout": "Salir",
     "headerUser": "Usuario",
     "headerButtons": "Botones",
-    "headerAccount": "Cuenta",
+    "headerAccount": "Cuentas",
     "headerActions": "Acciones",
     "headerOptions": "Opciones",
     "headerReports": "Relatórios"

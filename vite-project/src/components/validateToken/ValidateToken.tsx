@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
-
+import { host } from "@/App";
 const ValidadeToken = (Component: React.ComponentType) => {
   return () => {
     const navigate = useNavigate();
@@ -12,7 +12,7 @@ const ValidadeToken = (Component: React.ComponentType) => {
         if (!token) {
           navigate('/Login');
         } else {
-          const response = await fetch("https://meet.wecom.com.br/api/verifyToken", {
+          const response = await fetch(`${host}/api/verifyToken`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
