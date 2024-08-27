@@ -91,7 +91,7 @@ export default function InteractiveOpt({
     return <OptHistory />; // nao carrega o grid 
   }
   return (
-    <div className="flex flex-col gap-1 justify-start h-full w-[500px] xl:w-[700px] xl3:w-[1000px] align-top">
+    <div className="flex flex-col gap-1 justify-start h-full w-[500px] xl2:w-[700px] xl3:w-[1000px] align-top">
       <OptGrid
         interactive={interactive}
         buttons={buttons}
