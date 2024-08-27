@@ -1,7 +1,7 @@
 import { History, Table } from "lucide-react";
 import { useEffect, useState } from "react";
 import { TabsOpt, TabsList, TabsTrigger, TabsContent } from "./Opt";
-import { Map, MapPin, Rss, Radio, Video, MessageSquare } from "lucide-react";
+import { Map, MapPin, Rss, Radio, Video, MessageSquare,Phone } from "lucide-react";
 import texts from "@/_data/texts.json";
 import { useLanguage } from "@/components/language/LanguageContext";
 import { ChatInterface, useChat } from "../chat/ChatContext";
@@ -96,6 +96,13 @@ export default function OptBar({
           icon={Video}
         >
           {texts[language].video}
+        </TabsTrigger>
+        <TabsTrigger
+          value="call"
+          className="w-full flex-row gap-1 justify-start h-full text-[0px] xl:text-sm"
+          icon={Phone}
+        >
+          Chamadas
         </TabsTrigger>
         {interactive === "top" ? (
           <TabsTrigger

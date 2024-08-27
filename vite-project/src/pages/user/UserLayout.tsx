@@ -7,7 +7,7 @@ import {
   useAccount,
 } from "@/components/account/AccountContext";
 import { Button } from "@/components/ui/button";
-import { useContext, useState } from "react";
+import { ReactElement, useContext, useState } from "react";
 
 import Logout from "@/components/logout/Logout";
 import { WebSocketProvider } from "@/components/websocket/WebSocketProvider";
@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/sheet";
 
 import LeftGrid from "@/components/leftGrid/LeftGrid";
-import { Ghost } from "lucide-react";
+import { Ghost, Pause, Phone, User, } from "lucide-react";
 import { SensorInterface, useSensors } from "@/components/sensor/SensorContext";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { useHistory } from "@/components/history/HistoryContext";
@@ -243,10 +243,20 @@ function UserLayout() {
         setButtonClickedStatus(message.btn_id, "callConnected");
         break;
       case "CallHeld":
-        //tratar aqui
+        setButtonClickedStatus(message.btn_id, "callHeld");
+        // usuario me colocou em espera
         break;
       case "CallRetrieved":
-        //tratar aqui
+        setButtonClickedStatus(message.btn_id, "callRetrieved");
+        // usuario retomou a chamada
+        break;
+      case "UserCallRetrieved":
+        setButtonClickedStatus(message.btn_id, "userCallRetrieved");
+        // eu retomei a chamada
+        break;
+      case "UserCallHeld":
+        setButtonClickedStatus(message.btn_id, "userCallHeld");
+        //eu coloquei em espera
         break;
       case "CallDisconnected":
         setButtonClickedStatus(message.btn_id, "callDisconnected");

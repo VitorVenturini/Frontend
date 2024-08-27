@@ -53,7 +53,7 @@ interface ButtonContextType {
   removeClickedButton: (id: number) => void;
   clearButtons: () => void;
   setButtonTriggered: (id: number, triggered: boolean) => void;
-  setButtonClickedStatus: (id: number, clickedStatus: string) => void;
+  setButtonClickedStatus: (id: number, clickedStatus: string, note?: string) => void;
   setButtonNumberCallStatus: (number: string, callStatus: string, note: string) => void;
   setStopButtonTriggered: (alarm: string, triggered: boolean) => void;
   setStopWarningTreshold: (id: number, triggered: boolean) => void;

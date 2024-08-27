@@ -216,6 +216,7 @@ export default function ButtonsComponent({
                 <div>{renderModalByType()}</div>
               </CardContent>
             </Card>
+
           </>
         );
       default:
