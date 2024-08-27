@@ -5,6 +5,7 @@ import InteractiveOpt from "./interactiveOpt";
 
 import { ButtonInterface } from "@/components/buttons/buttonContext/ButtonsContext";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 interface User {
   id: string;
@@ -67,6 +68,7 @@ export default function InteractiveGridCopy({
             selectedOpt={selectedOpt}
             clickedUser={clickedUser}
           />
+          
           <InteractiveOpt
             interactive={interactive}
             buttons={buttonsInSelectedOpt}
