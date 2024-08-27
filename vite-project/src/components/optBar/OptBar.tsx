@@ -7,6 +7,8 @@ import { useLanguage } from "@/components/language/LanguageContext";
 import { ChatInterface, useChat } from "../chat/ChatContext";
 import { useButtons } from "../buttons/buttonContext/ButtonsContext";
 import { useAccount } from "../account/AccountContext";
+import { Button } from "@/components/ui/button"
+
 
 type OnOptChange = (opt: string) => void;
 
@@ -58,56 +60,50 @@ export default function OptBar({
   return (
     <TabsOpt
       value={selectedOpt}
-      className="h-full"
+      className="h-full flex-row gap-1"
       onValueChange={handleOptChange}
     >
       <TabsList className="flex-col h-full justify-between">
         <TabsTrigger
           value="floor"
-          className="w-full flex-row gap-1 h-full text-[0px] xl:text-sm"
+          className="w-full flex-row gap-1 h-full text-[0px] xl2:text-sm"
           icon={Map}
         >
           {texts[language].floorPlan}
         </TabsTrigger>
         <TabsTrigger
           value="maps"
-          className="w-full flex-row gap-1 justify-start h-full text-[0px] xl:text-sm"
+          className="w-full flex-row gap-1 justify-start h-full text-[0px] xl2:text-sm"
           icon={MapPin}
         >
           {texts[language].map}
         </TabsTrigger>
         <TabsTrigger
           value="sensor"
-          className="w-full flex-row gap-1 justify-start h-full text-[0px] xl:text-sm"
+          className="w-full flex-row gap-1 justify-start h-full text-[0px] xl2:text-sm"
           icon={Rss}
         >
           {texts[language].sensor}
         </TabsTrigger>
         <TabsTrigger
           value="radio"
-          className="w-full flex-row gap-1 justify-start h-full text-[0px] xl:text-sm"
+          className="w-full flex-row gap-1 justify-start h-full text-[0px] xl2:text-sm"
           icon={Radio}
         >
           {texts[language].radio}
         </TabsTrigger>
         <TabsTrigger
           value="video"
-          className="w-full flex-row gap-1 justify-start h-full text-[0px] xl:text-sm"
+          className="w-full flex-row gap-1 justify-start h-full text-[0px] xl2:text-sm"
           icon={Video}
         >
           {texts[language].video}
         </TabsTrigger>
-        <TabsTrigger
-          value="call"
-          className="w-full flex-row gap-1 justify-start h-full text-[0px] xl:text-sm"
-          icon={Phone}
-        >
-          Chamadas
-        </TabsTrigger>
+
         {interactive === "top" ? (
           <TabsTrigger
             value="chat"
-            className="w-full flex-row gap-1 justify-start h-full text-[0px] xl:text-sm"
+            className="w-full flex-row gap-1 justify-start h-full text-[0px] xl2:text-sm"
             icon={MessageSquare}
           >
             <div className="flex items-center">
@@ -123,15 +119,29 @@ export default function OptBar({
         ) : (
           <TabsTrigger
             value="history"
-            className="w-full flex-row gap-1 justify-start h-full text-[0px] xl:text-sm"
+            className="w-full flex-row gap-1 justify-start h-full text-[0px] xl2:text-sm"
             icon={History}
           >
             Historico
           </TabsTrigger>
         )}
+          {interactive === "bottom" ? (
+        <TabsTrigger
+        value="call"
+        className="w-full flex-row gap-1 justify-start h-full text-[0px] xl2:text-sm"
+        icon={Phone}
+      >
+        Chamadas
+      </TabsTrigger>
+        ) : (
+          null
+            
+        )}
+        
       </TabsList>
-      {/* <TabsContent value="account"></TabsContent>
-        <TabsContent value="password"></TabsContent> */}
+  
+      
     </TabsOpt>
+    
   );
 }
