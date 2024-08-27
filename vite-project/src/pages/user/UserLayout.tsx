@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/sheet";
 
 import LeftGrid from "@/components/leftGrid/LeftGrid";
-import { Ghost, Pause, Phone, User, } from "lucide-react";
+import { Ghost, Pause, Phone, User } from "lucide-react";
 import { SensorInterface, useSensors } from "@/components/sensor/SensorContext";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { useHistory } from "@/components/history/HistoryContext";
@@ -240,7 +240,7 @@ function UserLayout() {
         setButtonClickedStatus(message.btn_id, "callRinging");
         break;
       case "CallConnected":
-        setButtonClickedStatus(message.btn_id, "callConnected");
+        setButtonClickedStatus(message.btn_id, "callConnected", true);
         break;
       case "CallHeld":
         setButtonClickedStatus(message.btn_id, "callHeld");
@@ -259,7 +259,7 @@ function UserLayout() {
         //eu coloquei em espera
         break;
       case "CallDisconnected":
-        setButtonClickedStatus(message.btn_id, "callDisconnected");
+        setButtonClickedStatus(message.btn_id, "callDisconnected", false);
         break;
       case "NumberOnline":
         setButtonNumberCallStatus(message.number, message.color, message.note);

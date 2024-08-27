@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/card";
 import OptChat from "./OptChat";
 import OptHistory from "./OptHistory";
+import OptCall from "./OptCall";
 
 interface OptLayoutCopyProps {
   clickedButtonId: number | null;
@@ -85,6 +86,8 @@ export default function OptLayoutCopy(props: OptLayoutCopyProps) {
           );
         case "camera":
           return <OptCamera filteredSensorInfo={filteredCamInfo} />;
+        // case "call":
+        //   return <OptCall/>
         default:
           return <div>Selecione uma opção</div>;
       }
