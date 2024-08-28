@@ -75,16 +75,17 @@ export default function CommandButton({ handleClick, button }: ButtonProps) {
     }
   }, [button.comboStart]); // so vai ativar quando tiver troca de valor
 
-  const buttonState = buttons.find((b) => b.id === button.id);
-  const commandValue = buttonState?.commandValue;
+  // const buttonState = buttons.find((b) => b.id === button.id);
+  // const commandValue = buttonState?.commandValue;
 
   useEffect(() => {
+    console.log("value " + button.commandValue)
     setButtonLoading(button.id, false);
     if (button.comboStart) {
       // parar o combo se ele tiver ativo
       setStopCombo(button.id); // pois precisamos ver se o valor do button.comboStart mudou para ativar o UseEffect acima
     }
-  }, [commandValue]); // quando vier o novo valor do botão command ( quando vier o ControllerReceived)
+  }, [button.commandValue]); // quando vier o novo valor do botão command ( quando vier o ControllerReceived)
 
   return (
     <div
@@ -101,7 +102,7 @@ export default function CommandButton({ handleClick, button }: ButtonProps) {
             {button.loading ? (
               <img src={LogoCore} className="mr-2 h-8 animate-spin" />
             ) : (
-              <Switch checked={commandValue === "on"} />
+              <Switch checked={button.commandValue === "on"} />
             )}
           </div>
         )}

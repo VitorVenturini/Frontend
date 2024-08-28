@@ -51,6 +51,7 @@ import {
   useUsersPbx,
 } from "@/components/users/usersPbx/UsersPbxContext";
 import { PbxInterface } from "@/components/options/Pbx/PbxContext";
+import { useCalls } from "@/components/calls/CallContext";
 
 interface User {
   id: string;
@@ -105,7 +106,7 @@ function UserLayout() {
     chatRead,
     clearChat,
   } = useChat();
-
+  const { addCall } = useCalls();
   const [selectedOptTop, setSelectedOptTop] = useState<string>("floor"); // default for top
   const [clickedUserTop, setClickedUserTop] = useState<string | null>(null);
   const [selectedOptBottom, setSelectedOptBottom] = useState<string>("floor"); // default for bottom
@@ -236,15 +237,42 @@ function UserLayout() {
         setUsersPbx(PbxUsers);
         pbxUser = PbxUsers;
         break;
+      case "CallsInCurse":
+        const callsInCurse = message.result;
+        console.log("CallsInCurse received:", callsInCurse);
+        callsInCurse.forEach((call: any) => {
+          const { btn_id, call_started } = call;
+          console.log(`Processing call for btn_id: ${btn_id}`);
+          // Calcular a duração da chamada em andamento
+          const callStartTime = new Date(call_started).getTime();
+          const now = Date.now();
+          const elapsedTime = Math.floor((now - callStartTime) / 1000);
+
+          // Atualizar o botão correspondente com o status da chamada
+          setSelectedOptBottom("call");
+          setButtonClickedStatus(btn_id, "callInCurse", true);
+
+          // Adicionar a chamada ao contexto de chamadas com a duração calculada
+          const button = buttons.find((btn) => btn.id === btn_id);
+          if (button) {
+            console.log(`Adding call for button: ${button.button_name}`);
+            addCall(button, elapsedTime);
+          } else {
+            console.log(`Button not found for btn_id: ${btn_id}`);
+          }
+        });
+
+        break;
+
       case "CallRinging":
         setButtonClickedStatus(message.btn_id, "callRinging");
         break;
       case "CallConnected":
-        setSelectedOptBottom("call")
+        setSelectedOptBottom("call");
         setButtonClickedStatus(message.btn_id, "callConnected", true);
         break;
       case "CallHeld":
-        setButtonClickedStatus(message.btn_id, "callHeld",true);
+        setButtonClickedStatus(message.btn_id, "callHeld", true);
         // usuario me colocou em espera
         break;
       case "CallRetrieved":
@@ -256,7 +284,7 @@ function UserLayout() {
         // eu retomei a chamada
         break;
       case "UserCallHeld":
-        setButtonClickedStatus(message.btn_id, "userCallHeld",true);
+        setButtonClickedStatus(message.btn_id, "userCallHeld", true);
         //eu coloquei em espera
         break;
       case "CallDisconnected":

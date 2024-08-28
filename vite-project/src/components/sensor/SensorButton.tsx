@@ -19,19 +19,34 @@ interface ButtonProps {
 
 export default function SensorButton({ handleClick, button }: ButtonProps) {
   const { buttonSensors, sensors } = useSensors();
-  const { setOldValue, setNewValue, buttons } = useButtons();
+  const { setOldValue, setNewValue, buttons, setButtonTriggered } =
+    useButtons();
   const account = useAccount();
-  const wss = useWebSocketData()
-  
-  const handleClickButton =  () => {
-    handleClick() // handleClick utilizado no admin para setar a posição do botão
-    wss?.sendMessage({
-      api: "user",
-      mt: "UpdateButton",
-      btn_id: button.id,
-      muted: true
-    })
-  }
+  const wss = useWebSocketData();
+
+  const handleClickButton = () => {
+    handleClick(); // handleClick utilizado no admin para setar a posição do botão
+    if (!account.isAdmin) {
+      if (button.muted) {
+        //botão está muted
+        wss?.sendMessage({
+          api: "user",
+          mt: "UpdateButton",
+          btn_id: button.id,
+          muted: false,
+        });
+      } else {
+        // botão nao está muted
+        wss?.sendMessage({
+          api: "user",
+          mt: "UpdateButton",
+          btn_id: button.id,
+          muted: true,
+        });
+      }
+      // triggered false
+    }
+  };
   const buttonState = buttons.find((b) => b.id === button.id);
 
   const oldValue = buttonState?.oldValue;
@@ -45,8 +60,8 @@ export default function SensorButton({ handleClick, button }: ButtonProps) {
     if (button?.sensor_type && filteredSensor) {
       const value = parseInt((filteredSensor as any)[button.sensor_type], 10);
       if (newValue !== value) {
-        setOldValue(button.sensor_type, button.button_prt, newValue); // Armazena o valor antigo antes de atualizar
-        setNewValue(button.sensor_type, button.button_prt, value); // Atualiza o valor novo
+        setOldValue(button.sensor_type, button.button_prt, newValue); // armazena o valor antigo antes de atualizar
+        setNewValue(button.sensor_type, button.button_prt, value); // atualiza o valor novo
       }
     }
   }, [filteredSensor, button?.sensor_type, newValue]);
@@ -58,9 +73,19 @@ export default function SensorButton({ handleClick, button }: ButtonProps) {
   )[0];
 
   const getButtonClassName = () => {
-    return checkButtonWarning(button, newValue)
-      ? `${commonClasses} flex flex-col cursor-pointer active:bg-red-900 bg-red-800 blinking-background`
-      : `${commonClasses} flex flex-col cursor-pointer active:bg-red-900 bg-buttonSensor`;
+    const isWarning = checkButtonWarning(button, newValue);
+    if (isWarning && !button?.muted) {
+      return `${commonClasses} flex flex-col cursor-pointer active:bg-red-900 bg-red-800 blinking-background`;
+    } else if (isWarning && button?.muted) {
+      return `${commonClasses} flex flex-col cursor-pointer active:bg-red-900 outline outline-2 border-xs border-red-900 outline-red-900 bg-buttonSensor `;
+    } else if (!isWarning && button.muted) {
+      return `${commonClasses} flex flex-col cursor-pointer active:bg-red-900 bg-muted `;
+    } else if (!isWarning && !button.muted) {
+      return `${commonClasses} flex flex-col cursor-pointer active:bg-red-900 bg-buttonSensor`;
+    }
+    // return checkButtonWarning(button, newValue)
+    //   ? `${commonClasses} flex flex-col cursor-pointer active:bg-red-900 bg-red-800 blinking-background`
+    //   : `${commonClasses} flex flex-col cursor-pointer active:bg-red-900 bg-buttonSensor`;
   };
 
   return (
@@ -78,17 +103,18 @@ export default function SensorButton({ handleClick, button }: ButtonProps) {
             account.isAdmin ? sensorModel?.description : (button.img as any)
           }
         />
-        <p className=" flex text-sm font-medium leading-none xl3:text-2xl">{button.button_name}</p>
+        <p className=" flex text-sm font-medium leading-none xl3:text-2xl">
+          {button.button_name}
+        </p>
       </div>
       <p className="text-[9px] font-medium leading-none text-muted-foreground">
         {sensorModel ? sensorModel.sensor_name : ""}
       </p>
-      <SensorResponsiveInfo 
+      <SensorResponsiveInfo
         button={button}
         oldValue={oldValue}
         newValue={newValue}
       />
-
     </div>
   );
 }

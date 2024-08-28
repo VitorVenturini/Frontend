@@ -83,6 +83,10 @@ export default function NumberButton({ button, onClick }: NumberProps) {
       case "callConnected":
         setClickedStatusClass("bg-red-600");
         break;
+      case "callInCurse":
+        setClickedButton(true);
+        setCallStatusClass("bg-red-900");
+        break;
       case "callRinging":
         //setStatusClass("bg-orange-500")
         setClickedStatusClass("bg-orange-700");

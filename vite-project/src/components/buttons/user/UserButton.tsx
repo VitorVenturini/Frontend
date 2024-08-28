@@ -110,6 +110,10 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
       case "callConnected":
         setCallStatusClass("bg-red-900");
         break;
+      case "callInCurse":
+        setClickedButton(true);
+        setCallStatusClass("bg-red-900");
+        break;
       case "callRinging":
         //setStatusClass("bg-orange-500")
         setCallStatusClass("bg-orange-700");
@@ -119,7 +123,7 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
         break;
       case "userCallHeld":
         //setStatusClass("bg-orange-500")
-        setCallStatusClass("bg-blue-800");
+        setCallStatusClass("bg-blue-900");
         break;
       case "userCallRetrieved":
         //setStatusClass("bg-orange-500")

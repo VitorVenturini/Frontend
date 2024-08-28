@@ -36,7 +36,7 @@ export default function OptBar({
   const handleOptChange = (newOpt: string) => {
     onOptChange(newOpt);
   };
-  console.log(selectedOpt);
+  //console.log(selectedOpt);
 
   useEffect(() => {
     // Verifica se há mensagens não lidas

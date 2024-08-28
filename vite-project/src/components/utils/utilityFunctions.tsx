@@ -1,8 +1,4 @@
 import { ButtonInterface } from "../buttons/buttonContext/ButtonsContext";
-import { SensorInterface } from "../sensor/SensorContext";
-import { useButtons } from "../buttons/buttonContext/ButtonsContext";
-import texts from "@/_data/texts.json";
-import { useLanguage } from "@/components/language/LanguageContext";
 
 function getDegreeRange(direction: string) {
   switch (direction) {
