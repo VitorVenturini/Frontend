@@ -50,7 +50,7 @@ export default function MessageList({ user, onClick, clickedUser }: OptProps) {
   }, [chat]);
 
   const initials = getInitials(user.name || "Usuário");
-  const avatarBase64 = generateAvatar(initials);
+  const avatarBase64 = generateAvatar(initials as string);
 
   return (
     <div>
