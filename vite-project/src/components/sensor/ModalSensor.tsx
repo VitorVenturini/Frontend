@@ -47,6 +47,8 @@ import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { ButtonInterface } from "@/components/buttons/buttonContext/ButtonsContext";
 import { useSensors } from "./SensorContext";
 import { limitButtonName } from "../utils/utilityFunctions";
+import SensorCard from "./sensorCard";
+import { ScrollArea } from "../ui/scroll-area";
 
 interface User {
   id: string;
@@ -98,10 +100,12 @@ export default function ModalSensor({
   const { sensors } = useSensors();
   const wss = useWebSocketData();
 
-  const handleNameSensor = (value: string) => {
-    setNameSensor(value);
-    setTypeMeasure(""); // Reset typeMeasure when changing the sensor
+
+  const handleSensorClick = (deveui: string) => {
+    setNameSensor(deveui); // Atualiza o estado do sensor clicado
+    setTypeMeasure("");
   };
+
 
   const handleNameButton = (event: ChangeEvent<HTMLInputElement>) => {
     const limitedName = limitButtonName(event.target.value);
@@ -109,8 +113,12 @@ export default function ModalSensor({
   };
   const handleTypeMeasure = (value: string) => {
     setTypeMeasure(value);
-    value === "press_short" || value === "press_double" || value === "press_long" ? setGeralThreshold(value) : null
-    // condição especial para setar o tipo de medida do SmartButton no max_threshold 
+    value === "press_short" ||
+    value === "press_double" ||
+    value === "press_long"
+      ? setGeralThreshold(value)
+      : null;
+    // condição especial para setar o tipo de medida do SmartButton no max_threshold
   };
   const handleMaxValue = (event: ChangeEvent<HTMLInputElement>) => {
     setGeralThreshold("");
@@ -203,9 +211,14 @@ export default function ModalSensor({
     "press_short",
     "press_double",
     "press_long",
-
   ];
-  const typesWithSelectOnly = ["magnet_status", "leak", "pir", "tamper_status","daylight"];
+  const typesWithSelectOnly = [
+    "magnet_status",
+    "leak",
+    "pir",
+    "tamper_status",
+    "daylight",
+  ];
 
   const showMinMaxFields = !typesWithoutMinMax.includes(typeMeasure);
   const showSelectOnly = typesWithSelectOnly.includes(typeMeasure);
@@ -213,12 +226,15 @@ export default function ModalSensor({
   const selectedSensor = sensors.filter((sensor) => {
     return sensor.deveui === nameSensor;
   })[0];
-  console.log("GERAL TRESHOLD" + geralThreshold)
+  console.log("GERAL TRESHOLD" + geralThreshold);
   let sensorParameters = selectedSensor ? selectedSensor.parameters : [];
   // remover parâmetros que contêm "out" no nome se a descrição do sensor começar com "UC" (todos iot controllers)
   if (selectedSensor?.description?.startsWith("UC")) {
-    sensorParameters = sensorParameters.filter(param => !param.parameter.includes("out"));
+    sensorParameters = sensorParameters.filter(
+      (param) => !param.parameter.includes("out")
+    );
   }
+
   return (
     <>
       {isUpdate && (
@@ -227,64 +243,53 @@ export default function ModalSensor({
           <CardDescription>descrição</CardDescription>
         </CardHeader>
       )}
-      <CardContent className="grid gap-4 py-4">
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label className="text-end" htmlFor="buttonName">
+      <CardContent className="max-w-5xl w-full flex gap-4 py-4">
+        <div className="flex flex-col w-[50%] items-center gap-4">
+          <Label className="text-end h-[30px]" htmlFor="buttonName">
             Selecione o Sensor
           </Label>
-          <Select value={nameSensor} onValueChange={handleNameSensor}>
-            <SelectTrigger className="col-span-3">
-              <SelectValue placeholder="Selecione um Sensor" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Sensores</SelectLabel>
-                {sensors.map((sensor) => (
-                  <SelectItem
-                    key={sensor.deveui}
-                    value={sensor.deveui as string}
-                  >
-                    {sensor.sensor_name}
+          <div className="gap-4">
+            <ScrollArea className="h-[350px] w-[300px]">
+              <SensorCard onSensorClick={handleSensorClick}/>
+            </ScrollArea>
+          </div>
+        </div>
+        <div className="flex flex-col w-[50%] items-center gap-4">
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label className="text-end" htmlFor="buttonName">
+              Nome do botão
+            </Label>
+            <Input
+              className="col-span-3"
+              id="buttonName"
+              placeholder="Nome do botão"
+              value={nameButton}
+              onChange={handleNameButton}
+              required
+            />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label className="text-end" htmlFor="framework" id="typeMeasure">
+              Tipo de medida
+            </Label>
+            <Select
+              value={typeMeasure}
+              onValueChange={handleTypeMeasure}
+              disabled={!nameSensor}
+            >
+              <SelectTrigger className="col-span-3" id="SelectTypeMeasure">
+                <SelectValue placeholder="Selecione o tipo de medida" />
+              </SelectTrigger>
+              <SelectContent position="popper">
+                {sensorParameters.map((param, index) => (
+                  <SelectItem key={index} value={param.parameter}>
+                    {param.name}
                   </SelectItem>
                 ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label className="text-end" htmlFor="buttonName">
-            Nome do botão
-          </Label>
-          <Input
-            className="col-span-3"
-            id="buttonName"
-            placeholder="Nome do botão"
-            value={nameButton}
-            onChange={handleNameButton}
-            required
-          />
-        </div>
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label className="text-end" htmlFor="framework" id="typeMeasure">
-            Tipo de medida
-          </Label>
-          <Select
-            value={typeMeasure}
-            onValueChange={handleTypeMeasure}
-            disabled={!nameSensor}
-          >
-            <SelectTrigger className="col-span-3" id="SelectTypeMeasure">
-              <SelectValue placeholder="Selecione o tipo de medida" />
-            </SelectTrigger>
-            <SelectContent position="popper">
-              {sensorParameters.map((param, index) => (
-                <SelectItem key={index} value={param.parameter}>
-                  {param.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+              </SelectContent>
+            </Select>
+          </div>
+        
         {showMinMaxFields && (
           <>
             <div className="grid grid-cols-4 items-center gap-4">
@@ -332,7 +337,6 @@ export default function ModalSensor({
               >
                 <SelectTrigger className="col-span-3" id="SelectValue">
                   <SelectValue placeholder="Selecione um Valor" />
-
                 </SelectTrigger>
 
                 <SelectContent position="popper">
@@ -374,6 +378,7 @@ export default function ModalSensor({
             </div>
           </>
         )}
+        
         {typeMeasure === "wind_direction" && (
           <div>
             <div className="grid grid-cols-4 items-center gap-4 mb-4">
@@ -432,6 +437,7 @@ export default function ModalSensor({
             </div>
           </div>
         )}
+        </div>
       </CardContent>
       <CardFooter className="flex justify-between">
         {isUpdate && (

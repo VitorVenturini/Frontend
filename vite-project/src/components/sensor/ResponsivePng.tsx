@@ -1,7 +1,7 @@
 import { Contact } from "lucide-react";
 import AM103 from "../../assets/SensorsPng/AM103.png";
 import EM300_SLD from "../../assets/SensorsPng/EM300-SLD.png";
-import WS101_SOS from "../../assets/SensorsPng/WS101_SOS.png";
+import WS101_SOS from "../../assets/SensorsPng/WS101.png";
 import WS301 from "../../assets/SensorsPng/WS301.png";
 import UC300 from "@/assets/SensorsPng/UC300.png";
 import WTS506 from "@/assets/SensorsPng/WTS506.png";

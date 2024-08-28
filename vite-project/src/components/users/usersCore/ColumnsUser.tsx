@@ -6,9 +6,7 @@ import { Button } from "@/components/ui/button";
 import { UserInterface } from "@/components/users/UserContext";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { useState } from "react";
-import { Pencil
-
- } from "lucide-react";
+import { Pencil } from "lucide-react";
 import CardCreateAccount from "@/components/account/CardCreateAccount";
 export const columnsUser: ColumnDef<UserInterface>[] = [
   {

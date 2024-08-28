@@ -24,10 +24,9 @@ export default function Logout() {
   const navigate = useNavigate();
   const ws = useWebSocketData();
   const { language } = useLanguage();
-  console.log("LOGOUT",account, localStorage)
+
   const handleLogout = () => {
 
-    console.log("EXIT LOGOUT", account.session , localStorage)
    // localStorage.removeItem(account.session);
    localStorage.clear()
     
