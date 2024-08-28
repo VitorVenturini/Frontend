@@ -102,8 +102,9 @@ function App() {
 }
 
 function RootRoute() {
-  const isLogged = localStorage.getItem("isLogged");
-  return isLogged ? <Navigate to="/user" /> : <LoginPage />;
+  const account = useContext(AccountContext);
+  // const isLogged = localStorage.getItem("isLogged");
+  return account.isLogged ? <Navigate to="/user" /> : <LoginPage />;
 }
 
 function AdminRoute() {

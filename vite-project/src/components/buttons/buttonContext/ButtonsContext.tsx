@@ -33,6 +33,7 @@ export interface ButtonInterface {
   callStatus?: string;
   note?: string;
   onCall?: boolean;
+  held?: boolean;
   muted?: boolean;
 }
 
@@ -51,6 +52,7 @@ interface ButtonContextType {
     sensorName: string,
     value: number | undefined
   ) => void;
+  setHeldCall : (id: number, isHeld: boolean) => void;
   setClickedButton: (id: number) => void;
   removeClickedButton: (id: number) => void;
   clearButtons: () => void;
@@ -141,6 +143,13 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
     setButtons((prevButtons) =>
       prevButtons.map((button) =>
         button.id === id ? { ...button, clicked: true } : button
+      )
+    );
+  };
+  const setHeldCall = (id: number, isHeld: boolean) => {
+    setButtons((prevButtons) =>
+      prevButtons.map((button) =>
+        button.id === id ? { ...button, held: isHeld } : button
       )
     );
   };
@@ -238,6 +247,7 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
       value={{
         buttons,
         setButtons,
+        setHeldCall,
         addButton,
         clearButtons,
         updateButton,

@@ -99,23 +99,9 @@ export default function CardLogin() {
 
         toast({ description: "Login efetuado com sucesso." });
 
-        localStorage.setItem("isLogged", "true");
         updateAccount({ isLogged: true });
         console.log({ ...account, updateAccount: undefined });
-
-        console.log(
-          "isLogged setado para true" + localStorage.getItem("isLogged")
-        );
-
         console.log("Login efetuado com sucesso");
-
-        console.log(
-          `isLogged: ${localStorage.getItem(
-            "isLogged"
-          )},guid: ${localStorage.getItem(
-            "guid"
-          )}, token: ${localStorage.getItem("token")}  `
-        );
         setIsLoading(false);
 
         // Sempre navega para a tela de usuário após o login bem-sucedido

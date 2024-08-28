@@ -240,22 +240,23 @@ function UserLayout() {
         setButtonClickedStatus(message.btn_id, "callRinging");
         break;
       case "CallConnected":
+        setSelectedOptBottom("call")
         setButtonClickedStatus(message.btn_id, "callConnected", true);
         break;
       case "CallHeld":
-        setButtonClickedStatus(message.btn_id, "callHeld");
+        setButtonClickedStatus(message.btn_id, "callHeld",true);
         // usuario me colocou em espera
         break;
       case "CallRetrieved":
-        setButtonClickedStatus(message.btn_id, "callRetrieved");
+        setButtonClickedStatus(message.btn_id, "callRetrieved", true);
         // usuario retomou a chamada
         break;
       case "UserCallRetrieved":
-        setButtonClickedStatus(message.btn_id, "userCallRetrieved");
+        setButtonClickedStatus(message.btn_id, "userCallRetrieved", true);
         // eu retomei a chamada
         break;
       case "UserCallHeld":
-        setButtonClickedStatus(message.btn_id, "userCallHeld");
+        setButtonClickedStatus(message.btn_id, "userCallHeld",true);
         //eu coloquei em espera
         break;
       case "CallDisconnected":
