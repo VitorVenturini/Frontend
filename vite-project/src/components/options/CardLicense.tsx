@@ -24,15 +24,15 @@ export default function LicenseCard() {
   const { toast } = useToast();
   const wss = useWebSocketData();
   const [licenseInput, setLicense] = useState("");
-  
 
-  
-  const licenseData = Object.entries(licenseApi.licenseActive).map(([key, value]) => ({
-    item: key.charAt(0).toUpperCase() + key.slice(1), // Capitaliza a primeira letra
-    total: value.total,
-    used: value.used,
-  }));
-  const keys = ['item', 'used', 'total']
+  const licenseData = Object.entries(licenseApi.licenseActive).map(
+    ([key, value]) => ({
+      item: key.charAt(0).toUpperCase() + key.slice(1), // Capitaliza a primeira letra
+      total: value.total,
+      used: value.used,
+    })
+  );
+  const keys = ["item", "used", "total"];
   const handleLicenseKey = (event: ChangeEvent<HTMLInputElement>) => {
     setKey(event.target.value);
   };
@@ -49,16 +49,16 @@ export default function LicenseCard() {
     setIsLoading(true);
     console.log(`Nova Key: ${licenseKey}`);
     if (licenseKey === "") {
-      wss?.sendMessage({
-        api: "admin",
-        mt: "UpdateConfig",
-        licenseFile: licenseInput,
-      });
       toast({
         variant: "destructive",
         description: "Chave Vazia",
       });
     } else {
+      wss?.sendMessage({
+        api: "admin",
+        mt: "UpdateConfig",
+        licenseFile: licenseKey,
+      });
       toast({
         description: "Chave de Licença atualizada com sucesso",
       });
@@ -118,8 +118,8 @@ export default function LicenseCard() {
             <ColumnsReports
               data={licenseData}
               keys={keys}
-              report={'Licenças disponíveis' as any}
-              filter = {''}
+              report={"Licenças disponíveis" as any}
+              filter={""}
             />
           </div>
         </div>
