@@ -22,7 +22,7 @@ interface ButtonProps {
 export default function UserButton({ button, handleClick }: ButtonProps) {
   const { usersPbx } = useUsersPbx();
   const { language } = useLanguage();
-  const {setStopCombo} = useButtons()
+  const { setStopCombo } = useButtons();
 
   const filteredUser = usersPbx?.filter((user) => {
     return user.guid === button.button_prt;
@@ -34,7 +34,7 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
   const account = useAccount();
   const wss = useWebSocketData();
 
- // combo ligação 
+  // combo ligação
   useEffect(() => {
     if (button.comboStart) {
       if (!account.isAdmin) {
@@ -46,12 +46,11 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
             btn_id: button.id,
           });
           setClickedButton(true);
-          setStopCombo(button.id)
+          setStopCombo(button.id);
         }
       }
     }
   }, [button.comboStart]);
-
 
   const handleClickCall = () => {
     handleClick(); // para setar a posição na hora de criar botão
@@ -74,7 +73,7 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
         });
         //setStatusClass("bg-green-800");
         setClickedButton(false);
-        setStopCombo(button.id)
+        setStopCombo(button.id);
       }
     }
   };
@@ -111,33 +110,61 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
       case "callConnected":
         setCallStatusClass("bg-red-900");
         break;
+      case "callInCurse":
+        setClickedButton(true);
+        setCallStatusClass("bg-red-900");
+        break;
       case "callRinging":
         //setStatusClass("bg-orange-500")
         setCallStatusClass("bg-orange-700");
         break;
       case "callDisconnected":
-        setClickedButton(false)
+        setClickedButton(false);
+        break;
+      case "userCallHeld":
+        //setStatusClass("bg-orange-500")
+        setCallStatusClass("bg-blue-900");
+        break;
+      case "userCallRetrieved":
+        //setStatusClass("bg-orange-500")
+        setCallStatusClass("bg-red-900");
+        break;
+      case "callRetrieved":
+        //setStatusClass("bg-orange-500")
+        setCallStatusClass("bg-red-900");
+        break;
+      case "callHeld":
+        //setStatusClass("bg-orange-500")
+        setCallStatusClass("bg-purple-900");
         break;
     }
-  }, [button.clickedStatus]); // monitorar o status da chamada 
+  }, [button.clickedStatus]); // monitorar o status da chamada
 
   return (
     <div
       className={`${commonClasses} flex flex-col justify-between h-full cursor-pointer ${
-        clickedButton ? callStatusClass : (filteredUser?.status === "offline" ? "bg-neutral-900" : "bg-green-800")
+        clickedButton
+          ? callStatusClass
+          : filteredUser?.status === "offline"
+          ? "bg-neutral-900"
+          : "bg-green-800"
       } `}
       onClick={handleClickCall}
     >
       <div className="flex-grow">
         <div className="flex items-center gap-1 cursor-pointer">
-          <User size={16}/>
-          <p className="text-sm leading-none xl3:text-2xl">{button.button_name}</p>
+          <User size={16} />
+          <p className="text-sm leading-none xl3:text-2xl">
+            {button.button_name}
+          </p>
         </div>
         <div className="text-sm flex font-extrabold justify-end">
           <p className="xl3:text-2xl">{filteredUser?.cn}</p>
         </div>
       </div>
-      <div className={`text-sm text-foreground/55 flex justify-center mt-auto w-full ${statusClass}`}>
+      <div
+        className={`text-sm text-foreground/55 flex justify-center mt-auto w-full ${statusClass}`}
+      >
         {getText(filteredUser?.note, texts[language])}
       </div>
     </div>

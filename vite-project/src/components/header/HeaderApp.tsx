@@ -60,7 +60,7 @@ export default function HeaderApp() {
         <img src={LogoCore} alt="Logo" className="w- h-16" />
 
         <div>
-          <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
+          <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight capitalize">
             {account?.name || "Usuário"}
           </h3>
           <p className="text-sm text-muted-foreground">{account?.email}</p>

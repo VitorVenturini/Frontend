@@ -7,7 +7,7 @@ import {
   useAccount,
 } from "@/components/account/AccountContext";
 import { Button } from "@/components/ui/button";
-import { useContext, useState } from "react";
+import { ReactElement, useContext, useState } from "react";
 
 import Logout from "@/components/logout/Logout";
 import { WebSocketProvider } from "@/components/websocket/WebSocketProvider";
@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/sheet";
 
 import LeftGrid from "@/components/leftGrid/LeftGrid";
-import { Ghost } from "lucide-react";
+import { Ghost, Pause, Phone, User } from "lucide-react";
 import { SensorInterface, useSensors } from "@/components/sensor/SensorContext";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { useHistory } from "@/components/history/HistoryContext";
@@ -51,6 +51,7 @@ import {
   useUsersPbx,
 } from "@/components/users/usersPbx/UsersPbxContext";
 import { PbxInterface } from "@/components/options/Pbx/PbxContext";
+import { useCalls } from "@/components/calls/CallContext";
 
 interface User {
   id: string;
@@ -105,7 +106,7 @@ function UserLayout() {
     chatRead,
     clearChat,
   } = useChat();
-
+  const { addCall } = useCalls();
   const [selectedOptTop, setSelectedOptTop] = useState<string>("floor"); // default for top
   const [clickedUserTop, setClickedUserTop] = useState<string | null>(null);
   const [selectedOptBottom, setSelectedOptBottom] = useState<string>("floor"); // default for bottom
@@ -236,20 +237,60 @@ function UserLayout() {
         setUsersPbx(PbxUsers);
         pbxUser = PbxUsers;
         break;
+      case "CallsInCurse":
+        const callsInCurse = message.result;
+        console.log("CallsInCurse received:", callsInCurse.length);
+        if (callsInCurse.length > 0) {
+          callsInCurse.forEach((call: any) => {
+            const { btn_id, call_started } = call;
+            console.log(`Processing call for btn_id: ${btn_id}`);
+            // Calcular a duração da chamada em andamento
+            const callStartTime = new Date(call_started).getTime();
+            const now = Date.now();
+            const elapsedTime = Math.floor((now - callStartTime) / 1000);
+
+            // Atualizar o botão correspondente com o status da chamada
+            setSelectedOptBottom("call");
+            setButtonClickedStatus(btn_id, "callInCurse", true);
+
+            // Adicionar a chamada ao contexto de chamadas com a duração calculada
+            const button = allBtn.find((btn) => btn.id === btn_id);
+            if (button) {
+              console.log(`Adding call for button: ${button.button_name}`);
+              addCall(button, elapsedTime);
+            } else {
+              console.log(`Button not found for btn_id: ${btn_id}`);
+            }
+          });
+        }
+
+        break;
+
       case "CallRinging":
         setButtonClickedStatus(message.btn_id, "callRinging");
         break;
       case "CallConnected":
-        setButtonClickedStatus(message.btn_id, "callConnected");
+        setSelectedOptBottom("call");
+        setButtonClickedStatus(message.btn_id, "callConnected", true);
         break;
       case "CallHeld":
-        //tratar aqui
+        setButtonClickedStatus(message.btn_id, "callHeld", true);
+        // usuario me colocou em espera
         break;
       case "CallRetrieved":
-        //tratar aqui
+        setButtonClickedStatus(message.btn_id, "callRetrieved", true);
+        // usuario retomou a chamada
+        break;
+      case "UserCallRetrieved":
+        setButtonClickedStatus(message.btn_id, "userCallRetrieved", true);
+        // eu retomei a chamada
+        break;
+      case "UserCallHeld":
+        setButtonClickedStatus(message.btn_id, "userCallHeld", true);
+        //eu coloquei em espera
         break;
       case "CallDisconnected":
-        setButtonClickedStatus(message.btn_id, "callDisconnected");
+        setButtonClickedStatus(message.btn_id, "callDisconnected", false);
         break;
       case "NumberOnline":
         setButtonNumberCallStatus(message.number, message.color, message.note);

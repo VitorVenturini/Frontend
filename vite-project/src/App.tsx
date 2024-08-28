@@ -25,6 +25,7 @@ import { DataProvider } from "./Reports/DataContext";
 import { UserPbxProvider } from "./components/users/usersPbx/UsersPbxContext";
 import { PbxProvider } from "./components/options/Pbx/PbxContext";
 import { AppConfigProvider } from "./components/options/ConfigContext";
+import { CallProvider } from "./components/calls/CallContext";
 
 export const host = "https://core.wecom.com.br";
 //const currentUrl = window.location.hostname;
@@ -54,45 +55,50 @@ function App() {
         <PbxProvider>
           <GoogleApiKeyProvider>
             <AppConfigProvider>
-            <ChatProvider>
-              <DataProvider>
-                <HistoryProvider>
-                  <ActionProvider>
-                    <GatewayProvider>
-                      <AccountProvider>
-                        <UserProvider>
-                          <UserPbxProvider>
-                            <ButtonProvider>
-                              <SensorProvider>
-                                <CameraProvider>
-                                  <Routes>
-                                    <Route path="/" element={<RootRoute />} />
-                                    <Route
-                                      path="/login"
-                                      element={<LoginPage />}
-                                    />
-                                    <Route
-                                      path="/admin/*"
-                                      element={<AdminRoute />}
-                                    />
-                                    <Route
-                                      path="/user/*"
-                                      element={<UserRoute />}
-                                    />
-                                    <Route path="*" element={<NoPage />} />
-                                  </Routes>
-                                  <Toaster />
-                                </CameraProvider>
-                              </SensorProvider>
-                            </ButtonProvider>
-                          </UserPbxProvider>
-                        </UserProvider>
-                      </AccountProvider>
-                    </GatewayProvider>
-                  </ActionProvider>
-                </HistoryProvider>
-              </DataProvider>
-            </ChatProvider>
+              <ChatProvider>
+                <DataProvider>
+                  <HistoryProvider>
+                    <ActionProvider>
+                      <GatewayProvider>
+                        <AccountProvider>
+                          <UserProvider>
+                            <UserPbxProvider>
+                              <ButtonProvider>
+                                <CallProvider>
+                                  <SensorProvider>
+                                    <CameraProvider>
+                                      <Routes>
+                                        <Route
+                                          path="/"
+                                          element={<RootRoute />}
+                                        />
+                                        <Route
+                                          path="/login"
+                                          element={<LoginPage />}
+                                        />
+                                        <Route
+                                          path="/admin/*"
+                                          element={<AdminRoute />}
+                                        />
+                                        <Route
+                                          path="/user/*"
+                                          element={<UserRoute />}
+                                        />
+                                        <Route path="*" element={<NoPage />} />
+                                      </Routes>
+                                      <Toaster />
+                                    </CameraProvider>
+                                  </SensorProvider>
+                                </CallProvider>
+                              </ButtonProvider>
+                            </UserPbxProvider>
+                          </UserProvider>
+                        </AccountProvider>
+                      </GatewayProvider>
+                    </ActionProvider>
+                  </HistoryProvider>
+                </DataProvider>
+              </ChatProvider>
             </AppConfigProvider>
           </GoogleApiKeyProvider>
         </PbxProvider>
@@ -102,8 +108,9 @@ function App() {
 }
 
 function RootRoute() {
-  const isLogged = localStorage.getItem("isLogged");
-  return isLogged ? <Navigate to="/user" /> : <LoginPage />;
+  const account = useContext(AccountContext);
+  // const isLogged = localStorage.getItem("isLogged");
+  return account.isLogged ? <Navigate to="/user" /> : <LoginPage />;
 }
 
 function AdminRoute() {

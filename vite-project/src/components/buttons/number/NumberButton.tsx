@@ -1,4 +1,7 @@
-import { ButtonInterface, useButtons } from "@/components/buttons/buttonContext/ButtonsContext";
+import {
+  ButtonInterface,
+  useButtons,
+} from "@/components/buttons/buttonContext/ButtonsContext";
 import * as Icons from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { commonClasses } from "../ButtonsComponent";
@@ -25,7 +28,7 @@ export default function NumberButton({ button, onClick }: NumberProps) {
   const { language } = useLanguage();
   const wss = useWebSocketData();
   const [clickedButton, setClickedButton] = useState(false);
-  const {setStopCombo} = useButtons()
+  const { setStopCombo } = useButtons();
 
   //combo ligação
   useEffect(() => {
@@ -40,13 +43,12 @@ export default function NumberButton({ button, onClick }: NumberProps) {
           });
           setClickedButton(true);
           setClickedStatusClass("bg-red-800");
-          setStopCombo(button.id)
+          setStopCombo(button.id);
         }
       }
     }
   }, [button.comboStart]);
 
-  
   const handleClick = () => {
     onClick(); // para setar a posição na hora de criar botão
     if (!account.isAdmin) {
@@ -67,30 +69,50 @@ export default function NumberButton({ button, onClick }: NumberProps) {
           btn_id: button.id,
         });
         setClickedStatusClass("bg-green-800");
-        setClickedButton(false)
-        setStopCombo(button.id)
+        setClickedButton(false);
+        setStopCombo(button.id);
       }
     }
     //console.log("Button" + JSON.stringify(button))
   };
 
-  // CORES PARA TODO BOTÃO 
-
+  //CORES PARA O BOTÃO INTEIRO
   useEffect(() => {
-    // setStatusClass("bg-red-900");
+    setCallStatusClass("bg-red-600");
     switch (button.clickedStatus) {
       case "callConnected":
-        setClickedStatusClass("bg-red-900");
+        setClickedStatusClass("bg-red-600");
+        break;
+      case "callInCurse":
+        setClickedButton(true);
+        setCallStatusClass("bg-red-900");
         break;
       case "callRinging":
+        //setStatusClass("bg-orange-500")
         setClickedStatusClass("bg-orange-700");
         break;
       case "callDisconnected":
         setClickedStatusClass("bg-green-800");
         setClickedButton(false);
         break;
+      case "userCallHeld":
+        //setStatusClass("bg-orange-500")
+        setClickedStatusClass("bg-blue-800");
+        break;
+      case "userCallRetrieved":
+        //setStatusClass("bg-orange-500")
+        setClickedStatusClass("bg-red-900");
+        break;
+      case "callRetrieved":
+        //setStatusClass("bg-orange-500")
+        setClickedStatusClass("bg-red-600");
+        break;
+      case "callHeld":
+        //setStatusClass("bg-orange-500")
+        setClickedStatusClass("bg-purple-900");
+        break;
     }
-  }, [button.clickedStatus]); // monitorar o status de click
+  }, [button.clickedStatus]); // monitorar o status da chamada
 
   // CORES PARA PARTE DE BAIXO DO BOTÃO (LISTRINHA)
   useEffect(() => {
@@ -116,16 +138,20 @@ export default function NumberButton({ button, onClick }: NumberProps) {
       onClick={handleClick}
     >
       <div className="flex items-center gap-1 cursor-pointer">
-        {IconComponent  && <IconComponent size={17} />}
-        <p className="text-sm leading-none xl3:text-2xl">{button.button_name}</p>
+        {IconComponent && <IconComponent size={17} />}
+        <p className="text-sm leading-none xl3:text-2xl">
+          {button.button_name}
+        </p>
       </div>
       <div className="text-sm flex justify-end font-extrabold">
         <p className="xl3:text-2xl">{button.button_prt}</p>
       </div>
       <div
-        className={`text-sm flex justify-center text-foreground/75 mt-auto w-full ${button.callStatus ? callStatusClass : "bg-green-600"}`}
+        className={`text-sm flex justify-center text-foreground/75 mt-auto w-full ${
+          button.callStatus ? callStatusClass : "bg-green-600"
+        }`}
       >
-        { button.note ? getText(button?.note, texts[language]) : "Disponível"}
+        {button.note ? getText(button?.note, texts[language]) : "Disponível"}
       </div>
     </div>
   );
