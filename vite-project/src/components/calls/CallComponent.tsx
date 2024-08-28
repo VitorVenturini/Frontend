@@ -5,6 +5,7 @@ import {
   PhoneOff,
   PhoneForwarded,
   Keyboard as KeyboardIcon,
+  User2,
 } from "lucide-react";
 import {
   ButtonInterface,
@@ -43,8 +44,8 @@ export default function CallComponent({ buttonOnCall }: CallComponentProps) {
     return user.guid === buttonOnCall.button_prt;
   })[0];
 
-  const initials = getInitials(filteredUser?.cn || "Usuário");
-  const avatarBase64 = generateAvatar(initials);
+  const initials = getInitials(filteredUser?.cn);
+  const avatarBase64 = initials ? generateAvatar(initials) : null;
 
   // //contador
   // useEffect(() => {
@@ -99,10 +100,15 @@ export default function CallComponent({ buttonOnCall }: CallComponentProps) {
   return (
     <div className="py-2 px-2 gap-4 flex bg-muted justify-between rounded-md my-2 items-center w-full mr-2">
       <div className="flex items-center gap-3">
-        <Avatar>
-          <AvatarImage src={avatarBase64} />
-          <AvatarFallback>CN</AvatarFallback>
-        </Avatar>
+        {avatarBase64 !== null ? (
+          <Avatar>
+            <AvatarImage src={avatarBase64 as string} />
+            <AvatarFallback>CN</AvatarFallback>
+          </Avatar>
+        ) : (
+          <User2 />
+        )}
+
         <div>{filteredUser ? filteredUser.cn : buttonOnCall.button_prt}</div>
         <div className="text-xs">
           {formatDuration(getCallDuration(buttonOnCall.id))}

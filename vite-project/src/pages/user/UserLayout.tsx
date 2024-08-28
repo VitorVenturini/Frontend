@@ -239,28 +239,30 @@ function UserLayout() {
         break;
       case "CallsInCurse":
         const callsInCurse = message.result;
-        console.log("CallsInCurse received:", callsInCurse);
-        callsInCurse.forEach((call: any) => {
-          const { btn_id, call_started } = call;
-          console.log(`Processing call for btn_id: ${btn_id}`);
-          // Calcular a duração da chamada em andamento
-          const callStartTime = new Date(call_started).getTime();
-          const now = Date.now();
-          const elapsedTime = Math.floor((now - callStartTime) / 1000);
+        console.log("CallsInCurse received:", callsInCurse.length);
+        if (callsInCurse.length > 0) {
+          callsInCurse.forEach((call: any) => {
+            const { btn_id, call_started } = call;
+            console.log(`Processing call for btn_id: ${btn_id}`);
+            // Calcular a duração da chamada em andamento
+            const callStartTime = new Date(call_started).getTime();
+            const now = Date.now();
+            const elapsedTime = Math.floor((now - callStartTime) / 1000);
 
-          // Atualizar o botão correspondente com o status da chamada
-          setSelectedOptBottom("call");
-          setButtonClickedStatus(btn_id, "callInCurse", true);
+            // Atualizar o botão correspondente com o status da chamada
+            setSelectedOptBottom("call");
+            setButtonClickedStatus(btn_id, "callInCurse", true);
 
-          // Adicionar a chamada ao contexto de chamadas com a duração calculada
-          const button = buttons.find((btn) => btn.id === btn_id);
-          if (button) {
-            console.log(`Adding call for button: ${button.button_name}`);
-            addCall(button, elapsedTime);
-          } else {
-            console.log(`Button not found for btn_id: ${btn_id}`);
-          }
-        });
+            // Adicionar a chamada ao contexto de chamadas com a duração calculada
+            const button = allBtn.find((btn) => btn.id === btn_id);
+            if (button) {
+              console.log(`Adding call for button: ${button.button_name}`);
+              addCall(button, elapsedTime);
+            } else {
+              console.log(`Button not found for btn_id: ${btn_id}`);
+            }
+          });
+        }
 
         break;
 
