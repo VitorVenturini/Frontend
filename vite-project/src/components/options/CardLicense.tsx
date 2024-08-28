@@ -18,21 +18,21 @@ import { useAppConfig } from "./ConfigContext";
 import ColumnsReports from "@/Reports/collumnsReports";
 
 export default function LicenseCard() {
-  const [licenseKey, setKey] = useState("");
+  const { licenseApi } = useAppConfig();
+  const [licenseKey, setKey] = useState(licenseApi?.licenseFile.value || "");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const wss = useWebSocketData();
   const [licenseInput, setLicense] = useState("");
-  const { licenseApi } = useAppConfig();
+  
 
-  console.log("LICENSE API", licenseApi);
+  
   const licenseData = Object.entries(licenseApi.licenseActive).map(([key, value]) => ({
     item: key.charAt(0).toUpperCase() + key.slice(1), // Capitaliza a primeira letra
     total: value.total,
     used: value.used,
   }));
   const keys = ['item', 'used', 'total']
-
   const handleLicenseKey = (event: ChangeEvent<HTMLInputElement>) => {
     setKey(event.target.value);
   };
@@ -51,7 +51,7 @@ export default function LicenseCard() {
     if (licenseKey === "") {
       wss?.sendMessage({
         api: "admin",
-        mt: "UpdateLicense",
+        mt: "UpdateConfig",
         licenseFile: licenseInput,
       });
       toast({
@@ -98,7 +98,7 @@ export default function LicenseCard() {
                 id="key"
                 placeholder="Chave de Licença"
                 onChange={handleLicenseKey}
-                value={licenseApi.licenseFile.value}
+                value={licenseKey as string}
               />
             </div>
           </div>
