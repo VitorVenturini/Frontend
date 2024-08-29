@@ -67,6 +67,9 @@ export default function CardCreateAccount({
   const { addUsers } = useUsers();
   const wss = useWebSocketData();
 
+  // const availableSIPS = usersPbx?.filter((user) =>{
+  //     return user.e
+  // })
   const validateFields = () => {
     let isValid = true;
 

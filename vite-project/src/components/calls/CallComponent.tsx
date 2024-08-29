@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/popover";
 import Keyboard from "../utils/Keyboard";
 import { useCalls } from "../calls/CallContext";
+import { Button } from "../ui/button";
 
 interface CallComponentProps {
   buttonOnCall: ButtonInterface;
@@ -115,7 +116,7 @@ export default function CallComponent({ buttonOnCall }: CallComponentProps) {
         </div>
       </div>
       <div className="flex items-center gap-4">
-        <div className="bg-background p-2 rounded-xl cursor-pointer items-center flex">
+        <Button size="icon" variant="outline">
           <Popover open={openKeyboard} onOpenChange={setOpenKeyboard}>
             <PopoverTrigger>
               <KeyboardIcon />
@@ -124,22 +125,20 @@ export default function CallComponent({ buttonOnCall }: CallComponentProps) {
               <Keyboard onKeyPress={handleKeyPress} />
             </PopoverContent>
           </Popover>
-        </div>
-        <div
-          className="bg-background p-2 rounded-xl cursor-pointer"
+        </Button>
+        <Button
           onClick={heldCall ? handleRetrieveCall : handleHeldCall}
+          size="icon"
+          variant="outline"
         >
           {heldCall ? <Play /> : <Pause />}
-        </div>
-        <div className="bg-background p-2 rounded-xl cursor-pointer">
+        </Button>
+        <Button size="icon" variant="outline">
           <PhoneForwarded />
-        </div>
-        <div
-          className="bg-background p-2 rounded-xl cursor-pointer"
-          onClick={handleEndCall}
-        >
+        </Button>
+        <Button onClick={handleEndCall} size="icon" variant="outline">
           <PhoneOff />
-        </div>
+        </Button>
         {/* POPOVER DO TECLADO AQUI VOU UTILIZA-LO NOVAMNETE MAS POR ENQUANTO DEIXA ASSIM*/}
       </div>
     </div>
