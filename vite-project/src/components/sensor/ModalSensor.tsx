@@ -100,12 +100,10 @@ export default function ModalSensor({
   const { sensors } = useSensors();
   const wss = useWebSocketData();
 
-
   const handleSensorClick = (deveui: string) => {
     setNameSensor(deveui); // Atualiza o estado do sensor clicado
     setTypeMeasure("");
   };
-
 
   const handleNameButton = (event: ChangeEvent<HTMLInputElement>) => {
     const limitedName = limitButtonName(event.target.value);
@@ -250,196 +248,214 @@ export default function ModalSensor({
           </Label>
           <div className="gap-4">
             <ScrollArea className="h-[350px] w-[300px]">
-              <SensorCard onSensorClick={handleSensorClick}/>
+              <SensorCard onSensorClick={handleSensorClick} />
             </ScrollArea>
           </div>
         </div>
-        <div className="flex flex-col w-[50%] items-center gap-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-end" htmlFor="buttonName">
-              Nome do botão
-            </Label>
-            <Input
-              className="col-span-3"
-              id="buttonName"
-              placeholder="Nome do botão"
-              value={nameButton}
-              onChange={handleNameButton}
-              required
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-end" htmlFor="framework" id="typeMeasure">
-              Tipo de medida
-            </Label>
-            <Select
-              value={typeMeasure}
-              onValueChange={handleTypeMeasure}
-              disabled={!nameSensor}
-            >
-              <SelectTrigger className="col-span-3" id="SelectTypeMeasure">
-                <SelectValue placeholder="Selecione o tipo de medida" />
-              </SelectTrigger>
-              <SelectContent position="popper">
-                {sensorParameters.map((param, index) => (
-                  <SelectItem key={index} value={param.parameter}>
-                    {param.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        
-        {showMinMaxFields && (
-          <>
+        <div className="flex flex-col w-[50%] justify-between gap-4">
+          <div className="flex-col gap-4 h-[80%]">
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label className="text-end" htmlFor="minValue">
-                Valor Mínimo
+              <Label className="text-end" htmlFor="buttonName">
+                Nome do botão
               </Label>
               <Input
                 className="col-span-3"
-                id="minValue"
-                placeholder="00"
-                type="number"
-                value={minValue}
-                onChange={handleMinValue}
+                id="buttonName"
+                placeholder="Nome do botão"
+                value={nameButton}
+                onChange={handleNameButton}
                 required
-                disabled={!typeMeasure}
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label className="text-end" htmlFor="maxValue">
-                Valor Máximo
-              </Label>
-              <Input
-                className="col-span-3"
-                id="maxValue"
-                placeholder="00"
-                type="number"
-                value={maxValue}
-                onChange={handleMaxValue}
-                required
-                disabled={!typeMeasure}
-              />
-            </div>
-          </>
-        )}
-        {showSelectOnly && (
-          <>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label className="text-end" htmlFor="SelectValue">
-                Valor para ativar o alarme
+              <Label className="text-end" htmlFor="framework" id="typeMeasure">
+                Tipo de medida
               </Label>
               <Select
-                value={geralThreshold}
-                onValueChange={handleGeralThreshold}
-                disabled={!typeMeasure}
+                value={typeMeasure}
+                onValueChange={handleTypeMeasure}
+                disabled={!nameSensor}
               >
-                <SelectTrigger className="col-span-3" id="SelectValue">
-                  <SelectValue placeholder="Selecione um Valor" />
+                <SelectTrigger className="col-span-3" id="SelectTypeMeasure">
+                  <SelectValue placeholder="Selecione o tipo de medida" />
                 </SelectTrigger>
+                <SelectContent position="popper">
+                  {sensorParameters.map((param, index) => (
+                    <SelectItem key={index} value={param.parameter}>
+                      {param.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-                <SelectContent position="popper">
-                  <SelectGroup>
-                    <SelectLabel>Selecione um Valor</SelectLabel>
-                    {typeMeasure === "magnet_status" && (
-                      <>
-                        <SelectItem value="1">Aberto</SelectItem>
-                        <SelectItem value="0">Fechado</SelectItem>
-                      </>
-                    )}
-                    {typeMeasure === "tamper_status" && (
-                      <>
-                        <SelectItem value="1">Não Instalado</SelectItem>
-                        <SelectItem value="0">Instalado</SelectItem>
-                      </>
-                    )}
-                    {typeMeasure === "leak" && (
-                      <>
-                        <SelectItem value="1">Alagado</SelectItem>
-                        <SelectItem value="0">Seco</SelectItem>
-                      </>
-                    )}
-                    {typeMeasure === "pir" && (
-                      <>
-                        <SelectItem value="1">Presença</SelectItem>
-                        <SelectItem value="0">Vazio</SelectItem>
-                      </>
-                    )}
-                    {typeMeasure === "daylight" && (
-                      <>
-                        <SelectItem value="1">Luz</SelectItem>
-                        <SelectItem value="0">Escuro</SelectItem>
-                      </>
-                    )}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-          </>
-        )}
-        
-        {typeMeasure === "wind_direction" && (
-          <div>
-            <div className="grid grid-cols-4 items-center gap-4 mb-4">
-              <Label className="text-end" htmlFor="SelectValue">
-                Valor Mínimo
-              </Label>
-              <Select
-                value={minValue}
-                onValueChange={handleMinWindThreshold}
-                disabled={!typeMeasure}
-              >
-                <SelectTrigger className="col-span-3" id="SelectValue">
-                  <SelectValue placeholder="Selecione um Valor" />
-                </SelectTrigger>
-                <SelectContent position="popper">
-                  <SelectGroup>
-                    <SelectLabel>Select a Value</SelectLabel>
-                    <SelectItem value="N">North</SelectItem>
-                    <SelectItem value="NE">Northeast</SelectItem>
-                    <SelectItem value="E">East</SelectItem>
-                    <SelectItem value="SE">Southeast</SelectItem>
-                    <SelectItem value="S">South</SelectItem>
-                    <SelectItem value="SW">Southwest</SelectItem>
-                    <SelectItem value="W">West</SelectItem>
-                    <SelectItem value="NW">Northwest</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label className="text-end" htmlFor="SelectValue">
-                Valor Máximo
-              </Label>
-              <Select
-                value={maxValue}
-                onValueChange={handleMaxWindThreshold}
-                disabled={!typeMeasure}
-              >
-                <SelectTrigger className="col-span-3" id="SelectValue">
-                  <SelectValue placeholder="Selecione um Valor" />
-                </SelectTrigger>
-                <SelectContent position="popper">
-                  <SelectGroup>
-                    <SelectLabel>Select a Value</SelectLabel>
-                    <SelectItem value="N">North</SelectItem>
-                    <SelectItem value="NE">Northeast</SelectItem>
-                    <SelectItem value="E">East</SelectItem>
-                    <SelectItem value="SE">Southeast</SelectItem>
-                    <SelectItem value="S">South</SelectItem>
-                    <SelectItem value="SW">Southwest</SelectItem>
-                    <SelectItem value="W">West</SelectItem>
-                    <SelectItem value="NW">Northwest</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
+            {showMinMaxFields && (
+              <>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label className="text-end" htmlFor="minValue">
+                    Valor Mínimo
+                  </Label>
+                  <Input
+                    className="col-span-3"
+                    id="minValue"
+                    placeholder="00"
+                    type="number"
+                    value={minValue}
+                    onChange={handleMinValue}
+                    required
+                    disabled={!typeMeasure}
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label className="text-end" htmlFor="maxValue">
+                    Valor Máximo
+                  </Label>
+                  <Input
+                    className="col-span-3"
+                    id="maxValue"
+                    placeholder="00"
+                    type="number"
+                    value={maxValue}
+                    onChange={handleMaxValue}
+                    required
+                    disabled={!typeMeasure}
+                  />
+                </div>
+              </>
+            )}
+            {showSelectOnly && (
+              <>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label className="text-end" htmlFor="SelectValue">
+                    Valor para ativar o alarme
+                  </Label>
+                  <Select
+                    value={geralThreshold}
+                    onValueChange={handleGeralThreshold}
+                    disabled={!typeMeasure}
+                  >
+                    <SelectTrigger className="col-span-3" id="SelectValue">
+                      <SelectValue placeholder="Selecione um Valor" />
+                    </SelectTrigger>
+
+                    <SelectContent position="popper">
+                      <SelectGroup>
+                        <SelectLabel>Selecione um Valor</SelectLabel>
+                        {typeMeasure === "magnet_status" && (
+                          <>
+                            <SelectItem value="1">Aberto</SelectItem>
+                            <SelectItem value="0">Fechado</SelectItem>
+                          </>
+                        )}
+                        {typeMeasure === "tamper_status" && (
+                          <>
+                            <SelectItem value="1">Não Instalado</SelectItem>
+                            <SelectItem value="0">Instalado</SelectItem>
+                          </>
+                        )}
+                        {typeMeasure === "leak" && (
+                          <>
+                            <SelectItem value="1">Alagado</SelectItem>
+                            <SelectItem value="0">Seco</SelectItem>
+                          </>
+                        )}
+                        {typeMeasure === "pir" && (
+                          <>
+                            <SelectItem value="1">Presença</SelectItem>
+                            <SelectItem value="0">Vazio</SelectItem>
+                          </>
+                        )}
+                        {typeMeasure === "daylight" && (
+                          <>
+                            <SelectItem value="1">Luz</SelectItem>
+                            <SelectItem value="0">Escuro</SelectItem>
+                          </>
+                        )}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </>
+            )}
+
+            {typeMeasure === "wind_direction" && (
+              <div>
+                <div className="grid grid-cols-4 items-center gap-4 mb-4">
+                  <Label className="text-end" htmlFor="SelectValue">
+                    Valor Mínimo
+                  </Label>
+                  <Select
+                    value={minValue}
+                    onValueChange={handleMinWindThreshold}
+                    disabled={!typeMeasure}
+                  >
+                    <SelectTrigger className="col-span-3" id="SelectValue">
+                      <SelectValue placeholder="Selecione um Valor" />
+                    </SelectTrigger>
+                    <SelectContent position="popper">
+                      <SelectGroup>
+                        <SelectLabel>Select a Value</SelectLabel>
+                        <SelectItem value="N">North</SelectItem>
+                        <SelectItem value="NE">Northeast</SelectItem>
+                        <SelectItem value="E">East</SelectItem>
+                        <SelectItem value="SE">Southeast</SelectItem>
+                        <SelectItem value="S">South</SelectItem>
+                        <SelectItem value="SW">Southwest</SelectItem>
+                        <SelectItem value="W">West</SelectItem>
+                        <SelectItem value="NW">Northwest</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label className="text-end" htmlFor="SelectValue">
+                    Valor Máximo
+                  </Label>
+                  <Select
+                    value={maxValue}
+                    onValueChange={handleMaxWindThreshold}
+                    disabled={!typeMeasure}
+                  >
+                    <SelectTrigger className="col-span-3" id="SelectValue">
+                      <SelectValue placeholder="Selecione um Valor" />
+                    </SelectTrigger>
+                    <SelectContent position="popper">
+                      <SelectGroup>
+                        <SelectLabel>Select a Value</SelectLabel>
+                        <SelectItem value="N">North</SelectItem>
+                        <SelectItem value="NE">Northeast</SelectItem>
+                        <SelectItem value="E">East</SelectItem>
+                        <SelectItem value="SE">Southeast</SelectItem>
+                        <SelectItem value="S">South</SelectItem>
+                        <SelectItem value="SW">Southwest</SelectItem>
+                        <SelectItem value="W">West</SelectItem>
+                        <SelectItem value="NW">Northwest</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            )}
+          </div>
+          <div className="flex-col gap-4 items-start justify-end align-bottom h-[20%]">
+            <h4>Preview</h4>
+            <div>
+              <div className="flex flex-col justify-between cursor-pointer active:bg-red-900 bg-buttonSensor">
+                <div className="flex items-center  gap-1 cursor-pointer ">
+                  <p className=" flex text-sm font-medium leading-none xl3:text-2xl">
+                    {nameButton}
+                  </p>
+                </div>
+                <p className="text-[9px] font-medium leading-none text-muted-foreground">
+                  {nameSensor}
+                </p>
+                {typeMeasure}
+              </div>
             </div>
           </div>
-        )}
         </div>
       </CardContent>
-      <CardFooter className="flex justify-between">
+      <CardFooter className="flex justify-end">
         {isUpdate && (
           <Button variant="secondary">
             <AlertDialog>

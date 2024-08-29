@@ -392,6 +392,13 @@ function AdminLayout() {
           setPbxStatus([{ status }]);
         }
         break;
+        case 'AddGatewayError':
+          toast({
+            variant: "destructive",
+            title:"Limite Atingido",
+            description: "Máximo de Gateways cadastrados verifique sua licença",
+          });
+        break;
       default:
         console.log("Unknown message type:", message);
         break;
