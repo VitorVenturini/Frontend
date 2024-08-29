@@ -48,6 +48,7 @@ import {
   useUsersPbx,
 } from "@/components/users/usersPbx/UsersPbxContext";
 import { useAppConfig } from "@/components/options/ConfigContext";
+import Loader from "@/components/Loader";
 
 function AdminLayout() {
   const account = useAccount();
@@ -74,7 +75,7 @@ function AdminLayout() {
   const [receivedFragments, setReceivedFragments] = useState<any[]>([]);
   const { addDataReport, clearDataReport } = useData();
   const myAccountInfo = JSON.parse(localStorage.getItem("Account") || "{}");
-
+  const [isLoading,setIsLoading] = useState(true)
   var pbxUser: UserPbxInterface[];
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
@@ -131,6 +132,7 @@ function AdminLayout() {
         setSensors([]);
         clearSensors();
         addSensorName(sensorData);
+        setIsLoading(false)
         break;
       case "SelectActionsMessageSuccess":
         console.log("allActions ", JSON.stringify(message.result));
@@ -426,7 +428,12 @@ function AdminLayout() {
       token={account.accessToken}
       onMessage={handleWebSocketMessage}
     >
-      <HeaderApp />
+      {
+        isLoading ? (
+          <Loader/>
+        ): (
+          <>
+             <HeaderApp />
       {/* Your admin layout here */}
       <Routes>
         <Route path="account" element={<Account />} />
@@ -436,6 +443,10 @@ function AdminLayout() {
         <Route path="reports" element={<Reports />} />
         {/* Add more admin routes as needed */}
       </Routes>
+          </>
+        )
+      }
+   
     </WebSocketProvider>
   );
 }
