@@ -6,7 +6,7 @@ export default function OptCall() {
   const { calls } = useCalls();
 
   return (
-    <ScrollArea className="w-full h-[200px]  lg:h-[290px]  xl2:h-[400px] xl3:h-[590px]  relative">
+    <ScrollArea className="w-full h-[200px]  lg:h-[290px]  xl2:h-[400px] xl3:h-[590px]  relative gap-3">
       {calls.map((call) => (
         <CallComponent key={call.id} buttonOnCall={call} />
       ))}

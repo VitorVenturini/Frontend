@@ -1,5 +1,5 @@
 import { Route, Routes, Navigate } from "react-router-dom";
-import { useEffect, useContext } from "react";
+import { useEffect, useContext, useState } from "react";
 import {
   AccountProvider,
   AccountContext,
@@ -26,11 +26,21 @@ import { UserPbxProvider } from "./components/users/usersPbx/UsersPbxContext";
 import { PbxProvider } from "./components/options/Pbx/PbxContext";
 import { AppConfigProvider } from "./components/options/ConfigContext";
 import { CallProvider } from "./components/calls/CallContext";
+import Loader from "./components/Loader";
 
 export const host = "https://core.wecom.com.br";
 //const currentUrl = window.location.hostname;
 
 function App() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading for 2 seconds
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 4000);
+  }, []);
+
   useEffect(() => {
     // Função para verificar se o evento é um gesto de pinça e prevenir o zoom
     const preventPinchZoom = (e: TouchEvent) => {
@@ -50,60 +60,69 @@ function App() {
     };
   }, []);
   return (
-    <ThemeProvider>
-      <LanguageProvider>
-        <PbxProvider>
-          <GoogleApiKeyProvider>
-            <AppConfigProvider>
-              <ChatProvider>
-                <DataProvider>
-                  <HistoryProvider>
-                    <ActionProvider>
-                      <GatewayProvider>
-                        <AccountProvider>
-                          <UserProvider>
-                            <UserPbxProvider>
-                              <ButtonProvider>
-                                <CallProvider>
-                                  <SensorProvider>
-                                    <CameraProvider>
-                                      <Routes>
-                                        <Route
-                                          path="/"
-                                          element={<RootRoute />}
-                                        />
-                                        <Route
-                                          path="/login"
-                                          element={<LoginPage />}
-                                        />
-                                        <Route
-                                          path="/admin/*"
-                                          element={<AdminRoute />}
-                                        />
-                                        <Route
-                                          path="/user/*"
-                                          element={<UserRoute />}
-                                        />
-                                        <Route path="*" element={<NoPage />} />
-                                      </Routes>
-                                      <Toaster />
-                                    </CameraProvider>
-                                  </SensorProvider>
-                                </CallProvider>
-                              </ButtonProvider>
-                            </UserPbxProvider>
-                          </UserProvider>
-                        </AccountProvider>
-                      </GatewayProvider>
-                    </ActionProvider>
-                  </HistoryProvider>
-                </DataProvider>
-              </ChatProvider>
-            </AppConfigProvider>
-          </GoogleApiKeyProvider>
-        </PbxProvider>
-      </LanguageProvider>
-    </ThemeProvider>
+    <>
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <ThemeProvider>
+          <LanguageProvider>
+            <PbxProvider>
+              <GoogleApiKeyProvider>
+                <AppConfigProvider>
+                  <ChatProvider>
+                    <DataProvider>
+                      <HistoryProvider>
+                        <ActionProvider>
+                          <GatewayProvider>
+                            <AccountProvider>
+                              <UserProvider>
+                                <UserPbxProvider>
+                                  <ButtonProvider>
+                                    <CallProvider>
+                                      <SensorProvider>
+                                        <CameraProvider>
+                                          <Routes>
+                                            <Route
+                                              path="/"
+                                              element={<RootRoute />}
+                                            />
+                                            <Route
+                                              path="/login"
+                                              element={<LoginPage />}
+                                            />
+                                            <Route
+                                              path="/admin/*"
+                                              element={<AdminRoute />}
+                                            />
+                                            <Route
+                                              path="/user/*"
+                                              element={<UserRoute />}
+                                            />
+                                            <Route
+                                              path="*"
+                                              element={<NoPage />}
+                                            />
+                                          </Routes>
+                                          <Toaster />
+                                        </CameraProvider>
+                                      </SensorProvider>
+                                    </CallProvider>
+                                  </ButtonProvider>
+                                </UserPbxProvider>
+                              </UserProvider>
+                            </AccountProvider>
+                          </GatewayProvider>
+                        </ActionProvider>
+                      </HistoryProvider>
+                    </DataProvider>
+                  </ChatProvider>
+                </AppConfigProvider>
+              </GoogleApiKeyProvider>
+            </PbxProvider>
+          </LanguageProvider>
+        </ThemeProvider>
+      )}
+    </>
   );
 }
 

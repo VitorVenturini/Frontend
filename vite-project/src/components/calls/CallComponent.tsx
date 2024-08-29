@@ -24,6 +24,15 @@ import {
 import Keyboard from "../utils/Keyboard";
 import { useCalls } from "../calls/CallContext";
 import { Button } from "../ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+
 
 interface CallComponentProps {
   buttonOnCall: ButtonInterface;
@@ -99,7 +108,8 @@ export default function CallComponent({ buttonOnCall }: CallComponentProps) {
   };
 
   return (
-    <div className="py-2 px-2 gap-4 flex bg-muted justify-between rounded-md my-2 items-center w-full mr-2">
+    <Card className="flex justify-between px-4 py-6 m-3">
+  
       <div className="flex items-center gap-3">
         {avatarBase64 !== null ? (
           <Avatar>
@@ -116,12 +126,13 @@ export default function CallComponent({ buttonOnCall }: CallComponentProps) {
         </div>
       </div>
       <div className="flex items-center gap-4">
-        <Button size="icon" variant="outline">
+        <Button size="icon" variant="secondary">
           <Popover open={openKeyboard} onOpenChange={setOpenKeyboard}>
             <PopoverTrigger>
               <KeyboardIcon />
             </PopoverTrigger>
-            <PopoverContent>
+            <PopoverContent
+            className="w-full">
               <Keyboard onKeyPress={handleKeyPress} />
             </PopoverContent>
           </Popover>
@@ -129,18 +140,19 @@ export default function CallComponent({ buttonOnCall }: CallComponentProps) {
         <Button
           onClick={heldCall ? handleRetrieveCall : handleHeldCall}
           size="icon"
-          variant="outline"
+          variant="secondary"
         >
           {heldCall ? <Play /> : <Pause />}
         </Button>
-        <Button size="icon" variant="outline">
+        <Button size="icon" variant="secondary">
           <PhoneForwarded />
         </Button>
-        <Button onClick={handleEndCall} size="icon" variant="outline">
+        <Button onClick={handleEndCall} size="icon" variant="secondary">
           <PhoneOff />
         </Button>
         {/* POPOVER DO TECLADO AQUI VOU UTILIZA-LO NOVAMNETE MAS POR ENQUANTO DEIXA ASSIM*/}
-      </div>
-    </div>
+        </div>
+    
+    </Card>
   );
 }
