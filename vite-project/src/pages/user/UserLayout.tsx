@@ -61,6 +61,7 @@ import {
 } from "@/components/users/usersPbx/UsersPbxContext";
 import { PbxInterface } from "@/components/options/Pbx/PbxContext";
 import { useCalls } from "@/components/calls/CallContext";
+import Loader from "@/components/Loader";
 
 interface User {
   id: string;
@@ -71,6 +72,7 @@ interface User {
 
 function UserLayout() {
   const account = useAccount();
+  const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
   const { updateAccount } = useAccount();
   const { setUsers } = useUsers();
@@ -188,6 +190,7 @@ function UserLayout() {
         const allSensors = JSON.parse(message.result);
         // allSensors.forEach((sensor: SensorInterface) => updateSensorButton(sensor));
         addSensorsButton(allSensors); // info dos sensores para ser exibido nos botões
+        setIsLoading(false);
         break;
       case "SensorReceived":
         const sensorDataReceived = message.value;
@@ -276,10 +279,10 @@ function UserLayout() {
         break;
       case "ConnRemovedByAdmin":
         const currentSession = localStorage.getItem("currentSession");
-        localStorage.removeItem(currentSession as string)
-        localStorage.removeItem("currentSession")
+        localStorage.removeItem(currentSession as string);
+        localStorage.removeItem("currentSession");
         navigate("/login");
-        localStorage.setItem("disconnected",message.from)
+        localStorage.setItem("disconnected", message.from);
 
         break;
       case "CallRinging":
@@ -419,52 +422,60 @@ function UserLayout() {
   };
 
   return (
-    <WebSocketProvider
-      token={account.accessToken}
-      onMessage={handleWebSocketMessage}
-    >
-      <div className="flex justify-center gap-1 p-1">
-        <div className="gap-1 space-y-1">
-          {/* DE CIMA  */}
-          <InteractiveGridCopy
-            interactive="top"
-            onKeyChange={handleOptChangeTop}
-            buttons={buttons}
-            selectedUser={account}
-            selectedOpt={selectedOptTop}
-            clickedUser={clickedUserTop}
-            setClickedUser={handleClickedUserTop}
-          />
-          {/* DE BAIXO  */}
-          <InteractiveGridCopy
-            interactive="bottom"
-            onKeyChange={handleOptChangeBottom}
-            buttons={buttons}
-            selectedUser={account}
-            selectedOpt={selectedOptBottom}
-            clickedUser={clickedUserBottom}
-            setClickedUser={handleClickedUserBottom}
-          />
-        </div>
+    <>
+      <WebSocketProvider
+        token={account.accessToken}
+        onMessage={handleWebSocketMessage}
+      >
+        {isLoading ? (
+          <Loader />
+        ) : (
+          <>
+            <div className="flex justify-center gap-1 p-1">
+              <div className="gap-1 space-y-1">
+                {/* DE CIMA  */}
+                <InteractiveGridCopy
+                  interactive="top"
+                  onKeyChange={handleOptChangeTop}
+                  buttons={buttons}
+                  selectedUser={account}
+                  selectedOpt={selectedOptTop}
+                  clickedUser={clickedUserTop}
+                  setClickedUser={handleClickedUserTop}
+                />
+                {/* DE BAIXO  */}
+                <InteractiveGridCopy
+                  interactive="bottom"
+                  onKeyChange={handleOptChangeBottom}
+                  buttons={buttons}
+                  selectedUser={account}
+                  selectedOpt={selectedOptBottom}
+                  clickedUser={clickedUserBottom}
+                  setClickedUser={handleClickedUserBottom}
+                />
+              </div>
 
-        <ButtonsGridPage
-          buttonsGrid={buttons}
-          selectedUser={account}
-          // selectedOpt={selectedOpt}
-          // onOptChange={handleOptChange}
-          // clickedUser={clickedUser}
-        />
-      </div>
-      <div className="flex gap-5">
-        {account.type === "admin" && (
-          <Button variant="ghost" onClick={handleAdminToggle}>
-            {" "}
-            <img src={LogoCore} alt="Logo" className="h-8" />
-          </Button>
+              <ButtonsGridPage
+                buttonsGrid={buttons}
+                selectedUser={account}
+                // selectedOpt={selectedOpt}
+                // onOptChange={handleOptChange}
+                // clickedUser={clickedUser}
+              />
+            </div>
+            <div className="flex gap-5">
+              {account.type === "admin" && (
+                <Button variant="ghost" onClick={handleAdminToggle}>
+                  {" "}
+                  <img src={LogoCore} alt="Logo" className="h-8" />
+                </Button>
+              )}
+              <Logout />
+            </div>
+          </>
         )}
-        <Logout />
-      </div>
-    </WebSocketProvider>
+      </WebSocketProvider>
+    </>
   );
 }
 
