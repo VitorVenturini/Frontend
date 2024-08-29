@@ -35,6 +35,7 @@ import { Loader2 } from "lucide-react";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { ButtonInterface } from "@/components/buttons/buttonContext/ButtonsContext";
 import { useUsersPbx } from "@/components/users/usersPbx/UsersPbxContext";
+import { limitButtonName } from "@/components/utils/utilityFunctions";
 
 interface User {
   id: string;
@@ -76,7 +77,8 @@ export default function ModalUser({
   const { usersPbx } = useUsersPbx();
 
   const handleNameButton = (event: ChangeEvent<HTMLInputElement>) => {
-    setNameButton(event.target.value);
+    const limitedName = limitButtonName(event.target.value);
+    setNameButton(limitedName);
   };
   const handleButtonValue = (value: string) => {
     setButtonValue(value);

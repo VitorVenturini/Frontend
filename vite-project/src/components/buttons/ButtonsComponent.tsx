@@ -388,12 +388,15 @@ export default function ButtonsComponent({
             // {getDialogContent()}
             // </div>
             <Dialog>
-              <DialogTrigger>
+              <DialogTrigger className="flex justify-center">
                 <div
-                  className={`${commonClasses} flex items-center justify-center`}
+                  className={`${commonClasses} flex items-center `}
                   onClick={handleClick}
                 >
+                  <div className="flex w-full items-center justify-center">
                   <Plus />
+                  </div>
+                  
                 </div>
               </DialogTrigger>
               <DialogContent className="max-w-5xl">{getDialogContent()}</DialogContent>

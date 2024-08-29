@@ -45,6 +45,7 @@ import React, { useEffect, useState, ChangeEvent } from "react";
 import { Loader2 } from "lucide-react";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { ButtonInterface } from "@/components/buttons/buttonContext/ButtonsContext";
+import { limitButtonName } from "@/components/utils/utilityFunctions";
 
 interface User {
   id: string;
@@ -80,7 +81,8 @@ export default function ModalAlarm({
   const wss = useWebSocketData();
 
   const handleNameButton = (event: ChangeEvent<HTMLInputElement>) => {
-    setNameButton(event.target.value);
+    const limitedName = limitButtonName(event.target.value);
+    setNameButton(limitedName);
   };
   const handleNumberAlarm = (event: ChangeEvent<HTMLInputElement>) => {
     setNumberAlarm(event.target.value);

@@ -46,6 +46,7 @@ import { Loader2 } from "lucide-react";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { ButtonInterface } from "@/components/buttons/buttonContext/ButtonsContext";
 import { useSensors } from "@/components/sensor/SensorContext";
+import { limitButtonName } from "@/components/utils/utilityFunctions";
 
 interface User {
   id: string;
@@ -93,7 +94,8 @@ export default function ModalCommand({
   );
 
   const handleNameButton = (event: ChangeEvent<HTMLInputElement>) => {
-    setNameButton(event.target.value);
+    const limitedName = limitButtonName(event.target.value);
+    setNameButton(limitedName);
   };
   const handleNameCommand = (value: string) => {
     setNameCommand(value);
