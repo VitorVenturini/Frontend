@@ -10,7 +10,7 @@ import {
 import bcrypt from "bcryptjs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import React, { useState, ChangeEvent, useContext } from "react";
+import React, { useState, ChangeEvent, useContext, useEffect } from "react";
 import { Switch } from "@/components/ui/switch";
 import { useNavigate } from "react-router-dom";
 import { useAccount } from "@/components/account/AccountContext";
@@ -52,6 +52,7 @@ export default function CardLogin() {
   const account = useAccount();
   const { language } = useLanguage();
   const [open, setOpen] = useState(false);
+  const disconnected = localStorage.getItem("disconnected");
   //const ws = useWebSocketData();
   const handleEmailChange = (event: ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
@@ -63,12 +64,6 @@ export default function CardLogin() {
   const handleNewPasswordChange = (event: ChangeEvent<HTMLInputElement>) => {
     setNewPassword(event.target.value);
   };
-  // const handleSwitchChange = () => {
-  //   const newIsAdmin = !isAdmin;
-  //   setIsAdmin(newIsAdmin);
-  //   updateAccount({ isAdmin: newIsAdmin });
-  //   console.log("isAdmin setado para " + newIsAdmin);
-  // };
 
   const handleLogin = async () => {
     setIsLoading(true);
@@ -155,6 +150,15 @@ export default function CardLogin() {
 
     handleLogin(); // Chama a função de login
   };
+  const handleCloseAlertDialog = () => {
+    setOpen(false);
+    localStorage.removeItem("disconnected");
+  };
+  useEffect(() => {
+    if (disconnected && disconnected?.length > 0) {
+      setOpen(true);
+    }
+  }, [disconnected]);
 
   return (
     <div>
@@ -227,14 +231,24 @@ export default function CardLogin() {
       <AlertDialog open={open} onOpenChange={setOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Login Duplicado</AlertDialogTitle>
+            <AlertDialogTitle>
+              {disconnected && disconnected?.length > 0
+                ? "Você foi desconectado"
+                : "Login Duplicado"}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              Você já está conectado em outra sessão. Por favor, encerre a
-              sessão anterior para poder realizar o login nesta.
+              {disconnected && disconnected?.length > 0 ? (
+                <div className="flex gap-1">
+                  Você foi desconectado por
+                  <p className="capitalize"> {disconnected}</p>
+                </div>
+              ) : (
+                "Você já está conectado em outra sessão. Por favor, encerre a sessão anterior para poder realizar o login nesta."
+              )}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogAction onClick={() => setOpen(false)}>
+            <AlertDialogAction onClick={() => handleCloseAlertDialog()}>
               Entendido
             </AlertDialogAction>
           </AlertDialogFooter>

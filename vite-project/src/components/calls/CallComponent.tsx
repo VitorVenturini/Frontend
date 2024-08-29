@@ -38,6 +38,7 @@ export default function CallComponent({ buttonOnCall }: CallComponentProps) {
   const { getCallDuration } = useCalls();
   const [heldCall, setHeldStateCall] = useState(buttonOnCall.held || false);
   const [callDuration, setCallDuration] = useState(0);
+  const [openKeyboardDTMF, setOpenKeyboardDTMF] = useState(false);
   const [openKeyboard, setOpenKeyboard] = useState(false);
   //const [retrieveCall, setRetrieveCall] = useState<boolean>(false);
 
@@ -116,34 +117,43 @@ export default function CallComponent({ buttonOnCall }: CallComponentProps) {
         </div>
       </div>
       <div className="flex items-center gap-4">
-        <Button size="icon" variant="outline">
-          <Popover open={openKeyboard} onOpenChange={setOpenKeyboard}>
+        <div>
+          <Popover open={openKeyboardDTMF} onOpenChange={setOpenKeyboardDTMF}>
             <PopoverTrigger>
-              <KeyboardIcon />
+              <Button size="icon" variant="outline">
+                {" "}
+                <KeyboardIcon />{" "}
+              </Button>
             </PopoverTrigger>
             <PopoverContent>
-              <Keyboard onKeyPress={handleKeyPress} />
+              <Keyboard onKeyPress={handleKeyPress} forwarded={false}/>
             </PopoverContent>
           </Popover>
-        </Button>
+        </div>
         <Button
           onClick={heldCall ? handleRetrieveCall : handleHeldCall}
           size="icon"
           variant="outline"
-          className={heldCall ? "outline outline-2 border-xs border-red-900 outline-red-900" : "" }
+          className={
+            heldCall
+              ? "outline outline-2 border-xs border-red-900 outline-red-900"
+              : ""
+          }
         >
           {heldCall ? <Play /> : <Pause />}
         </Button>
-        <Button size="icon" variant="outline">
+        <div>
           <Popover open={openKeyboard} onOpenChange={setOpenKeyboard}>
             <PopoverTrigger>
-              <PhoneForwarded />
+              <Button size="icon" variant="outline">
+                <PhoneForwarded />{" "}
+              </Button>
             </PopoverTrigger>
             <PopoverContent>
-              <Keyboard onKeyPress={handleKeyPress} />
+              <Keyboard onKeyPress={handleKeyPress} forwarded = {true}  />
             </PopoverContent>
           </Popover>
-        </Button>
+        </div>
         <Button onClick={handleEndCall} size="icon" variant="outline">
           <PhoneOff />
         </Button>

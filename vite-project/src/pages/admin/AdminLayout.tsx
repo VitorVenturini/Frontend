@@ -277,6 +277,7 @@ function AdminLayout() {
         localStorage.removeItem(currentSession as string)
         localStorage.removeItem("currentSession")
         navigate("/login");
+        localStorage.setItem("disconnected",message.from)
         // message.from
         break;
       case "CoreUserOnline":
