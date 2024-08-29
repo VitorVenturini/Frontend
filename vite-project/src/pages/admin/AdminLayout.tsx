@@ -97,6 +97,7 @@ function AdminLayout() {
           description: "Botão Atualizado com sucesso",
         });
         break;
+
       case "DeleteButtonsSuccess":
         toast({
           description: "Botão excluído com sucesso",
@@ -271,6 +272,13 @@ function AdminLayout() {
           updateUserPbxStauts(message.guid, "offline", "offline");
         }
         break;
+      case "ConnRemovedByAdmin":
+        const currentSession = localStorage.getItem("currentSession");
+        localStorage.removeItem(currentSession as string)
+        localStorage.removeItem("currentSession")
+        navigate("/login");
+        // message.from
+        break;
       case "CoreUserOnline":
         updateUserStauts(message.guid, "online");
         break;
@@ -392,25 +400,24 @@ function AdminLayout() {
           setPbxStatus([{ status }]);
         }
         break;
-        case 'AddGatewayError':
-          toast({
-            variant: "destructive",
-            title:"Limite Atingido",
-            description: "Máximo de Gateways cadastrados verifique sua licença",
-          });
+      case "AddGatewayError":
+        toast({
+          variant: "destructive",
+          title: "Limite Atingido",
+          description: "Máximo de Gateways cadastrados verifique sua licença",
+        });
         break;
-        case 'DelConnUserResult':
-          toast({
-            variant: "destructive",
-            title:"Usuário Desconectado",
-            description: "Usuário foi desconectado de sua sessão",
-          });
+      case "DelConnUserResult":
+        toast({
+          variant: "destructive",
+          title: "Usuário Desconectado",
+          description: "Usuário foi desconectado de sua sessão",
+        });
         break;
       default:
         console.log("Unknown message type:", message);
         break;
     }
-
   };
 
   return (

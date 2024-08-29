@@ -53,7 +53,6 @@ export default function CardLogin() {
   const { language } = useLanguage();
   const [open, setOpen] = useState(false);
   //const ws = useWebSocketData();
-  // localStorage.clear()
   const handleEmailChange = (event: ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
   };
@@ -92,8 +91,6 @@ export default function CardLogin() {
       // emailNotFound
       if (response.ok) {
         const data = await response.json();
-        localStorage.setItem("token", data.accessToken);
-        console.log("Token de acesso para o local storage:", data.accessToken);
         const accountData = { ...data };
         updateAccount(accountData);
 

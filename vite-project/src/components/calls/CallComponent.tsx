@@ -130,11 +130,19 @@ export default function CallComponent({ buttonOnCall }: CallComponentProps) {
           onClick={heldCall ? handleRetrieveCall : handleHeldCall}
           size="icon"
           variant="outline"
+          className={heldCall ? "outline outline-2 border-xs border-red-900 outline-red-900" : "" }
         >
           {heldCall ? <Play /> : <Pause />}
         </Button>
         <Button size="icon" variant="outline">
-          <PhoneForwarded />
+          <Popover open={openKeyboard} onOpenChange={setOpenKeyboard}>
+            <PopoverTrigger>
+              <PhoneForwarded />
+            </PopoverTrigger>
+            <PopoverContent>
+              <Keyboard onKeyPress={handleKeyPress} />
+            </PopoverContent>
+          </Popover>
         </Button>
         <Button onClick={handleEndCall} size="icon" variant="outline">
           <PhoneOff />

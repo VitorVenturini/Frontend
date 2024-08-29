@@ -265,7 +265,13 @@ function UserLayout() {
         }
 
         break;
-
+      case "ConnRemovedByAdmin":
+        const currentSession = localStorage.getItem("currentSession");
+        localStorage.removeItem(currentSession as string)
+        localStorage.removeItem("currentSession")
+        navigate("/login");
+        // message.from
+        break;
       case "CallRinging":
         setButtonClickedStatus(message.btn_id, "callRinging");
         break;

@@ -27,9 +27,10 @@ export default function Logout() {
 
   const handleLogout = () => {
 
-   // localStorage.removeItem(account.session);
-   localStorage.clear()
-    
+   const currentSession = localStorage.getItem("currentSession");
+   localStorage.removeItem(currentSession as string)
+   localStorage.removeItem("currentSession")
+   
     if (ws) {
       ws.closeConnection(); // Fecha a conexão WebSocket
     }
