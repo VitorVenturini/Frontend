@@ -123,7 +123,7 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
         break;
       case "userCallHeld":
         //setStatusClass("bg-orange-500")
-        setCallStatusClass("bg-blue-900");
+        setCallStatusClass("bg-blue-800");
         break;
       case "userCallRetrieved":
         //setStatusClass("bg-orange-500")

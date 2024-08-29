@@ -1,14 +1,17 @@
 import React, { useState } from "react";
 import { ArrowRightLeftIcon, CircleX } from "lucide-react";
 import { Button } from "../ui/button";
+import { useWebSocketData } from "../websocket/WebSocketProvider";
+import { ButtonInterface } from "../buttons/buttonContext/ButtonsContext";
 interface KeyboardProps {
   onKeyPress: (key: string) => void;
   forwarded: boolean;
+  buttonOnCall: ButtonInterface
 }
 
-const Keyboard: React.FC<KeyboardProps> = ({ onKeyPress, forwarded }) => {
+const Keyboard: React.FC<KeyboardProps> = ({ onKeyPress, forwarded,buttonOnCall }) => {
   const [keySequence, setKeySequence] = useState<string[]>([]);
-
+  const wss = useWebSocketData()
   const keys = [
     ["1", "2", "3"],
     ["4", "5", "6"],
@@ -26,6 +29,12 @@ const Keyboard: React.FC<KeyboardProps> = ({ onKeyPress, forwarded }) => {
   };
 
   const handleRedirectCall = () => {
+    wss?.sendMessage({
+      api: "user",
+      mt: "RedirectCall",
+      btn_id: buttonOnCall.id,
+      distination: keySequence.join("")
+    })
     // mt: RedirectCall , btn_id , destination
   };
   return (
@@ -50,7 +59,7 @@ const Keyboard: React.FC<KeyboardProps> = ({ onKeyPress, forwarded }) => {
       {forwarded && (
         <div className="mt-4 flex justify-center ">
           <Button
-            className="flex items-center justify-center cursor-pointer bg-muted text-white rounded-lg p-2"
+            className="flex items-center justify-center cursor-pointer bg-muted text-white rounded-lg "
             onClick={handleRedirectCall}
           >
             <div className="flex flex-col items-center">

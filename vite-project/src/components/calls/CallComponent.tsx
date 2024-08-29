@@ -31,8 +31,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-
+} from "@/components/ui/card";
 
 interface CallComponentProps {
   buttonOnCall: ButtonInterface;
@@ -110,7 +109,6 @@ export default function CallComponent({ buttonOnCall }: CallComponentProps) {
 
   return (
     <Card className="flex justify-between px-4 py-6 m-3">
-  
       <div className="flex items-center gap-3">
         {avatarBase64 !== null ? (
           <Avatar>
@@ -129,16 +127,18 @@ export default function CallComponent({ buttonOnCall }: CallComponentProps) {
       <div className="flex items-center gap-4">
         <div>
           <Popover open={openKeyboardDTMF} onOpenChange={setOpenKeyboardDTMF}>
-
             <PopoverTrigger>
-              <Button size="icon" variant="outline">
+              <Button size="icon" variant="secondary">
                 {" "}
                 <KeyboardIcon />{" "}
               </Button>
             </PopoverTrigger>
             <PopoverContent>
-              <Keyboard onKeyPress={handleKeyPress} forwarded={false}/>
-
+              <Keyboard
+                onKeyPress={handleKeyPress}
+                forwarded={false}
+                buttonOnCall={buttonOnCall}
+              />
             </PopoverContent>
           </Popover>
         </div>
@@ -152,21 +152,24 @@ export default function CallComponent({ buttonOnCall }: CallComponentProps) {
         <div>
           <Popover open={openKeyboard} onOpenChange={setOpenKeyboard}>
             <PopoverTrigger>
-              <Button size="icon" variant="outline">
+              <Button size="icon" variant="secondary">
                 <PhoneForwarded />{" "}
               </Button>
             </PopoverTrigger>
             <PopoverContent>
-              <Keyboard onKeyPress={handleKeyPress} forwarded = {true}  />
+              <Keyboard
+                onKeyPress={handleKeyPress}
+                forwarded={true}
+                buttonOnCall={buttonOnCall}
+              />
             </PopoverContent>
           </Popover>
         </div>
-        <Button onClick={handleEndCall} size="icon" variant="outline">
+        <Button onClick={handleEndCall} size="icon" variant="destructive">
           <PhoneOff />
         </Button>
         {/* POPOVER DO TECLADO AQUI VOU UTILIZA-LO NOVAMNETE MAS POR ENQUANTO DEIXA ASSIM*/}
-        </div>
-    
+      </div>
     </Card>
   );
 }
