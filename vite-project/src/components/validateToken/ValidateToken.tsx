@@ -1,13 +1,14 @@
 import React, { useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import { host } from "@/App";
+import { useAccount } from "../account/AccountContext";
 const ValidadeToken = (Component: React.ComponentType) => {
   return () => {
     const navigate = useNavigate();
-
+    const account = useAccount()
     useEffect(() => {
       const verifyToken = async () => {
-        const token = localStorage.getItem("token");
+        const token = account.accessToken
     
         if (!token) {
           navigate('/Login');

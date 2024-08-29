@@ -85,8 +85,9 @@ export default function CardOptGeneric({
   const [userToChat, setUserToChat] = useState("");
   const { toast } = useToast();
   const [isCreating, setIsCreating] = useState(false);
-  const {} = useAccount();
+  const account = useAccount();
   const wss = useWebSocketData();
+
 
   const handleNameOpt = (event: React.ChangeEvent<HTMLInputElement>) => {
     const limitedName = limitButtonName(event.target.value);
@@ -129,7 +130,7 @@ export default function CardOptGeneric({
           const response = await fetch(host + "/api/uploadFiles", {
             method: "POST",
             headers: {
-              "x-auth": localStorage.getItem("token") || "",
+              "x-auth": account.accessToken || "",
             },
             body: formData,
           });

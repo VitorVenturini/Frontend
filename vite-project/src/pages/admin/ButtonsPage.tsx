@@ -1,7 +1,6 @@
 import { Input } from "@/components/ui/input";
 import * as React from "react";
 import ButtonsGridPages from "@/components/buttons/buttonsGrid/ButtonsGridPages";
-import LeftGrid from "@/components/leftGrid/LeftGrid";
 
 import InteractiveGridCopy from "@/components/optBar/InteractiveGridCopy";
 import {
@@ -63,16 +62,13 @@ export default function ButtonsPage() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch(
-          `${host}/api/listUsers`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              "x-auth": localStorage.getItem("token") || "",
-            },
-          }
-        );
+        const response = await fetch(`${host}/api/listUsers`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "x-auth": account.accessToken || "",
+          },
+        });
         const data = await response.json();
         setUsers(data);
         // console.log("ALL USERS" + JSON.stringify(data))
@@ -170,7 +166,7 @@ export default function ButtonsPage() {
             <div>
               {
                 <ButtonsGridPages
-                  buttonsGrid = {filteredButtons}
+                  buttonsGrid={filteredButtons}
                   selectedUser={selectedUser}
                   //onOptChange={handleOptChange}
                 />

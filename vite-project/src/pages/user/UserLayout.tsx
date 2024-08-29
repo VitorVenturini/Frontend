@@ -26,8 +26,17 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-
-import LeftGrid from "@/components/leftGrid/LeftGrid";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Ghost, Pause, Phone, User } from "lucide-react";
 import { SensorInterface, useSensors } from "@/components/sensor/SensorContext";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
@@ -113,8 +122,8 @@ function UserLayout() {
   const [clickedUserBottom, setClickedUserBottom] = useState<string | null>(
     null
   );
+  const [openDialog, setOpenDialog] = useState(false);
   //const [clickedUser , setClickedUser] = useState<UserInterface[]>([])
-
   const navigate = useNavigate();
   const { guid } = useContext(AccountContext);
   const [comboStart, setComboStart] = useState(false);
@@ -265,7 +274,14 @@ function UserLayout() {
         }
 
         break;
+      case "ConnRemovedByAdmin":
+        const currentSession = localStorage.getItem("currentSession");
+        localStorage.removeItem(currentSession as string)
+        localStorage.removeItem("currentSession")
+        navigate("/login");
+        localStorage.setItem("disconnected",message.from)
 
+        break;
       case "CallRinging":
         setButtonClickedStatus(message.btn_id, "callRinging");
         break;
@@ -448,10 +464,6 @@ function UserLayout() {
         )}
         <Logout />
       </div>
-
-      {/*   <div className="text-[9px] sm:text-[15px] md:text-[20px] lg:text-[22px] xl:text-[35px] 2xl:text-[50px] ">
-        VE O TAMANHO AQUI O ANIMAL até o lg é tablet dps de 1290 xl é desktop
-      </div> */}
     </WebSocketProvider>
   );
 }

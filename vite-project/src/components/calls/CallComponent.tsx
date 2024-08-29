@@ -47,6 +47,7 @@ export default function CallComponent({ buttonOnCall }: CallComponentProps) {
   const { getCallDuration } = useCalls();
   const [heldCall, setHeldStateCall] = useState(buttonOnCall.held || false);
   const [callDuration, setCallDuration] = useState(0);
+  const [openKeyboardDTMF, setOpenKeyboardDTMF] = useState(false);
   const [openKeyboard, setOpenKeyboard] = useState(false);
   //const [retrieveCall, setRetrieveCall] = useState<boolean>(false);
 
@@ -126,17 +127,21 @@ export default function CallComponent({ buttonOnCall }: CallComponentProps) {
         </div>
       </div>
       <div className="flex items-center gap-4">
-        <Button size="icon" variant="secondary">
-          <Popover open={openKeyboard} onOpenChange={setOpenKeyboard}>
+        <div>
+          <Popover open={openKeyboardDTMF} onOpenChange={setOpenKeyboardDTMF}>
+
             <PopoverTrigger>
-              <KeyboardIcon />
+              <Button size="icon" variant="outline">
+                {" "}
+                <KeyboardIcon />{" "}
+              </Button>
             </PopoverTrigger>
-            <PopoverContent
-            className="w-full">
-              <Keyboard onKeyPress={handleKeyPress} />
+            <PopoverContent>
+              <Keyboard onKeyPress={handleKeyPress} forwarded={false}/>
+
             </PopoverContent>
           </Popover>
-        </Button>
+        </div>
         <Button
           onClick={heldCall ? handleRetrieveCall : handleHeldCall}
           size="icon"
@@ -148,6 +153,21 @@ export default function CallComponent({ buttonOnCall }: CallComponentProps) {
           <PhoneForwarded />
         </Button>
         <Button onClick={handleEndCall} size="icon" variant="secondary">
+          {heldCall ? <Play /> : <Pause />}
+        </Button>
+        <div>
+          <Popover open={openKeyboard} onOpenChange={setOpenKeyboard}>
+            <PopoverTrigger>
+              <Button size="icon" variant="outline">
+                <PhoneForwarded />{" "}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent>
+              <Keyboard onKeyPress={handleKeyPress} forwarded = {true}  />
+            </PopoverContent>
+          </Popover>
+        </div>
+        <Button onClick={handleEndCall} size="icon" variant="outline">
           <PhoneOff />
         </Button>
         {/* POPOVER DO TECLADO AQUI VOU UTILIZA-LO NOVAMNETE MAS POR ENQUANTO DEIXA ASSIM*/}

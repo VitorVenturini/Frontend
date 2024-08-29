@@ -42,6 +42,7 @@ import { UserPbxInterface } from "../users/usersPbx/UsersPbxContext";
 import { Toggle } from "@/components/ui/toggle";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { IN } from "country-flag-icons/react/3x2";
+import { useAccount } from "./AccountContext";
 interface CreateAccountProps {
   user?: UserInterface;
   isUpdate?: boolean;
@@ -60,16 +61,21 @@ export default function CardCreateAccount({
   const [type, setType] = useState<string>(user?.type || "");
   const [isCreating, setIsCreating] = useState(false);
   const { usersPbx } = useUsersPbx();
+  const { users } = useUsers();
   const [searchTerm, setSearchTerm] = useState("");
   const [e164, setE164] = useState(user?.sip || "");
   const { language } = useLanguage();
   const { toast } = useToast();
   const { addUsers } = useUsers();
   const wss = useWebSocketData();
+  const account = useAccount();
 
-  // const availableSIPS = usersPbx?.filter((user) =>{
-  //     return user.e
-  // })
+  const allSIPS = usersPbx?.map((user) => user.e164).filter((e164) => e164);
+
+  const availableSIPS = allSIPS?.filter((sip) => {
+    return !users.some((user) => user.sip === sip);
+  });
+
   const validateFields = () => {
     let isValid = true;
 
@@ -175,7 +181,7 @@ export default function CardCreateAccount({
       name: name,
       sip: e164,
       type: type,
-      ...(isUpdate && { id: user?.id })
+      ...(isUpdate && { id: user?.id }),
     };
 
     try {
@@ -185,13 +191,12 @@ export default function CardCreateAccount({
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "x-auth": localStorage.getItem("token") || "",
+            "x-auth": account.accessToken || "",
           },
           body: JSON.stringify(obj),
         }
-        
       );
-      console.log('ACCONT UPDATE', obj)
+      console.log("ACCONT UPDATE", obj);
       const data = await response.json();
 
       if (!response.ok) {
@@ -318,19 +323,24 @@ export default function CardCreateAccount({
             </div>
           </div>
           <div className="grid grid-cols-5 items-center gap-4">
-          <Label className="text-end " htmlFor="type">
-                SIP
-              </Label>
-          <Select  value={e164} onValueChange={handleSetE164} >
-            <SelectTrigger className="col-span-3" id="type">
-              <SelectValue placeholder="Select a SIP" />
-            </SelectTrigger>
-            <SelectContent>
-              {usersPbx?.map((row) => (
-                <SelectItem value={row.guid}>{row.e164}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            <Label className="text-end " htmlFor="type">
+              SIP
+            </Label>
+            <Select value={e164} onValueChange={handleSetE164}>
+              <SelectTrigger className="col-span-3" id="type">
+                <SelectValue placeholder="Select a SIP" />
+              </SelectTrigger>
+              <SelectContent>
+                {availableSIPS?.map((sip) => {
+                  const row = usersPbx.find((user) => user.e164 === sip);
+                  return (
+                    <SelectItem key={row?.guid} value={row?.guid as string}>
+                      {row?.e164}
+                    </SelectItem>
+                  );
+                })}
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </CardContent>
