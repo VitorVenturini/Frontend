@@ -1,13 +1,5 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-
+import ResponsivePng from "./ResponsivePng";
+import { commonClasses } from "../buttons/ButtonsComponent";
 import {
   Card,
   CardContent,
@@ -76,6 +68,7 @@ export default function ModalSensor({
   const [nameSensor, setNameSensor] = useState(
     existingButton?.button_prt || ""
   );
+
   const [nameButton, setNameButton] = useState(
     existingButton?.button_name || ""
   );
@@ -94,6 +87,8 @@ export default function ModalSensor({
   );
 
   const [modelSensor, setModelSensor] = useState(existingButton?.img || "");
+  const typePreview =
+    typeMeasure.charAt(0).toUpperCase() + typeMeasure.slice(1);
 
   const [isCreating, setIsCreating] = useState(false);
   const { toast } = useToast();
@@ -139,12 +134,12 @@ export default function ModalSensor({
     setGeralThreshold("");
     setMaxValue(value);
   };
+  const filteredModel = sensors.filter((sensor) => {
+    return sensor.deveui === nameSensor;
+  })[0];
   const handleCreateButton = () => {
     try {
       if (nameButton && typeMeasure) {
-        const filteredModel = sensors.filter((sensor) => {
-          return sensor.deveui === nameSensor;
-        })[0];
         if (showMinMaxFields && (!maxValue || !minValue)) {
           toast({
             variant: "destructive",
@@ -439,17 +434,18 @@ export default function ModalSensor({
           </div>
           <div className="flex-col gap-4 items-start justify-end align-bottom h-[20%]">
             <h4>Preview</h4>
-            <div>
+            <div className={commonClasses}>
               <div className="flex flex-col justify-between cursor-pointer active:bg-red-900 bg-buttonSensor">
                 <div className="flex items-center  gap-1 cursor-pointer ">
+                  <ResponsivePng sensorModel={filteredModel?.description} />
                   <p className=" flex text-sm font-medium leading-none xl3:text-2xl">
                     {nameButton}
                   </p>
                 </div>
                 <p className="text-[9px] font-medium leading-none text-muted-foreground">
-                  {nameSensor}
+                  {filteredModel?.sensor_name}
                 </p>
-                {typeMeasure}
+                {typePreview}
               </div>
             </div>
           </div>
