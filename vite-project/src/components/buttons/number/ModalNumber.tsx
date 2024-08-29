@@ -1,5 +1,5 @@
 import { ButtonInterface } from "@/components/buttons/buttonContext/ButtonsContext";
-import React, { useState } from "react";
+import React, { useEffect, useState, ChangeEvent } from "react";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -47,6 +47,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useUsersPbx } from "@/components/users/usersPbx/UsersPbxContext";
+import { limitButtonName } from "@/components/utils/utilityFunctions";
 
 interface User {
   id: string;
@@ -87,8 +88,9 @@ export default function ModalNumber({
   const wss = useWebSocketData();
   const { usersPbx } = useUsersPbx();
 
-  const handleNameButton = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNameButton(event.target.value);
+  const handleNameButton = (event: ChangeEvent<HTMLInputElement>) => {
+    const limitedName = limitButtonName(event.target.value);
+    setNameButton(limitedName);
   };
   const handleParamButton = (event: React.ChangeEvent<HTMLInputElement>) => {
     setParamButton(event.target.value);

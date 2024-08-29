@@ -46,6 +46,7 @@ import { Loader2 } from "lucide-react";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { ButtonInterface } from "@/components/buttons/buttonContext/ButtonsContext";
 import { useButtons } from "@/components/buttons/buttonContext/ButtonsContext";
+import { limitButtonName } from "@/components/utils/utilityFunctions";
 
 interface User {
   id: string;
@@ -88,7 +89,8 @@ export default function ModalCombo({
   const wss = useWebSocketData();
 
   const handleNameButton = (event: ChangeEvent<HTMLInputElement>) => {
-    setNameButton(event.target.value);
+    const limitedName = limitButtonName(event.target.value);
+    setNameButton(limitedName);
   };
   const handleCreateButton = () => {
     try {

@@ -46,6 +46,7 @@ import { Loader2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { host } from "@/App";
 import { useAccount } from "../account/AccountContext";
+import { limitButtonName } from "../utils/utilityFunctions";
 
 interface User {
   id: string;
@@ -89,7 +90,8 @@ export default function CardOptGeneric({
 
 
   const handleNameOpt = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNameOpt(event.target.value);
+    const limitedName = limitButtonName(event.target.value);
+    setNameOpt(limitedName);
   };
   const handleValueOpt = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValueOpt(event.target.value);

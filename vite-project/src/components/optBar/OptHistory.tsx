@@ -12,10 +12,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function OptHistory() {
   return (
-    
-      <ScrollArea className="h-[390px] w-full">
+      <ScrollArea className="w-full h-[200px]  lg:h-[290px]  xl2:h-[400px] xl3:h-[590px]  relative">
         <HistoryGrid />
       </ScrollArea>
-
   );
 }

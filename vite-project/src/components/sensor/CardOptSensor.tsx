@@ -44,6 +44,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { ButtonInterface } from "@/components/buttons/buttonContext/ButtonsContext";
 import { Loader2 } from "lucide-react";
+import { limitButtonName } from "../utils/utilityFunctions";
 
 interface User {
   id: string;
@@ -78,7 +79,8 @@ export default function CardOptSensor({
   const wss = useWebSocketData();
 
   const handleNameOpt = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNameOpt(event.target.value);
+    const name = limitButtonName(event.target.value);
+    setNameOpt(name);
   };
   const handleNameSensor = (value: string) => {
     setNameSensor(value);
