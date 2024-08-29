@@ -1,7 +1,6 @@
 import { Input } from "@/components/ui/input";
 import * as React from "react";
 import ButtonsGridPages from "@/components/buttons/buttonsGrid/ButtonsGridPages";
-import LeftGrid from "@/components/leftGrid/LeftGrid";
 
 import InteractiveGridCopy from "@/components/optBar/InteractiveGridCopy";
 import {

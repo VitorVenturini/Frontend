@@ -27,7 +27,6 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
-import LeftGrid from "@/components/leftGrid/LeftGrid";
 import { Ghost, Pause, Phone, User } from "lucide-react";
 import { SensorInterface, useSensors } from "@/components/sensor/SensorContext";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
