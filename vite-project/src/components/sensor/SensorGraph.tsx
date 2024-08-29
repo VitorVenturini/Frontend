@@ -94,9 +94,10 @@ export function SensorGraph({ chartData }: SensorGraphProps) {
     setActionExecDevice(value);
   };
   return (
-    <Card className="w-full h-full ">
+    <Card className="w-full h-[200px]  lg:h-[200px]  xl2:h-[300px] xl3:h-[400px]  relative
+     ">
       <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
-        <div className="flex flex-1 flex justify-center gap-1 px-2 py-2 ">
+        <div className="flex flex-1 justify-center gap-1 px-2 py-2 ">
       
           {keys.map((key) => {
             return (
@@ -116,10 +117,10 @@ export function SensorGraph({ chartData }: SensorGraphProps) {
        
         
       </CardHeader>
-      <CardContent className="h-full w-full">
+      <CardContent className="h-full w-full  p-0">
         <ChartContainer
           config={dataChartConfig}
-          className="aspect-auto h-full w-full"
+          className="h-full w-full relative"
         >
           <LineChart
             accessibilityLayer
@@ -127,8 +128,8 @@ export function SensorGraph({ chartData }: SensorGraphProps) {
             margin={{
               left: 12,
               right: 12,
-              top: 25,
-              bottom: 25,
+              top: 8,
+              bottom: 8,
             }}
           >
             <CartesianGrid vertical={false} />
@@ -136,8 +137,8 @@ export function SensorGraph({ chartData }: SensorGraphProps) {
               dataKey="date"
               tickLine={false}
               axisLine={false}
-              tickMargin={8}
-              minTickGap={32}
+              tickMargin={0}
+              minTickGap={0}
               tickFormatter={(value) => {
                 const date = new Date(value);
                 return date.toLocaleDateString("pt-BR", {

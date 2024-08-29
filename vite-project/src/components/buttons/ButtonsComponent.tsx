@@ -58,7 +58,7 @@ interface ButtonProps {
   selectedPage: string;
 }
 export const commonClasses =
-  "w-[128px] h-[66px] xl:w-[128px] xl:h-[60px] xl2:w-[150px] xl2:h-[80px] rounded-lg border bg-border text-white shadow-sm p-1 justify-between";
+  "w-[128px] h-[66px] xl:w-[128px] xl:h-[60px] xl2:w-[150px] xl2:h-[80px] xl3:w-[230px] xl3:h-[120px] rounded-lg border bg-border text-white shadow-sm p-1 justify-between";
 
 export default function ButtonsComponent({
   button,
@@ -185,14 +185,14 @@ export default function ButtonsComponent({
         clickedPosition?.j >= 1 &&
         clickedPosition?.j <= 5:
         return (
-          <>
+          <div className="max-w-5xl">
             <Card className="border-none bg-transparent">
               <CardHeader>
                 <CardTitle>Criar Botão</CardTitle>
                 <CardDescription>Selecione um tipo de botão</CardDescription>
               </CardHeader>
               <CardContent className="gap-4">
-                <div className="grid grid-cols-5 items-center gap-4 mt-3 mb-3">
+                <div className=" grid grid-cols-4 items-center gap-4 mt-3 mb-3">
                   <Label
                     className="text-end"
                     htmlFor="framework"
@@ -216,7 +216,7 @@ export default function ButtonsComponent({
                 <div>{renderModalByType()}</div>
               </CardContent>
             </Card>
-          </>
+          </div>
         );
       default:
         break;
@@ -339,9 +339,9 @@ export default function ButtonsComponent({
                 </div>
               </DialogTrigger>
               {isAdmin && (
-                <div>
-                  <DialogContent>
-                    <ModalSensor
+                <div >
+                  <DialogContent className="max-w-5xl"  >
+                    <ModalSensor 
                       selectedPage={selectedPage}
                       selectedUser={selectedUser}
                       clickedPosition={clickedPosition}
@@ -396,7 +396,7 @@ export default function ButtonsComponent({
                   <Plus />
                 </div>
               </DialogTrigger>
-              <DialogContent>{getDialogContent()}</DialogContent>
+              <DialogContent className="max-w-5xl">{getDialogContent()}</DialogContent>
             </Dialog>
           );
         } else {

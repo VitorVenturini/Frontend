@@ -5,6 +5,7 @@ import InteractiveOpt from "./interactiveOpt";
 
 import { ButtonInterface } from "@/components/buttons/buttonContext/ButtonsContext";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 interface User {
   id: string;
@@ -58,7 +59,7 @@ export default function InteractiveGridCopy({
   };
 
   return (
-    <Card className="flex items-center h-[305px] xl:h-[400px] w-full p-1 gap-1">
+    <Card className="flex items-center h-[305px] xl2:h-[400px] xl3:h-[600px] w-full p-1 gap-1">
       {selectedUser && (
         <>
           <OptBar
@@ -67,6 +68,7 @@ export default function InteractiveGridCopy({
             selectedOpt={selectedOpt}
             clickedUser={clickedUser}
           />
+          
           <InteractiveOpt
             interactive={interactive}
             buttons={buttonsInSelectedOpt}

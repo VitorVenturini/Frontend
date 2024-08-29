@@ -32,6 +32,9 @@ export interface ButtonInterface {
   clickedStatus?: string;
   callStatus?: string;
   note?: string;
+  onCall?: boolean;
+  held?: boolean;
+  muted?: boolean;
 }
 
 interface ButtonContextType {
@@ -49,12 +52,22 @@ interface ButtonContextType {
     sensorName: string,
     value: number | undefined
   ) => void;
+  setHeldCall : (id: number, isHeld: boolean) => void;
   setClickedButton: (id: number) => void;
   removeClickedButton: (id: number) => void;
   clearButtons: () => void;
   setButtonTriggered: (id: number, triggered: boolean) => void;
-  setButtonClickedStatus: (id: number, clickedStatus: string) => void;
-  setButtonNumberCallStatus: (number: string, callStatus: string, note: string) => void;
+  setButtonClickedStatus: (
+    id: number,
+    clickedStatus: string,
+    onCall?: boolean,
+    note?: string
+  ) => void;
+  setButtonNumberCallStatus: (
+    number: string,
+    callStatus: string,
+    note: string
+  ) => void;
   setStopButtonTriggered: (alarm: string, triggered: boolean) => void;
   setStopWarningTreshold: (id: number, triggered: boolean) => void;
   setCommandValue: (btn_id: number, prt: string, value: string) => void;
@@ -133,6 +146,13 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
       )
     );
   };
+  const setHeldCall = (id: number, isHeld: boolean) => {
+    setButtons((prevButtons) =>
+      prevButtons.map((button) =>
+        button.id === id ? { ...button, held: isHeld } : button
+      )
+    );
+  };
 
   const setButtonLoading = (id: number, loading: boolean) => {
     setButtons((prevButtons) =>
@@ -154,20 +174,29 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
     setButtons([]);
   };
 
-  const setButtonClickedStatus = (id: number, clickedStatus: string, note?: string) => {
+  const setButtonClickedStatus = (
+    id: number,
+    clickedStatus: string,
+    onCall?: boolean,
+    note?: string
+  ) => {
     setButtons((prevButtons) =>
       prevButtons.map((button) =>
-        button.id === id ? { ...button, clickedStatus, note } : button
+        button.id === id ? { ...button, clickedStatus, onCall, note } : button
       )
-    );  
+    );
   };
 
-  const setButtonNumberCallStatus = (number: string, callStatus: string, note: string) => {
+  const setButtonNumberCallStatus = (
+    number: string,
+    callStatus: string,
+    note: string
+  ) => {
     setButtons((prevButtons) =>
       prevButtons.map((button) =>
         button.button_prt === number ? { ...button, callStatus, note } : button
       )
-    );  
+    );
   };
 
   const setButtonTriggered = (id: number, triggered: boolean) => {
@@ -218,6 +247,7 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
       value={{
         buttons,
         setButtons,
+        setHeldCall,
         addButton,
         clearButtons,
         updateButton,

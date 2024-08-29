@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/card";
 import OptChat from "./OptChat";
 import OptHistory from "./OptHistory";
+import OptCall from "./OptCall";
 
 interface OptLayoutCopyProps {
   clickedButtonId: number | null;
@@ -85,6 +86,8 @@ export default function OptLayoutCopy(props: OptLayoutCopyProps) {
           );
         case "camera":
           return <OptCamera filteredSensorInfo={filteredCamInfo} />;
+        // case "call":
+        //   return <OptCall/>
         default:
           return <div>Selecione uma opção</div>;
       }
@@ -105,7 +108,7 @@ export default function OptLayoutCopy(props: OptLayoutCopyProps) {
   };
 
   return (
-    <Card className="rounded-none bg-transparent w-full h-full max-h-[330px]">
+    <Card className="rounded-none bg-transparent w-full h-full relative sm:h-[292px] xl2:h-[350px] xl3:h-[500px]">
       {renderContent()}
     </Card>
   );

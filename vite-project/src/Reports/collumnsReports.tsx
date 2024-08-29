@@ -18,6 +18,7 @@ const ColumnsReports: React.FC<ColumnsReportsProps> = ({
   keys,
   filter,
 }) => {
+
   const columns: ColumnDef<any, any>[] = useMemo(() => {
     // Filtra as colunas que não devem ser exibidas
     const baseColumns: ColumnDef<any, any>[] = keys
@@ -26,8 +27,9 @@ const ColumnsReports: React.FC<ColumnsReportsProps> = ({
         accessorKey: key,
         header: key.toUpperCase(),
       }));
-
+    
     if (report === "RptCalls") {
+      
       baseColumns.push({
         accessorKey: "ACTIONS",
         header: "ACTIONS",
@@ -46,14 +48,13 @@ const ColumnsReports: React.FC<ColumnsReportsProps> = ({
                 trackHeight={20}
                 barWidth={1}
                 gap={2}
-                visualise={true}
+                visualise={false}
                 backgroundColor="#1e293b"
                 barColor="#1e293b"
                 barPlayedColor="#ffffff"
                 skipDuration={2}
                 showLoopOption={false}
                 showVolumeControl={false}
-                
               />
               <a
                 href={`${host}${recordLink}`}

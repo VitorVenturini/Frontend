@@ -16,23 +16,35 @@ import { useToast } from "@/components/ui/use-toast";
 import { useWebSocketData } from "../websocket/WebSocketProvider";
 import { useAppConfig } from "./ConfigContext";
 import ColumnsReports from "@/Reports/collumnsReports";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function LicenseCard() {
-  const [licenseKey, setKey] = useState("");
+  const { licenseApi } = useAppConfig();
+  const [licenseKey, setKey] = useState(licenseApi?.licenseFile.value || "");
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoading2, setIsLoading2] = useState(false);
   const { toast } = useToast();
   const wss = useWebSocketData();
   const [licenseInput, setLicense] = useState("");
-  const { licenseApi } = useAppConfig();
 
-  console.log("LICENSE API", licenseApi);
-  const licenseData = Object.entries(licenseApi.licenseActive).map(([key, value]) => ({
-    item: key.charAt(0).toUpperCase() + key.slice(1), // Capitaliza a primeira letra
-    total: value.total,
-    used: value.used,
-  }));
-  const keys = ['item', 'used', 'total']
-
+  const licenseData = Object.entries(licenseApi.licenseActive).map(
+    ([key, value]) => ({
+      item: key.charAt(0).toUpperCase() + key.slice(1), // Capitaliza a primeira letra
+      total: value.total,
+      used: value.used,
+    })
+  );
+  const keys = ["item", "used", "total"];
   const handleLicenseKey = (event: ChangeEvent<HTMLInputElement>) => {
     setKey(event.target.value);
   };
@@ -49,28 +61,74 @@ export default function LicenseCard() {
     setIsLoading(true);
     console.log(`Nova Key: ${licenseKey}`);
     if (licenseKey === "") {
-      wss?.sendMessage({
-        api: "admin",
-        mt: "UpdateLicense",
-        licenseFile: licenseInput,
-      });
       toast({
         variant: "destructive",
         description: "Chave Vazia",
       });
     } else {
+      wss?.sendMessage({
+        api: "admin",
+        mt: "UpdateConfig",
+        entry: "licenseFile",
+        vl: licenseKey,
+      });
       toast({
         description: "Chave de Licença atualizada com sucesso",
       });
     }
     setIsLoading(false);
   };
+  const restartService = async () => {
+    setIsLoading2(true);
+    wss?.sendMessage({
+      api: "admin",
+      mt: "RestartService",
+    });
+    toast({
+      description: "Serviço reiniciado com sucesso",
+    });
+    setIsLoading2(false);
+  };
 
   return (
     <Card className="min-w-[700px]">
-      <CardHeader className="flex-row align-middle justify-between items-center">
+      <CardHeader className="grid grid-cols-3 justify-between items-center">
         <CardTitle>Licenciamento</CardTitle>
-        {!isLoading && <Button onClick={saveKey}>Salvar</Button>}
+        {!isLoading2 && (
+          <div className="flex gap-4 justify-center">
+            <AlertDialog>
+            <AlertDialogTrigger>
+            <Button variant={"destructive"}>
+              Reiniciar Serviço
+            </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Voce tem certeza?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Ao apertar em confirmar toda as seções serão desconectadas
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction onClick={restartService}>Confirmar</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+ 
+          </div>
+        )}
+        {isLoading2 && (
+          <Button disabled>
+            <Loader2 className="mr-2 h-4 w-4 justify-between animate-spin" />
+            Reiniciar
+          </Button>
+        )}
+        {!isLoading && (
+          <div className="flex gap-4 justify-end">
+            <Button onClick={saveKey}>Salvar</Button>
+          </div>
+        )}
         {isLoading && (
           <Button disabled>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -98,7 +156,7 @@ export default function LicenseCard() {
                 id="key"
                 placeholder="Chave de Licença"
                 onChange={handleLicenseKey}
-                value={licenseApi.licenseFile.value}
+                value={licenseKey as string}
               />
             </div>
           </div>
@@ -118,8 +176,8 @@ export default function LicenseCard() {
             <ColumnsReports
               data={licenseData}
               keys={keys}
-              report={'Licenças disponíveis' as any}
-              filter = {''}
+              report={"Licenças disponíveis" as any}
+              filter={""}
             />
           </div>
         </div>
