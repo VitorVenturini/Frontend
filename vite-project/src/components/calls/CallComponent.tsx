@@ -149,12 +149,6 @@ export default function CallComponent({ buttonOnCall }: CallComponentProps) {
         >
           {heldCall ? <Play /> : <Pause />}
         </Button>
-        <Button size="icon" variant="secondary">
-          <PhoneForwarded />
-        </Button>
-        <Button onClick={handleEndCall} size="icon" variant="secondary">
-          {heldCall ? <Play /> : <Pause />}
-        </Button>
         <div>
           <Popover open={openKeyboard} onOpenChange={setOpenKeyboard}>
             <PopoverTrigger>
