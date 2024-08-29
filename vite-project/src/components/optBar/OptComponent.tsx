@@ -99,7 +99,7 @@ export default function OptComponent({
   };
 
   const commonClasses =
-    "w-[60px] h-[40px]  xl2:w-[60px] xl3:h-[80px] xl3:w-[80px] rounded-lg border bg-border text-card-foreground shadow-sm p-1 flex items-center justify-center";
+    "w-[60px] h-[40px]  xl2:w-[60px] xl3:h-[80px] xl3:w-[80px] rounded-lg border bg-border text-card-foreground shadow-sm p-1 flex items-start justify-center text-left text-wrap truncate";
 
   const getDialogContent = () => {
     switch (selectedOpt) {
@@ -217,13 +217,13 @@ export default function OptComponent({
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <div
-                className={`${commonClasses} flex flex-col cursor-pointer ${
+                className={`${commonClasses} flex flex-col cursor-pointer text-wrap ${
                   isClicked ? "bg-zinc-950" : ""
                 }`}
                 onClick={handleClick}
               >
-                <div className="flex items-center gap-1 cursor-pointer">
-                  <p className="text-sm font-medium leading-none">
+                <div className="flex items-center gap-1 cursor-pointer text-wrap">
+                  <p className="text-sm font-medium leading-none text-clip text-pretty">
                     {button.button_name}
                   </p>
                 </div>
