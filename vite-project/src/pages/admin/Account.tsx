@@ -18,7 +18,7 @@ export default function Account() {
     }return item
   
   })
-  console.log("ACCONT ", usersPbx, ajustData)
+
   function replaceData(
     users: any[],
     item: any,

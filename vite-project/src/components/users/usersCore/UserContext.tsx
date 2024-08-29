@@ -23,6 +23,7 @@ interface UserContextType {
   addUsers: (user: UserInterface) => void;
   updateUser: (user: UserInterface) => void;
   updateUserStauts: (guid: string, status: string, note?: string) => void;
+  //onlineUsers: (guid: string) => void;
   deleteUser: (id: number) => void;
 }
 
@@ -46,6 +47,9 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       prevUsers.map((user) => (user.guid === guid ? { ...user, status, note } : user))
     );
   };
+  // const onlineUsers = (guid: string) => {
+  //   setUsers(() => )
+  // }
   const deleteUser = (id: number) => {
     setUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
   };
@@ -57,6 +61,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         addUsers,
         updateUser,
         updateUserStauts,
+        //onlineUsers,
         deleteUser,
       }}
     >

@@ -399,10 +399,18 @@ function AdminLayout() {
             description: "Máximo de Gateways cadastrados verifique sua licença",
           });
         break;
+        case 'DelConnUserResult':
+          toast({
+            variant: "destructive",
+            title:"Usuário Desconectado",
+            description: "Usuário foi desconectado de sua sessão",
+          });
+        break;
       default:
         console.log("Unknown message type:", message);
         break;
     }
+
   };
 
   return (
