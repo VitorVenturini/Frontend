@@ -5,9 +5,10 @@ import WS101_SOS from "../../assets/SensorsPng/WS101.png";
 import WS301 from "../../assets/SensorsPng/WS301.png";
 import UC300 from "@/assets/SensorsPng/UC300.png";
 import WTS506 from "@/assets/SensorsPng/WTS506.png";
-import WS202 from "@/assets/SensorsPng/WS202.png"
-import AM307 from "@/assets/SensorsPng/AM307.png"
-import WS156 from "@/assets/SensorsPng/WS156.png"
+import WS202 from "@/assets/SensorsPng/WS202.png";
+import AM307 from "@/assets/SensorsPng/AM307.png";
+import WS156 from "@/assets/SensorsPng/WS156.png";
+import VS121 from "@/assets/SensorsPng/VS121.png";
 interface ButtonProps {
   sensorModel: string | undefined;
 }
@@ -15,7 +16,6 @@ interface ButtonProps {
 export default function ResponsivePng({ sensorModel }: ButtonProps) {
   let imageSrc;
   let altText;
-
   //case sensorModel?.startsWith("AM103"):
 
   switch (sensorModel) {
@@ -54,6 +54,10 @@ export default function ResponsivePng({ sensorModel }: ButtonProps) {
     case "WTS506":
       imageSrc = WTS506;
       altText = "WTS506 Sensor";
+      break;
+    case "VS121":
+      imageSrc = VS121;
+      altText = "VS121 Sensor";
       break;
     default:
       imageSrc = ""; // ou uma imagem padrão

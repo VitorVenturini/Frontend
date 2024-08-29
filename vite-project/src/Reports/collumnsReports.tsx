@@ -18,7 +18,6 @@ const ColumnsReports: React.FC<ColumnsReportsProps> = ({
   keys,
   filter,
 }) => {
-
   const columns: ColumnDef<any, any>[] = useMemo(() => {
     // Filtra as colunas que não devem ser exibidas
     const baseColumns: ColumnDef<any, any>[] = keys
@@ -27,9 +26,8 @@ const ColumnsReports: React.FC<ColumnsReportsProps> = ({
         accessorKey: key,
         header: key.toUpperCase(),
       }));
-    
+
     if (report === "RptCalls") {
-      
       baseColumns.push({
         accessorKey: "ACTIONS",
         header: "ACTIONS",
@@ -85,9 +83,11 @@ const ColumnsReports: React.FC<ColumnsReportsProps> = ({
                   }
                 }}
               >
-                <Download                 className={`cursor-pointer ${
-                  !isLinkAvailable && "opacity-50 cursor-not-allowed"
-                }`}/>
+                <Download
+                  className={`cursor-pointer ${
+                    !isLinkAvailable && "opacity-50 cursor-not-allowed"
+                  }`}
+                />
               </a>
             </div>
           );
