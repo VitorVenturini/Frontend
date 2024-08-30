@@ -5,6 +5,7 @@ import { LanguageToggle } from "@/components/language/LanguageToggle";
 import LogoCore from "../assets/LogoCore.svg";
 import LogoWecom from "../assets/WecomLogo.svg";
 import { ModeToggle } from "@/components/mode-toggle";
+import { FullScreenButton } from "@/components/FullScreanButton";
 
 export default function LoginPage() {
   return (
@@ -17,6 +18,8 @@ export default function LoginPage() {
 
           <LanguageToggle />
           <ModeToggle />
+          <FullScreenButton />
+
 
           </div>
         </div>
