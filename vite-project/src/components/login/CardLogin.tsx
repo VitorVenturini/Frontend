@@ -41,6 +41,16 @@ import { useToast } from "@/components/ui/use-toast";
 import { set } from "date-fns";
 import { host } from "@/App";
 
+const enterFullScreen = () => {
+  const elem = document.documentElement;
+
+  if (elem.requestFullscreen) {
+    elem.requestFullscreen().catch((err) => {
+      console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+    });
+  }
+};
+
 export default function CardLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -98,10 +108,12 @@ export default function CardLogin() {
         updateAccount({ isLogged: true });
         console.log({ ...account, updateAccount: undefined });
         console.log("Login efetuado com sucesso");
+        
         setIsLoading(false);
 
         // Sempre navega para a tela de usuário após o login bem-sucedido
         navigate("/user");
+        
       } else {
         const data = await response.json();
         switch (data.error) {
@@ -150,9 +162,13 @@ export default function CardLogin() {
   };
   const handleFormSubmit = (event: React.FormEvent) => {
     event.preventDefault(); // Previne o comportamento padrão do formulário
+
     console.log("Form submitted"); // Debug log
 
     handleLogin(); // Chama a função de login
+
+    enterFullScreen(); // Chama a função de tela cheia
+    
   };
   const handleCloseAlertDialog = () => {
     setOpen(false);
