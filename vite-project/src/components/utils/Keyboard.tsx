@@ -22,6 +22,15 @@ const Keyboard: React.FC<KeyboardProps> = ({ onKeyPress, forwarded,buttonOnCall 
   const handleKeyPress = (key: string) => {
     setKeySequence((prevSequence) => [...prevSequence, key]);
     onKeyPress(key);
+    if(!forwarded){
+      // quando nao for para redirecionar manda o digito em cada tecla clicada
+      wss?.sendMessage({
+        api: "user",
+        mt: "SendDtmfDigits",
+        digit: key,
+        btn_id: buttonOnCall.id
+      })
+    }
   };
 
   const handleClearKey = () => {
@@ -33,7 +42,7 @@ const Keyboard: React.FC<KeyboardProps> = ({ onKeyPress, forwarded,buttonOnCall 
       api: "user",
       mt: "RedirectCall",
       btn_id: buttonOnCall.id,
-      distination: keySequence.join("")
+      destination: keySequence.join("")
     })
     // mt: RedirectCall , btn_id , destination
   };

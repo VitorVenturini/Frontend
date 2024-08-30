@@ -11,6 +11,7 @@ import { useUsers } from "../users/usersCore/UserContext";
 import OptUser from "../chat/MessageList";
 import MessageList from "../chat/MessageList";
 import { useChat } from "../chat/ChatContext";
+import { Button } from "react-chat-elements";
 
 interface OptGridProps {
   buttons: ButtonInterface[];
@@ -62,31 +63,42 @@ export default function OptGrid({
   };
 
   // Monitorar se o combo iniciou
+  const processedButtonsRef = useRef<Set<number>>(new Set());
+
   useEffect(() => {
     const buttonInCombo = buttons.find(
       (button) =>
         button.comboStart &&
         button.position_y === (interactive === "top" ? "1" : "2")
     );
+
     if (buttonInCombo && buttonInCombo.id !== comboStartedRef.current) {
-      setComboStarted(buttonInCombo.id);
       comboStartedRef.current = buttonInCombo.id;
+      setComboStarted(buttonInCombo.id);
     }
   }, [buttons, interactive]);
 
-  // Se o combo iniciou, simular o clique no botão e enviar msg websocket caso necessário
   useEffect(() => {
     if (comboStarted) {
       const buttonInCombo = buttons.find(
         (button) => button.id === comboStarted
       );
-      if (buttonInCombo) {
-        setClickedButtonId(buttonInCombo.id, interactive); // setar o botão clicado atualmente
+
+      if (buttonInCombo && !processedButtonsRef.current.has(buttonInCombo.id)) {
+        // Marcar o botão como processado
+        processedButtonsRef.current.add(buttonInCombo.id);
+
+        // Definir o botão como clicado
+        setClickedButtonId(buttonInCombo.id, interactive);
+
+        // Enviar mensagem TriggerStartOpt para o WebSocket
         wss?.sendMessage({
           api: "user",
           mt: "TriggerStartOpt",
           btn_id: buttonInCombo.id,
         });
+
+        // Se o botão for do tipo sensor ou câmera, enviar mensagem adicional
         if (
           buttonInCombo.button_type === "sensor" ||
           buttonInCombo.button_type === "camera"
@@ -101,14 +113,63 @@ export default function OptGrid({
     }
   }, [comboStarted]);
 
+  // Lógica de clique
+  const handleClick = (button: ButtonInterface) => {
+    if (clickedButtonId === button.id) {
+      // Parar o combo se o botão tiver um combo ativo
+      if (button.comboStart) {
+        console.log("Parando Combo para Opt...");
+        setStopCombo(button.id);
+      }
+      // para permitir que o combo seja iniciado novamente
+      if (comboStarted !== null) {
+        setComboStarted(null);
+        comboStartedRef.current = null;
+        processedButtonsRef.current.clear();
+      }
+
+      // Se clicar no mesmo botão, fecha a opt
+      setClickedButtonId(null, interactive);
+    } else {
+      // Se clicar em um botão diferente ou novo
+
+      // para permitir que o combo seja iniciado novamente
+      if (comboStarted !== null) {
+        setStopCombo(clickedButtonId as number);
+        setComboStarted(null);
+        comboStartedRef.current = null;
+        processedButtonsRef.current.clear();
+      }
+      // Atualizar o botão clicado
+      setClickedButtonId(button.id, interactive);
+
+      // Enviar TriggerStartOpt ao abrir um novo botão
+      wss?.sendMessage({
+        api: "user",
+        mt: "TriggerStartOpt",
+        btn_id: button.id,
+      });
+
+      if (button.button_type === "sensor" || button.button_type === "camera") {
+        // Enviar mensagem para consultar imagem da câmera ou informações do sensor
+        wss?.sendMessage({
+          api: "user",
+          mt: "SelectDeviceHistory",
+          id: button.button_prt,
+        });
+      }
+    }
+  };
+
   // resetar state comboStarted ao mudar de selectedOpt
   // ou ao clicar para fechar o botão
   useEffect(() => {
     if (comboStarted !== null) {
       setComboStarted(null);
       comboStartedRef.current = null;
+      processedButtonsRef.current.clear();
     }
-  }, [selectedOpt, clickedButtonId]);
+  }, [selectedOpt]);
 
   if (selectedOpt === "chat") {
     const usersWithLastMessage = users.map((user) => {
@@ -195,51 +256,7 @@ export default function OptGrid({
                 clickedPosition={clickedPosition}
                 selectedOpt={selectedOpt}
                 isClicked={clickedButtonId === button.id} // true or false
-                onClick={() => {
-                  if (account.isAdmin) {
-                    setClickedPosition({
-                      i: interactive === "top" ? 1 : 2,
-                      j: j + 1,
-                    });
-                    console.log(
-                      `Clicked position state:`,
-                      "i: " + clickedPosition?.i + " j: " + clickedPosition?.j
-                    );
-                  } else {
-                    // usuario
-                    if (
-                      clickedButtonId !== button.id &&
-                      (button.button_type === "sensor" ||
-                        button.button_type === "camera")
-                    ) {
-                      // enviar mensagem para consultar imagem da camera ou infos do sensor
-                      wss?.sendMessage({
-                        api: "user",
-                        mt: "SelectDeviceHistory",
-                        id: button.button_prt,
-                      });
-                    }
-                    if (button.comboStart) {
-                      setStopCombo(button.id); // parar o combo do botão
-                      setClickedButtonId(
-                        clickedButtonId === button.id ? null : button.id,
-                        interactive
-                      );
-                    } else {
-                      setClickedButtonId(
-                        clickedButtonId === button.id ? null : button.id,
-                        interactive
-                      );
-                      if (clickedButtonId === null) {
-                        wss?.sendMessage({
-                          api: "user",
-                          mt: "TriggerStartOpt",
-                          btn_id: button.id,
-                        });
-                      }
-                    }
-                  }
-                }}
+                onClick={() => handleClick(button)}
               />
             </div>
           ))}

@@ -140,6 +140,7 @@ function UserLayout() {
       "sensor",
       "camera",
       "radio",
+      "call",
     ];
     return allowedTypes.includes(type);
   };
@@ -373,11 +374,20 @@ function UserLayout() {
         if (comboButtons) {
           if (comboButtons.position_y === "1") {
             if (isAllowedButtonType(message.type)) {
-              setSelectedOptTop(message.type);
+              setSelectedOptTop(
+                message.type === "camera" ? "sensor" : message.type
+              );
+              //nao existe opt camera , entao se o botão for do tipo camera colocamos a opt Sensor
             }
           } else if (comboButtons.position_y === "2") {
             if (isAllowedButtonType(message.type)) {
-              setSelectedOptBottom(message.type);
+              setSelectedOptBottom(
+                message.type === "camera" ? "sensor" : message.type
+              );
+              //nao existe opt camera , entao se o botão for do tipo camera colocamos a opt Sensor
+              console.log(
+                "OptBottom" + selectedOptBottom + "OptTop" + selectedOptTop
+              );
             }
           }
         }

@@ -85,6 +85,10 @@ export default function CardLogin() {
       //{"error":"incorrectPassword"}
       // emailNotFound
       if (response.ok) {
+        const appLanguage = localStorage.getItem("app-language");
+        localStorage.clear();
+        localStorage.setItem("app-language", appLanguage as string);
+
         const data = await response.json();
         const accountData = { ...data };
         updateAccount(accountData);

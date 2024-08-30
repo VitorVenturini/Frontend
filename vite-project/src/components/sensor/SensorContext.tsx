@@ -83,20 +83,20 @@ export const SensorProvider = ({ children }: { children: ReactNode }) => {
   const [sensors, setSensors] = useState<SensorInterface[]>([]);
   const [buttonSensors, setButtonSensors] = useState<SensorInterface[]>([]);
   const [graphSensors, setGraphSensors] = useState<SensorInterface[]>([]);
-  const [cameraImages, setCameraImages] = useState<SensorInterface[]>([]); 
+  const [cameraImages, setCameraImages] = useState<SensorInterface[]>([]);
 
   const addSensors = (newSensors: SensorInterface[]) => {
     setGraphSensors((prevGraphSensors) => [...prevGraphSensors, ...newSensors]);
   };
-  
+
   // const updateGraphSensor = (sensor: SensorInterface) => {
   //   setGraphSensors((prevGraphSensors) => {
   //     const sensorGraphData = prevGraphSensors.filter(
   //       (s) => s.sensor_name === sensor.sensor_name
   //     );
-  
+
   //     const lastGraphSensor = sensorGraphData[0]; // O mais recente
-  
+
   //     if (lastGraphSensor && lastGraphSensor.date === sensor.date) {
   //       return prevGraphSensors; // Sem mudança, já que é a mesma data
   //     } else {
@@ -110,33 +110,34 @@ export const SensorProvider = ({ children }: { children: ReactNode }) => {
       const sensorSpecificData = prevGraphSensors.filter(
         (s) => s.sensor_name === sensor.sensor_name
       );
-  
+
       // Verifica se o novo dado é idêntico ao mais recente já existente
       const lastGraphSensor = sensorSpecificData[0]; // O mais recente
-  
-      const isDuplicate = lastGraphSensor && 
+
+      const isDuplicate =
+        lastGraphSensor &&
         Object.keys(sensor).every(
-          (key) => sensor[key as keyof SensorInterface] === lastGraphSensor[key as keyof SensorInterface]
+          (key) =>
+            sensor[key as keyof SensorInterface] ===
+            lastGraphSensor[key as keyof SensorInterface]
         );
-  
+
       // Se o dado for duplicado, não faz nada
       if (isDuplicate) {
         return prevGraphSensors;
       }
-  
+
       // Adiciona o novo dado do sensor no início da lista
       sensorSpecificData.unshift(sensor);
-  
+
       // Garante que o sensor específico tenha no máximo 10 registros
       if (sensorSpecificData.length > 10) {
         sensorSpecificData.pop(); // Remove o último elemento do sensor específico
       }
-  
+
       // Substitui os dados do sensor específico no graphSensors com os atualizados
       return [
-        ...prevGraphSensors.filter(
-          (s) => s.sensor_name !== sensor.sensor_name
-        ),
+        ...prevGraphSensors.filter((s) => s.sensor_name !== sensor.sensor_name),
         ...sensorSpecificData,
       ];
     });
@@ -148,26 +149,33 @@ export const SensorProvider = ({ children }: { children: ReactNode }) => {
 
   const updateGalleryImages = (image: SensorInterface) => {
     setCameraImages((prevCameraImages) => {
-      const updatedImages = [image, ...prevCameraImages];
+      const cameraSpecificImages = prevCameraImages.filter(
+        (img) => img.deveui === image.deveui
+      );
+
+      const updatedImages = [image, ...cameraSpecificImages];
 
       if (updatedImages.length > 10) {
-        updatedImages.pop(); 
+        updatedImages.pop();
       }
 
-      return updatedImages;
+      return [
+        ...prevCameraImages.filter((img) => img.deveui !== image.deveui),
+        ...updatedImages,
+      ];
     });
   };
 
   const addSensorsButton = (newSensors: SensorInterface[]) => {
-    setButtonSensors(newSensors); // Alimenta diretamente o buttonSensors com 1 registro de cada sensors 
+    setButtonSensors(newSensors); // Alimenta diretamente o buttonSensors com 1 registro de cada sensors
   };
 
   const updateSensorButton = (sensor: SensorInterface) => {
     setButtonSensors((prevButtonSensors) => {
       const updatedButtonSensors = prevButtonSensors.filter(
         (s) => s.sensor_name !== sensor.sensor_name
-      );// pega a lista atualizada com todos os sensores exclue o valor antigo de cada sensors e atualiza um valor novo 
-      
+      ); // pega a lista atualizada com todos os sensores exclue o valor antigo de cada sensors e atualiza um valor novo
+
       updatedButtonSensors.unshift(sensor); // Adiciona o sensor ao início
       return updatedButtonSensors;
     });
@@ -204,7 +212,7 @@ export const SensorProvider = ({ children }: { children: ReactNode }) => {
     setSensors([]);
     setButtonSensors([]);
     setGraphSensors([]);
-    setCameraImages([]); 
+    setCameraImages([]);
   };
 
   const clearGraphSensors = () => {
