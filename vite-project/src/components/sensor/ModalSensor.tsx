@@ -219,7 +219,7 @@ export default function ModalSensor({
   const selectedSensor = sensors.filter((sensor) => {
     return sensor.deveui === nameSensor;
   })[0];
-  console.log("GERAL TRESHOLD" + geralThreshold);
+  
   let sensorParameters = selectedSensor ? selectedSensor.parameters : [];
   // remover parâmetros que contêm "out" no nome se a descrição do sensor começar com "UC" (todos iot controllers)
   if (selectedSensor?.description?.startsWith("UC")) {
@@ -227,7 +227,10 @@ export default function ModalSensor({
       (param) => !param.parameter.includes("out")
     );
   }
-
+  const [filterDevice, setFilterDevice] = useState("");
+  const handlefilterDevice = (event: ChangeEvent<HTMLInputElement>) => {
+    setFilterDevice(event.target.value);
+  };
   return (
     <>
       {isUpdate && (
@@ -238,18 +241,30 @@ export default function ModalSensor({
       )}
       <CardContent className="max-w-5xl w-full flex gap-4 py-4">
         <div className="flex flex-col w-[50%] items-center gap-4">
-          <Label className="text-end h-[30px]" htmlFor="buttonName">
+          <Label
+            className="text-end flex w-full items-center justify-center h-[30px]"
+            htmlFor="buttonName"
+          >
             Selecione o Sensor
           </Label>
+          <Input
+            className="w-full"
+            id="buttonName"
+            placeholder="Filtrar..."
+            onChange={handlefilterDevice}
+          />
           <div className="gap-4">
-            <ScrollArea className="h-[350px] w-[300px]">
-              <SensorCard onSensorClick={handleSensorClick} />
+            <ScrollArea className="h-[350px] w-full border border-input">
+              <SensorCard
+                onSensorClick={handleSensorClick}
+                filter={filterDevice}
+              />
             </ScrollArea>
           </div>
         </div>
         <div className="flex flex-col w-[50%] justify-between gap-4">
-          <div className="flex-col gap-4 h-[80%]">
-            <div className="grid grid-cols-4 items-center gap-4">
+          <div className="flex-col gap-4 h-[75%]">
+            <div className="grid grid-cols-4 items-center gap-4 mt-9 py-1">
               <Label className="text-end" htmlFor="buttonName">
                 Nome do botão
               </Label>
@@ -262,7 +277,7 @@ export default function ModalSensor({
                 required
               />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
+            <div className="grid grid-cols-4 items-center gap-4 py-1">
               <Label className="text-end" htmlFor="framework" id="typeMeasure">
                 Tipo de medida
               </Label>
@@ -286,7 +301,7 @@ export default function ModalSensor({
 
             {showMinMaxFields && (
               <>
-                <div className="grid grid-cols-4 items-center gap-4">
+                <div className="grid grid-cols-4 items-center py-1 gap-4">
                   <Label className="text-end" htmlFor="minValue">
                     Valor Mínimo
                   </Label>
@@ -301,7 +316,7 @@ export default function ModalSensor({
                     disabled={!typeMeasure}
                   />
                 </div>
-                <div className="grid grid-cols-4 items-center gap-4">
+                <div className="grid grid-cols-4 py-1 items-center gap-4">
                   <Label className="text-end" htmlFor="maxValue">
                     Valor Máximo
                   </Label>
@@ -320,7 +335,7 @@ export default function ModalSensor({
             )}
             {showSelectOnly && (
               <>
-                <div className="grid grid-cols-4 items-center gap-4">
+                <div className="grid grid-cols-4 py-1 items-center gap-4">
                   <Label className="text-end" htmlFor="SelectValue">
                     Valor para ativar o alarme
                   </Label>
@@ -375,7 +390,7 @@ export default function ModalSensor({
 
             {typeMeasure === "wind_direction" && (
               <div>
-                <div className="grid grid-cols-4 items-center gap-4 mb-4">
+                <div className="grid grid-cols-4 py-1 items-center gap-4 mb-4">
                   <Label className="text-end" htmlFor="SelectValue">
                     Valor Mínimo
                   </Label>
@@ -402,7 +417,7 @@ export default function ModalSensor({
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="grid grid-cols-4 items-center gap-4">
+                <div className="grid grid-cols-4 py-1 items-center gap-4">
                   <Label className="text-end" htmlFor="SelectValue">
                     Valor Máximo
                   </Label>
@@ -432,7 +447,7 @@ export default function ModalSensor({
               </div>
             )}
           </div>
-          <div className="flex-col gap-4 items-start justify-end align-bottom h-[20%]">
+          <div className="flex-col gap-4 items-start justify-end align-bottom h-[25%]">
             <h4>Preview</h4>
             <div className={commonClasses}>
               <div className="flex flex-col justify-between cursor-pointer active:bg-red-900 bg-buttonSensor">

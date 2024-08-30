@@ -10,7 +10,7 @@ export default function Loader(){
         <div className=" flex w-[100vw] h-[100vh] items-center justify-center">
             <div className="flex gap-5 mx-11 ">
                 <img src={c}  />
-                <img src={o} className="animate-spin direction-reverse" />
+                <img src={o} className="animate-spin" />
                 <img src={r}  />
                 <img src={e}  />
             </div>
