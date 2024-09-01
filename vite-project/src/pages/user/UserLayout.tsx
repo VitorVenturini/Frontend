@@ -286,6 +286,24 @@ function UserLayout() {
         localStorage.setItem("disconnected", message.from);
 
         break;
+      case "IncomingCallConnected":
+        //tratar chamada conectada aqui
+        const incomingCallUser = pbxUser.filter((user) => {
+          return user.e164 === message.num;
+        })[0];
+        console.log("IncomingCallUser " + JSON.stringify(incomingCallUser));
+        const incomingCallBtn = allBtn.filter((btn) => {
+          return btn.button_prt === incomingCallUser.guid;
+        })[0];
+        console.log("IncomingCallBtnId " + incomingCallBtn?.id);
+        setSelectedOptBottom("call");
+        setButtonClickedStatus(
+          incomingCallBtn?.id,
+          "incomingCallConnected",
+          true,
+          true
+        );
+        break;
       case "CallRinging":
         setButtonClickedStatus(message.btn_id, "callRinging");
         break;

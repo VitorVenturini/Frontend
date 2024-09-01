@@ -35,6 +35,7 @@ export interface ButtonInterface {
   onCall?: boolean;
   held?: boolean;
   muted?: boolean;
+  incomingCall?: boolean;
 }
 
 interface ButtonContextType {
@@ -61,6 +62,7 @@ interface ButtonContextType {
     id: number,
     clickedStatus: string,
     onCall?: boolean,
+    incomingCall?: boolean,
     note?: string
   ) => void;
   setButtonNumberCallStatus: (
@@ -178,11 +180,13 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
     id: number,
     clickedStatus: string,
     onCall?: boolean,
+    incomingCall?: boolean,
     note?: string
   ) => {
+    console.log("clickedStatus" + clickedStatus)
     setButtons((prevButtons) =>
       prevButtons.map((button) =>
-        button.id === id ? { ...button, clickedStatus, onCall, note } : button
+        button.id === id ? { ...button, clickedStatus, onCall,incomingCall,note } : button
       )
     );
   };

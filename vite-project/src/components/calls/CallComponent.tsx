@@ -97,11 +97,21 @@ export default function CallComponent({ buttonOnCall }: CallComponentProps) {
   };
 
   const handleEndCall = () => {
-    wss?.sendMessage({
-      api: "user",
-      mt: "EndCall",
-      btn_id: buttonOnCall.id,
-    });
+    if (buttonOnCall?.incomingCall) {
+      wss?.sendMessage({
+        api: "user",
+        mt: "EndIncomingCall",
+        btn_id: buttonOnCall.id,
+        device: buttonOnCall.button_device,
+        num: filteredUser.e164
+      });
+    } else {
+      wss?.sendMessage({
+        api: "user",
+        mt: "EndCall",
+        btn_id: buttonOnCall.id,
+      });
+    }
   };
   const handleKeyPress = (key: string) => {
     console.log("Key pressed:", key);

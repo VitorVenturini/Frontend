@@ -65,12 +65,23 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
         //setStatusClass("bg-red-800");
         setClickedButton(true);
       } else if (clickedButton && filteredUser.status !== "offline") {
-        // desligar
-        wss?.sendMessage({
-          api: "user",
-          mt: "EndCall",
-          btn_id: button.id,
-        });
+        if (button.incomingCall) {
+          wss?.sendMessage({
+            api: "user",
+            mt: "EndIncomingCall",
+            btn_id: button.id,
+            device: button.button_device,
+            num: filteredUser.e164
+          });
+        } else {
+          // desligar quando eu cliquei
+          wss?.sendMessage({
+            api: "user",
+            mt: "EndCall",
+            btn_id: button.id,
+          });
+        }
+
         //setStatusClass("bg-green-800");
         setClickedButton(false);
         setStopCombo(button.id);
@@ -108,6 +119,10 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
     setCallStatusClass("bg-red-900");
     switch (button.clickedStatus) {
       case "callConnected":
+        setCallStatusClass("bg-red-900");
+        break;
+      case "incomingCallConnected":
+        setClickedButton(true);
         setCallStatusClass("bg-red-900");
         break;
       case "callInCurse":
