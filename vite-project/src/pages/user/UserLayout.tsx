@@ -119,7 +119,7 @@ function UserLayout() {
     chatRead,
     clearChat,
   } = useChat();
-  const { addCall,addIncomingCall } = useCalls();
+  const { addCall,addIncomingCall,removeIncomingCall } = useCalls();
   const [selectedOptTop, setSelectedOptTop] = useState<string>("floor"); // default for top
   const [clickedUserTop, setClickedUserTop] = useState<string | null>(null);
   const [selectedOptBottom, setSelectedOptBottom] = useState<string>("floor"); // default for bottom
@@ -313,6 +313,7 @@ function UserLayout() {
         setSelectedOptBottom("call");
         break;
       case "IncomingCallDisconnected":
+        removeIncomingCall(message.call)
         break;
       case "CallRinging":
         setButtonClickedStatus(message.btn_id, "callRinging");
