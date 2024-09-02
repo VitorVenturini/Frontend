@@ -10,8 +10,7 @@ const DigitalClock = () => {
 
     return () => clearInterval(interval); // Limpa o intervalo quando o componente é desmontado
   }, []);
-
-  const formatTime = (date ) => {
+  const formatTime = (date: Date) => {
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
     const seconds = String(date.getSeconds()).padStart(2, '0');
