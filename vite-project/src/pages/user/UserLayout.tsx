@@ -17,6 +17,7 @@ import {
   useButtons,
   ButtonInterface,
 } from "@/components/buttons/buttonContext/ButtonsContext";
+import { FullScreenButton } from "@/components/FullScreanButton";
 
 import {
   Sheet,
@@ -508,6 +509,7 @@ function UserLayout() {
                 </Button>
               )}
               <Logout />
+              <FullScreenButton />
             </div>
           </>
         )}
