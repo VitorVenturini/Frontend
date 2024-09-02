@@ -293,7 +293,10 @@ function AdminLayout() {
           toast({
             description: "Relatório não gerado, revise seus parâmetros",
           });
-        } else {
+        }else if (message.src === "RptIotDevice") {
+          console.log("REPORT Iot Data");
+
+        }  else {
           setReceivedFragments((prevFragments) => {
             const newFragments = [...prevFragments, message.result];
             if (message.lastFragment) {
