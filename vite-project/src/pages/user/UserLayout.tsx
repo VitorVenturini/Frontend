@@ -63,6 +63,7 @@ import {
 import { PbxInterface } from "@/components/options/Pbx/PbxContext";
 import { useCalls } from "@/components/calls/CallContext";
 import Loader from "@/components/Loader";
+import HeaderUser from "@/components/header/HeaderUser";
 
 interface User {
   id: string;
@@ -460,47 +461,40 @@ function UserLayout() {
           <Loader />
         ) : (
           <>
-            <div className="flex justify-center gap-1 p-1">
-              <div className="gap-1 space-y-1">
-                {/* DE CIMA  */}
-                <InteractiveGridCopy
-                  interactive="top"
-                  onKeyChange={handleOptChangeTop}
-                  buttons={buttons}
-                  selectedUser={account}
-                  selectedOpt={selectedOptTop}
-                  clickedUser={clickedUserTop}
-                  setClickedUser={handleClickedUserTop}
-                />
-                {/* DE BAIXO  */}
-                <InteractiveGridCopy
-                  interactive="bottom"
-                  onKeyChange={handleOptChangeBottom}
-                  buttons={buttons}
-                  selectedUser={account}
-                  selectedOpt={selectedOptBottom}
-                  clickedUser={clickedUserBottom}
-                  setClickedUser={handleClickedUserBottom}
-                />
-              </div>
+            <div className="flex justify-center items-center min-h-screen">
+              <div className="">
+                <div className="flex gap-1 p-1">
+                  <div className="gap-1 space-y-1">
+                    <InteractiveGridCopy
+                      interactive="top"
+                      onKeyChange={handleOptChangeTop}
+                      buttons={buttons}
+                      selectedUser={account}
+                      selectedOpt={selectedOptTop}
+                      clickedUser={clickedUserTop}
+                      setClickedUser={handleClickedUserTop}
+                    />
+                    <InteractiveGridCopy
+                      interactive="bottom"
+                      onKeyChange={handleOptChangeBottom}
+                      buttons={buttons}
+                      selectedUser={account}
+                      selectedOpt={selectedOptBottom}
+                      clickedUser={clickedUserBottom}
+                      setClickedUser={handleClickedUserBottom}
+                    />
+                  </div>
 
-              <ButtonsGridPage
-                buttonsGrid={buttons}
-                selectedUser={account}
-                // selectedOpt={selectedOpt}
-                // onOptChange={handleOptChange}
-                // clickedUser={clickedUser}
-              />
-            </div>
-            <div className="flex gap-5">
-              {account.type === "admin" && (
-                <Button variant="ghost" onClick={handleAdminToggle}>
-                  {" "}
-                  <img src={LogoCore} alt="Logo" className="h-8" />
-                </Button>
-              )}
-              <Logout />
-              <FullScreenButton />
+                  <ButtonsGridPage
+                    buttonsGrid={buttons}
+                    selectedUser={account}
+                    // selectedOpt={selectedOpt}
+                    // onOptChange={handleOptChange}
+                    // clickedUser={clickedUser}
+                  />
+                </div>
+                <HeaderUser />
+              </div>
             </div>
           </>
         )}
