@@ -63,12 +63,8 @@ import {
 import { PbxInterface } from "@/components/options/Pbx/PbxContext";
 import { useCalls } from "@/components/calls/CallContext";
 import Loader from "@/components/Loader";
-<<<<<<< HEAD
 import HeaderUser from "@/components/header/HeaderUser";
-=======
 import { connected } from "process";
->>>>>>> 7ecd61ebf4cc8a9b3afcc1eb284d8d6ff212afc5
-
 interface User {
   id: string;
   name: string;
