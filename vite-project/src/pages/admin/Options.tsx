@@ -8,6 +8,7 @@ import RadioCard from "@/components/options/RadioCard";
 import PbxConfigCard from "@/components/options/Pbx/PbxConfigCard";
 import APIGoogleCard from "@/components/options/ApiGoogle/APIGoogleCard";
 import IotCameraCard from "@/components/options/IotCameraCard";
+import Notify from "@/components/options/Notifications";
 
 export default function MenuOptions() {
   const [activeButton, setActiveButton] = useState<string | null>(null);
@@ -32,6 +33,8 @@ export default function MenuOptions() {
         return <APIGoogleCard />;
       case "IotCamera":
         return <IotCameraCard />;
+      case "Notifications":
+        return <Notify />;
       default:
         return null;
     }
@@ -88,6 +91,13 @@ export default function MenuOptions() {
           onClick={() => handleClick("Gateways")}
         >
           Iot Gateways
+        </Button>
+        <Button
+          className="focus:bg-accent"
+          variant={"ghost"}
+          onClick={() => handleClick("Notifications")}
+        >
+          Notificações
         </Button>
       </div>
       <div className="flex align-middle justify-center items-center w-full">

@@ -9,6 +9,7 @@ import WS202 from "@/assets/SensorsPng/WS202.png";
 import AM307 from "@/assets/SensorsPng/AM307.png";
 import WS156 from "@/assets/SensorsPng/WS156.png";
 import VS121 from "@/assets/SensorsPng/VS121.png";
+import placeHolder from "@/assets/SensorsPng/devicePlaceholder.png"
 interface ButtonProps {
   sensorModel: string | undefined;
 }
@@ -60,7 +61,7 @@ export default function ResponsivePng({ sensorModel }: ButtonProps) {
       altText = "VS121 Sensor";
       break;
     default:
-      imageSrc = ""; // ou uma imagem padrão
+      imageSrc = placeHolder; // ou uma imagem padrão
       altText = "Default Sensor";
   }
 

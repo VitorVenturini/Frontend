@@ -3,7 +3,7 @@ import ReactAudioPlayer from "react-audio-player";
 import { Button } from "@/components/ui/button";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { addDays, format } from "date-fns";
-import { Calendar as CalendarIcon } from "lucide-react";
+import { Calendar as CalendarIcon, Divide } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -35,10 +35,9 @@ type DateRange = {
 import { useSensors } from "@/components/sensor/SensorContext";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { useCameras } from "@/components/cameras/CameraContext";
 
-export default function Reports({
-  className,
-}: React.HTMLAttributes<HTMLDivElement>) {
+export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
   const { users } = useUsers();
   const wss = useWebSocketData();
   const [date, setDate] = React.useState<DateRange>({
@@ -55,6 +54,7 @@ export default function Reports({
   const [startHour, setStartHour] = useState("");
   const [endHour, setEndHour] = useState("");
   const [setRpt] = useState("");
+  const { cameras } = useCameras();
 
   const handleStartHour = (event: ChangeEvent<HTMLInputElement>) => {
     setStartHour(event.target.value);
@@ -146,10 +146,33 @@ export default function Reports({
       console.error("Data não definida corretamente.");
     }
   };
+  const handleIotDevice = (value: string) => {
+    clearDataReport();
+    setActionExecDevice(value);
 
+    if (value && date?.from) {
+      // Verificação se 'date' e 'date.from' estão definidos
+      const fromDateTimeUTC = formatDateTime(date.from, startHour, "00:00:00");
+      const toDateTimeUTC = formatDateTime(
+        date.to ? date.to : date.from,
+        endHour,
+        "23:59:59"
+      );
+      // wss?.sendMessage({
+      //   api: "admin",
+      //   mt: "SelectFromReports",
+      //   src: "RptIotDevices",
+      //   deveui: value,
+      //   from: fromDateTimeUTC,
+      //   to: toDateTimeUTC,
+      // });
+    } else {
+      console.error("Data não definida corretamente.");
+    }
+  };
   const handleMenu = (value: string) => {
     clearDataReport();
-    if (date && value !== "RptSensors") {
+    if (date && value !== "RptSensors" && value !== "RptIotDevices") {
       const fromDateTimeUTC = formatDateTime(date.from, startHour, "00:00:00");
       const toDateTimeUTC = formatDateTime(
         date.to ? date.to : date.from,
@@ -165,13 +188,17 @@ export default function Reports({
         from: fromDateTimeUTC,
         to: toDateTimeUTC,
       });
-    } else if (value !== "RptSensors") {
+    } else if (value !== "RptSensors" && value !== "RptIotDevices" ) {
       toast({
         description: "Relatório não gerado, revise seus parâmetros",
       });
+    } else if (value === "RptIotDevices"){
+      toast({
+        description: "Selecione um device para mostrar as fotos",
+      });
     } else {
       toast({
-        description: "Selecione um Sensor para gerar o gráfico",
+        description: "Selecione um sensor para gerar o gráfico",
       });
     }
   };
@@ -180,6 +207,15 @@ export default function Reports({
   useEffect(() => {
     if (reportSrc === "RptSensors" && actionExecDevice && date?.from) {
       handleExecDevice(actionExecDevice);
+
+      const fromDateTimeUTC = formatDateTime(date.from, startHour, "00:00:00");
+      const toDateTimeUTC = formatDateTime(
+        date.to ? date.to : date.from,
+        endHour,
+        "23:59:59"
+      );
+    }else if (reportSrc === "RptIotDevices" && actionExecDevice && date?.from) {
+      handleIotDevice(actionExecDevice);
 
       const fromDateTimeUTC = formatDateTime(date.from, startHour, "00:00:00");
       const toDateTimeUTC = formatDateTime(
@@ -273,14 +309,15 @@ export default function Reports({
               <TabsTrigger value="RptActivities">Atividade</TabsTrigger>
               <TabsTrigger value="RptSensors">Sensores</TabsTrigger>
               <TabsTrigger value="RptMessages">Mensagens</TabsTrigger>
+              <TabsTrigger value="RptIotDevices">Iot Câmeras</TabsTrigger>
             </TabsList>
-            <TabsContent value="RptSensors" className="gap-4 py-4 ">
-              <div className="flex items-center gap-4 h-[10px]">
-                <div className="flex justify-end gap-1">
+            <TabsContent value="RptSensors" className="gap-4 ">
+            <div className="grid items-center justify-start grid-cols-3 gap-4 h-[10px] ">
+              <div className="grid justify-start col-span-1 gap-1 ">
                   <Label htmlFor="name">Sensor</Label>
                 </div>
                 <Select onValueChange={handleExecDevice}>
-                  <SelectTrigger className="col-span-1">
+                  <SelectTrigger className="col-span-2">
                     <SelectValue placeholder="Selecione um Sensor" />
                   </SelectTrigger>
                   <SelectContent>
@@ -299,9 +336,37 @@ export default function Reports({
                 </Select>
               </div>
             </TabsContent>
+            <TabsContent value="RptIotDevices" className="gap-4 ">
+            <div className="grid items-center justify-start grid-cols-3 gap-4 h-[10px] ">
+              <div className="grid justify-start col-span-1 gap-1 ">
+                <Label htmlFor="name">Iot Câmeras</Label>
+              </div>
+              <Select onValueChange={handleIotDevice}>
+                <SelectTrigger className="col-span-2">
+                  <SelectValue placeholder="Selecione um Sensor" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Iot Câmeras</SelectLabel>
+                    {cameras.map((camera) => (
+                      <SelectItem
+                        key={camera.nickname}
+                        value={camera?.mac as string}
+                      >
+                        {camera.nickname}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+          </TabsContent>
           </div>
           <TabsContent value="RptSensors" className="gap-4 py-4 ">
             <Grafico chartData={dataReport.chart} />
+          </TabsContent>
+          <TabsContent value="RptIotDevices" className="gap-4 py-4">
+              
           </TabsContent>
           <TabsContent value="RptAvailability" className="gap-4 py-4">
             {dataReport?.table[0] && (
@@ -335,12 +400,12 @@ export default function Reports({
           </TabsContent>
           <TabsContent value="RptCalls" className="gap-4 py-4">
             {dataReport?.table[0] && (
-                <ColumnsReports
-                  data={dataReport.table}
-                  keys={dataReport.keys}
-                  report={dataReport.src as any}
-                  filter={"user"}
-                />
+              <ColumnsReports
+                data={dataReport.table}
+                keys={dataReport.keys}
+                report={dataReport.src as any}
+                filter={"user"}
+              />
             )}
           </TabsContent>
         </Tabs>
