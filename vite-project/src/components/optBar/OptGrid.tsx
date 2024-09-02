@@ -256,7 +256,14 @@ export default function OptGrid({
                 clickedPosition={clickedPosition}
                 selectedOpt={selectedOpt}
                 isClicked={clickedButtonId === button.id} // true or false
-                onClick={() => handleClick(button)}
+                onClick={() =>
+                  account.isAdmin
+                    ? setClickedPosition({
+                        i: interactive === "top" ? 1 : 2,
+                        j: j + 1,
+                      })
+                    : handleClick(button)
+                }
               />
             </div>
           ))}

@@ -6,7 +6,7 @@ import { ButtonInterface } from "../buttons/buttonContext/ButtonsContext";
 interface KeyboardProps {
   onKeyPress: (key: string) => void;
   forwarded: boolean;
-  buttonOnCall: ButtonInterface
+  buttonOnCall?: ButtonInterface
 }
 
 const Keyboard: React.FC<KeyboardProps> = ({ onKeyPress, forwarded,buttonOnCall }) => {
@@ -28,7 +28,7 @@ const Keyboard: React.FC<KeyboardProps> = ({ onKeyPress, forwarded,buttonOnCall 
         api: "user",
         mt: "SendDtmfDigits",
         digit: key,
-        btn_id: buttonOnCall.id
+        btn_id: buttonOnCall?.id
       })
     }
   };
@@ -41,7 +41,7 @@ const Keyboard: React.FC<KeyboardProps> = ({ onKeyPress, forwarded,buttonOnCall 
     wss?.sendMessage({
       api: "user",
       mt: "RedirectCall",
-      btn_id: buttonOnCall.id,
+      btn_id: buttonOnCall?.id,
       destination: keySequence.join("")
     })
     // mt: RedirectCall , btn_id , destination

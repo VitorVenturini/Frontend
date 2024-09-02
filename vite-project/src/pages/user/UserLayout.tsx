@@ -63,7 +63,11 @@ import {
 import { PbxInterface } from "@/components/options/Pbx/PbxContext";
 import { useCalls } from "@/components/calls/CallContext";
 import Loader from "@/components/Loader";
+<<<<<<< HEAD
 import HeaderUser from "@/components/header/HeaderUser";
+=======
+import { connected } from "process";
+>>>>>>> 7ecd61ebf4cc8a9b3afcc1eb284d8d6ff212afc5
 
 interface User {
   id: string;
@@ -119,7 +123,7 @@ function UserLayout() {
     chatRead,
     clearChat,
   } = useChat();
-  const { addCall } = useCalls();
+  const { addCall,addIncomingCall } = useCalls();
   const [selectedOptTop, setSelectedOptTop] = useState<string>("floor"); // default for top
   const [clickedUserTop, setClickedUserTop] = useState<string | null>(null);
   const [selectedOptBottom, setSelectedOptBottom] = useState<string>("floor"); // default for bottom
@@ -288,23 +292,31 @@ function UserLayout() {
         localStorage.setItem("disconnected", message.from);
 
         break;
-      case "IncomingCallConnected":
-        //tratar chamada conectada aqui
-        const incomingCallUser = pbxUser.filter((user) => {
-          return user.e164 === message.num;
-        })[0];
-        console.log("IncomingCallUser " + JSON.stringify(incomingCallUser));
-        const incomingCallBtn = allBtn.filter((btn) => {
-          return btn.button_prt === incomingCallUser.guid;
-        })[0];
-        console.log("IncomingCallBtnId " + incomingCallBtn?.id);
+      case "IncomingCallRing":
+        //    {"api":"user","mt":"IncomingCallRing","device":"Softphone","num":"1015","call":32}
+        //  {api: 'user', mt: 'IncomingCallRing', device: 'IP 112', num: '1015', call: 30}
+        const incomingCallRing = {
+          id: message.call,
+          device: message.device,
+          num: message.num,
+          callId: message.call,
+          connected: false
+        };
+        addIncomingCall(incomingCallRing);
         setSelectedOptBottom("call");
-        setButtonClickedStatus(
-          incomingCallBtn?.id,
-          "incomingCallConnected",
-          true,
-          true
-        );
+        break;
+      case "IncomingCallConnected":
+        const incomingCallConnected = {
+          id: message.call,
+          device: message.device,
+          num: message.num,
+          callId: message.call,
+          connected: true
+        };
+        addIncomingCall(incomingCallConnected);
+        setSelectedOptBottom("call");
+        break;
+      case "IncomingCallDisconnected":
         break;
       case "CallRinging":
         setButtonClickedStatus(message.btn_id, "callRinging");
