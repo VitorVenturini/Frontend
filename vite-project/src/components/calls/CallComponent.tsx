@@ -22,7 +22,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import Keyboard from "../utils/Keyboard";
-import { useCalls } from "../calls/CallContext";
+import { IncomingCallInterface, useCalls } from "../calls/CallContext";
 import { Button } from "../ui/button";
 import {
   Card,
@@ -34,27 +34,34 @@ import {
 } from "@/components/ui/card";
 
 interface CallComponentProps {
-  buttonOnCall: ButtonInterface;
+  buttonOnCall?: ButtonInterface;
+  incomingCall?: IncomingCallInterface;
 }
-export default function CallComponent({ buttonOnCall }: CallComponentProps) {
+export default function CallComponent({
+  buttonOnCall,
+  incomingCall,
+}: CallComponentProps) {
   {
     /*se nao tiver chamadas retorna um skeleton */
   }
   const { usersPbx } = useUsersPbx();
   const { setHeldCall } = useButtons();
   const wss = useWebSocketData();
-  const { getCallDuration } = useCalls();
-  const [heldCall, setHeldStateCall] = useState(buttonOnCall.held || false);
+  const { getCallDuration ,getIncomingCallDuration} = useCalls();
+  const [heldCall, setHeldStateCall] = useState(buttonOnCall?.held || false);
   const [callDuration, setCallDuration] = useState(0);
   const [openKeyboardDTMF, setOpenKeyboardDTMF] = useState(false);
   const [openKeyboard, setOpenKeyboard] = useState(false);
   //const [retrieveCall, setRetrieveCall] = useState<boolean>(false);
-
   const filteredUser = usersPbx?.filter((user) => {
-    return user.guid === buttonOnCall.button_prt;
+    return user.guid === buttonOnCall?.button_prt;
   })[0];
 
-  const initials = getInitials(filteredUser?.cn);
+  const filteredIncomingCallUser = usersPbx?.filter((user) => {
+    return user.e164 === incomingCall?.num;
+  })[0];
+
+  const initials = getInitials(filteredUser?.cn || filteredIncomingCallUser.cn);
   const avatarBase64 = initials ? generateAvatar(initials) : null;
 
   // //contador
@@ -80,36 +87,35 @@ export default function CallComponent({ buttonOnCall }: CallComponentProps) {
     wss?.sendMessage({
       api: "user",
       mt: "HeldCall",
-      btn_id: buttonOnCall.id,
+      btn_id: buttonOnCall?.id,
     });
     setHeldStateCall(true);
-    setHeldCall(buttonOnCall.id, true);
+    setHeldCall(buttonOnCall?.id as number, true);
   };
   const handleRetrieveCall = () => {
     wss?.sendMessage({
       api: "user",
       mt: "RetrieveCall",
-      btn_id: buttonOnCall.id,
+      btn_id: buttonOnCall?.id,
     });
     // setRetrieveCall(true);
     setHeldStateCall(false);
-    setHeldCall(buttonOnCall.id, false);
+    setHeldCall(buttonOnCall?.id as number, false);
   };
 
   const handleEndCall = () => {
-    if (buttonOnCall?.incomingCall) {
+    if (incomingCall) {
       wss?.sendMessage({
         api: "user",
         mt: "EndIncomingCall",
-        btn_id: buttonOnCall.id,
-        device: buttonOnCall.button_device,
-        num: filteredUser.e164
+        device: incomingCall?.device,
+        num: incomingCall?.num,
       });
     } else {
       wss?.sendMessage({
         api: "user",
         mt: "EndCall",
-        btn_id: buttonOnCall.id,
+        btn_id: buttonOnCall?.id,
       });
     }
   };
@@ -128,10 +134,21 @@ export default function CallComponent({ buttonOnCall }: CallComponentProps) {
         ) : (
           <User2 />
         )}
-
-        <div>{filteredUser ? filteredUser.cn : buttonOnCall.button_prt}</div>
+        {incomingCall ? (
+          <div>
+            {filteredIncomingCallUser
+              ? filteredIncomingCallUser.cn
+              : incomingCall.num}
+          </div>
+        ) : (
+          <div>{filteredUser ? filteredUser.cn : buttonOnCall?.button_prt}</div>
+        )}
         <div className="text-xs">
-          {formatDuration(getCallDuration(buttonOnCall.id))}
+          {incomingCall ? (
+            <div>{formatDuration(getIncomingCallDuration(incomingCall.callId))}</div>
+          ): (
+            <div>{formatDuration(getCallDuration(buttonOnCall?.id as number))}</div>
+          )}
         </div>
       </div>
       <div className="flex items-center gap-4">
