@@ -2,7 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import ValidadeToken from "@/components/validateToken/ValidateToken";
 import Account from "./Account";
 import ButtonsPage from "./ButtonsPage";
-import HeaderApp from "@/components/header/HeaderApp";
+import HeaderApp from "@/components/header/HeaderAdmin";
 import { useAccount } from "@/components/account/AccountContext";
 import { useNavigate } from "react-router-dom";
 import {
@@ -293,7 +293,10 @@ function AdminLayout() {
           toast({
             description: "Relatório não gerado, revise seus parâmetros",
           });
-        } else {
+        }else if (message.src === "RptIotDevice") {
+          console.log("REPORT Iot Data");
+
+        }  else {
           setReceivedFragments((prevFragments) => {
             const newFragments = [...prevFragments, message.result];
             if (message.lastFragment) {

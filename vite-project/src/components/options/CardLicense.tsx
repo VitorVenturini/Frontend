@@ -79,15 +79,10 @@ export default function LicenseCard() {
     setIsLoading(false);
   };
   const restartService = async () => {
-    setIsLoading2(true);
     wss?.sendMessage({
       api: "admin",
       mt: "RestartService",
     });
-    toast({
-      description: "Serviço reiniciado com sucesso",
-    });
-    setIsLoading2(false);
   };
 
   return (
