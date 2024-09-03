@@ -453,7 +453,7 @@ export default function ModalSensor({
               <div className="flex flex-col justify-between cursor-pointer active:bg-red-900 bg-buttonSensor">
                 <div className="flex items-center  gap-1 cursor-pointer ">
                   <ResponsivePng sensorModel={filteredModel?.description} />
-                  <p className=" flex text-sm font-medium leading-none xl3:text-2xl">
+                  <p className=" flex text-sm font-medium leading-none xl4:text-2xl">
                     {nameButton}
                   </p>
                 </div>

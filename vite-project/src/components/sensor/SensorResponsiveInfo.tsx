@@ -151,7 +151,7 @@ export default function SensorResponsiveInfo({
                 <ResponsiveIcon
                   sensorType={button.sensor_type}
                 />
-                <p className="text-[10px] font-bold leading-none text-foreground xl3:text-lg">
+                <p className="text-[10px] font-bold leading-none text-foreground xl4:text-lg">
                   {button.sensor_type}
                 </p>
               </div>
@@ -159,7 +159,7 @@ export default function SensorResponsiveInfo({
               <div className="flex gap-1">
                 <div className="flex items-center gap-1">
                   {!account.isAdmin && (
-                    <p className="text-md font-extrabold xl3:text-2xl">{formattedValue}</p>
+                    <p className="text-md font-extrabold xl4:text-2xl">{formattedValue}</p>
                   )}
                   <p className="text-[8px] text-muted-foreground">{metric}</p>
                 </div>
