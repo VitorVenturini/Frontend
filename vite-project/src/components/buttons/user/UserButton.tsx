@@ -157,7 +157,7 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
 
   return (
     <div
-      className={`${commonClasses} flex flex-col justify-between h-full cursor-pointer ${
+      className={`${commonClasses} flex flex-col justify-between  cursor-pointer ${
         clickedButton
           ? callStatusClass
           : filteredUser?.status === "offline"
@@ -166,19 +166,19 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
       } `}
       onClick={handleClickCall}
     >
-      <div className="flex-grow">
-        <div className="flex items-center gap-1 cursor-pointer">
+      <div className="flex-grow xl3:space-y-2">
+        <div className="flex items-center gap-1  cursor-pointer ">
           <User size={16} />
-          <p className="text-sm leading-none xl4:text-2xl">
+          <p className="text-sm leading-none xl4:text-2xl ">
             {button.button_name}
           </p>
         </div>
-        <div className="text-sm flex font-extrabold justify-end">
-          <p className="xl4:text-2xl">{filteredUser?.cn}</p>
+        <div className="text-sm flex font-extrabold justify-end xl3:px-2">
+          <p className="xl3:text-2xl">{filteredUser?.cn}</p>
         </div>
       </div>
       <div
-        className={`text-sm text-foreground/55 flex justify-center mt-auto w-full ${statusClass}`}
+        className={`text-[10px] xl2:text-sm text-foreground/55 flex justify-center mt-auto w-full ${statusClass}`}
       >
         {getText(filteredUser?.note, texts[language])}
       </div>

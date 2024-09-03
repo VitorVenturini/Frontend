@@ -4,6 +4,7 @@ import { Layers3 } from "lucide-react";
 import { useAccount } from "@/components/account/AccountContext";
 import { useEffect, useRef, useState } from "react";
 import { commonClasses } from "../ButtonsComponent";
+
 interface ComboProps {
   button: ButtonInterface;
   handleClick: () => void;
@@ -50,11 +51,9 @@ export default function ComboButton({ button, handleClick }: ComboProps) {
         } flex flex-col cursor-pointer`}
       onClick={handleClickCombo}
     >
-      <div className="flex items-center gap-1 cursor-pointer">
-        <Layers3 />
-        <p className="text-sm font-medium leading-none">{button.button_name}</p>
+      <div className="flex items-center gap-1 cursor-pointer align-middle justify-center h-full ">
+        <p className="text-sm font-bold xl3:text-2xl leading-none">{button.button_name}</p>
       </div>
-      <div>{/* <p>{button.button_prt}</p> */}</div>
     </div>
   );
 }
