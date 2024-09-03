@@ -3,15 +3,22 @@ import { ArrowRightLeftIcon, CircleX } from "lucide-react";
 import { Button } from "../ui/button";
 import { useWebSocketData } from "../websocket/WebSocketProvider";
 import { ButtonInterface } from "../buttons/buttonContext/ButtonsContext";
+import { IncomingCallInterface } from "../calls/CallContext";
 interface KeyboardProps {
   onKeyPress: (key: string) => void;
   forwarded: boolean;
-  buttonOnCall?: ButtonInterface
+  buttonOnCall?: ButtonInterface;
+  incoming?: IncomingCallInterface;
 }
 
-const Keyboard: React.FC<KeyboardProps> = ({ onKeyPress, forwarded,buttonOnCall }) => {
+const Keyboard: React.FC<KeyboardProps> = ({
+  onKeyPress,
+  forwarded,
+  buttonOnCall,
+  incoming,
+}) => {
   const [keySequence, setKeySequence] = useState<string[]>([]);
-  const wss = useWebSocketData()
+  const wss = useWebSocketData();
   const keys = [
     ["1", "2", "3"],
     ["4", "5", "6"],
@@ -22,14 +29,21 @@ const Keyboard: React.FC<KeyboardProps> = ({ onKeyPress, forwarded,buttonOnCall 
   const handleKeyPress = (key: string) => {
     setKeySequence((prevSequence) => [...prevSequence, key]);
     onKeyPress(key);
-    if(!forwarded){
-      // quando nao for para redirecionar manda o digito em cada tecla clicada
+    if (!forwarded && incoming) {
+      wss?.sendMessage({
+        api: "user",
+        mt: "SendDtmfDigitsIncomingCall",
+        digit: key,
+        device: incoming.device,
+        call: incoming.callId
+      });
+    }else if(!forwarded && !incoming){
       wss?.sendMessage({
         api: "user",
         mt: "SendDtmfDigits",
         digit: key,
-        btn_id: buttonOnCall?.id
-      })
+        btn_id: buttonOnCall?.id,
+      });
     }
   };
 
@@ -38,12 +52,23 @@ const Keyboard: React.FC<KeyboardProps> = ({ onKeyPress, forwarded,buttonOnCall 
   };
 
   const handleRedirectCall = () => {
-    wss?.sendMessage({
-      api: "user",
-      mt: "RedirectCall",
-      btn_id: buttonOnCall?.id,
-      destination: keySequence.join("")
-    })
+    if (incoming) {
+      wss?.sendMessage({
+        api: "user",
+        mt: "RedirectIncomingCall",
+        device: incoming.device,
+        call: incoming.callId,
+        destination: keySequence.join(""),
+      });
+    } else {
+      wss?.sendMessage({
+        api: "user",
+        mt: "RedirectCall",
+        btn_id: buttonOnCall?.id,
+        destination: keySequence.join(""),
+      });
+    }
+
     // mt: RedirectCall , btn_id , destination
   };
   return (

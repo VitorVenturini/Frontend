@@ -119,7 +119,7 @@ function UserLayout() {
     chatRead,
     clearChat,
   } = useChat();
-  const { addCall,addIncomingCall,removeIncomingCall } = useCalls();
+  const { addCall, addIncomingCall, removeIncomingCall } = useCalls();
   const [selectedOptTop, setSelectedOptTop] = useState<string>("floor"); // default for top
   const [clickedUserTop, setClickedUserTop] = useState<string | null>(null);
   const [selectedOptBottom, setSelectedOptBottom] = useState<string>("floor"); // default for bottom
@@ -256,9 +256,8 @@ function UserLayout() {
         const callsInCurse = message.result;
         console.log("CallsInCurse received:", callsInCurse.length);
         if (callsInCurse.length > 0) {
-          callsInCurse.forEach((call: any) => {
-            const { btn_id, call_started } = call;
-            console.log(`Processing call for btn_id: ${btn_id}`);
+          callsInCurse.forEach((calls: any) => {
+            const { btn_id, call_started, direction, call_innovaphone, number } = calls;
             // Calcular a duração da chamada em andamento
             const callStartTime = new Date(call_started).getTime();
             const now = Date.now();
@@ -266,17 +265,33 @@ function UserLayout() {
 
             // Atualizar o botão correspondente com o status da chamada
             setSelectedOptBottom("call");
-            setButtonClickedStatus(btn_id, "callInCurse", true);
-
-            // Adicionar a chamada ao contexto de chamadas com a duração calculada
-            const button = allBtn.find((btn) => btn.id === btn_id);
-            if (button) {
-              console.log(`Adding call for button: ${button.button_name}`);
-              addCall(button, elapsedTime);
-            } else {
-              console.log(`Button not found for btn_id: ${btn_id}`);
+            if (btn_id) {
+              setButtonClickedStatus(btn_id, "callInCurse", true);
+              // Adicionar a chamada ao contexto de chamadas com a duração calculada
+              const button = allBtn.find((btn) => btn.id === btn_id);
+              if (button) {
+                console.log(`Adding call for button: ${button.button_name}`);
+                addCall(button, elapsedTime);
+              } else {
+                console.log(`Button not found for btn_id: ${btn_id}`);
+              }
+            } else if (!btn_id && direction === "inc") {
+              const incomingCallsInCurse = {
+                id: call_innovaphone,
+                device: "",
+                num: number,
+                callId: call_innovaphone,
+                connected: true,
+              };
+              addIncomingCall(incomingCallsInCurse)
             }
           });
+          // {"id":"628","guid":"7144860350128285873","number":"1015",
+          //"call_started":"2024-09-03 11:48:43.067 +00:00",
+          //   "call_ringing":"2024-09-03 11:48:43.067 +00:00",
+          //   "call_connected":"2024-09-03 11:48:48.587 +00:00",
+          //   "call_ended":null,"status":1,"direction":"inc",
+          //   "record_id":null,"btn_id":null,"call_innovaphone":"132"}
         }
 
         break;
@@ -296,7 +311,7 @@ function UserLayout() {
           device: message.device,
           num: message.num,
           callId: message.call,
-          connected: false
+          connected: false,
         };
         addIncomingCall(incomingCallRing);
         setSelectedOptBottom("call");
@@ -307,13 +322,13 @@ function UserLayout() {
           device: message.device,
           num: message.num,
           callId: message.call,
-          connected: true
+          connected: true,
         };
         addIncomingCall(incomingCallConnected);
         setSelectedOptBottom("call");
         break;
       case "IncomingCallDisconnected":
-        removeIncomingCall(message.call)
+        removeIncomingCall(message.call);
         break;
       case "CallRinging":
         setButtonClickedStatus(message.btn_id, "callRinging");

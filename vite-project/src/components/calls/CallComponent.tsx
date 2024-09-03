@@ -47,11 +47,13 @@ export default function CallComponent({
   const { usersPbx } = useUsersPbx();
   const { setHeldCall } = useButtons();
   const wss = useWebSocketData();
-  const { getCallDuration ,getIncomingCallDuration} = useCalls();
-  const [heldCall, setHeldStateCall] = useState(buttonOnCall?.held || false);
+  const { getCallDuration, getIncomingCallDuration } = useCalls();
+  const [heldCall, setHeldStateCall] = useState(buttonOnCall?.held || incomingCall?.held);
+  // const [heldIncomingCall,setHeldStateIncomingCall] = useState( || false)
   const [callDuration, setCallDuration] = useState(0);
   const [openKeyboardDTMF, setOpenKeyboardDTMF] = useState(false);
   const [openKeyboard, setOpenKeyboard] = useState(false);
+  const {setHeldIncomingCall} = useCalls()
   //const [retrieveCall, setRetrieveCall] = useState<boolean>(false);
   const filteredUser = usersPbx?.filter((user) => {
     return user.guid === buttonOnCall?.button_prt;
@@ -61,7 +63,7 @@ export default function CallComponent({
     return user.e164 === incomingCall?.num;
   })[0];
 
-  const initials = getInitials(filteredUser?.cn || filteredIncomingCallUser.cn);
+  const initials = getInitials(filteredUser?.cn || filteredIncomingCallUser?.cn);
   const avatarBase64 = initials ? generateAvatar(initials) : null;
 
   // //contador
@@ -84,23 +86,49 @@ export default function CallComponent({
   };
 
   const handleHeldCall = () => {
-    wss?.sendMessage({
-      api: "user",
-      mt: "HeldCall",
-      btn_id: buttonOnCall?.id,
-    });
-    setHeldStateCall(true);
-    setHeldCall(buttonOnCall?.id as number, true);
+    if (incomingCall) {
+      wss?.sendMessage({
+        api: "user",
+        mt: "HeldIncomingCall",
+        device: incomingCall?.device,
+        num: incomingCall?.num,
+        call: incomingCall?.callId,
+      });
+      setHeldIncomingCall(incomingCall.callId,true)
+      setHeldStateCall(true);
+      // setHeldStateIncomingCall(true)
+    } else {
+      wss?.sendMessage({
+        api: "user",
+        mt: "HeldCall",
+        btn_id: buttonOnCall?.id,
+      });
+      setHeldCall(buttonOnCall?.id as number, true);
+      setHeldStateCall(true);
+    }
   };
   const handleRetrieveCall = () => {
-    wss?.sendMessage({
-      api: "user",
-      mt: "RetrieveCall",
-      btn_id: buttonOnCall?.id,
-    });
-    // setRetrieveCall(true);
-    setHeldStateCall(false);
-    setHeldCall(buttonOnCall?.id as number, false);
+    if (incomingCall) {
+      wss?.sendMessage({
+        api: "user",
+        mt: "RetrieveIncomingCall",
+        device: incomingCall?.device,
+        num: incomingCall?.num,
+        call: incomingCall?.callId,
+      });
+      setHeldIncomingCall(incomingCall.callId,false)
+      setHeldStateCall(false);
+    } else {
+      wss?.sendMessage({
+        api: "user",
+        mt: "RetrieveCall",
+        btn_id: buttonOnCall?.id,
+      });
+      setHeldStateCall(false);
+      setHeldCall(buttonOnCall?.id as number, false);
+
+    }
+
   };
 
   const handleEndCall = () => {
@@ -137,7 +165,7 @@ export default function CallComponent({
         {incomingCall ? (
           <div>
             {filteredIncomingCallUser
-              ? filteredIncomingCallUser.cn
+              ? filteredIncomingCallUser?.cn
               : incomingCall.num}
           </div>
         ) : (
@@ -145,9 +173,13 @@ export default function CallComponent({
         )}
         <div className="text-xs">
           {incomingCall ? (
-            <div>{formatDuration(getIncomingCallDuration(incomingCall.callId))}</div>
-          ): (
-            <div>{formatDuration(getCallDuration(buttonOnCall?.id as number))}</div>
+            <div>
+              {formatDuration(getIncomingCallDuration(incomingCall.callId))}
+            </div>
+          ) : (
+            <div>
+              {formatDuration(getCallDuration(buttonOnCall?.id as number))}
+            </div>
           )}
         </div>
       </div>
@@ -165,6 +197,7 @@ export default function CallComponent({
                 onKeyPress={handleKeyPress}
                 forwarded={false}
                 buttonOnCall={buttonOnCall}
+                incoming={incomingCall}
               />
             </PopoverContent>
           </Popover>
@@ -188,6 +221,7 @@ export default function CallComponent({
                 onKeyPress={handleKeyPress}
                 forwarded={true}
                 buttonOnCall={buttonOnCall}
+                incoming={incomingCall}
               />
             </PopoverContent>
           </Popover>

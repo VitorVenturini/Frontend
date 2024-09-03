@@ -8,6 +8,7 @@ export interface IncomingCallInterface {
   num: string;
   callId: number;
   connected: boolean;
+  held?: boolean;
 }
 
 interface CallContextProps {
@@ -17,7 +18,8 @@ interface CallContextProps {
   removeCall: (buttonId: string) => void;
   getCallDuration: (buttonId: number) => number;
   addIncomingCall: (incomingCall: IncomingCallInterface) => void;
-  removeIncomingCall: (callId: string) => void;
+  removeIncomingCall: (callId: number) => void;
+  setHeldIncomingCall : (callID: number, isHeld: boolean) => void;
   getIncomingCallDuration: (callId: number) => number;
 }
 
@@ -93,6 +95,14 @@ export const CallProvider: React.FC<{ children: React.ReactNode }> = ({
     return () => clearInterval(interval);
   }, []);
 
+  const setHeldIncomingCall = (callID: number, isHeld: boolean) => {
+    setIncomingCalls((prevCalls) =>
+      prevCalls.map((call) =>
+        call.callId === callID ? { ...call, held: isHeld } : call
+      )
+    );
+  };
+
   const addCall = (button: ButtonInterface, duration: number) => {
     setCalls((prev) => [...prev, button]);
     setStartTimes((prev) => ({
@@ -110,17 +120,31 @@ export const CallProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const addIncomingCall = (incomingCall: IncomingCallInterface) => {
-    setIncomingCalls(prev => [...prev, incomingCall]);
+    setIncomingCalls((prev) => {
+      const existingCallIndex = prev.findIndex(call => call.callId === incomingCall.callId);
+      
+      if (existingCallIndex !== -1) {
+        // Atualiza a chamada existente
+        const updatedCalls = [...prev];
+        updatedCalls[existingCallIndex] = { ...updatedCalls[existingCallIndex], ...incomingCall };
+        return updatedCalls;
+      } else {
+        // Adiciona uma nova chamada se não existir
+        return [...prev, incomingCall];
+      }
+    });
+  
     if (incomingCall.connected) {
-      setIncomingStartTimes(prev => ({
+      setIncomingStartTimes((prev) => ({
         ...prev,
         [incomingCall.id]: Date.now(),
       }));
     }
   };
+  
 
-  const removeIncomingCall = (callId: string) => {
-    setIncomingCalls(prev => prev.filter(call => call.id !== callId));
+  const removeIncomingCall = (callId: number) => {
+    setIncomingCalls(prev => prev.filter(call => call.id as any !== callId));
     setIncomingStartTimes(prev => {
       const { [callId]: _, ...rest } = prev;
       return rest;
@@ -141,7 +165,7 @@ export const CallProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <CallContext.Provider
-      value={{ calls,incomingCalls,addIncomingCall,removeIncomingCall,addCall, removeCall, getCallDuration,getIncomingCallDuration }}
+      value={{ calls,incomingCalls,addIncomingCall, setHeldIncomingCall ,removeIncomingCall,addCall, removeCall, getCallDuration,getIncomingCallDuration }}
     >
       {children}
     </CallContext.Provider>
