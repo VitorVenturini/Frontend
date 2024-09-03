@@ -46,7 +46,9 @@ const enterFullScreen = () => {
 
   if (elem.requestFullscreen) {
     elem.requestFullscreen().catch((err) => {
-      console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+      console.error(
+        `Error attempting to enable full-screen mode: ${err.message} (${err.name})`
+      );
     });
   }
 };
@@ -108,12 +110,11 @@ export default function CardLogin() {
         updateAccount({ isLogged: true });
         console.log({ ...account, updateAccount: undefined });
         console.log("Login efetuado com sucesso");
-        
+
         setIsLoading(false);
 
         // Sempre navega para a tela de usuário após o login bem-sucedido
         navigate("/user");
-        
       } else {
         const data = await response.json();
         switch (data.error) {
@@ -132,6 +133,9 @@ export default function CardLogin() {
           case "rejected":
             console.error("Erro: Rejeitado.");
             toast({ description: "Revise suas credenciais" });
+            break;
+          case "noMoreLicense":
+            toast({ description: "Sua Licença nao permite isso" });
             break;
           case "SequelizeConnectionRefusedError":
             console.error("Erro: Backend.");
@@ -168,7 +172,6 @@ export default function CardLogin() {
     handleLogin(); // Chama a função de login
 
     enterFullScreen(); // Chama a função de tela cheia
-    
   };
   const handleCloseAlertDialog = () => {
     setOpen(false);

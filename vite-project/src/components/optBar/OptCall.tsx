@@ -10,7 +10,7 @@ export default function OptCall() {
   const wss = useWebSocketData();
   const [isLoading, setIsLoading] = useState(true);
 
-  const handleSelectDevice = (device: string, callID: number) => {
+  const handleSelectDevice = (device: string, callID: string) => {
     console.log("Device Escolhido" + device);
     wss?.sendMessage({
       api: "user",
@@ -20,27 +20,18 @@ export default function OptCall() {
     });
   };
 
-  const handleRefuseCall = (device: string, callID: number) => {
+  const handleRefuseCall = (callID: string) => {
      wss?.sendMessage({
       api: "user",
-      mt: "UserClear",
-      device: device,
+      mt: "ClearCall",
       call: callID,
     });
 
-    // console.log("Device Escolhido" + device);
-    // wss?.sendMessage({
-    //   api: "user",
-    //   mt: "ConnectCall",
-    //   device: device,
-    //   call: callID,
-    // });
   };
-
-  const activeIncomingCalls = incomingCalls.filter((inc) => {
-    return inc.connected;
-  });
-
+  useEffect(() =>{
+    console.log("ligações" + JSON.stringify(incomingCalls))
+  },[incomingCalls])
+  const activeIncomingCalls = incomingCalls.filter((inc) => inc.connected);
   return (
     <ScrollArea className="w-full h-[200px]  lg:h-[290px]  xl2:h-[400px] xl3:h-[590px]  relative gap-3">
       {calls.map((call) => (
@@ -54,18 +45,18 @@ export default function OptCall() {
       {incomingCalls
         .filter((call) => !call.connected)
         .map((call) => (
-          <div key={call.id}>
+          <div key={call.id} className="gap-2">
             Recebendo Ligação de <b>{call.num}</b>
             <p></p>Em qual device você deseja atender a Ligação
             <Button
               variant="default"
               onClick={() => handleSelectDevice(call.device, call.callId)}
             >
-              {call.device}
+              {call.deviceText}
             </Button>
             <Button
               variant="destructive"
-              onClick={() => handleRefuseCall(call.device, call.callId)}
+              onClick={() => handleRefuseCall(call.callId)}
             >
               Recusar
             </Button>
