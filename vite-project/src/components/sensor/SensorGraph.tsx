@@ -94,7 +94,7 @@ export function SensorGraph({ chartData }: SensorGraphProps) {
     setActionExecDevice(value);
   };
   return (
-    <Card className="w-full h-[200px]  lg:h-[200px]  xl2:h-[300px] xl3:h-[400px]  relative
+    <Card className="w-full h-[200px]  lg:h-[200px]  xl2:h-[300px] xl4:h-[400px]  relative
      ">
       <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
         <div className="flex flex-1 justify-center gap-1 px-2 py-2 ">

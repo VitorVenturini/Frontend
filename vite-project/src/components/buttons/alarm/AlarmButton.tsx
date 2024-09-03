@@ -87,9 +87,9 @@ export default function AlarmButton({ button, handleClick }: ButtonProps) {
     >
       <div className="flex items-center gap-1 cursor-pointer ">
         <OctagonAlert size={17}/>
-        <p className="text-sm font-medium leading-none xl3:text-2xl">{button.button_name}</p>
+        <p className="text-sm font-medium leading-none xl4:text-2xl">{button.button_name}</p>
       </div>
-      <div className="flex font-extrabold text-xl justify-end xl3:text-3xl">
+      <div className="flex font-extrabold text-xl justify-end xl4:text-3xl">
         {button.button_prt}
       </div>
     </div>

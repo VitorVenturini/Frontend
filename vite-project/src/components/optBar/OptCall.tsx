@@ -21,7 +21,7 @@ export default function OptCall() {
     return inc.connected;
   });
   return (
-    <ScrollArea className="w-full h-[200px]  lg:h-[290px]  xl2:h-[400px] xl3:h-[590px]  relative gap-3">
+    <ScrollArea className="w-full h-[200px]  lg:h-[290px]  xl2:h-[400px] xl4:h-[590px]  relative gap-3">
     {calls.map((call) => (
       <CallComponent key={call.id} buttonOnCall={call} />
     ))}

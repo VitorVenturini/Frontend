@@ -99,7 +99,7 @@ export default function OptComponent({
   };
 
   const commonClasses =
-    "w-[60px] h-[40px]  xl2:w-[60px] xl3:h-[80px] xl3:w-[80px] rounded-lg border bg-border text-card-foreground shadow-sm p-1 flex items-start justify-center text-left text-wrap truncate";
+    "w-[60px] h-[40px]  xl2:w-[60px] xl3:h-[60px] xl4:h-[80px] xl4:w-[80px] rounded-lg border bg-border text-card-foreground shadow-sm p-1 flex items-start justify-center text-left text-wrap truncate";
 
   const getDialogContent = () => {
     switch (selectedOpt) {
