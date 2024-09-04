@@ -134,7 +134,7 @@ export default function CardLogin() {
             console.error("Erro: Rejeitado.");
             toast({ description: "Revise suas credenciais" });
             break;
-          case "noMoreLicense":
+          case "noMoreLicenses":
             toast({ description: "Sua Licença nao permite isso" });
             break;
           case "SequelizeConnectionRefusedError":

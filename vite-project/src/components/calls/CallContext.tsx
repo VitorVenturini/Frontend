@@ -10,6 +10,7 @@ export interface IncomingCallInterface {
   callId: string;
   connected: boolean;
   held?: boolean;
+  heldByUser?: boolean;
 }
 
 interface CallContextProps {
@@ -24,6 +25,7 @@ interface CallContextProps {
   ) => void;
   removeIncomingCall: (callId: string) => void;
   setHeldIncomingCall: (callID: string, isHeld: boolean) => void;
+  setHeldIncomingCallByUser: (callID: string, isHeld: boolean) => void;
   getIncomingCallDuration: (callId: string) => number;
 }
 
@@ -84,15 +86,15 @@ export const CallProvider: React.FC<{ children: React.ReactNode }> = ({
     // Inicializa os tempos de início para chamadas conectadas
     connectedIncomingCalls.forEach((call) => {
       if (!incomingStartTimes[call.id]) {
-        setIncomingStartTimes((prev) => ({ ...prev, [call.id]: Date.now() }));
+        setIncomingStartTimes((prev) => ({ ...prev, [call.callId]: Date.now() }));
       }
     });
 
     // Remove entradas para chamadas desconectadas
-    Object.keys(incomingStartTimes).forEach((id) => {
-      if (!connectedIncomingCalls.find((call) => call.id === id)) {
+    Object.keys(incomingStartTimes).forEach((callID) => {
+      if (!connectedIncomingCalls.find((call) => call.callId === callID)) {
         setIncomingStartTimes((prev) => {
-          const { [id]: _, ...rest } = prev;
+          const { [callID]: _, ...rest } = prev;
           return rest;
         });
       }
@@ -111,6 +113,14 @@ export const CallProvider: React.FC<{ children: React.ReactNode }> = ({
     setIncomingCalls((prevCalls) =>
       prevCalls.map((call) =>
         call.callId === callID ? { ...call, held: isHeld } : call
+      )
+    );
+  };
+
+  const setHeldIncomingCallByUser = (callID: string, isHeld: boolean) => {
+    setIncomingCalls((prevCalls) =>
+      prevCalls.map((call) =>
+        call.callId === callID ? { ...call, heldByUser: isHeld } : call
       )
     );
   };
@@ -204,6 +214,7 @@ export const CallProvider: React.FC<{ children: React.ReactNode }> = ({
         incomingCalls,
         addIncomingCall,
         setHeldIncomingCall,
+        setHeldIncomingCallByUser,
         removeIncomingCall,
         addCall,
         removeCall,

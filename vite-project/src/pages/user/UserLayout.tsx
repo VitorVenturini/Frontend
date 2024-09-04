@@ -92,6 +92,8 @@ function UserLayout() {
     updateButton,
     setCommandValue,
     comboStarted,
+    setHeldCall,
+    setHeldCallByUser,
     buttons,
   } = useButtons();
   const {
@@ -119,7 +121,7 @@ function UserLayout() {
     chatRead,
     clearChat,
   } = useChat();
-  const { addCall, addIncomingCall, removeIncomingCall, removeCall } =
+  const { addCall, addIncomingCall, removeIncomingCall, removeCall,setHeldIncomingCall,setHeldIncomingCallByUser } =
     useCalls();
   const [selectedOptTop, setSelectedOptTop] = useState<string>("floor"); // default for top
   const [clickedUserTop, setClickedUserTop] = useState<string | null>(null);
@@ -355,19 +357,44 @@ function UserLayout() {
         setButtonClickedStatus(message.btn_id, "callConnected", true);
         break;
       case "CallHeld":
-        setButtonClickedStatus(message.btn_id, "callHeld", true);
         // usuario me colocou em espera
+        if (message.btn_id !== "") {
+          console.log("Chamada que eu realizei");
+          setButtonClickedStatus(message.btn_id, "callHeld", true);
+          setHeldCallByUser(message.btn_id, true);
+        } else {
+          console.log("Chamada que eu recebi");
+          setHeldIncomingCallByUser(String(message.call),true)
+        }
         break;
       case "CallRetrieved":
-        setButtonClickedStatus(message.btn_id, "callRetrieved", true);
+        if (message.btn_id !== "") {
+          setButtonClickedStatus(message.btn_id, "callRetrieved", true);
+          setHeldCallByUser(message.btn_id, false);
+        }else{
+          console.log("Chamada que eu recebi");
+          setHeldIncomingCallByUser(String(message.call),false)
+        }
         // usuario retomou a chamada
         break;
       case "UserCallRetrieved":
-        setButtonClickedStatus(message.btn_id, "userCallRetrieved", true);
+        if (message.btn_id !== "") {
+          console.log("Chamada que eu realizei");
+          setButtonClickedStatus(message.btn_id, "userCallRetrieved", true);
+          setHeldCall(message.btn_id, false);
+        } else {
+          setHeldIncomingCall(message.btn_id, false);
+        }
         // eu retomei a chamada
         break;
       case "UserCallHeld":
-        setButtonClickedStatus(message.btn_id, "userCallHeld", true);
+        if (message.btn_id !== "") {
+          console.log("Chamada que eu realizei");
+          setButtonClickedStatus(message.btn_id, "userCallHeld", true);
+          setHeldCall(message.btn_id, true);
+        } else {
+          setHeldIncomingCall(message.btn_id, true);
+        }
         //eu coloquei em espera
         break;
       case "CallDisconnected":

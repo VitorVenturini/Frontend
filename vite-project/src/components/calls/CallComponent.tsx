@@ -48,12 +48,15 @@ export default function CallComponent({
   const { setHeldCall } = useButtons();
   const wss = useWebSocketData();
   const { getCallDuration, getIncomingCallDuration } = useCalls();
-  const [heldCall, setHeldStateCall] = useState(buttonOnCall?.held || incomingCall?.held);
+  const [heldCall, setHeldStateCall] = useState(
+    buttonOnCall?.held || incomingCall?.held
+  );
+  const [callStateClass, setCallStateClass] = useState<string>("");
   // const [heldIncomingCall,setHeldStateIncomingCall] = useState( || false)
   const [callDuration, setCallDuration] = useState(0);
   const [openKeyboardDTMF, setOpenKeyboardDTMF] = useState(false);
   const [openKeyboard, setOpenKeyboard] = useState(false);
-  const {setHeldIncomingCall} = useCalls()
+  const { setHeldIncomingCall } = useCalls();
   //const [retrieveCall, setRetrieveCall] = useState<boolean>(false);
   const filteredUser = usersPbx?.filter((user) => {
     return user.guid === buttonOnCall?.button_prt;
@@ -63,18 +66,10 @@ export default function CallComponent({
     return user.e164 === incomingCall?.num;
   })[0];
 
-  const initials = getInitials(filteredUser?.cn || filteredIncomingCallUser?.cn);
+  const initials = getInitials(
+    filteredUser?.cn || filteredIncomingCallUser?.cn
+  );
   const avatarBase64 = initials ? generateAvatar(initials) : null;
-
-  // //contador
-  // useEffect(() => {
-  //   const startTime = Date.now();
-  //   const interval = setInterval(() => {
-  //     const elapsedTime = Math.floor((Date.now() - startTime) / 1000);
-  //     setCallDuration(elapsedTime);
-  //   }, 1000);
-  //   return () => clearInterval(interval);
-  // }, []);
 
   const formatDuration = (seconds: number) => {
     const h = Math.floor(seconds / 3600);
@@ -94,17 +89,12 @@ export default function CallComponent({
         num: incomingCall?.num,
         call: incomingCall?.callId,
       });
-      setHeldIncomingCall(incomingCall.callId,true)
-      setHeldStateCall(true);
-      // setHeldStateIncomingCall(true)
     } else {
       wss?.sendMessage({
         api: "user",
         mt: "HeldCall",
         btn_id: buttonOnCall?.id,
       });
-      setHeldCall(buttonOnCall?.id as number, true);
-      setHeldStateCall(true);
     }
   };
   const handleRetrieveCall = () => {
@@ -116,19 +106,13 @@ export default function CallComponent({
         num: incomingCall?.num,
         call: incomingCall?.callId,
       });
-      setHeldIncomingCall(incomingCall.callId,false)
-      setHeldStateCall(false);
     } else {
       wss?.sendMessage({
         api: "user",
         mt: "RetrieveCall",
         btn_id: buttonOnCall?.id,
       });
-      setHeldStateCall(false);
-      setHeldCall(buttonOnCall?.id as number, false);
-
     }
-
   };
 
   const handleEndCall = () => {
@@ -150,9 +134,50 @@ export default function CallComponent({
   const handleKeyPress = (key: string) => {
     console.log("Key pressed:", key);
   };
+  // monitorar se a ligação está em espera ou nao
+  useEffect(() => {
+    if (buttonOnCall?.held) {
+      // eu coloquei em espera
+      setHeldStateCall(true);
+      setCallStateClass(
+        "outline outline-2 border-xs border-blue-800 outline-blue-800"
+      );
+    } else if (buttonOnCall?.heldByUser) {
+      // usuário me colocou em espera
+      setCallStateClass(
+        "outline outline-2 border-xs border-purple-900 outline-purple-900"
+      );
+    } else {
+      // eu tirei da espera ou o usuario tirou da espera
+      setHeldStateCall(false);
+      setCallStateClass(
+        "outline outline-2 border-xs border-red-800 outline-red-800"
+      );
+    }
+  }, [buttonOnCall]);
 
+  useEffect(() => {
+    if (incomingCall?.held) {
+      // eu coloquei em espera a incomingCall
+      setHeldStateCall(true);
+      setCallStateClass(
+        "outline outline-2 border-xs border-blue-800 outline-blue-800"
+      );
+    } else if (incomingCall?.heldByUser) {
+        // usuário me colocou em espera ( a incomingCall )
+        setCallStateClass(
+          "outline outline-2 border-xs border-purple-900 outline-purple-900"
+        );
+    } else {
+       // eu tirei da espera ou o usuario tirou da espera a incomingCall
+       setHeldStateCall(false);
+       setCallStateClass(
+         "outline outline-2 border-xs border-red-800 outline-red-800"
+       );
+    }
+  }, [incomingCall]);
   return (
-    <Card className="flex justify-between px-4 py-6 m-3">
+    <Card className={`flex justify-between px-4 py-6 m-3 ${callStateClass} `}>
       <div className="flex items-center gap-3">
         {avatarBase64 !== null ? (
           <Avatar>
@@ -171,7 +196,7 @@ export default function CallComponent({
         ) : (
           <div>{filteredUser ? filteredUser.cn : buttonOnCall?.button_prt}</div>
         )}
-        <div className="text-xs">
+        <div className="text-xs mt-1">
           {incomingCall ? (
             <div>
               {formatDuration(getIncomingCallDuration(incomingCall.callId))}

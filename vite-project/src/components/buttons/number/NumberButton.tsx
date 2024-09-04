@@ -100,7 +100,7 @@ export default function NumberButton({ button, onClick }: NumberProps) {
         break;
       case "userCallHeld":
         //setStatusClass("bg-orange-500")
-        setClickedStatusClass("bg-blue-800");
+        setClickedStatusClass("!bg-blue-800");
         break;
       case "userCallRetrieved":
         //setStatusClass("bg-orange-500")

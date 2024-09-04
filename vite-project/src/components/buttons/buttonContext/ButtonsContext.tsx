@@ -34,6 +34,7 @@ export interface ButtonInterface {
   note?: string;
   onCall?: boolean;
   held?: boolean;
+  heldByUser?: boolean;
   muted?: boolean;
   incomingCall?: boolean;
 }
@@ -54,6 +55,7 @@ interface ButtonContextType {
     value: number | undefined
   ) => void;
   setHeldCall : (id: number, isHeld: boolean) => void;
+  setHeldCallByUser : (id: number, isHeld: boolean) => void;
   setClickedButton: (id: number) => void;
   removeClickedButton: (id: number) => void;
   clearButtons: () => void;
@@ -156,6 +158,14 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
+  const setHeldCallByUser = (id: number, isHeld: boolean) => {
+    setButtons((prevButtons) =>
+      prevButtons.map((button) =>
+        button.id === id ? { ...button, heldByUser: isHeld } : button
+      )
+    );
+  };
+
   const setButtonLoading = (id: number, loading: boolean) => {
     setButtons((prevButtons) =>
       prevButtons.map((button) =>
@@ -252,6 +262,7 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
         buttons,
         setButtons,
         setHeldCall,
+        setHeldCallByUser,
         addButton,
         clearButtons,
         updateButton,
