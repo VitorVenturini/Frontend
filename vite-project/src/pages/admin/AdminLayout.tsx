@@ -77,6 +77,9 @@ function AdminLayout() {
   const myAccountInfo = JSON.parse(localStorage.getItem("Account") || "{}");
   const [isLoading,setIsLoading] = useState(true)
   var pbxUser: UserPbxInterface[];
+  const { setLoadBarData, clearLoadBarData } = useAppConfig();
+
+
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
     switch (message.mt) {
@@ -98,7 +101,6 @@ function AdminLayout() {
           description: "Botão Atualizado com sucesso",
         });
         break;
-
       case "DeleteButtonsSuccess":
         toast({
           description: "Botão excluído com sucesso",
@@ -293,10 +295,14 @@ function AdminLayout() {
           toast({
             description: "Relatório não gerado, revise seus parâmetros",
           });
-        }else if (message.src === "RptIotDevice") {
-          console.log("REPORT Iot Data");
+        } else {
+          clearDataReport()
+          clearLoadBarData()
+          setLoadBarData({
+            total: message.totalFragments,
+            unitValue: message.thisFragment,
+          });
 
-        }  else {
           setReceivedFragments((prevFragments) => {
             const newFragments = [...prevFragments, message.result];
             if (message.lastFragment) {
@@ -320,7 +326,6 @@ function AdminLayout() {
 
                 addDataReport(parsedData, "sensor", jsonKeys, message.src);
               } else {
-                console.log(parsedData, "REPORT TABLE");
                 // Função auxiliar para formatação de datas
                 function formatDate(dateString: string): string {
                   const date = new Date(dateString);
@@ -350,14 +355,13 @@ function AdminLayout() {
                   if (item.read) {
                     item.read = formatDate(item.read);
                   }
-
                   // Formatar colunas que começam com 'call' e possuem valor
                   Object.keys(item).forEach((key) => {
-                    if (key.startsWith("call") && item[key]) {
+                    if (key.startsWith("call") && item[key] && !key.startsWith("call_innovaphone")) {
                       item[key] = formatDate(item[key]);
                     }
                   });
-                  if (item.status) {
+                  if (item.status || item.direction) {
                     switch (item.status) {
                       case 3:
                         item.status = "Finalizado";
@@ -386,11 +390,28 @@ function AdminLayout() {
                       default:
                         break;
                     }
+                    switch (item.direction) {
+                      case 'out':
+                        item.direction = "Saída";
+                        break;
+                      case "inc":
+                        item.direction = "Entrada";
+                        break;
+                      default:
+                        break;
+                    }
+                    
                   }
+               
                   return item;
                 });
-
-                addDataReport(parsedData, "table", jsonKeys, message.src);
+                if(message.src === 'RptIotHistory'){
+                  console.log('RPT IOT HYSTORY', parsedData)
+                  addDataReport(parsedData, 'img', jsonKeys, message.src)
+                }else {
+                  addDataReport(parsedData, "table", jsonKeys, message.src);
+                }
+                
               }
 
               return []; // Limpa os fragmentos recebidos

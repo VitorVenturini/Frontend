@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState } from "react";
 export interface DataInterface {
   chart: any[];
   table: any[];
+  img: any[];
   keys: any[];
   src: any[];
 }
@@ -27,6 +28,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
   const [dataReport, setDataReport] = useState<DataInterface>({
     chart: [],
     table: [],
+    img:[],
     keys: [],
     src: [],
   });
@@ -37,6 +39,8 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
         return { ...prevData, chart: newData, keys: keys, src: src };
       } else if (reportType === "table") {
         return { ...prevData, table: newData, keys: keys, src: src };
+      }else if (reportType === "img") {
+        return { ...prevData, img: newData, keys: keys, src: src };
       } else {
         return prevData;
       }
@@ -44,7 +48,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const clearDataReport = () => {
-    setDataReport({ chart: [], table: [], keys: [], src:[] });
+    setDataReport({ chart: [], table: [],img: [], keys: [], src:[] });
   };
 
   return (

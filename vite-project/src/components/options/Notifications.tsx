@@ -1,8 +1,8 @@
+import React, { useState } from 'react';
 import beep from "../../../src/assets/sounds/bleep.wav";
 import minor from "../../../src/assets/sounds/minor.wav";
 import mobile from "../../../src/assets/sounds/mobile.wav";
 import suspiciou from "../../../src/assets/sounds/suspiciou.wav";
-import ReactAudioPlayer from "react-audio-player";
 import { AudioPlayer } from "react-audio-player-component";
 import { Checkbox } from "../ui/checkbox";
 
@@ -17,12 +17,19 @@ import {
 import { Button } from "../ui/button";
 
 export default function Notify() {
-    const handleClick = () => {
-        console.log('clicado')
-    }
+  const [selectedAudio, setSelectedAudio] = useState(null);
+
+  const handleCheckboxChange = (audioId: any) => {
+    setSelectedAudio(audioId);
+  };
+
+  const handleClick = () => {
+    console.log('Audio selecionado:', selectedAudio);
+  };
+
   return (
-    <Card className="min-w-[700px] w-fit h-fit p-2">
-      <CardHeader className="flex  w-full justify-between gap-4">
+    <Card className="min-w-[450px] w-fit h-fit p-2">
+      <CardHeader className="flex-row items-center align-middle w-full justify-between gap-4">
         <CardTitle>
           <p>Audio</p>
           <CardDescription>Selecione um audio padrão</CardDescription>
@@ -31,7 +38,11 @@ export default function Notify() {
       </CardHeader>
       <div className="bg-card justify-center items-center gap-2 h-fit">
         <div className="items-center flex space-x-2 p-2 ">
-          <Checkbox id="beep"/>
+          <Checkbox
+            id="beep"
+            checked={selectedAudio === 'beep'}
+            onCheckedChange={() => handleCheckboxChange('beep')}
+          />
           <AudioPlayer
             src={beep}
             minimal={true}
@@ -47,10 +58,14 @@ export default function Notify() {
             showLoopOption={false}
             showVolumeControl={false}
           />
-          <p>A1</p>
+          <p>beep</p>
         </div>
         <div className="items-center flex space-x-2 p-2 ">
-          <Checkbox id="minor"/>
+          <Checkbox
+            id="minor"
+            checked={selectedAudio === 'minor'}
+            onCheckedChange={() => handleCheckboxChange('minor')}
+          />
           <AudioPlayer
             src={minor}
             minimal={true}
@@ -66,10 +81,14 @@ export default function Notify() {
             showLoopOption={false}
             showVolumeControl={false}
           />
-          <p>A2</p>
+          <p>minor</p>
         </div>
         <div className="items-center flex space-x-2 p-2 ">
-          <Checkbox id="mobile"/>
+          <Checkbox
+            id="mobile"
+            checked={selectedAudio === 'mobile'}
+            onCheckedChange={() => handleCheckboxChange('mobile')}
+          />
           <AudioPlayer
             src={mobile}
             minimal={true}
@@ -85,10 +104,14 @@ export default function Notify() {
             showLoopOption={false}
             showVolumeControl={false}
           />
-          <p>A3</p>
+          <p>mobile</p>
         </div>
         <div className="items-center flex space-x-2 p-2 ">
-          <Checkbox id="suspicius"/>
+          <Checkbox
+            id="suspiciou"
+            checked={selectedAudio === 'suspiciou'}
+            onCheckedChange={() => handleCheckboxChange('suspiciou')}
+          />
           <AudioPlayer
             src={suspiciou}
             minimal={true}
@@ -104,7 +127,7 @@ export default function Notify() {
             showLoopOption={false}
             showVolumeControl={false}
           />
-          <p>A4</p>
+          <p>suspiciou</p>
         </div>
       </div>
     </Card>
