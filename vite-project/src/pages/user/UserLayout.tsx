@@ -383,7 +383,7 @@ function UserLayout() {
           setButtonClickedStatus(message.btn_id, "userCallRetrieved", true);
           setHeldCall(message.btn_id, false);
         } else {
-          setHeldIncomingCall(message.btn_id, false);
+          setHeldIncomingCall(String(message.call), false);
         }
         // eu retomei a chamada
         break;
@@ -393,7 +393,7 @@ function UserLayout() {
           setButtonClickedStatus(message.btn_id, "userCallHeld", true);
           setHeldCall(message.btn_id, true);
         } else {
-          setHeldIncomingCall(message.btn_id, true);
+          setHeldIncomingCall(String(message.call), true);
         }
         //eu coloquei em espera
         break;
