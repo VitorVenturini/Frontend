@@ -99,7 +99,7 @@ export function DataTable<TData>({
                 <SelectLabel>{texts[language].users}</SelectLabel>
                 {users.map((user) => (
                   <SelectItem
-                    key={user.id}
+                    key={user.guid}
                     value={table.getColumn("from") || table.getColumn("number") ? user.name : user.guid}
                   >
                     {user.name}

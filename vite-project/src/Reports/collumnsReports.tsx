@@ -21,7 +21,7 @@ const ColumnsReports: React.FC<ColumnsReportsProps> = ({
   const columns: ColumnDef<any, any>[] = useMemo(() => {
     // Filtra as colunas que não devem ser exibidas
     const baseColumns: ColumnDef<any, any>[] = keys
-      .filter((key) => key !== "record_link" && key !== "record_id")
+      .filter((key) => key !== "record_link" && key !== "record_id" && key !== "btn_id" && key !== "call_innovaphone")
       .map((key) => ({
         accessorKey: key,
         header: key.toUpperCase(),

@@ -27,6 +27,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { host } from "@/App";
 type DateRange = {
   from: Date;
@@ -36,6 +42,10 @@ import { useSensors } from "@/components/sensor/SensorContext";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useCameras } from "@/components/cameras/CameraContext";
+import { useAppConfig } from "@/components/options/ConfigContext";
+import { LoaderBar } from "@/components/LoaderBar";
+
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
   const { users } = useUsers();
@@ -55,6 +65,7 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
   const [endHour, setEndHour] = useState("");
   const [setRpt] = useState("");
   const { cameras } = useCameras();
+  const { loadBarData } = useAppConfig();
 
   const handleStartHour = (event: ChangeEvent<HTMLInputElement>) => {
     setStartHour(event.target.value);
@@ -158,14 +169,14 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
         endHour,
         "23:59:59"
       );
-      // wss?.sendMessage({
-      //   api: "admin",
-      //   mt: "SelectFromReports",
-      //   src: "RptIotDevices",
-      //   deveui: value,
-      //   from: fromDateTimeUTC,
-      //   to: toDateTimeUTC,
-      // });
+      wss?.sendMessage({
+        api: "admin",
+        mt: "SelectFromReports",
+        src: "RptIotHistory",
+        deveui: value,
+        from: fromDateTimeUTC,
+        to: toDateTimeUTC,
+      });
     } else {
       console.error("Data não definida corretamente.");
     }
@@ -188,11 +199,11 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
         from: fromDateTimeUTC,
         to: toDateTimeUTC,
       });
-    } else if (value !== "RptSensors" && value !== "RptIotDevices" ) {
+    } else if (value !== "RptSensors" && value !== "RptIotDevices") {
       toast({
         description: "Relatório não gerado, revise seus parâmetros",
       });
-    } else if (value === "RptIotDevices"){
+    } else if (value === "RptIotDevices") {
       toast({
         description: "Selecione um device para mostrar as fotos",
       });
@@ -214,7 +225,11 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
         endHour,
         "23:59:59"
       );
-    }else if (reportSrc === "RptIotDevices" && actionExecDevice && date?.from) {
+    } else if (
+      reportSrc === "RptIotDevices" &&
+      actionExecDevice &&
+      date?.from
+    ) {
       handleIotDevice(actionExecDevice);
 
       const fromDateTimeUTC = formatDateTime(date.from, startHour, "00:00:00");
@@ -247,7 +262,7 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
       <div className="flex gap-3">
         <Tabs
           defaultValue="account"
-          className="w-full flex-col"
+          className="w-full h-full flex-col"
           onValueChange={handleMenu}
         >
           <div className="flex gap-4">
@@ -311,9 +326,9 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
               <TabsTrigger value="RptMessages">Mensagens</TabsTrigger>
               <TabsTrigger value="RptIotDevices">Iot Câmeras</TabsTrigger>
             </TabsList>
-            <TabsContent value="RptSensors" className="gap-4 ">
-            <div className="grid items-center justify-start grid-cols-3 gap-4 h-[10px] ">
-              <div className="grid justify-start col-span-1 gap-1 ">
+            <TabsContent value="RptSensors" className="gap-4">
+              <div className="grid items-center justify-start grid-cols-3 gap-4 h-[10px] ">
+                <div className="grid justify-start col-span-1 gap-1 ">
                   <Label htmlFor="name">Sensor</Label>
                 </div>
                 <Select onValueChange={handleExecDevice}>
@@ -337,49 +352,110 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
               </div>
             </TabsContent>
             <TabsContent value="RptIotDevices" className="gap-4 ">
-            <div className="grid items-center justify-start grid-cols-3 gap-4 h-[10px] ">
-              <div className="grid justify-start col-span-1 gap-1 ">
-                <Label htmlFor="name">Iot Câmeras</Label>
+              <div className="grid items-center justify-start grid-cols-3 gap-4 h-[10px] ">
+                <div className="grid justify-start col-span-1 gap-1 ">
+                  <Label htmlFor="name">Iot Câmeras</Label>
+                </div>
+                <Select onValueChange={handleIotDevice}>
+                  <SelectTrigger className="col-span-2">
+                    <SelectValue placeholder="Selecione um Device" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Iot Câmeras</SelectLabel>
+                      {cameras.map((camera) => (
+                        <SelectItem
+                          key={camera.nickname}
+                          value={camera?.mac as string}
+                        >
+                          {camera.nickname}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
               </div>
-              <Select onValueChange={handleIotDevice}>
-                <SelectTrigger className="col-span-2">
-                  <SelectValue placeholder="Selecione um Sensor" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Iot Câmeras</SelectLabel>
-                    {cameras.map((camera) => (
-                      <SelectItem
-                        key={camera.nickname}
-                        value={camera?.mac as string}
-                      >
-                        {camera.nickname}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-          </TabsContent>
+            </TabsContent>
           </div>
-          <TabsContent value="RptSensors" className="gap-4 py-4 ">
-            <Grafico chartData={dataReport.chart} />
+          <TabsContent value="RptSensors" className="gap-4 py-4">
+            {dataReport.chart.length == 0 ? (
+              <div className="w-full align-middle items-center justify-center h-[600px] flex">
+                <LoaderBar
+                  total={loadBarData.total}
+                  unitValue={loadBarData.unitValue}
+                />
+              </div>
+            ) : (
+              <Grafico chartData={dataReport.chart} />
+            )}
           </TabsContent>
           <TabsContent value="RptIotDevices" className="gap-4 py-4">
-              
+            {dataReport.img.length == 0 ? (
+              <div className="w-full align-middle items-center justify-center h-[600px]">
+                <LoaderBar
+                  total={loadBarData.total}
+                  unitValue={loadBarData.unitValue}
+                />
+              </div>
+            ) : (
+              <ScrollArea className="w-full align-middle items-center justify-center h-full">
+                <div className="flex flex-wrap gap-4">
+                  {dataReport.img.map((item, index) => (
+                    <Dialog key={item.id}>
+                      <DialogTrigger>
+                        <div className="flex flex-col items-center">
+                          <img
+                            src={item.image}
+                            alt={`Image ${index}`}
+                            className="object-cover w-32 h-32"
+                          />
+                          <p className="text-xs">{item.date}</p>
+                        </div>
+                      </DialogTrigger>
+                      <DialogContent className="h-full max-w-5xl">
+                        <img
+                          src={item.image}
+                          alt={`Image ${index}`}
+                          className="w-full h-full"
+                        />
+                      </DialogContent>
+                    </Dialog>
+                  ))}
+                </div>
+              </ScrollArea>
+            )}
           </TabsContent>
-          <TabsContent value="RptAvailability" className="gap-4 py-4">
-            {dataReport?.table[0] && (
-              <ColumnsReports
-                data={dataReport.table}
-                keys={dataReport.keys}
-                report={dataReport.src as any}
-                filter={"user"}
-              />
+          <TabsContent
+            value="RptAvailability"
+            className="gap-4 py-4"
+          >
+            {dataReport.table.length == 0 ? (
+              <div className="w-full align-middle items-center justify-center h-[600px] flex">
+                <LoaderBar
+                  total={loadBarData.total}
+                  unitValue={loadBarData.unitValue}
+                />
+              </div>
+            ) : (
+              <div className="w-full">
+                <ColumnsReports
+                  data={dataReport.table}
+                  keys={dataReport.keys}
+                  report={dataReport.src as any}
+                  filter={"user"}
+                />
+              </div>
             )}
           </TabsContent>
           <TabsContent value="RptActivities" className="gap-4 py-4">
-            {dataReport?.table[0] && (
+            {dataReport.table.length == 0 ? (
+              <div className="w-full align-middle items-center justify-center h-[600px] flex">
+                <LoaderBar
+                  total={loadBarData.total}
+                  unitValue={loadBarData.unitValue}
+                />
+              </div>
+            ) : (
               <ColumnsReports
                 data={ajustData}
                 keys={dataReport.keys}
@@ -389,7 +465,14 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
             )}
           </TabsContent>
           <TabsContent value="RptMessages" className="gap-4 py-4">
-            {dataReport?.table[0] && (
+            {dataReport.table.length == 0 ? (
+              <div className="w-full align-middle items-center justify-center h-[600px] flex">
+                <LoaderBar
+                  total={loadBarData.total}
+                  unitValue={loadBarData.unitValue}
+                />
+              </div>
+            ) : (
               <ColumnsReports
                 data={dataReport.table}
                 keys={dataReport.keys}
@@ -399,7 +482,14 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
             )}
           </TabsContent>
           <TabsContent value="RptCalls" className="gap-4 py-4">
-            {dataReport?.table[0] && (
+            {dataReport.table.length == 0 ? (
+              <div className="w-full align-middle items-center justify-center h-[600px] flex">
+                <LoaderBar
+                  total={loadBarData.total}
+                  unitValue={loadBarData.unitValue}
+                />
+              </div>
+            ) : (
               <ColumnsReports
                 data={dataReport.table}
                 keys={dataReport.keys}

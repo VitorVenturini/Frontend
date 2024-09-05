@@ -1,5 +1,11 @@
 import React, { createContext, useState, useContext, ReactNode } from "react";
 
+// Definição de LoaderBarProps para o estado do LoaderBar
+export interface LoaderBarProps {
+  total: number;
+  unitValue: number;
+}
+
 export interface PbxInterface {
   status: string;
 }
@@ -53,9 +59,11 @@ interface AppConfigContextType {
   pbxStatus: PbxInterface[];
   apiKeyInfo: GoogleApiKeyInterface[];
   licenseApi: License;
+  loadBarData: LoaderBarProps;
   setPbxStatus: React.Dispatch<React.SetStateAction<PbxInterface[]>>;
   setApiKeyInfo: React.Dispatch<React.SetStateAction<GoogleApiKeyInterface[]>>;
   setLicense: React.Dispatch<React.SetStateAction<License>>;
+  setLoadBarData: React.Dispatch<React.SetStateAction<LoaderBarProps>>;
   addPbx: (pbx: PbxInterface) => void;
   addApiKey: (apiKey: GoogleApiKeyInterface) => void;
   updateLicense: (
@@ -64,6 +72,10 @@ interface AppConfigContextType {
     licenseActive: LicenseActive,
     licenseInstallDate: string | null
   ) => void;
+  clearPbxStatus: () => void;
+  clearApiKeyInfo: () => void;
+  clearLicense: () => void;
+  clearLoadBarData: () => void;
 }
 
 const AppConfigContext = createContext<AppConfigContextType | undefined>(undefined);
@@ -75,9 +87,39 @@ export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
     status: "active",
     licenseKey: { value: "", createdAt: null, updatedAt: null },
     licenseFile: { value: "", createdAt: null, updatedAt: null },
-    licenseActive: { pbx: { total: 0, used: 0 }, users: { total: 0, used: 0 }, admins: { total: 0, used: 0 }, online: { total: 0, used: 0 }, gateways: { total: 0, used: 0 } },
+    licenseActive: {
+      pbx: { total: 0, used: 0 },
+      users: { total: 0, used: 0 },
+      admins: { total: 0, used: 0 },
+      online: { total: 0, used: 0 },
+      gateways: { total: 0, used: 0 },
+    },
     licenseInstallDate: null,
   });
+
+  const [loadBarData, setLoadBarData] = useState<LoaderBarProps>({
+    total: 0,
+    unitValue: 0,
+  });
+
+  // Funções para limpar/clearar o estado
+
+  const clearPbxStatus = () => setPbxStatus([]);
+  const clearApiKeyInfo = () => setApiKeyInfo([]);
+  const clearLicense = () => setLicense({
+    status: "active",
+    licenseKey: { value: "", createdAt: null, updatedAt: null },
+    licenseFile: { value: "", createdAt: null, updatedAt: null },
+    licenseActive: {
+      pbx: { total: 0, used: 0 },
+      users: { total: 0, used: 0 },
+      admins: { total: 0, used: 0 },
+      online: { total: 0, used: 0 },
+      gateways: { total: 0, used: 0 },
+    },
+    licenseInstallDate: null,
+  });
+  const clearLoadBarData = () => setLoadBarData({ total: 0, unitValue: 0 });
 
   const addPbx = (pbx: PbxInterface) => {
     setPbxStatus((prevPbxInfo) => [...prevPbxInfo, pbx]);
@@ -102,20 +144,24 @@ export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  console.log("CONTEXT LICENSE", licenseApi);
-
   return (
     <AppConfigContext.Provider
       value={{
         pbxStatus,
         apiKeyInfo,
         licenseApi,
+        loadBarData,
         setPbxStatus,
         setApiKeyInfo,
         setLicense,
+        setLoadBarData,
         addPbx,
         addApiKey,
         updateLicense,
+        clearPbxStatus,
+        clearApiKeyInfo,
+        clearLicense,
+        clearLoadBarData,
       }}
     >
       {children}
