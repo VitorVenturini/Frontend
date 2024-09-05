@@ -51,22 +51,23 @@ const useWebSocket = (
 
       ws.current.onclose = (event) => {
         console.log("WebSocket connection closed:", event.code, event.reason);
-        if (!account.isLogged) {
+        if (event.code === 1006) {
+          //code 1006 significa que a conexão foi fechada pelo servidor 
           timer.current = setTimeout(() => {
             console.log("Reconnecting WebSocket...");
             connect();
           }, 5000);
         }
       };
-      ws.current.onerror = (event) => {
-        console.error("WebSocket error:", event);
-        if (!account.isLogged) {
-          timer.current = setTimeout(() => {
-            console.log("Reconnecting WebSocket...");
-            connect();
-          }, 5000);
-        }
-      };
+      // ws.current.onerror = (event) => {
+      //   console.error("WebSocket error:", event);
+      //   if (!account.isLogged) {
+      //     timer.current = setTimeout(() => {
+      //       console.log("Reconnecting WebSocket...");
+      //       connect();
+      //     }, 5000);
+      //   }
+      // };
 
       ws.current.onmessage = (message) => {
         console.log("WebSocket message received:", message.data);
