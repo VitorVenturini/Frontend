@@ -106,13 +106,13 @@ export default function ButtonsPage() {
 
   return (
     <div className="flex flex-col justify-center gap-3">
-      <div className="flex justify-between gap-3 items-center lg:mx-20">
+      <div className="flex justify-center gap-3 items-center">
         <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
           {texts[language].headerUser}:
         </h3>
 
         <Select onValueChange={handleUserSelect}>
-          <SelectTrigger className="">
+          <SelectTrigger className=" lg:w-[500px] xl:w-[600px] xl2:w-[700px] xl3:w-[800px] xl4:w-[900px]">
             <SelectValue placeholder={texts[language].selectUserPlaceholder} />
           </SelectTrigger>
           <SelectContent>
@@ -126,10 +126,10 @@ export default function ButtonsPage() {
             </SelectGroup>
           </SelectContent>
         </Select>
-        <Button>{texts[language].table}</Button>
+        
       </div>
       {!selectedUser ? (
-        <div className="flex flex-col justify-center items-center gap-5 mt-5">
+        <div className="flex flex-col justify-center items-center gap-5 mt-5 ">
           <div className="flex align-middle items-center gap-8">
             <ArrowBigUpDash size={30} className="animate-bounce" />
             {texts[language].chooseUser}

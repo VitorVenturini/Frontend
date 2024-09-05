@@ -35,10 +35,10 @@ export default function Account() {
   }
   
   return (
-    <div className="px-2 flex flex-col gap-4 justify-center mx-[250px]">
-      <ScrollArea className="h-[500px] xl2:h-[1000px]">
+    <div className="px-12 xl2:px-20 flex flex-col  justify-center">
+      
         <DataTable columns={columnsUser} data={users} />
-      </ScrollArea>
+      
     </div>
   );
 }

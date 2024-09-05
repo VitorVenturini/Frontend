@@ -40,7 +40,6 @@ export default function HeaderUser() {
           </div>
           <img src={LogoWecom2} className="h-4 opacity-30" />
         </div>
-        
         <Button className="flex justify-center" variant="secondary">
         <DigitalClock />
         </Button>

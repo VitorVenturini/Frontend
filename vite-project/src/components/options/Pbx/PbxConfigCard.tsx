@@ -99,7 +99,7 @@ export default function PbxConfigCard() {
     setIsLoading(false);
   };
   return (
-    <Card className="w-[50%] h-fit">
+    <Card className="">
       <CardHeader>
         <div className="flex align-middle justify-between items-center">
           <CardTitle>PBX</CardTitle>
@@ -114,9 +114,9 @@ export default function PbxConfigCard() {
         </div>
         <CardDescription>Modelo e URL do pbx</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="grid w-full items-center gap-6">
         <div className="w-full flex flex-col gap-5">
-          <div className="flex items-center justify-between gap-3 w-full">
+          <div className="grid grid-cols-2 items-center gap-4">
             <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
               Modelo
             </h4>
@@ -134,7 +134,7 @@ export default function PbxConfigCard() {
               </SelectContent>
             </Select>
           </div>
-          <div className="flex items-center justify-between gap-3 w-full">
+          <div className="grid grid-cols-2 items-center gap-4">
             <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
               URL
             </h4>
@@ -146,17 +146,17 @@ export default function PbxConfigCard() {
               value={urlPbx}
             />
           </div>
-          <div className="flex items-center justify-between gap-3 w-full">
-            <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
+          <div className="grid grid-cols-2 items-center gap-4">
+            <h4 className="scroll-m-20 text-xl font-semibold tracking-tight ">
               Status
             </h4>
             {pbxStatus[0]?.status === "200" ? (
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1 justify-end">
                 <h4>Online</h4>
                 <span className="relative inline-flex rounded-full h-4 w-4 bg-green-500"></span>
               </div>
             ) : (
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1 justify-end">
                 <h4>Offline</h4>
                 <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
               </div>

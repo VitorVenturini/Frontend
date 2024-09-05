@@ -25,6 +25,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { useUsers } from "@/components/users/usersCore/UserContext";
+import LogoCore from "@/assets/Vector.svg";
 
 interface User {
   id: string;
@@ -154,58 +155,10 @@ export function DataTable<TData extends TableData, TValue>({
             <TableRow>
               <TableCell colSpan={columns.length} className="h-24 text-center">
                 {loading && (
-                  <div className="flex flex-col gap-8">
-                    <div className="flex items-center space-x-4">
-                      <Skeleton className="h-4 w-[20px]" />
-                      <Skeleton className="h-4 w-[180px]" />
-                      <Skeleton className="h-4 w-[180px]" />
-                      <Skeleton className="h-4 w-[150px]" />
-                      <Skeleton className="h-4 w-[80px]" />
-                      <Skeleton className="h-4 w-[80px]" />
-                      <Skeleton className="h-4 w-[80px]" />
-                      <Skeleton className="h-4 w-[80px]" />
-                    </div>
-                    <div className="flex items-center space-x-4">
-                      <Skeleton className="h-4 w-[20px]" />
-                      <Skeleton className="h-4 w-[180px]" />
-                      <Skeleton className="h-4 w-[180px]" />
-                      <Skeleton className="h-4 w-[150px]" />
-                      <Skeleton className="h-4 w-[80px]" />
-                      <Skeleton className="h-4 w-[80px]" />
-                      <Skeleton className="h-4 w-[80px]" />
-                      <Skeleton className="h-4 w-[80px]" />
-                    </div>
-                    <div className="flex items-center space-x-4">
-                      <Skeleton className="h-4 w-[20px]" />
-                      <Skeleton className="h-4 w-[180px]" />
-                      <Skeleton className="h-4 w-[180px]" />
-                      <Skeleton className="h-4 w-[150px]" />
-                      <Skeleton className="h-4 w-[80px]" />
-                      <Skeleton className="h-4 w-[80px]" />
-                      <Skeleton className="h-4 w-[80px]" />
-                      <Skeleton className="h-4 w-[80px]" />
-                    </div>
-                    <div className="flex items-center space-x-4">
-                      <Skeleton className="h-4 w-[20px]" />
-                      <Skeleton className="h-4 w-[180px]" />
-                      <Skeleton className="h-4 w-[180px]" />
-                      <Skeleton className="h-4 w-[150px]" />
-                      <Skeleton className="h-4 w-[80px]" />
-                      <Skeleton className="h-4 w-[80px]" />
-                      <Skeleton className="h-4 w-[80px]" />
-                      <Skeleton className="h-4 w-[80px]" />
-                    </div>
-                    <div className="flex items-center space-x-4">
-                      <Skeleton className="h-4 w-[20px]" />
-                      <Skeleton className="h-4 w-[180px]" />
-                      <Skeleton className="h-4 w-[180px]" />
-                      <Skeleton className="h-4 w-[150px]" />
-                      <Skeleton className="h-4 w-[80px]" />
-                      <Skeleton className="h-4 w-[80px]" />
-                      <Skeleton className="h-4 w-[80px]" />
-                      <Skeleton className="h-4 w-[80px]" />
-                    </div>
+                  <div className="flex w-full justify-center">
+                 <img src={LogoCore} className="p-6 h-64 animate-spin" />
                   </div>
+
                 )}
                 <h1 className="m-4">No Result</h1>
               </TableCell>

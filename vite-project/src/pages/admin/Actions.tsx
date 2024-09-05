@@ -27,10 +27,8 @@ export default function Actions() {
 
   // implementar lógica do backend para consultar ações do usuário
   return (
-    <div className="bg-card">
-      <div>
+    <div>
         <TableActions columns={actions} data={actions}></TableActions>
-      </div>
     </div>
   );
 }

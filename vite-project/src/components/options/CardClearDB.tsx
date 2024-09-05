@@ -38,50 +38,48 @@ export default function CardClearDB() {
   const [date, setDate] = React.useState<Date>();
   const { language } = useLanguage();
   return (
-    <Card className="min-w-[00px] h-fit">
+    <Card className="w-[630px] h-fit">
       <CardHeader>
         <CardTitle>{texts[language].removeDatabaseHistory}</CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="w-full flex flex-col gap-5">
-          <div className="flex items-center justify-between gap-3">
-            <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
-              {texts[language].endOfPeriod}
-            </h4>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant={"outline"}
-                  className={cn(
-                    "w-[280px] justify-start text-left font-normal",
-                    !date && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {date ? (
-                    format(date, "PPP")
-                  ) : (
-                    <span>{texts[language].chooseDate}</span>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  onSelect={setDate}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
-
-          <div className="flex items-center justify-between gap-3">
-            <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
+      <CardContent className="grid gap-4 py-9">
+        <div className="grid grid-cols-2 items-center gap-4">
+          <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
+            {texts[language].endOfPeriod}
+          </h4>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant={"outline"}
+                className={cn(
+                  "w-[280px] justify-start text-left font-normal",
+                  !date && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {date ? (
+                  format(date, "PPP")
+                ) : (
+                  <span>{texts[language].chooseDate}</span>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0">
+              <Calendar
+                mode="single"
+                selected={date}
+                onSelect={setDate}
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
+        <div className="grid grid-cols-2 items-center gap-4">
+        <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
               {texts[language].options}
             </h4>
-            <Select>
-              <SelectTrigger className="w-[180px]">
+            <Select >
+              <SelectTrigger>
                 <SelectValue placeholder={texts[language].options} />
               </SelectTrigger>
               <SelectContent>
@@ -102,8 +100,8 @@ export default function CardClearDB() {
                 </SelectGroup>
               </SelectContent>
             </Select>
-          </div>
         </div>
+
       </CardContent>
       <CardFooter className="flex justify-end">
         <Button>{texts[language].save}</Button>

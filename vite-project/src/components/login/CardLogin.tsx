@@ -199,7 +199,7 @@ export default function CardLogin() {
               {texts[language].enterEmail} e {texts[language].enterPassword}
             </CardDescription>
           </CardHeader>
-          <CardContent className="grid gap-4 py-9">
+          <CardContent >
             <div className="grid w-full items-center gap-6">
               <div className="grid grid-cols-3 items-center gap-4">
                 <Label htmlFor="email" className="text-end">

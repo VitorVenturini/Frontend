@@ -99,8 +99,8 @@ const ColumnsReports: React.FC<ColumnsReportsProps> = ({
   }, [keys, report]);
 
   return (
-    <div>
-      <h2 className="flex justify-center font-bold">Relatório {report}</h2>
+    <div className="space-y-2">
+                  <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">{report}</h4>
       <DataTable columns={columns} data={data} filter={filter} />
     </div>
   );

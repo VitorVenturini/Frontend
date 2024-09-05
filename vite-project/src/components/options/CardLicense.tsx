@@ -86,7 +86,7 @@ export default function LicenseCard() {
   };
 
   return (
-    <Card className="min-w-[700px]">
+    <Card className="min-w-[900px]">
       <CardHeader className="grid grid-cols-3 justify-between items-center">
         <CardTitle>Licenciamento</CardTitle>
         {!isLoading2 && (
@@ -165,9 +165,6 @@ export default function LicenseCard() {
             </p>
           </div>
           <div className="flex-col items-center justify-between gap-3">
-            <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
-              Licenças
-            </h4>
             <ColumnsReports
               data={licenseData}
               keys={keys}

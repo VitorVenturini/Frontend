@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import LicenseCard from "@/components/options/CardLicense";
 import CardClearDB from "@/components/options/CardClearDB";
 import Gateways from "@/components/options/Gateways";
@@ -16,6 +16,9 @@ export default function MenuOptions() {
   const handleClick = (buttonMenu: string) => {
     setActiveButton(buttonMenu);
   };
+  useEffect(() => {
+    setActiveButton("License");
+  }, []);
 
   const renderActiveComponent = () => {
     switch (activeButton) {
@@ -42,7 +45,7 @@ export default function MenuOptions() {
 
   return (
     <div className="flex w-full h-full justify-between">
-      <div className="flex flex-col justify-start gap-4 m-4">
+      <div className="flex flex-col justify-start p-2 gap-4 h-[calc(100vh-92px)] bg-card">
         <Button
           className="focus:bg-accent"
           variant={"ghost"}
