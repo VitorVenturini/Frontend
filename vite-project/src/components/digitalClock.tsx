@@ -18,7 +18,7 @@ const DigitalClock = () => {
   };
 
   return (
-    <div >
+    <div className='flex justify-center'>
         <p className='font-extrabold text-3xl'>
         {formatTime(time)}
         </p>

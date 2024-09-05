@@ -10,6 +10,8 @@ import { FullScreenButton } from "@/components/FullScreanButton";
 import LogoCore from "@/assets/LogoCore.svg";
 import DigitalClock from "../digitalClock";
 import LogoWecom2 from "@/assets/LogoWecom2.svg";
+import { ModeToggle } from "@/components/mode-toggle";
+import { LanguageToggle } from "@/components/language/LanguageToggle";
 
 export default function HeaderUser() {
   const account = useAccount();
@@ -24,22 +26,26 @@ export default function HeaderUser() {
   };
 
   return (
-    <div className="relative w-full">
+    <div className="relative w-full py-1">
       <div className="flex gap-5 justify-between align-middle items-center">
-      
-        <div className="gap-5 flex  align-middle items-center ">
+        <div className="flex align-middle items-center justify-between gap-24">
+          <div className="flex align-middle items-center gap-2">
           <Button variant="ghost" onClick={account.type === "admin" ? handleAdminToggle : undefined}>
-            <img src={LogoCore} className="h-8" 
-            />
+            <img src={LogoCore} className="h-8" />
           </Button>
-
         <FullScreenButton />
-          <Logout />
-    
-          
+        <LanguageToggle />
+        <ModeToggle />
+        <Logout />
+          </div>
+          <img src={LogoWecom2} className="h-4 opacity-30" />
         </div>
-        <img src={LogoWecom2} className="h-4 opacity-30" />
+        
+        <Button className="flex justify-center" variant="secondary">
         <DigitalClock />
+        </Button>
+        
+        
       </div>
     </div>
   );

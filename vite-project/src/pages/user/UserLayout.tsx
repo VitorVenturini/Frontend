@@ -487,7 +487,7 @@ function UserLayout() {
           <>
             <div className="flex justify-center items-center min-h-screen">
               <div className="">
-                <div className="flex gap-1 p-1">
+                <div className="flex gap-1">
                   <div className="gap-1 space-y-1">
                     <InteractiveGridCopy
                       interactive="top"
