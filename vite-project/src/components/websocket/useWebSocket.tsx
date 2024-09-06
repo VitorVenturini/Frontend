@@ -42,7 +42,7 @@ const useWebSocket = (
               mt: "Ping",
             })
           );
-        }, 1000);
+        }, 60000);
       };
 
       ws.current.onclose = (event) => {
