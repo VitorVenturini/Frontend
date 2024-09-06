@@ -11,6 +11,7 @@ interface Account {
   type: string; //saber se é admin ou user
   updatedAt: string;
   accessToken: string;
+  expToken?: number; // data de expiração do token
   isAdmin: boolean; // pra saber se vai logar como admin ou user
   isLogged: boolean; // pra saber se está logado
   session: string;
@@ -26,6 +27,7 @@ export const initialState: Account = {
   type: "",
   updatedAt: "",
   accessToken: "",
+  expToken: undefined,
   isAdmin: false,
   isLogged: false,
   session: "",

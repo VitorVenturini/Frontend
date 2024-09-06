@@ -27,11 +27,14 @@ import { PbxProvider } from "./components/options/Pbx/PbxContext";
 import { AppConfigProvider } from "./components/options/ConfigContext";
 import { CallProvider } from "./components/calls/CallContext";
 import Loader from "./components/Loader";
+import TokenRenewer from "./components/validateToken/TokenRenewer";
 
 export const host = "https://core.wecom.com.br";
 //const currentUrl = window.location.hostname;
 
 function App() {
+  const account = useContext(AccountContext);
+
   useEffect(() => {
     // Função para verificar se o evento é um gesto de pinça e prevenir o zoom
     const preventPinchZoom = (e: TouchEvent) => {
@@ -50,6 +53,7 @@ function App() {
       document.removeEventListener("touchstart", preventPinchZoom);
     };
   }, []);
+
   return (
     <>
       <ThemeProvider>
@@ -92,6 +96,7 @@ function App() {
                                           />
                                         </Routes>
                                         <Toaster />
+                                        <TokenRenewer/>
                                       </CameraProvider>
                                     </SensorProvider>
                                   </CallProvider>

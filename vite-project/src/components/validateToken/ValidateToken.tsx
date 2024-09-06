@@ -2,10 +2,12 @@ import React, { useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import { host } from "@/App";
 import { useAccount } from "../account/AccountContext";
+
 const ValidadeToken = (Component: React.ComponentType) => {
   return () => {
     const navigate = useNavigate();
     const account = useAccount()
+    const { updateAccount } = useAccount();
     useEffect(() => {
       const verifyToken = async () => {
         const token = account.accessToken
@@ -26,8 +28,11 @@ const ValidadeToken = (Component: React.ComponentType) => {
             // navigate('/Login');
             console.error("Erro ao verificar token:", response.statusText);
             navigate('/login') 
-            // redirecionar para login caso token nao esteja validado (testar e rever)
+            return;
           }
+
+        const data = await response.json();
+        updateAccount({ expToken: data.exp });
         }
       };
     

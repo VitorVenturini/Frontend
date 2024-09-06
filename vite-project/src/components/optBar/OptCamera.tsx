@@ -48,7 +48,11 @@ export default function OptCamera({ filteredSensorInfo }: OptCameraProps) {
       ) : (
         <div className="flex h-full w-full relative items-center align-middle justify-center gap-1  ">
           <div className="flex h-full relative">
-            <img className=" h-full w-full relative object-cover" src={active} alt="" />
+            <img
+              className=" h-full w-full relative object-cover"
+              src={active}
+              alt=""
+            />
           </div>
           <div className="grid grid-cols-2 grid-rows-5 gap-1 relative">
             {filteredSensorInfo.map((sensor, index) => (
@@ -56,7 +60,7 @@ export default function OptCamera({ filteredSensorInfo }: OptCameraProps) {
                 <img
                   onClick={() => setActive(isImageValid(sensor?.image || ""))}
                   src={sensor?.image || ""}
-                  className={`h-7 xl2:h-12 max-w-full cursor-pointer rounded-lg object-cover object-center relative${
+                  className={`h-7 xl2:h-12 max-w-full cursor-pointer rounded-lg object-cover object-center relative ${
                     sensor?.image === active
                       ? "outline outline-3 border-lg border-red-900 outline-red-900"
                       : ""
