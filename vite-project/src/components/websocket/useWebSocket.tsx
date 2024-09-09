@@ -36,37 +36,34 @@ const useWebSocket = (
       ws.current.onopen = () => {
         if (timer.current) clearTimeout(timer.current);
         console.log("WebSocket connection opened");
-        console.log(account.isAdmin);
-        console.log(account);
-        // if (account.isAdmin) {
-        //   //ws.current?.send(JSON.stringify({ api: "admin", mt: "DeleteAllButtons" }));
-        // } else {
-        //   // ws.current?.send(JSON.stringify({ api: "user" , mt: "SelectSensorInfoSrc", type: "co2", sensor: "Sensor Técnica" }));
-        //   ws.current?.send(
-        //     JSON.stringify({ api: "user", mt: "SelectButtons" })
-        //   );
-        //   //ws.current?.send(JSON.stringify({ api: "user", mt: "SelectSensorName" }));
-        // }
+        timer.current = setInterval(() => {
+          ws.current?.send(
+            JSON.stringify({
+              mt: "Ping",
+            })
+          );
+        }, 60000);
       };
 
       ws.current.onclose = (event) => {
         console.log("WebSocket connection closed:", event.code, event.reason);
-        if (!account.isLogged) {
+        if (event.code === 1006) {
+          //code 1006 significa que a conexão foi fechada pelo servidor
           timer.current = setTimeout(() => {
             console.log("Reconnecting WebSocket...");
             connect();
           }, 5000);
         }
       };
-      ws.current.onerror = (event) => {
-        console.error("WebSocket error:", event);
-        if (!account.isLogged) {
-          timer.current = setTimeout(() => {
-            console.log("Reconnecting WebSocket...");
-            connect();
-          }, 5000);
-        }
-      };
+      // ws.current.onerror = (event) => {
+      //   console.error("WebSocket error:", event);
+      //   if (!account.isLogged) {
+      //     timer.current = setTimeout(() => {
+      //       console.log("Reconnecting WebSocket...");
+      //       connect();
+      //     }, 5000);
+      //   }
+      // };
 
       ws.current.onmessage = (message) => {
         console.log("WebSocket message received:", message.data);

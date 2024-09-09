@@ -3,7 +3,7 @@ import { IncomingCallInterface } from "./CallContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useUsersPbx } from "../users/usersPbx/UsersPbxContext";
 import { generateAvatar, getInitials } from "../utils/utilityFunctions";
-import { PhoneOff, User2 } from "lucide-react";
+import { Phone, PhoneOff, User2 } from "lucide-react";
 import { Button } from "../ui/button";
 import { useWebSocketData } from "../websocket/WebSocketProvider";
 
@@ -45,8 +45,9 @@ export default function ReceivedCall({ receivedCalls }: ReceivedCallProps) {
   };
 
   return (
-    <Card className="gap-2 ">
-      <div className="flex items-center gap-3">
+    <Card className="gap-2 mt-1">
+      {/*blinking-border*/}
+      <div className="flex items-center gap-3 m-2">
         {avatarBase64 !== null ? (
           <Avatar>
             <AvatarImage src={avatarBase64 as string} />
@@ -63,20 +64,21 @@ export default function ReceivedCall({ receivedCalls }: ReceivedCallProps) {
       {/* Renderiza um botão para cada dispositivo */}
       <div className="flex items-center gap-2">
       <div>
-        Em qual dispositivo você deseja atender a ligação?
         {receivedCalls.map((call) => (
           <Button
             key={call.device}
             variant="default"
             onClick={() => handleSelectDevice(call.device, call.callId)}
+            className="gap-2 bg-green-600 rounded-xl m-2 font-bold"
           >
+            <Phone/>
             {call.deviceText}
           </Button>
         ))}
       </div>
 
-      <div className="flex items-center gap-4">
-        <Button onClick={handleRefuseAllCalls} size="icon" variant="destructive">
+      <div className="flex items-center gap-4 ">
+        <Button onClick={handleRefuseAllCalls} size="icon" variant="destructive" className="rounded-xl">
           <PhoneOff />
         </Button>
       </div>

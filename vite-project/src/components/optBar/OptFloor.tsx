@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ButtonInterface } from "@/components/buttons/buttonContext/ButtonsContext";
-
+import { host } from "@/App";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
 interface OptFloorProps {
@@ -20,7 +20,7 @@ export default function OptFloor({ clickedButton }: OptFloorProps) {
         <TransformWrapper >
           <TransformComponent wrapperStyle={{ width: '100%', height: '100%' }}>
             <img
-              src={clickedButton.button_prt}
+              src={host + clickedButton.button_prt}
               alt="img"
               className="h-full w-full relative"
             />

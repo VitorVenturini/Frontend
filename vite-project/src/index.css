@@ -17,6 +17,23 @@
   }
 }
 
+@keyframes blinkBorder {
+  0% {
+    border-color: var(--muted); 
+  }
+  50% {
+    border-color: rgb(175, 1, 1); 
+  }
+  100% {
+    border-color: var(--muted); 
+  }
+}
+
+.blinking-border {
+  /* border: 2px solid; Adjust border width as needed */
+  animation: blinkBorder 1s infinite; /* 1 second duration and infinite repetition */
+}
+
 .blinking-background {
   animation: blinkBackground 1s infinite;
 }
