@@ -49,7 +49,9 @@ import { useButtons } from "@/components/buttons/buttonContext/ButtonsContext";
 import { limitButtonName } from "@/components/utils/utilityFunctions";
 import ComboCardButtons from "./ComboCardButtons";
 import { UserInterface } from "@/components/users/usersCore/UserContext";
-
+import DroppableComboArea from "./DroppableComboArea";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 interface ButtonProps {
   clickedPosition: { i: number; j: number } | null;
   selectedUser: UserInterface | null;
@@ -67,15 +69,6 @@ export default function ModalCombo({
   isUpdate = false,
   onClose,
 }: ButtonProps) {
-  const { buttons } = useButtons();
-
-  const userButtons = buttons.filter((btn) => {
-    return (
-      btn.button_user === selectedUser?.guid &&
-      (btn.page === selectedPage || btn.page === "0")
-    );
-  });
-
   const [nameButton, setNameButton] = useState(
     existingButton?.button_name || ""
   );
@@ -86,6 +79,21 @@ export default function ModalCombo({
   const [isCreating, setIsCreating] = useState(false);
   const { toast } = useToast();
   const wss = useWebSocketData();
+
+  const { buttons } = useButtons();
+
+  const [dragAndDropButtons, setDragAndDropButtons] = useState<
+    ButtonInterface[]
+  >([]);
+  const [removedButtons, setRemovedButtons] = useState<ButtonInterface[]>([]);
+
+  const handleButtonDrop = (button: ButtonInterface) => {
+    setRemovedButtons((prev) => [...prev, button]);
+  };
+
+  const handleReturnButton = (button: ButtonInterface) => {
+    setRemovedButtons((prev) => prev.filter((b) => b.id !== button.id));
+  };
 
   const handleNameButton = (event: ChangeEvent<HTMLInputElement>) => {
     const limitedName = limitButtonName(event.target.value);
@@ -154,7 +162,7 @@ export default function ModalCombo({
   };
 
   return (
-    <>
+    <DndProvider backend={HTML5Backend}>
       <CardHeader>
         <CardTitle>
           {isUpdate ? "Atualização" : "Criação"} de Botões Combo
@@ -164,32 +172,18 @@ export default function ModalCombo({
           campos abaixo
         </CardDescription>
       </CardHeader>
-    
+
       <CardContent className="grid gap-4 py-1">
         <div className="flex gap-5">
-          {/* DIV ARRASTAR E SOLTAR  */}
-          <div className="w-[50%]">
-            <h1>Criação de combo</h1>
-            <CardDescription>
-              Arraste o botão desejado para a posição
-            </CardDescription>
-            <div className="grid grid-cols-2 py-2 gap-3">
-              <div className="w-[200px] h-[120px] outline outline-2 border-xs border-muted outline-muted text-muted-foreground flex items-center justify-center">
-                Solte o botão aqui
-              </div>
-              <div className="w-[200px] h-[120px] outline outline-2 border-xs border-muted outline-muted text-muted-foreground flex items-center justify-center">
-                Solte o botão aqui
-              </div>
-              <div className="w-[200px] h-[120px] outline outline-2 border-xs border-muted outline-muted text-muted-foreground flex items-center justify-center">
-                Solte o botão aqui
-              </div>
-              <div className="w-[200px] h-[120px] outline outline-2 border-xs border-muted outline-muted text-muted-foreground flex items-center justify-center">
-                Solte o botão aqui
-              </div>
-            </div>
-          </div>
-          {/* ComboCardButtons para exibir e filtrar botões */}
-          <ComboCardButtons selectedUser = {selectedUser} />
+          <DroppableComboArea
+            onButtonDrop={handleButtonDrop}
+            onReturnButton={handleReturnButton}
+          />
+          <ComboCardButtons
+            selectedUser={selectedUser}
+            onButtonDrop={handleButtonDrop}
+            removedButtons={removedButtons} 
+          />
         </div>
       </CardContent>
       <CardFooter className="flex justify-between">
@@ -227,6 +221,6 @@ export default function ModalCombo({
           </Button>
         )}
       </CardFooter>
-    </>
+    </DndProvider>
   );
 }
