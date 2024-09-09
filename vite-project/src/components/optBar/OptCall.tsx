@@ -30,15 +30,16 @@ export default function OptCall() {
 
   return (
     <ScrollArea className="w-full lg:h-[267px] xl:h-[295px] xl2:h-[350px] xl3:h-[410px] xl4:h-[500px]  relative gap-3">
+      {/* CHAMADAS EM ANDAMENTO */}
       {calls.map((call) => (
         <CallComponent key={call.id} buttonOnCall={call} />
       ))}
-
+      {/* CHAMADAS RECEBIDAS EM ANDAMENTO */}
       {activeIncomingCalls.map((call) => (
         <CallComponent key={call.id} incomingCall={call} />
       ))}
 
-      {/* Exibe chamadas recebidas agrupadas */}
+      {/* CHAMADAS RECEBIDAS QUE AINDA NAO FORAM ATENDIDAS */}
       {Object.keys(receivedIncomingCalls).map((num) => (
         <ReceivedCall key={num} receivedCalls={receivedIncomingCalls[num]} />
       ))}
