@@ -174,7 +174,7 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
           </p>
         </div>
         <div className="text-sm flex font-extrabold justify-end xl3:px-2">
-          <p className="xl3:text-2xl">{filteredUser?.cn}</p>
+          <p className="xl3:text-xl">{filteredUser?.cn}</p>
         </div>
       </div>
       <div
