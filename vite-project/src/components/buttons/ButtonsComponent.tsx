@@ -1,10 +1,11 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import {
   Plus,
 } from "lucide-react";
 import { AccountContext } from "../account/AccountContext";
 import {
   ButtonInterface,
+  useButtons,
 } from "@/components/buttons/buttonContext/ButtonsContext";
 import { useState } from "react";
 import SensorButton from "../sensor/SensorButton";
@@ -42,6 +43,8 @@ import ModalUser from "./user/ModalUser";
 import UserButton from "./user/UserButton";
 import ModalNumber from "./number/ModalNumber";
 import NumberButton from "./number/NumberButton";
+import { useSearchParams } from "react-router-dom";
+import { useSensors } from "../sensor/SensorContext";
 interface User {
   id: string;
   name: string;
@@ -70,35 +73,7 @@ export default function ButtonsComponent({
   const { isAdmin } = useContext(AccountContext);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
-  // const { setOldValue, setNewValue, buttons, setButtons } = useButtons();
   const [selectedType, setSelectedType] = useState<string>("");
-
-  // para piscar nas outras páginas sem ser a atual
-  // useEffect(() => {
-  //   if (!buttons || buttons.length === 0 || isAdmin) return; // Verifica se buttons está definido e não vazio
-
-  //   buttons.forEach((btns) => {
-  //     // Itera sobre os botões
-  //     if (btns.button_type === "sensor" && btns.page !== "0") {
-  //       const filteredSensor = sensors.find(
-  //         (sensor) => sensor.sensor_name === btns.button_prt
-  //       ); // Encontra o sensor correspondente
-
-  //       if (filteredSensor && btns.sensor_type) {
-  //         const currentValue = parseInt(
-  //           (filteredSensor as any)[btns.sensor_type],
-  //           10
-  //         ); // Obtém o valor atual do sensor
-
-  //         // Compara com os valores anteriores
-  //         if (btns.newValue !== currentValue) {
-  //           setOldValue(btns.sensor_type, btns.button_prt, btns.newValue); // Define o valor antigo antes de atualizar
-  //           setNewValue(btns.sensor_type, btns.button_prt, currentValue); // Define o novo valor
-  //         }
-  //       }
-  //     }
-  //   });
-  // }, [sensors, buttons, setOldValue, setNewValue]); // Dependências
 
   const handleClick = () => {
     if (isAdmin) {

@@ -10,15 +10,29 @@ const TokenRenewer = () => {
 
   useEffect(() => {
     const checkTokenExpiration = () => {
-      const currentTime = Math.floor(Date.now() / 1000);
-      const timeToExpiration = (expToken as number) - currentTime;
+
+      if(!localStorage.getItem("currentSession")){
+          return;
+      }
+      const currentTime = Math.floor(Date.now() / 1000); // Tempo atual em segundos
+      const timeToExpiration = (expToken as number) - currentTime; // Tempo restante até expiração em segundos
 
       console.log("Verificando o token Atual...");
-      if (timeToExpiration <= 300) {
+      // Se faltar 1 hora (3600 segundos) ou menos, renova o token
+      if (timeToExpiration <= 3600 && timeToExpiration > 0) {
         console.log("Token prestes a expirar, renovando...");
         renewToken();
+      } else if (timeToExpiration <= 0 && isLogged) {
+        console.log("Token já está expirado, renovando...");
+        renewToken();
       } else {
-        console.log("Token ainda é válido.");
+        console.log(`Token válido, falta ${timeToExpiration} segundos para expirar.`);
+        const timeUntilOneHourBeforeExpiration = timeToExpiration - 3600;
+        if (timer.current) clearTimeout(timer.current); // Limpa o timeout anterior, se existir
+        timer.current = setTimeout(() => {
+          console.log("1 hora antes da expiração, renovando token...");
+          renewToken();
+        }, timeUntilOneHourBeforeExpiration * 1000); // Converte segundos em milissegundos
       }
     };
 
@@ -43,6 +57,9 @@ const TokenRenewer = () => {
         const newExpToken = await getNewExpToken(newToken);
         updateAccount({ expToken: newExpToken });
         console.log("Nova expiração do token:", newExpToken);
+
+        // Após renovar o token, reinicia a verificação
+        checkTokenExpiration();
       } catch (error) {
         console.error("Erro ao renovar token:", error);
         navigate("/login");
@@ -51,7 +68,7 @@ const TokenRenewer = () => {
 
     const getNewExpToken = async (token: string) => {
       try {
-        console.log("Verificando expiração do novo token...");
+        console.log("Validando o novo token...");
         const response = await fetch(`${host}/api/verifyToken`, {
           method: "POST",
           headers: {
@@ -72,24 +89,15 @@ const TokenRenewer = () => {
       }
     };
 
-    checkTokenExpiration();
-    timer.current = setInterval(() => {
-      if (!localStorage.getItem("currentSession")) {
-        console.log(
-          "Usuário não está logado, interrompendo a verificação do Token."
-        );
-      } else {
-        checkTokenExpiration();
-      }
-    }, 3600000); // 1 hora 3600000
-
+    // Verifica imediatamente ao montar o componente
+    //checkTokenExpiration();
     return () => {
       if (timer.current) {
-        clearInterval(timer.current);
-        console.log("Intervalo limpo.");
+        clearTimeout(timer.current);
+        console.log("Timeout limpo.");
       }
     };
-  }, [accessToken]);
+  }, [accessToken, expToken, navigate, updateAccount]);
 
   return null;
 };

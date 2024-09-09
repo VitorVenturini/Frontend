@@ -22,23 +22,9 @@ export default function comboCard({ }: ComboCardProps) {
 //     sensor.sensor_name.toLowerCase().includes(filter.toLowerCase())
 //   );
 
-//   return (
-//     <div className="w-full justify-between">
-//       {filteredSensors.map((sensor) => (
-//         <Button
-//           className="max-w-lg justify-start w-full"
-//           variant={clickedSensor === sensor.deveui ? "secondary" : "ghost"}
-//           key={sensor.deveui}
-//           onClick={() => handleClick(sensor.deveui as any)}
-//         >
-//           <div className="grid grid-cols-5 grid-rows-1 items-center align-middle">
-//             {sensor.sensor_name && (
-//               <ResponsivePng sensorModel={sensor.description} />
-//             )}
-//             <p>{sensor.sensor_name}</p>
-//           </div>
-//         </Button>
-//       ))}
-//     </div>
-//   );
+  return (
+    <div className="w-full justify-between">
+      teste
+    </div>
+  );
 }

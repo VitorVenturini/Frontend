@@ -12,6 +12,7 @@ import { useRef } from "react";
 import { format } from "date-fns";
 import { toast } from "../ui/use-toast";
 import { useAccount } from "../account/AccountContext";
+import EmojiPicker from "./EmojiPicker";
 interface ChatProps {
   userToChat: UserInterface;
 }
@@ -21,8 +22,10 @@ export default function ChatLayout({ userToChat }: ChatProps) {
   const [message, setMessage] = useState("");
   const { chat, addChat, chatRead } = useChat();
   const { users } = useUsers();
-  const account = useAccount()
-  const myAccountInfo = JSON.parse(localStorage.getItem(account.session) || "{}");
+  const account = useAccount();
+  const myAccountInfo = JSON.parse(
+    localStorage.getItem(account.session) || "{}"
+  );
   const messageListRef = useRef<any>(null);
   const endOfMessagesRef = useRef<HTMLDivElement>(null);
   const [isHistoryLoaded, setIsHistoryLoaded] = useState(false);
@@ -62,6 +65,10 @@ export default function ChatLayout({ userToChat }: ChatProps) {
 
   const handleInputMessage = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(event.target.value);
+  };
+
+  const handleEmojiSelect = (emoji: string) => {
+    setMessage((prevMessage) => prevMessage + emoji);
   };
 
   useEffect(() => {
@@ -213,6 +220,7 @@ export default function ChatLayout({ userToChat }: ChatProps) {
             value={message}
             onChange={handleInputMessage}
           />
+          {/* <EmojiPicker onSelectEmoji={handleEmojiSelect} /> */}
           <Button size="icon" type="submit">
             <Send />
           </Button>

@@ -23,10 +23,10 @@ export default function SensorButton({ handleClick, button }: ButtonProps) {
     useButtons();
   const account = useAccount();
   const wss = useWebSocketData();
-
+  const redButtonPrt = ["press_short", "press_long", "press_double"].includes(button.sensor_type as string)
   const handleClickButton = () => {
     handleClick(); // handleClick utilizado no admin para setar a posição do botão
-    if (!account.isAdmin) {
+    if (!account.isAdmin && !redButtonPrt) {
       if (button.muted) {
         //botão está muted
         wss?.sendMessage({
@@ -45,6 +45,13 @@ export default function SensorButton({ handleClick, button }: ButtonProps) {
         });
       }
       // triggered false
+    }else if(!account.isAdmin && redButtonPrt && button.triggered){
+      wss?.sendMessage({
+        api: "user",
+        mt: "TriggerStopAlarm",
+        prt: button.sensor_type,
+        btn_id: button.id,
+      });
     }
   };
   const buttonState = buttons.find((b) => b.id === button.id);
@@ -52,19 +59,19 @@ export default function SensorButton({ handleClick, button }: ButtonProps) {
   const oldValue = buttonState?.oldValue;
   const newValue = buttonState?.newValue;
 
-  const filteredSensor = (account.isAdmin ? sensors : buttonSensors).find(
-    (sensor) => sensor.deveui === button?.button_prt
-  );
+  // const filteredSensor = (account.isAdmin ? sensors : buttonSensors).find(
+  //   (sensor) => sensor.deveui === button?.button_prt
+  // );
 
-  useEffect(() => {
-    if (button?.sensor_type && filteredSensor) {
-      const value = parseInt((filteredSensor as any)[button.sensor_type], 10);
-      if (newValue !== value) {
-        setOldValue(button.sensor_type, button.button_prt, newValue); // armazena o valor antigo antes de atualizar
-        setNewValue(button.sensor_type, button.button_prt, value); // atualiza o valor novo
-      }
-    }
-  }, [filteredSensor, button?.sensor_type, newValue]);
+  // useEffect(() => {
+  //   if (button?.sensor_type && filteredSensor) {
+  //     const value = parseInt((filteredSensor as any)[button.sensor_type], 10);
+  //     if (newValue !== value) {
+  //       setOldValue(button.sensor_type, button.button_prt, newValue); // armazena o valor antigo antes de atualizar
+  //       setNewValue(button.sensor_type, button.button_prt, value); // atualiza o valor novo
+  //     }
+  //   }
+  // }, [filteredSensor, button?.sensor_type, newValue]);
 
   const sensorModel = (account.isAdmin ? sensors : buttonSensors).filter(
     (sensor) => {

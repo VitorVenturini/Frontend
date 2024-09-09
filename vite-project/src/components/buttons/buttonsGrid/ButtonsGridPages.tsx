@@ -15,7 +15,10 @@ import { useLanguage } from "@/components/language/LanguageContext";
 import texts from "@/_data/texts.json";
 import { checkButtonWarning } from "@/components/utils/utilityFunctions";
 import { useSensors } from "@/components/sensor/SensorContext";
-import { AccountContext, useAccount } from "@/components/account/AccountContext";
+import {
+  AccountContext,
+  useAccount,
+} from "@/components/account/AccountContext";
 
 interface User {
   id: string;
@@ -35,8 +38,8 @@ export default function ButtonsGridPages({
 }: ButtonsGridPagesProps) {
   const [selectedPage, setSelectedPage] = useState("1"); // Inicialmente, a página 1 é selecionada.
   const { language } = useLanguage();
-  const {buttons,setOldValue,setNewValue} = useButtons() // todos botões do app
-  const {buttonSensors} = useSensors()
+  const { buttons, setOldValue, setNewValue } = useButtons(); // todos botões do app
+  const { buttonSensors } = useSensors();
   const buttonsInSelectedPage = buttonsGrid.filter(
     (buttonsGrid) => buttonsGrid.page.toString() === selectedPage
   ); // Filtrar botões com base na página selecionada.
@@ -46,45 +49,45 @@ export default function ButtonsGridPages({
     setSelectedPage(newPage); // Atualizar a página selecionada quando o usuário seleciona uma nova página.
   };
 
-  //use effect para piscar nas outras páginas sem ser a atual
-  // useEffect(() => {
-  //   if (!buttons || buttons.length === 0 || isAdmin ) return; // Verifica se buttons está definido e não vazio
+  // use effect para piscar nas outras páginas sem ser a atual
+  useEffect(() => {
+    if (!buttons || buttons.length === 0 || isAdmin) return; // Verifica se buttons está definido e não vazio
 
-  //   buttons.forEach((btns) => {
-  //     // Itera sobre os botões
-  //     if (btns.button_type === "sensor" && btns.page !== "0") {
-  //       const filteredSensor = buttonSensors.find(
-  //         (sensor) => sensor.deveui === btns.button_prt
-  //       ); // Encontra o sensor correspondente
-  //       console.log("FILTEREDSENSORS" + JSON.stringify(filteredSensor))
-  //       if (filteredSensor && btns.sensor_type) {
-  //         const currentValue = parseInt(
-  //           (filteredSensor as any)[btns.sensor_type],
-  //           10
-  //         ); // Obtém o valor atual do sensor
+    buttons.forEach((btns) => {
+      // Itera sobre os botões
+      if (btns.button_type === "sensor" && btns.page !== "0") {
+        const filteredSensor = buttonSensors.find(
+          (sensor) => sensor.deveui === btns.button_prt
+        ); // Encontra o sensor correspondente
+        console.log("FILTEREDSENSORS" + JSON.stringify(filteredSensor));
+        if (filteredSensor && btns.sensor_type) {
+          const currentValue = parseInt(
+            (filteredSensor as any)[btns.sensor_type],
+            10
+          ); // Obtém o valor atual do sensor
 
-  //         // Compara com os valores anteriores
-  //         if (btns.newValue !== currentValue) {
-  //           setOldValue(btns.sensor_type, btns.button_prt, btns.newValue); // Define o valor antigo antes de atualizar
-  //           setNewValue(btns.sensor_type, btns.button_prt, currentValue); // Define o novo valor
-  //         }
-  //       }else{
-  //         return
-  //       }
-  //     }
-  //   });
-  // }, [buttonSensors]); // Dependências
+          // Compara com os valores anteriores
+          if (btns.newValue !== currentValue) {
+            setOldValue(btns.sensor_type, btns.button_prt, btns.newValue); // Define o valor antigo antes de atualizar
+            setNewValue(btns.sensor_type, btns.button_prt, currentValue); // Define o novo valor
+          }
+        } else {
+          return;
+        }
+      }
+    });
+  }, [buttonSensors]); // Dependências
 
- 
-// Verifica se algum botão está em estado de alerta em uma página específica
-const isPageWarning = (pageNumber: string) => {
-  return buttons.some((button) => {
-    return (
-      button.page.toString() === pageNumber &&
-      checkButtonWarning(button, button.newValue)
-    );
-  });
-};
+  // Verifica se algum botão está em estado de alerta em uma página específica
+  const isPageWarning = (pageNumber: string) => {
+    return buttons.some((button) => {
+      return (
+        (button.page.toString() === pageNumber &&
+          checkButtonWarning(button, button.newValue)) ||
+        (button.page.toString() === pageNumber && button.triggered)
+      );
+    });
+  };
 
   return (
     <Card className="p-1 flex flex-col gap-1 justify-between">

@@ -493,6 +493,9 @@ function UserLayout() {
           description: "Botão Vermelho Disparou",
         });
         break;
+      case "TriggerStopAlarmResult":
+        setButtonTriggered(message.btn_id, false);
+        break;
       default:
         console.log("Unknown message type:", message);
         break;
