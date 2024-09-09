@@ -16,7 +16,7 @@ interface OptFloorProps {
 
 export default function OptFloor({ clickedButton }: OptFloorProps) {
   return (
-    <Card className="h-full w-full relative">
+    <Card className="lg:h-[267px] xl:h-[295px] xl2:h-[350px] xl3:h-[410px] xl4:h-[500px] w-full relative">
         <TransformWrapper >
           <TransformComponent wrapperStyle={{ width: '100%', height: '100%' }}>
             <img
