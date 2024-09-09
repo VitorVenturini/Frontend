@@ -50,8 +50,8 @@ export default function ReceivedCall({ receivedCalls }: ReceivedCallProps) {
   };
 
   return (
-    <div className="animate-bounce ">
-      <Card className="p-2 m-4  bg-yellow-600 ">
+   
+      <Card className="px-4 py-6 m-3 animate-pulse bg-muted">
         <div className="flex justify-between ">
           {/*blinking-border*/}
           <div className="flex items-center gap-2">
@@ -113,6 +113,5 @@ export default function ReceivedCall({ receivedCalls }: ReceivedCallProps) {
           </div>
         </div>
       </Card>
-    </div>
   );
 }
