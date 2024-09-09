@@ -62,12 +62,14 @@ export default function ReceivedCall({ receivedCalls }: ReceivedCallProps) {
           ) : (
             <User2 />
           )}
-          <div className="flex flex-col ">
+          <div className="flex gap-2">
+            Chamada recebida:
             <b>
               {filteredIncomingCallUser
                 ? filteredIncomingCallUser?.cn
                 : receivedCalls[0]?.num}
             </b>
+            
           </div>
         </div>
 
