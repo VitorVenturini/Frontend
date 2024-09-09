@@ -46,16 +46,10 @@ import { Loader2 } from "lucide-react";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { ButtonInterface } from "@/components/buttons/buttonContext/ButtonsContext";
 import { limitButtonName } from "@/components/utils/utilityFunctions";
-
-interface User {
-  id: string;
-  name: string;
-  guid: string;
-}
-
+import { UserInterface } from "@/components/users/usersCore/UserContext";
 interface ButtonProps {
   clickedPosition: { i: number; j: number } | null;
-  selectedUser: User | null;
+  selectedUser: UserInterface | null;
   selectedPage: string;
   existingButton?: ButtonInterface;
   isUpdate?: boolean;

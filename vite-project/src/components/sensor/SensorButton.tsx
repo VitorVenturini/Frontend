@@ -13,7 +13,7 @@ import { checkButtonWarning } from "../utils/utilityFunctions";
 import { useWebSocketData } from "../websocket/WebSocketProvider";
 
 interface ButtonProps {
-  handleClick: () => void;
+  handleClick?: () => void;
   button: ButtonInterface;
 }
 
@@ -25,7 +25,7 @@ export default function SensorButton({ handleClick, button }: ButtonProps) {
   const wss = useWebSocketData();
   const redButtonPrt = ["press_short", "press_long", "press_double"].includes(button.sensor_type as string)
   const handleClickButton = () => {
-    handleClick(); // handleClick utilizado no admin para setar a posição do botão
+    handleClick?.(); // handleClick utilizado no admin para setar a posição do botão
     if (!account.isAdmin && !redButtonPrt) {
       if (button.muted) {
         //botão está muted

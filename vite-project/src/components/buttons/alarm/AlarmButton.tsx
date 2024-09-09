@@ -11,7 +11,7 @@ import { commonClasses } from "../ButtonsComponent";
 
 interface ButtonProps {
   button: ButtonInterface;
-  handleClick: () => void;
+  handleClick?: () => void;
 }
 
 export default function AlarmButton({ button, handleClick }: ButtonProps) {
@@ -43,7 +43,7 @@ export default function AlarmButton({ button, handleClick }: ButtonProps) {
   }, [button.triggered]);
 
   const handleClickAlarm = () => {
-    handleClick();
+    handleClick?.();
     setInitiatedByUser(true);
     if (!account.isAdmin) {
       const isClicked = button.clicked;

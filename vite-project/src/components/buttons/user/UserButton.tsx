@@ -16,7 +16,7 @@ import { getText } from "@/components/utils/utilityFunctions";
 
 interface ButtonProps {
   button: ButtonInterface;
-  handleClick: () => void;
+  handleClick?: () => void;
 }
 
 export default function UserButton({ button, handleClick }: ButtonProps) {
@@ -53,7 +53,7 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
   }, [button.comboStart]);
 
   const handleClickCall = () => {
-    handleClick(); // para setar a posição na hora de criar botão
+    handleClick?.(); // para setar a posição na hora de criar botão
     if (!account.isAdmin) {
       if (!clickedButton && filteredUser.status !== "offline") {
         // ligar

@@ -45,19 +45,13 @@ import ModalNumber from "./number/ModalNumber";
 import NumberButton from "./number/NumberButton";
 import { useSearchParams } from "react-router-dom";
 import { useSensors } from "../sensor/SensorContext";
-interface User {
-  id: string;
-  name: string;
-  guid: string;
-  sip: string;
-  // Adicione aqui outros campos se necessário
-}
+import { UserInterface } from "../users/usersCore/UserContext";
 
 interface ButtonProps {
   button: ButtonInterface;
   onClickPosition: () => void; // Adicione esta linha
   clickedPosition: { i: number; j: number } | null;
-  selectedUser: User | null;
+  selectedUser: UserInterface | null;
   selectedPage: string;
 }
 export const commonClasses =

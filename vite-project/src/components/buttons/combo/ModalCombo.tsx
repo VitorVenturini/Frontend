@@ -47,16 +47,12 @@ import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { ButtonInterface } from "@/components/buttons/buttonContext/ButtonsContext";
 import { useButtons } from "@/components/buttons/buttonContext/ButtonsContext";
 import { limitButtonName } from "@/components/utils/utilityFunctions";
-
-interface User {
-  id: string;
-  name: string;
-  guid: string;
-}
+import ComboCardButtons from "./ComboCardButtons";
+import { UserInterface } from "@/components/users/usersCore/UserContext";
 
 interface ButtonProps {
   clickedPosition: { i: number; j: number } | null;
-  selectedUser: User | null;
+  selectedUser: UserInterface | null;
   selectedPage: string;
   existingButton?: ButtonInterface;
   isUpdate?: boolean;
@@ -69,12 +65,15 @@ export default function ModalCombo({
   clickedPosition,
   existingButton,
   isUpdate = false,
-  onClose
+  onClose,
 }: ButtonProps) {
   const { buttons } = useButtons();
 
   const userButtons = buttons.filter((btn) => {
-    return btn.button_user === selectedUser?.guid && (btn.page === selectedPage || btn.page === "0")
+    return (
+      btn.button_user === selectedUser?.guid &&
+      (btn.page === selectedPage || btn.page === "0")
+    );
   });
 
   const [nameButton, setNameButton] = useState(
@@ -115,7 +114,7 @@ export default function ModalCombo({
         };
         wss?.sendMessage(message);
         setIsCreating(false);
-        onClose?.()
+        onClose?.();
       } else {
         toast({
           variant: "destructive",
@@ -135,7 +134,7 @@ export default function ModalCombo({
         mt: "DeleteButtons",
         id: existingButton?.id,
       });
-      onClose?.()
+      onClose?.();
     } catch (e) {
       console.error(e);
     }
@@ -165,88 +164,32 @@ export default function ModalCombo({
           campos abaixo
         </CardDescription>
       </CardHeader>
-
-      <CardContent className="grid gap-4 py-4">
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label className="text-end" htmlFor="buttonName">
-            Nome do botão
-          </Label>
-          <Input
-            className="col-span-3"
-            id="buttonName"
-            placeholder="Nome do botão"
-            value={nameButton}
-            onChange={handleNameButton}
-            required
-          />
-        </div>
-        <div className="flex gap-4 items-center">
-          <Label className="text-end" htmlFor="framework" id="typeButton">
-            Combo 1
-          </Label>
-          <Select value={combo1} onValueChange={handleCombo1}>
-            <SelectTrigger className="col-span-1" id="SelectTypeButton">
-              <SelectValue placeholder="Selecione o Botão" />
-            </SelectTrigger>
-            <SelectContent position="popper">
-              {userButtons.map((buttons) => (
-                <SelectItem key={buttons.id} value={buttons.id as any}>
-                  {buttons.button_name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="flex gap-4 items-center">
-          <Label className="text-end" htmlFor="framework" id="typeButton">
-            Combo 2
-          </Label>
-          <Select value={combo2} onValueChange={handleCombo2}>
-            <SelectTrigger className="col-span-1" id="SelectTypeButton">
-              <SelectValue placeholder="Selecione o Botão" />
-            </SelectTrigger>
-            <SelectContent position="popper">
-              {userButtons.map((buttons) => (
-                <SelectItem key={buttons.id} value={buttons.id as any}>
-                  {buttons.button_name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="flex gap-4 items-center">
-          <Label className="text-end" htmlFor="framework" id="typeButton">
-            Combo 3
-          </Label>
-          <Select value={combo3} onValueChange={handleCombo3}>
-            <SelectTrigger className="col-span-1" id="SelectTypeButton">
-              <SelectValue placeholder="Selecione o Botão" />
-            </SelectTrigger>
-            <SelectContent position="popper">
-              {userButtons.map((buttons) => (
-                <SelectItem key={buttons.id} value={buttons.id as any}>
-                  {buttons.button_name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="flex gap-4 items-center">
-          <Label className="text-end" htmlFor="framework" id="typeButton">
-            Combo 4
-          </Label>
-          <Select value={combo4} onValueChange={handleCombo4}>
-            <SelectTrigger className="col-span-1" id="SelectTypeButton">
-              <SelectValue placeholder="Selecione o Botão" />
-            </SelectTrigger>
-            <SelectContent position="popper">
-              {userButtons.map((buttons) => (
-                <SelectItem key={buttons.id} value={buttons.id as any}>
-                  {buttons.button_name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+    
+      <CardContent className="grid gap-4 py-1">
+        <div className="flex gap-5">
+          {/* DIV ARRASTAR E SOLTAR  */}
+          <div className="w-[50%]">
+            <h1>Criação de combo</h1>
+            <CardDescription>
+              Arraste o botão desejado para a posição
+            </CardDescription>
+            <div className="grid grid-cols-2 py-2 gap-3">
+              <div className="w-[200px] h-[120px] outline outline-2 border-xs border-muted outline-muted text-muted-foreground flex items-center justify-center">
+                Solte o botão aqui
+              </div>
+              <div className="w-[200px] h-[120px] outline outline-2 border-xs border-muted outline-muted text-muted-foreground flex items-center justify-center">
+                Solte o botão aqui
+              </div>
+              <div className="w-[200px] h-[120px] outline outline-2 border-xs border-muted outline-muted text-muted-foreground flex items-center justify-center">
+                Solte o botão aqui
+              </div>
+              <div className="w-[200px] h-[120px] outline outline-2 border-xs border-muted outline-muted text-muted-foreground flex items-center justify-center">
+                Solte o botão aqui
+              </div>
+            </div>
+          </div>
+          {/* ComboCardButtons para exibir e filtrar botões */}
+          <ComboCardButtons selectedUser = {selectedUser} />
         </div>
       </CardContent>
       <CardFooter className="flex justify-between">

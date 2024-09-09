@@ -15,7 +15,7 @@ import { commonClasses } from "../ButtonsComponent";
 import LogoCore from "../../../assets/Vector.svg";
 
 interface ButtonProps {
-  handleClick: () => void;
+  handleClick?: () => void;
   button: ButtonInterface;
 }
 
@@ -30,7 +30,7 @@ export default function CommandButton({ handleClick, button }: ButtonProps) {
 
   const handleClickCommand = () => {
     if (button.loading) return; // impede novos cliques enquanto está carregando
-    handleClick();
+    handleClick?.();
     setInitiatedByUser(true);
     if (!account.isAdmin) {
       wss?.sendMessage({

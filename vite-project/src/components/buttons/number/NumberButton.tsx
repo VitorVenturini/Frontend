@@ -13,7 +13,7 @@ import { useLanguage } from "@/components/language/LanguageContext";
 
 interface NumberProps {
   button: ButtonInterface;
-  onClick: () => void;
+  onClick?: () => void;
 }
 export default function NumberButton({ button, onClick }: NumberProps) {
   let IconComponent: React.ElementType | null = null;
@@ -50,7 +50,7 @@ export default function NumberButton({ button, onClick }: NumberProps) {
   }, [button.comboStart]);
 
   const handleClick = () => {
-    onClick(); // para setar a posição na hora de criar botão
+    onClick?.(); // para setar a posição na hora de criar botão
     if (!account.isAdmin) {
       if (!clickedButton) {
         // ligar

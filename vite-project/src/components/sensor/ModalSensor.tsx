@@ -41,16 +41,10 @@ import { useSensors } from "./SensorContext";
 import { limitButtonName } from "../utils/utilityFunctions";
 import SensorCard from "./sensorCard";
 import { ScrollArea } from "../ui/scroll-area";
-
-interface User {
-  id: string;
-  name: string;
-  guid: string;
-}
-
+import { UserInterface } from "../users/usersCore/UserContext";
 interface ButtonProps {
   clickedPosition: { i: number; j: number } | null;
-  selectedUser: User | null;
+  selectedUser: UserInterface | null;
   selectedPage: string;
   existingButton?: ButtonInterface;
   isUpdate?: boolean;
