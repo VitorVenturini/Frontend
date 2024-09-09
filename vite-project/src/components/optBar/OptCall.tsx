@@ -29,7 +29,7 @@ export default function OptCall() {
     }, {});
 
   return (
-    <ScrollArea className="w-full h-[200px]  lg:h-[290px]  xl2:h-[400px] xl3:h-[590px]  relative gap-3">
+    <ScrollArea className="w-full lg:h-[267px] xl:h-[295px] xl2:h-[350px] xl3:h-[410px] xl4:h-[500px]  relative gap-3">
       {calls.map((call) => (
         <CallComponent key={call.id} buttonOnCall={call} />
       ))}

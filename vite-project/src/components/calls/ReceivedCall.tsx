@@ -6,6 +6,11 @@ import { generateAvatar, getInitials } from "../utils/utilityFunctions";
 import { Phone, PhoneOff, User2 } from "lucide-react";
 import { Button } from "../ui/button";
 import { useWebSocketData } from "../websocket/WebSocketProvider";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 interface ReceivedCallProps {
   receivedCalls: IncomingCallInterface[]; // Agora recebemos um array de chamadas
@@ -45,44 +50,69 @@ export default function ReceivedCall({ receivedCalls }: ReceivedCallProps) {
   };
 
   return (
-    <Card className="gap-2 mt-1">
-      {/*blinking-border*/}
-      <div className="flex items-center gap-3 m-2">
-        {avatarBase64 !== null ? (
-          <Avatar>
-            <AvatarImage src={avatarBase64 as string} />
-            <AvatarFallback>CN</AvatarFallback>
-          </Avatar>
-        ) : (
-          <User2 />
-        )}
-        <div>
-          Chamada Recebida de: <b>{filteredIncomingCallUser ? filteredIncomingCallUser?.cn : receivedCalls[0]?.num}</b>
+    <div className="animate-bounce ">
+      <Card className="p-2 m-4  bg-yellow-600 ">
+        <div className="flex justify-between ">
+          {/*blinking-border*/}
+          <div className="flex items-center gap-2">
+            {avatarBase64 !== null ? (
+              <Avatar>
+                <AvatarImage src={avatarBase64 as string} />
+                <AvatarFallback>CN</AvatarFallback>
+              </Avatar>
+            ) : (
+              <User2 />
+            )}
+            <div className="flex flex-col ">
+              Chamada Recebida de:{" "}
+              <b>
+                {filteredIncomingCallUser
+                  ? filteredIncomingCallUser?.cn
+                  : receivedCalls[0]?.num}
+              </b>
+            </div>
+          </div>
+
+          {/* Renderiza um botão para cada dispositivo */}
+          <div className="flex items-center gap-4">
+            <div>
+              <Popover>
+                <PopoverTrigger>
+                  <Button className="gap-2 bg-green-600 hover:bg-green-600/60">
+                    <Phone />
+                    Atender
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-full">
+                  {receivedCalls.map((call) => (
+                    <Button
+                      key={call.device}
+                      variant="secondary"
+                      onClick={() =>
+                        handleSelectDevice(call.device, call.callId)
+                      }
+                      className="  gap-2 font-bold"
+                    >
+                      <Phone />
+                      {call.deviceText}
+                    </Button>
+                  ))}
+                </PopoverContent>
+              </Popover>
+            </div>
+
+            <div className="flex items-center">
+              <Button
+                onClick={handleRefuseAllCalls}
+                size="icon"
+                variant="destructive"
+              >
+                <PhoneOff />
+              </Button>
+            </div>
+          </div>
         </div>
-      </div>
-
-      {/* Renderiza um botão para cada dispositivo */}
-      <div className="flex items-center gap-2">
-      <div>
-        {receivedCalls.map((call) => (
-          <Button
-            key={call.device}
-            variant="default"
-            onClick={() => handleSelectDevice(call.device, call.callId)}
-            className="gap-2 bg-green-600 rounded-xl m-2 font-bold"
-          >
-            <Phone/>
-            {call.deviceText}
-          </Button>
-        ))}
-      </div>
-
-      <div className="flex items-center gap-4 ">
-        <Button onClick={handleRefuseAllCalls} size="icon" variant="destructive" className="rounded-xl">
-          <PhoneOff />
-        </Button>
-      </div>
-      </div>
-    </Card>
+      </Card>
+    </div>
   );
 }
