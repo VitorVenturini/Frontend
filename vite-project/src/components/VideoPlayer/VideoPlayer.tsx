@@ -49,12 +49,13 @@ export default function VideoPlayer({ url }: VideoPlayerProps) {
       return (
         <iframe
           width="100%"
-          height="315"
+          height="100%"
           src={`https://www.youtube.com/embed/${youTubeId}?autoplay=1`}
           frameBorder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
           title="YouTube video player"
+          className="lg:h-[267px] xl:h-[295px] xl2:h-[350px] xl3:h-[410px] xl4:h-[500px]"
         ></iframe>
       );
     } else {
@@ -62,8 +63,8 @@ export default function VideoPlayer({ url }: VideoPlayerProps) {
         case "mp4":
           console.log("Extensão " + extension);
           return (
-            <div>
-              <video controls width="100%" autoPlay>
+            <div className="lg:h-[267px] xl:h-[295px] xl2:h-[350px] xl3:h-[410px] xl4:h-[500px] relative">
+              <video controls width="100%" autoPlay className="w-full h-full">
                 <source src={url} type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
@@ -73,7 +74,7 @@ export default function VideoPlayer({ url }: VideoPlayerProps) {
           console.log("Extensão m3u8 " + extension);
           // para o caso Stream (m3u8) o tratamento é diferente pois ele é realizado no UseEffect com a lib de Hls
           return (
-            <video controls width="100%" ref={videoRef} autoPlay>
+            <video controls width="100%" ref={videoRef} autoPlay className="lg:h-[267px] xl:h-[295px] xl2:h-[350px] xl3:h-[410px] xl4:h-[500px] relative">
               Your browser does not support the video tag.
             </video>
           );
