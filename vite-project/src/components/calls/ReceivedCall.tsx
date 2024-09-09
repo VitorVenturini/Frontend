@@ -75,30 +75,23 @@ export default function ReceivedCall({ receivedCalls }: ReceivedCallProps) {
 
           {/* Renderiza um botão para cada dispositivo */}
           <div className="flex items-center gap-4">
-            <div>
-              <Popover>
-                <PopoverTrigger>
-                  <Button className="gap-2 bg-green-600 hover:bg-green-600/60">
-                    <Phone />
-                    Atender
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-full">
+            <div className="gap-2">
+  
                   {receivedCalls.map((call) => (
                     <Button
                       key={call.device}
-                      variant="secondary"
+                    
                       onClick={() =>
                         handleSelectDevice(call.device, call.callId)
                       }
-                      className="  gap-2 font-bold"
+                      className="gap-2 bg-green-600 hover:bg-green-600/60"
                     >
                       <Phone />
                       {call.deviceText}
                     </Button>
                   ))}
-                </PopoverContent>
-              </Popover>
+                  
+    
             </div>
 
             <div className="flex items-center">
