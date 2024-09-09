@@ -44,14 +44,17 @@ import { Input } from "@/components/ui/input";
 import { useCameras } from "@/components/cameras/CameraContext";
 import { useAppConfig } from "@/components/options/ConfigContext";
 import { LoaderBar } from "@/components/LoaderBar";
-
+import { ExampleUsePDF } from "@/Reports/ExportReports";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Margin, usePDF } from "react-to-pdf";
+import { FileIcon } from "lucide-react";
+import { FileSpreadsheetIcon } from "lucide-react";
 
 export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
   const { users } = useUsers();
   const wss = useWebSocketData();
   const [date, setDate] = React.useState<DateRange>({
-    from: addDays(new Date(), -10),
+    from: addDays(new Date(), -1),
     to: new Date(),
   });
 
@@ -63,10 +66,14 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
   const { sensors } = useSensors();
   const [startHour, setStartHour] = useState("");
   const [endHour, setEndHour] = useState("");
-  const [setRpt] = useState("");
   const { cameras } = useCameras();
   const { loadBarData } = useAppConfig();
-
+  const [selectRpt, setSelectRpt] = useState("");
+  const { targetRef, toPDF } = usePDF({
+    method: "open",
+    filename: "usepdf-example.pdf",
+    page: { margin: Margin.MEDIUM },
+  });
   const handleStartHour = (event: ChangeEvent<HTMLInputElement>) => {
     setStartHour(event.target.value);
   };
@@ -133,11 +140,10 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
     console.log("Dados ajustados:", ajustData);
   }
 
-  const handleExecDevice = (value: string) => {
+  const handleExecDevice = () => {
     clearDataReport();
-    setActionExecDevice(value);
-
-    if (value && date?.from) {
+    console.log(selectRpt);
+    if (selectRpt && date?.from) {
       // Verificação se 'date' e 'date.from' estão definidos
       const fromDateTimeUTC = formatDateTime(date.from, startHour, "00:00:00");
       const toDateTimeUTC = formatDateTime(
@@ -149,7 +155,7 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
         api: "admin",
         mt: "SelectFromReports",
         src: "RptSensors",
-        deveui: value,
+        deveui: selectRpt,
         from: fromDateTimeUTC,
         to: toDateTimeUTC,
       });
@@ -157,11 +163,10 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
       console.error("Data não definida corretamente.");
     }
   };
-  const handleIotDevice = (value: string) => {
+  const handleIotDevice = () => {
     clearDataReport();
-    setActionExecDevice(value);
-
-    if (value && date?.from) {
+    console.log(selectRpt);
+    if (selectRpt && date?.from) {
       // Verificação se 'date' e 'date.from' estão definidos
       const fromDateTimeUTC = formatDateTime(date.from, startHour, "00:00:00");
       const toDateTimeUTC = formatDateTime(
@@ -173,7 +178,7 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
         api: "admin",
         mt: "SelectFromReports",
         src: "RptIotHistory",
-        deveui: value,
+        deveui: selectRpt,
         from: fromDateTimeUTC,
         to: toDateTimeUTC,
       });
@@ -183,7 +188,7 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
   };
   const handleMenu = (value: string) => {
     clearDataReport();
-    if (date && value !== "RptSensors" && value !== "RptIotDevices") {
+    if (date) {
       const fromDateTimeUTC = formatDateTime(date.from, startHour, "00:00:00");
       const toDateTimeUTC = formatDateTime(
         date.to ? date.to : date.from,
@@ -214,171 +219,176 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
     }
   };
 
-  // UseEffect para monitorar mudanças em "date" e enviar ao backend
-  useEffect(() => {
-    if (reportSrc === "RptSensors" && actionExecDevice && date?.from) {
-      handleExecDevice(actionExecDevice);
-
-      const fromDateTimeUTC = formatDateTime(date.from, startHour, "00:00:00");
-      const toDateTimeUTC = formatDateTime(
-        date.to ? date.to : date.from,
-        endHour,
-        "23:59:59"
-      );
-    } else if (
-      reportSrc === "RptIotDevices" &&
-      actionExecDevice &&
-      date?.from
-    ) {
-      handleIotDevice(actionExecDevice);
-
-      const fromDateTimeUTC = formatDateTime(date.from, startHour, "00:00:00");
-      const toDateTimeUTC = formatDateTime(
-        date.to ? date.to : date.from,
-        endHour,
-        "23:59:59"
-      );
-    } else if (reportSrc && date?.from) {
-      // Verificação adicional para garantir que 'date.from' está definido
-      const fromDateTimeUTC = formatDateTime(date.from, startHour, "00:00:00");
-      const toDateTimeUTC = formatDateTime(
-        date.to ? date.to : date.from,
-        endHour,
-        "23:59:59"
-      );
-      wss?.sendMessage({
-        api: "admin",
-        mt: "SelectFromReports",
-        src: reportSrc,
-        guid: selectedUser,
-        from: fromDateTimeUTC,
-        to: toDateTimeUTC,
-      });
-    }
-  }, [date, startHour, endHour, actionExecDevice]); // Incluindo actionExecDevice nas dependências
-
   return (
     <Card className="w-full h-full p-2">
       <div className="flex gap-3">
-        <Tabs
-          defaultValue="account"
-          className="w-full h-full flex-col"
-          onValueChange={handleMenu}
-        >
-          <div className="flex gap-4">
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  id="date"
-                  variant={"outline"}
-                  className={cn(
-                    "w-[300px] justify-start text-left font-normal",
-                    !date && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {date?.from ? (
-                    date.to ? (
-                      <>
-                        {format(date.from, "LLL dd, y")} -{" "}
-                        {format(date.to, "LLL dd, y")}
-                      </>
+        <Tabs defaultValue="account" className="w-full h-full flex-col">
+          <div className="flex gap-4 justify-between">
+            <div className="flex justify-start gap-4">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    id="date"
+                    variant={"outline"}
+                    className={cn(
+                      "w-[300px] justify-start text-left font-normal",
+                      !date && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {date?.from ? (
+                      date.to ? (
+                        <>
+                          {format(date.from, "LLL dd, y")} -{" "}
+                          {format(date.to, "LLL dd, y")}
+                        </>
+                      ) : (
+                        format(date.from, "LLL dd, y")
+                      )
                     ) : (
-                      format(date.from, "LLL dd, y")
-                    )
-                  ) : (
-                    <span>Pick a date</span>
-                  )}
+                      <span>Pick a date</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    initialFocus
+                    mode="range"
+                    defaultMonth={date?.from}
+                    selected={date}
+                    onSelect={setDate as any}
+                    numberOfMonths={2}
+                  />
+                  <div className="flex align-middle items-center w-full p-2 justify-between">
+                    <Label>Hora inicial</Label>
+                    <Input
+                      className="w-[150px]"
+                      type="time"
+                      onChange={(e) => setStartHour(e.target.value)}
+                      value={startHour}
+                    />
+                    <Label>Hora Final</Label>
+                    <Input
+                      className="w-[150px]"
+                      type="time"
+                      value={endHour}
+                      onChange={(e) => setEndHour(e.target.value)}
+                    />
+                  </div>
+                </PopoverContent>
+              </Popover>
+              <TabsList>
+                <TabsTrigger value="RptAvailability">
+                  Disponibilidade
+                </TabsTrigger>
+                <TabsTrigger value="RptCalls">Chamadas</TabsTrigger>
+                <TabsTrigger value="RptActivities">Atividade</TabsTrigger>
+                <TabsTrigger value="RptMessages">Mensagens</TabsTrigger>
+                <TabsTrigger value="RptSensors">Sensores</TabsTrigger>
+                <TabsTrigger value="RptIotDevices">Iot Câmeras</TabsTrigger>
+              </TabsList>
+              <TabsContent value="RptSensors" className="gap-4">
+                <div className="grid items-center justify-start grid-cols-4 gap-4 h-[10px] ">
+                  <div className="grid justify-start col-span-1 gap-1 ">
+                    <Label htmlFor="name">Sensor</Label>
+                  </div>
+                  <Select onValueChange={setSelectRpt}>
+                    <SelectTrigger className="col-span-2">
+                      <SelectValue placeholder="Selecione um Sensor" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Sensores</SelectLabel>
+                        {sensors.map((sensor) => (
+                          <SelectItem
+                            key={sensor.sensor_name}
+                            value={sensor?.deveui as string}
+                          >
+                            {sensor.sensor_name}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </TabsContent>
+              <TabsContent value="RptIotDevices" className="gap-4 ">
+                <div className="grid items-center justify-start grid-cols-4 gap-4 h-[10px] ">
+                  <div className="grid justify-start col-span-1 gap-1 ">
+                    <Label htmlFor="name">Iot Câmeras</Label>
+                  </div>
+                  <Select onValueChange={setSelectRpt}>
+                    <SelectTrigger className="col-span-2">
+                      <SelectValue placeholder="Selecione um Device" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Iot Câmeras</SelectLabel>
+                        {cameras.map((camera) => (
+                          <SelectItem
+                            key={camera.nickname}
+                            value={camera?.mac as string}
+                          >
+                            {camera.nickname}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </TabsContent>
+            </div>
+            <div className="flex items-end justify-end">
+              <TabsContent value="RptSensors" className="flex">
+                <Button variant='ghost'>
+                  <FileIcon onClick={toPDF} />
                 </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  initialFocus
-                  mode="range"
-                  defaultMonth={date?.from}
-                  selected={date}
-                  onSelect={setDate as any}
-                  numberOfMonths={2}
-                />
-                <div className="flex align-middle items-center w-full p-2 justify-between">
-                  <Label>Hora inicial</Label>
-                  <Input
-                    className="w-[150px]"
-                    type="time"
-                    onChange={(e) => setStartHour(e.target.value)}
-                    value={startHour}
-                  />
-                  <Label>Hora Final</Label>
-                  <Input
-                    className="w-[150px]"
-                    type="time"
-                    value={endHour}
-                    onChange={(e) => setEndHour(e.target.value)}
-                  />
-                </div>
-              </PopoverContent>
-            </Popover>
-            <TabsList>
-              <TabsTrigger value="RptAvailability">Disponibilidade</TabsTrigger>
-              <TabsTrigger value="RptCalls">Chamadas</TabsTrigger>
-              <TabsTrigger value="RptActivities">Atividade</TabsTrigger>
-              <TabsTrigger value="RptSensors">Sensores</TabsTrigger>
-              <TabsTrigger value="RptMessages">Mensagens</TabsTrigger>
-              <TabsTrigger value="RptIotDevices">Iot Câmeras</TabsTrigger>
-            </TabsList>
-            <TabsContent value="RptSensors" className="gap-4">
-              <div className="grid items-center justify-start grid-cols-3 gap-4 h-[10px] ">
-                <div className="grid justify-start col-span-1 gap-1 ">
-                  <Label htmlFor="name">Sensor</Label>
-                </div>
-                <Select onValueChange={handleExecDevice}>
-                  <SelectTrigger className="col-span-2">
-                    <SelectValue placeholder="Selecione um Sensor" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>Sensores</SelectLabel>
-                      {sensors.map((sensor) => (
-                        <SelectItem
-                          key={sensor.sensor_name}
-                          value={sensor?.deveui as string}
-                        >
-                          {sensor.sensor_name}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </div>
-            </TabsContent>
-            <TabsContent value="RptIotDevices" className="gap-4 ">
-              <div className="grid items-center justify-start grid-cols-3 gap-4 h-[10px] ">
-                <div className="grid justify-start col-span-1 gap-1 ">
-                  <Label htmlFor="name">Iot Câmeras</Label>
-                </div>
-                <Select onValueChange={handleIotDevice}>
-                  <SelectTrigger className="col-span-2">
-                    <SelectValue placeholder="Selecione um Device" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>Iot Câmeras</SelectLabel>
-                      {cameras.map((camera) => (
-                        <SelectItem
-                          key={camera.nickname}
-                          value={camera?.mac as string}
-                        >
-                          {camera.nickname}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </div>
-            </TabsContent>
+                <Button onClick={() => handleExecDevice()}>Consultar</Button>
+              </TabsContent>
+              <TabsContent value="RptIotDevices" className="flex">
+                <Button
+                  className="flex justify-end"
+                  onClick={() => handleIotDevice()}
+                >
+                  Consultar
+                </Button>
+              </TabsContent>
+              <TabsContent value="RptAvailability" className="flex">
+                <Button
+                  className="flex justify-end"
+                  onClick={() => handleMenu("RptAvailability")}
+                >
+                  Consultar
+                </Button>
+              </TabsContent>
+              <TabsContent value="RptCalls" className="flex">
+                <Button
+                  className="flex justify-end"
+                  onClick={() => handleMenu("RptCalls")}
+                >
+                  Consultar
+                </Button>
+              </TabsContent>
+              <TabsContent value="RptActivities" className="flex">
+                <Button
+                  className="flex justify-end"
+                  onClick={() => handleMenu("RptActivities")}
+                >
+                  Consultar
+                </Button>
+              </TabsContent>
+              <TabsContent value="RptMessages" className="flex">
+                <Button
+                  className="flex justify-end"
+                  onClick={() => handleMenu("RptMessages")}
+                >
+                  Consultar
+                </Button>
+              </TabsContent>
+            </div>
           </div>
           <TabsContent value="RptSensors" className="gap-4 py-4">
-            {dataReport.chart.length == 0 ? (
+            {dataReport.chart.length == 0 && loadBarData.unitValue > 0 ? (
               <div className="w-full align-middle items-center justify-center h-[600px] flex">
                 <LoaderBar
                   total={loadBarData.total}
@@ -386,12 +396,14 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
                 />
               </div>
             ) : (
-              <Grafico chartData={dataReport.chart} />
+              <div ref={targetRef}>
+                <Grafico chartData={dataReport.chart} />
+              </div>
             )}
           </TabsContent>
           <TabsContent value="RptIotDevices" className="gap-4 py-4">
-            {dataReport.img.length == 0 ? (
-              <div className="w-full align-middle items-center justify-center h-[600px]">
+            {dataReport.img.length == 0 && loadBarData.unitValue > 0 ? (
+              <div className="w-full align-middle items-center justify-center h-[600px] flex">
                 <LoaderBar
                   total={loadBarData.total}
                   unitValue={loadBarData.unitValue}
@@ -425,10 +437,7 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
               </ScrollArea>
             )}
           </TabsContent>
-          <TabsContent
-            value="RptAvailability"
-            className="gap-4 py-4"
-          >
+          <TabsContent value="RptAvailability" className="gap-4 py-4">
             {dataReport.table.length == 0 ? (
               <div className="w-full align-middle items-center justify-center h-[600px] flex">
                 <LoaderBar

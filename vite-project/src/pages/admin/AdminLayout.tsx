@@ -408,8 +408,10 @@ function AdminLayout() {
                 if(message.src === 'RptIotHistory'){
                   console.log('RPT IOT HYSTORY', parsedData)
                   addDataReport(parsedData, 'img', jsonKeys, message.src)
+                  clearLoadBarData()
                 }else {
                   addDataReport(parsedData, "table", jsonKeys, message.src);
+                  clearLoadBarData()
                 }
                 
               }
