@@ -55,7 +55,7 @@ interface ButtonProps {
   selectedPage: string;
 }
 export const commonClasses =
-  "w-[128px] h-[66px] xl:w-[128px] xl:h-[66px] xl2:w-[150px] xl2:h-[80px] xl3:w-[190px] xl3:h-[100px] xl4:w-[230px] xl4:h-[120px] rounded-lg border bg-border text-card-foreground shadow-sm p-1 justify-between";
+  "w-[128px] h-[70px] xl:w-[128px] xl:h-[77px] xl2:w-[150px] xl2:h-[90px] xl3:w-[190px] xl3:h-[112px] xl4:w-[230px] xl4:h-[139px] rounded-lg border bg-border text-card-foreground shadow-sm p-1 justify-between";
 
 export default function ButtonsComponent({
   button,

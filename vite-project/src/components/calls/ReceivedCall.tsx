@@ -50,53 +50,55 @@ export default function ReceivedCall({ receivedCalls }: ReceivedCallProps) {
   };
 
   return (
-    <Card className="px-4 py-6 m-3 animate-pulse bg-muted space-y-2">
-      <div className="flex justify-between ">
-        {/*blinking-border*/}
-        <div className="flex items-center gap-2">
-          {avatarBase64 !== null ? (
-            <Avatar>
-              <AvatarImage src={avatarBase64 as string} />
-              <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
-          ) : (
-            <User2 />
-          )}
-          <div className="flex gap-2">
-            Chamada recebida:
-            <b>
-              {filteredIncomingCallUser
-                ? filteredIncomingCallUser?.cn
-                : receivedCalls[0]?.num}
-            </b>
-            
+    <Card className="relative px-4 py-6 m-3 space-y-2">
+      <div className="absolute inset-0 bg-muted animate-pulse "></div>
+      <div className="relative z-10 space-y-2">
+        <div className="flex justify-between">
+          {/*blinking-border*/}
+          <div className="flex items-center gap-2">
+            {avatarBase64 !== null ? (
+              <Avatar>
+                <AvatarImage src={avatarBase64 as string} />
+                <AvatarFallback>CN</AvatarFallback>
+              </Avatar>
+            ) : (
+              <User2 />
+            )}
+            <div className="flex gap-2">
+              Chamada recebida:
+              <b>
+                {filteredIncomingCallUser
+                  ? filteredIncomingCallUser?.cn
+                  : receivedCalls[0]?.num}
+              </b>
+            </div>
           </div>
-        </div>
 
-        {/* Renderiza um botão para cada dispositivo */}
-        <div className="flex items-center gap-4">
-          <div className="flex items-center">
-            <Button
-              onClick={handleRefuseAllCalls}
-              size="icon"
-              variant="destructive"
-            >
-              <PhoneOff />
-            </Button>
+          {/* Renderiza um botão para cada dispositivo */}
+          <div className="flex items-center gap-4">
+            <div className="flex items-center">
+              <Button
+                onClick={handleRefuseAllCalls}
+                size="icon"
+                variant="destructive"
+              >
+                <PhoneOff />
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
-      <div className="gap-2 ">
-        {receivedCalls.map((call) => (
-          <Button
-            key={call.device}
-            onClick={() => handleSelectDevice(call.device, call.callId)}
-            className="gap-2 bg-green-600 hover:bg-green-600/60 mx-1"
-          >
-            <Phone />
-            {call.deviceText}
-          </Button>
-        ))}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+          {receivedCalls.map((call) => (
+            <Button
+              key={call.device}
+              onClick={() => handleSelectDevice(call.device, call.callId)}
+              className="gap-2 bg-green-600 hover:bg-green-600/60 mx-1"
+            >
+              <Phone />
+              {call.deviceText}
+            </Button>
+          ))}
+        </div>
       </div>
     </Card>
   );
