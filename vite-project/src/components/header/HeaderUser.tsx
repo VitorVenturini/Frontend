@@ -12,6 +12,7 @@ import DigitalClock from "../digitalClock";
 import LogoWecom2 from "@/assets/LogoWecom2.svg";
 import { ModeToggle } from "@/components/mode-toggle";
 import { LanguageToggle } from "@/components/language/LanguageToggle";
+import NaoSeiAinda from "@/components/nSeiAinda";
 
 export default function HeaderUser() {
   const account = useAccount();
@@ -27,24 +28,28 @@ export default function HeaderUser() {
 
   return (
     <div className="relative w-full py-1">
-      <div className="flex gap-5 justify-between align-middle items-center">
-        <div className="flex align-middle items-center justify-between gap-24">
+      <div className="flex gap-5 align-middle justify-between items-center ">
+        <div className="flex align-middle items-center justify-between gap-24 basis-1/4">
           <div className="flex align-middle items-center gap-2">
-          <Button variant="ghost" onClick={account.type === "admin" ? handleAdminToggle : undefined}>
-            <img src={LogoCore} className="h-8" />
-          </Button>
-        <FullScreenButton />
-        <LanguageToggle />
-        <ModeToggle />
-        <Logout />
+            <Button
+              variant="ghost"
+              onClick={account.type === "admin" ? handleAdminToggle : undefined}
+            >
+              <img src={LogoCore} className="h-8" />
+            </Button>
+            <FullScreenButton />
+            <LanguageToggle />
+            <ModeToggle />
+            <Logout />
           </div>
-          <img src={LogoWecom2} className="h-4 opacity-30" />
         </div>
-        <Button className="flex justify-center" variant="secondary">
-        <DigitalClock />
+        <div className="basis-1/2">
+        <NaoSeiAinda />
+        </div>
+        <img src={LogoWecom2} className="h-4 opacity-30" />
+        <Button className="flex justify-center basis-1/8" variant="secondary">
+          <DigitalClock />
         </Button>
-        
-        
       </div>
     </div>
   );
