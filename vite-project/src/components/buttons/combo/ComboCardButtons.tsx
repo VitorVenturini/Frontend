@@ -124,7 +124,7 @@ export default function ComboCardButtons({
         value={filteredButtons}
         onChange={handleFilterButtons}
       />
-      <div className="h-[250px] border border-input mt-2 w-full overflow-y-auto">
+      <div className="h-[250px] border border-input mt-2 w-full">
         <div className="w-full flex flex-wrap gap-2">
           {buttonsToShow.map((button: ButtonInterface) => (
             <DraggableButton key={button.id} button={button}>
