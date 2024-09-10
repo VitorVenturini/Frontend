@@ -81,7 +81,7 @@ export default function DroppableComboArea({
           <div
             key={index}
             ref={createDropHandler(index)}
-            className="mb-2 w-full h-[80px] outline outline-2 border-xs border-muted outline-muted text-muted-foreground flex items-center"
+            className="relative mb-2 w-full h-[80px] outline outline-2 border-xs border-muted outline-muted text-muted-foreground flex items-center"
           >
             <div className="w-full flex justify-center">Posição 1</div>
             {button ? (
