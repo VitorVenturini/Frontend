@@ -44,11 +44,10 @@ import { Input } from "@/components/ui/input";
 import { useCameras } from "@/components/cameras/CameraContext";
 import { useAppConfig } from "@/components/options/ConfigContext";
 import { LoaderBar } from "@/components/LoaderBar";
-import { ExampleUsePDF } from "@/Reports/ExportReports";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Margin, usePDF } from "react-to-pdf";
-import { FileIcon } from "lucide-react";
-import { FileSpreadsheetIcon } from "lucide-react";
+import { Sheet } from "lucide-react";
+import { PdfGerate } from "@/Reports/ExportReports";
 
 export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
   const { users } = useUsers();
@@ -67,13 +66,20 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
   const [startHour, setStartHour] = useState("");
   const [endHour, setEndHour] = useState("");
   const { cameras } = useCameras();
-  const { loadBarData } = useAppConfig();
+  const { loadBarData, clearLoadBarData } = useAppConfig();
   const [selectRpt, setSelectRpt] = useState("");
   const { targetRef, toPDF } = usePDF({
     method: "open",
     filename: "usepdf-example.pdf",
-    page: { margin: Margin.MEDIUM },
+    page: { margin: Margin.NONE, orientation: 'landscape', },
   });
+
+  const handleClear = () => {
+    clearDataReport()
+    clearLoadBarData()
+  }
+
+
   const handleStartHour = (event: ChangeEvent<HTMLInputElement>) => {
     setStartHour(event.target.value);
   };
@@ -281,11 +287,11 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
                 <TabsTrigger value="RptAvailability">
                   Disponibilidade
                 </TabsTrigger>
-                <TabsTrigger value="RptCalls">Chamadas</TabsTrigger>
-                <TabsTrigger value="RptActivities">Atividade</TabsTrigger>
-                <TabsTrigger value="RptMessages">Mensagens</TabsTrigger>
-                <TabsTrigger value="RptSensors">Sensores</TabsTrigger>
-                <TabsTrigger value="RptIotDevices">Iot Câmeras</TabsTrigger>
+                <TabsTrigger value="RptCalls" onClick={handleClear}>Chamadas</TabsTrigger>
+                <TabsTrigger value="RptActivities" onClick={handleClear}>Atividade</TabsTrigger>
+                <TabsTrigger value="RptMessages" onClick={handleClear}>Mensagens</TabsTrigger>
+                <TabsTrigger value="RptSensors" onClick={handleClear}>Sensores</TabsTrigger>
+                <TabsTrigger value="RptIotDevices" onClick={handleClear}>Iot Câmeras</TabsTrigger>
               </TabsList>
               <TabsContent value="RptSensors" className="gap-4">
                 <div className="grid items-center justify-start grid-cols-4 gap-4 h-[10px] ">
@@ -339,9 +345,11 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
               </TabsContent>
             </div>
             <div className="flex items-end justify-end">
-              <TabsContent value="RptSensors" className="flex">
-                <Button variant='ghost'>
-                  <FileIcon onClick={toPDF} />
+              <TabsContent value="RptSensors" className="flex gap-2">
+                <p className="flex items-center text-[12px]">Export:</p>
+                  <PdfGerate dados={dataReport.chart} />
+                <Button variant="ghost" title="XLS" disabled={dataReport.chart.length === 0 ? true : false}>
+                  <Sheet />
                 </Button>
                 <Button onClick={() => handleExecDevice()}>Consultar</Button>
               </TabsContent>
