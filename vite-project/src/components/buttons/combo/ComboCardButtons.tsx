@@ -79,7 +79,7 @@ export default function ComboCardButtons({
       .toLowerCase();
     return (
       normalizedButtonName.includes(normalizedFilter) &&
-      button.button_type !== "combo"
+      button.button_type !== "combo" && button.button_type !== "sensor"
     );
   });
 
@@ -87,8 +87,6 @@ export default function ComboCardButtons({
     switch (button.button_type) {
       case "alarm":
         return <AlarmButton button={button} />;
-      case "sensor":
-        return <SensorButton button={button} />;
       case "command":
         return <CommandButton button={button} />;
       case "number":
@@ -126,7 +124,7 @@ export default function ComboCardButtons({
         value={filteredButtons}
         onChange={handleFilterButtons}
       />
-      <ScrollArea className="h-[250px] border border-input mt-2 w-full">
+      <div className="h-[250px] border border-input mt-2 w-full overflow-y-auto">
         <div className="w-full flex flex-wrap gap-2">
           {buttonsToShow.map((button: ButtonInterface) => (
             <DraggableButton key={button.id} button={button}>
@@ -134,7 +132,7 @@ export default function ComboCardButtons({
             </DraggableButton>
           ))}
         </div>
-      </ScrollArea>
+      </div>
     </div>
   );
 }
