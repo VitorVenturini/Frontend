@@ -37,7 +37,7 @@ export default function OptSensor({
   };
   // passar o array ordenado para o gráfico .
   const sortedChartData = sortArrayOfObjects(filteredSensorInfo)
-  console.log("sortedChartData" + JSON.stringify(sortedChartData))
+  //console.log("sortedChartData" + JSON.stringify(sortedChartData))
   return (
     <Card className="h-full flex">
       <SensorGraph chartData={sortedChartData.reverse()} />

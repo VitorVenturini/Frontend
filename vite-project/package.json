@@ -67,6 +67,8 @@
     "react-battery-gauge": "^1.0.7",
     "react-chat-elements": "^12.0.15",
     "react-day-picker": "^8.10.1",
+    "react-dnd": "^16.0.1",
+    "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.51.4",
     "react-resizable-panels": "^2.0.19",

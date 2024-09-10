@@ -54,6 +54,28 @@ export interface SensorInterface {
   gpio_out_2?: string | null;
   pt100_1?: string | null;
   pt100_2?: string | null;
+  people_count_all?: string | null;
+  people_count_max?: string | null;
+  people_in?: string | null;
+  people_out?: string | null;
+  people_total_in?: string | null;
+  people_total_out?: string | null;
+  region_1?: string | null;
+  region_2?: string | null;
+  region_3?: string | null;
+  region_4?: string | null;
+  region_5?: string | null;
+  region_6?: string | null;
+  region_7?: string | null;
+  region_8?: string | null;
+  region_9?: string | null;
+  region_10?: string | null;
+  region_11?: string | null;
+  region_12?: string | null;
+  region_13?: string | null;
+  region_14?: string | null;
+  region_15?: string | null;
+  region_16?: string | null;
   date?: string;
 }
 
@@ -153,10 +175,10 @@ export const SensorProvider = ({ children }: { children: ReactNode }) => {
       const cameraSpecificImages = prevCameraImages.filter(
         (img) => img.deveui === image.deveui
       );
-  
+
       // Verifica se a nova imagem é idêntica à mais recente já existente
       const lastCameraImage = cameraSpecificImages[0]; // A mais recente
-  
+
       const isDuplicate =
         lastCameraImage &&
         Object.keys(image).every(
@@ -164,20 +186,20 @@ export const SensorProvider = ({ children }: { children: ReactNode }) => {
             image[key as keyof SensorInterface] ===
             lastCameraImage[key as keyof SensorInterface]
         );
-  
+
       // Se a imagem for duplicada, não faz nada
       if (isDuplicate) {
         return prevCameraImages;
       }
-  
+
       // Adiciona a nova imagem no início da lista
       const updatedImages = [image, ...cameraSpecificImages];
-  
+
       // Garante que a lista de imagens para o mesmo sensor não exceda 10 itens
       if (updatedImages.length > 10) {
         updatedImages.pop(); // Remove a imagem mais antiga, se necessário
       }
-  
+
       // Substitui as imagens do mesmo sensor na lista geral com as atualizadas
       return [
         ...prevCameraImages.filter((img) => img.deveui !== image.deveui),
@@ -185,8 +207,6 @@ export const SensorProvider = ({ children }: { children: ReactNode }) => {
       ];
     });
   };
-  
-  
 
   const addSensorsButton = (newSensors: SensorInterface[]) => {
     setButtonSensors(newSensors); // Alimenta diretamente o buttonSensors com 1 registro de cada sensors

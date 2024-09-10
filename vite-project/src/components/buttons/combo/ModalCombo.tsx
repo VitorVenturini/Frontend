@@ -49,7 +49,9 @@ import { useButtons } from "@/components/buttons/buttonContext/ButtonsContext";
 import { limitButtonName } from "@/components/utils/utilityFunctions";
 import ComboCardButtons from "./ComboCardButtons";
 import { UserInterface } from "@/components/users/usersCore/UserContext";
-
+import DroppableComboArea from "./DroppableComboArea";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 interface ButtonProps {
   clickedPosition: { i: number; j: number } | null;
   selectedUser: UserInterface | null;
@@ -67,15 +69,6 @@ export default function ModalCombo({
   isUpdate = false,
   onClose,
 }: ButtonProps) {
-  const { buttons } = useButtons();
-
-  const userButtons = buttons.filter((btn) => {
-    return (
-      btn.button_user === selectedUser?.guid &&
-      (btn.page === selectedPage || btn.page === "0")
-    );
-  });
-
   const [nameButton, setNameButton] = useState(
     existingButton?.button_name || ""
   );
@@ -87,13 +80,28 @@ export default function ModalCombo({
   const { toast } = useToast();
   const wss = useWebSocketData();
 
+  const { buttons } = useButtons();
+
+  const [dragAndDropButtons, setDragAndDropButtons] = useState<
+    ButtonInterface[]
+  >([]);
+  const [removedButtons, setRemovedButtons] = useState<ButtonInterface[]>([]);
+
+  const handleButtonDrop = (button: ButtonInterface) => {
+    setRemovedButtons((prev) => [...prev, button]);
+  };
+
+  const handleReturnButton = (button: ButtonInterface) => {
+    setRemovedButtons((prev) => prev.filter((b) => b.id !== button.id));
+  };
+
   const handleNameButton = (event: ChangeEvent<HTMLInputElement>) => {
     const limitedName = limitButtonName(event.target.value);
     setNameButton(limitedName);
   };
   const handleCreateButton = () => {
     try {
-      if (nameButton && combo1) {
+      if (nameButton && combo1 && combo2 && combo3 && combo4) {
         setIsCreating(true);
         const message = {
           api: "admin",
@@ -140,21 +148,27 @@ export default function ModalCombo({
     }
   };
 
-  const handleCombo1 = (value: string) => {
-    setCombo1(value);
-  };
-  const handleCombo2 = (value: string) => {
-    setCombo2(value);
-  };
-  const handleCombo3 = (value: string) => {
-    setCombo3(value);
-  };
-  const handleCombo4 = (value: string) => {
-    setCombo4(value);
+  const updateCombos = (droppedButtons: (ButtonInterface | null)[]) => {
+    setCombo1((droppedButtons[0]?.id as any) || "");
+    setCombo2((droppedButtons[1]?.id as any) || "");
+    setCombo3((droppedButtons[2]?.id as any) || "");
+    setCombo4((droppedButtons[3]?.id as any) || "");
   };
 
+  // Pega os botões já existentes, se houver, para carregar na área de drop
+  const existingDroppedButtons = [
+    buttons.find((btn) => String(btn.id) === existingButton?.button_type_1) ||
+      null,
+    buttons.find((btn) => String(btn.id) === existingButton?.button_type_2) ||
+      null,
+    buttons.find((btn) => String(btn.id) === existingButton?.button_type_3) ||
+      null,
+    buttons.find((btn) => String(btn.id) === existingButton?.button_type_4) ||
+      null,
+  ];
+
   return (
-    <>
+    <DndProvider backend={HTML5Backend}>
       <CardHeader>
         <CardTitle>
           {isUpdate ? "Atualização" : "Criação"} de Botões Combo
@@ -164,32 +178,37 @@ export default function ModalCombo({
           campos abaixo
         </CardDescription>
       </CardHeader>
-    
+
       <CardContent className="grid gap-4 py-1">
+        <div className="grid grid-cols-4 items-center gap-4">
+          <Label className="text-end" htmlFor="buttonName">
+            Nome do botão
+          </Label>
+          <Input
+            className="col-span-3"
+            id="buttonName"
+            placeholder="Nome do botão"
+            value={nameButton}
+            onChange={handleNameButton}
+            required
+          />
+        </div>
         <div className="flex gap-5">
-          {/* DIV ARRASTAR E SOLTAR  */}
-          <div className="w-[50%]">
-            <h1>Criação de combo</h1>
-            <CardDescription>
-              Arraste o botão desejado para a posição
-            </CardDescription>
-            <div className="grid grid-cols-2 py-2 gap-3">
-              <div className="w-[200px] h-[120px] outline outline-2 border-xs border-muted outline-muted text-muted-foreground flex items-center justify-center">
-                Solte o botão aqui
-              </div>
-              <div className="w-[200px] h-[120px] outline outline-2 border-xs border-muted outline-muted text-muted-foreground flex items-center justify-center">
-                Solte o botão aqui
-              </div>
-              <div className="w-[200px] h-[120px] outline outline-2 border-xs border-muted outline-muted text-muted-foreground flex items-center justify-center">
-                Solte o botão aqui
-              </div>
-              <div className="w-[200px] h-[120px] outline outline-2 border-xs border-muted outline-muted text-muted-foreground flex items-center justify-center">
-                Solte o botão aqui
-              </div>
-            </div>
-          </div>
-          {/* ComboCardButtons para exibir e filtrar botões */}
-          <ComboCardButtons selectedUser = {selectedUser} />
+          <DroppableComboArea
+            onButtonDrop={handleButtonDrop}
+            onReturnButton={handleReturnButton}
+            updateCombos={updateCombos}
+            existingDroppedButtons={existingDroppedButtons}
+            isUpdate={isUpdate}
+          />
+          <ComboCardButtons
+            selectedUser={selectedUser}
+            onButtonDrop={handleButtonDrop}
+            removedButtons={removedButtons}
+            existingDroppedButtons={existingDroppedButtons}
+            onReturnButton={handleReturnButton}
+        
+          />
         </div>
       </CardContent>
       <CardFooter className="flex justify-between">
@@ -227,6 +246,6 @@ export default function ModalCombo({
           </Button>
         )}
       </CardFooter>
-    </>
+    </DndProvider>
   );
 }
