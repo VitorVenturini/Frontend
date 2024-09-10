@@ -3,7 +3,6 @@ import { useDrop } from "react-dnd";
 import { CardDescription } from "@/components/ui/card";
 import { ButtonInterface } from "../buttonContext/ButtonsContext";
 import AlarmButton from "../alarm/AlarmButton";
-import SensorButton from "@/components/sensor/SensorButton";
 import CommandButton from "../command/CommandButton";
 import NumberButton from "../number/NumberButton";
 import UserButton from "../user/UserButton";
@@ -48,12 +47,9 @@ export default function DroppableComboArea({
   existingDroppedButtons,
   isUpdate = false,
 }: DroppableComboAreaProps) {
-  const [droppedButtons, setDroppedButtons] = useState<(ButtonInterface | null)[]>([
-    null,
-    null,
-    null,
-    null,
-  ]);
+  const [droppedButtons, setDroppedButtons] = useState<
+    (ButtonInterface | null)[]
+  >([null, null, null, null]);
 
   // Carrega os botões existentes ao montar o componente se estiver em modo de atualização
   useEffect(() => {
@@ -105,7 +101,27 @@ export default function DroppableComboArea({
             ref={createDropHandler(index)}
             className="relative mb-2 w-full h-[80px] outline outline-2 border-xs border-muted outline-muted text-muted-foreground flex items-center"
           >
-            <div className="w-full flex justify-center">Posição {index + 1}</div>
+            <div className="w-full flex flex-col justify-center items-center">
+              <div>Posição {index + 1}</div>
+              {button?.page === "0" ? (
+                <p className="text-sm">
+                  {button.position_y === "1"
+                    ? "Em Cima"
+                    : button.position_y === "2"
+                    ? "Em Baixo"
+                    : ""}
+                </p>
+              ) : (
+                <p className="text-sm">
+                  {button?.button_type === "number"
+                    ? "Em Baixo"
+                    : button?.button_type === "user"
+                    ? "Em Baixo"
+                    : ""}
+                </p>
+              )}
+            </div>
+
             {button ? (
               <div className="w-full flex justify-center">
                 {renderButtonByType(button)}

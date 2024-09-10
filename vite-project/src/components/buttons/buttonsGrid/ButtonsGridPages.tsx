@@ -59,7 +59,7 @@ export default function ButtonsGridPages({
         const filteredSensor = buttonSensors.find(
           (sensor) => sensor.deveui === btns.button_prt
         ); // Encontra o sensor correspondente
-        console.log("FILTEREDSENSORS" + JSON.stringify(filteredSensor));
+       // console.log("FILTEREDSENSORS" + JSON.stringify(filteredSensor));
         if (filteredSensor && btns.sensor_type) {
           const currentValue = parseInt(
             (filteredSensor as any)[btns.sensor_type],

@@ -207,6 +207,7 @@ export default function ModalCombo({
             removedButtons={removedButtons}
             existingDroppedButtons={existingDroppedButtons}
             onReturnButton={handleReturnButton}
+        
           />
         </div>
       </CardContent>

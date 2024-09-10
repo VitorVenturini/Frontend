@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState, useEffect } from "react";
+import React, { ChangeEvent, useState } from "react";
 import { useButtons, ButtonInterface } from "../buttonContext/ButtonsContext";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -46,7 +46,7 @@ interface ComboCardButtonsProps {
   onButtonDrop: (button: ButtonInterface) => void;
   removedButtons: ButtonInterface[]; // Botões removidos
   existingDroppedButtons: (ButtonInterface | null)[]; // Botões na área de drop
-  onReturnButton: (button: ButtonInterface) => void; // Função para retornar o botão à lista
+  onReturnButton: (button: ButtonInterface) => void; // Callback para retornar botão removido à lista de disponíveis
 }
 
 export default function ComboCardButtons({
@@ -59,19 +59,12 @@ export default function ComboCardButtons({
   const [filteredButtons, setFilterButtons] = useState("");
   const { buttons } = useButtons();
 
-  // Filtra os botões do usuário selecionado, exceto os removidos e os que já estão na área de drop
+  // Filtra os botões do usuário selecionado, exceto os removidos
   const availableButtons = buttons.filter(
     (btn) =>
       btn.button_user === selectedUser?.guid &&
-      !removedButtons.some((removed) => removed.id === btn.id) && // Removidos da lista
-      !existingDroppedButtons.some((dropped) => dropped?.id === btn.id) // Já na área de drop
+      !removedButtons.some((removed) => removed.id === btn.id) // Removidos da lista
   );
-
-  useEffect(() => {
-    removedButtons.forEach((button) => {
-      onReturnButton(button); // Adiciona o botão de volta à lista ao ser removido da área de drop
-    });
-  }, [removedButtons]);
 
   const handleFilterButtons = (event: ChangeEvent<HTMLInputElement>) => {
     setFilterButtons(event.target.value);
