@@ -15,8 +15,6 @@ const renderButtonByType = (button: ButtonInterface | null) => {
   switch (button.button_type) {
     case "alarm":
       return <AlarmButton button={button} />;
-    case "sensor":
-      return <SensorButton button={button} />;
     case "command":
       return <CommandButton button={button} />;
     case "number":
@@ -78,15 +76,16 @@ export default function DroppableComboArea({
     <div className="w-[50%]">
       <h1>Criação de combo</h1>
       <CardDescription>Arraste o botão desejado para a posição</CardDescription>
-      <div className="grid grid-cols-2 py-2 gap-3">
+      <div className=" py-2 gap-3">
         {droppedButtons.map((button, index) => (
           <div
             key={index}
             ref={createDropHandler(index)}
-            className="relative w-[200px] h-[120px] outline outline-2 border-xs border-muted outline-muted text-muted-foreground flex items-center justify-center"
+            className="mb-2 w-full h-[80px] outline outline-2 border-xs border-muted outline-muted text-muted-foreground flex items-center"
           >
+            <div className="w-full flex justify-center">Posição 1</div>
             {button ? (
-              <div className="relative w-full h-full">
+              <div className="w-full flex justify-center">
                 {renderButtonByType(button)}
                 <button
                   className="absolute top-1 right-1 text-red-500"
@@ -96,7 +95,9 @@ export default function DroppableComboArea({
                 </button>
               </div>
             ) : (
-              "Solte o botão aqui"
+              <div className="w-full flex justify-center">
+                Solte o botão aqui
+              </div>
             )}
           </div>
         ))}
