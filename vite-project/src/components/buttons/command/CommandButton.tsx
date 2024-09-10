@@ -89,7 +89,7 @@ export default function CommandButton({ handleClick, button }: ButtonProps) {
 
   return (
     <div
-      className={`${commonClasses} bg-buttonSensor flex flex-col w-full`}
+      className={`${commonClasses} bg-buttonSensor flex flex-col cursor-pointer w-full`}
       onClick={handleClickCommand}
     >
       <div>

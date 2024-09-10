@@ -6,7 +6,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { CardDescription } from "@/components/ui/card";
 import { UserInterface } from "@/components/users/usersCore/UserContext";
 import AlarmButton from "../alarm/AlarmButton";
-import SensorButton from "@/components/sensor/SensorButton";
 import CommandButton from "../command/CommandButton";
 import NumberButton from "../number/NumberButton";
 import UserButton from "../user/UserButton";
@@ -35,7 +34,6 @@ const DraggableButton: React.FC<DraggableButtonProps> = ({
       ref={drag}
       style={{
         opacity: isDragging ? 0.5 : 1,
-        cursor: "copy",
       }}
     >
       {children}
@@ -47,22 +45,33 @@ interface ComboCardButtonsProps {
   selectedUser: UserInterface | null;
   onButtonDrop: (button: ButtonInterface) => void;
   removedButtons: ButtonInterface[]; // Botões removidos
+  existingDroppedButtons: (ButtonInterface | null)[]; // Botões na área de drop
+  onReturnButton: (button: ButtonInterface) => void; // Função para retornar o botão à lista
 }
 
 export default function ComboCardButtons({
   selectedUser,
   onButtonDrop,
   removedButtons,
+  existingDroppedButtons,
+  onReturnButton,
 }: ComboCardButtonsProps) {
   const [filteredButtons, setFilterButtons] = useState("");
   const { buttons } = useButtons();
-  
-  // Filtra os botões do usuário selecionado, exceto os removidos
+
+  // Filtra os botões do usuário selecionado, exceto os removidos e os que já estão na área de drop
   const availableButtons = buttons.filter(
     (btn) =>
       btn.button_user === selectedUser?.guid &&
-      !removedButtons.some((removed) => removed.id === btn.id) // Removidos da lista
+      !removedButtons.some((removed) => removed.id === btn.id) && // Removidos da lista
+      !existingDroppedButtons.some((dropped) => dropped?.id === btn.id) // Já na área de drop
   );
+
+  useEffect(() => {
+    removedButtons.forEach((button) => {
+      onReturnButton(button); // Adiciona o botão de volta à lista ao ser removido da área de drop
+    });
+  }, [removedButtons]);
 
   const handleFilterButtons = (event: ChangeEvent<HTMLInputElement>) => {
     setFilterButtons(event.target.value);
@@ -79,7 +88,8 @@ export default function ComboCardButtons({
       .toLowerCase();
     return (
       normalizedButtonName.includes(normalizedFilter) &&
-      button.button_type !== "combo" && button.button_type !== "sensor"
+      button.button_type !== "combo" &&
+      button.button_type !== "sensor"
     );
   });
 
@@ -95,7 +105,7 @@ export default function ComboCardButtons({
         return <UserButton button={button} />;
       default:
         return (
-          <div className={`flex-col flex ${commonClasses}`}>
+          <div className={`flex-col flex ${commonClasses} cursor-pointer`}>
             <div className="font-bold">{button.button_name}</div>
             <div className="text-sm text-muted-foreground">
               {button.button_type}

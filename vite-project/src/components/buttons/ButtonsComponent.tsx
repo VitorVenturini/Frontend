@@ -282,7 +282,7 @@ export default function ButtonsComponent({
                 </div>
               </DialogTrigger>
               {isAdmin && (
-                <DialogContent>
+                <DialogContent className="max-w-5xl">
                   {
                     <ModalCombo
                       selectedPage={selectedPage}

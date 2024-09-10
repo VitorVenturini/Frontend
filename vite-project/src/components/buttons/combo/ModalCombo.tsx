@@ -101,7 +101,7 @@ export default function ModalCombo({
   };
   const handleCreateButton = () => {
     try {
-      if (nameButton && combo1) {
+      if (nameButton && combo1 && combo2 && combo3 && combo4) {
         setIsCreating(true);
         const message = {
           api: "admin",
@@ -148,18 +148,24 @@ export default function ModalCombo({
     }
   };
 
-  const handleCombo1 = (value: string) => {
-    setCombo1(value);
+  const updateCombos = (droppedButtons: (ButtonInterface | null)[]) => {
+    setCombo1((droppedButtons[0]?.id as any) || "");
+    setCombo2((droppedButtons[1]?.id as any) || "");
+    setCombo3((droppedButtons[2]?.id as any) || "");
+    setCombo4((droppedButtons[3]?.id as any) || "");
   };
-  const handleCombo2 = (value: string) => {
-    setCombo2(value);
-  };
-  const handleCombo3 = (value: string) => {
-    setCombo3(value);
-  };
-  const handleCombo4 = (value: string) => {
-    setCombo4(value);
-  };
+
+  // Pega os botões já existentes, se houver, para carregar na área de drop
+  const existingDroppedButtons = [
+    buttons.find((btn) => String(btn.id) === existingButton?.button_type_1) ||
+      null,
+    buttons.find((btn) => String(btn.id) === existingButton?.button_type_2) ||
+      null,
+    buttons.find((btn) => String(btn.id) === existingButton?.button_type_3) ||
+      null,
+    buttons.find((btn) => String(btn.id) === existingButton?.button_type_4) ||
+      null,
+  ];
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -174,15 +180,33 @@ export default function ModalCombo({
       </CardHeader>
 
       <CardContent className="grid gap-4 py-1">
+        <div className="grid grid-cols-4 items-center gap-4">
+          <Label className="text-end" htmlFor="buttonName">
+            Nome do botão
+          </Label>
+          <Input
+            className="col-span-3"
+            id="buttonName"
+            placeholder="Nome do botão"
+            value={nameButton}
+            onChange={handleNameButton}
+            required
+          />
+        </div>
         <div className="flex gap-5">
           <DroppableComboArea
             onButtonDrop={handleButtonDrop}
             onReturnButton={handleReturnButton}
+            updateCombos={updateCombos}
+            existingDroppedButtons={existingDroppedButtons}
+            isUpdate={isUpdate}
           />
           <ComboCardButtons
             selectedUser={selectedUser}
             onButtonDrop={handleButtonDrop}
-            removedButtons={removedButtons} 
+            removedButtons={removedButtons}
+            existingDroppedButtons={existingDroppedButtons}
+            onReturnButton={handleReturnButton}
           />
         </div>
       </CardContent>

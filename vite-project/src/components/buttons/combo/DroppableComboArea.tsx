@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDrop } from "react-dnd";
 import { CardDescription } from "@/components/ui/card";
 import { ButtonInterface } from "../buttonContext/ButtonsContext";
@@ -35,26 +35,43 @@ const renderButtonByType = (button: ButtonInterface | null) => {
 
 interface DroppableComboAreaProps {
   onButtonDrop: (button: ButtonInterface) => void;
-  onReturnButton: (button: ButtonInterface) => void; // Função para retornar o botão
+  onReturnButton: (button: ButtonInterface) => void;
+  updateCombos: (droppedButtons: (ButtonInterface | null)[]) => void;
+  existingDroppedButtons: (ButtonInterface | null)[]; // Recebe os botões existentes
+  isUpdate?: boolean;
 }
 
 export default function DroppableComboArea({
   onButtonDrop,
   onReturnButton,
+  updateCombos,
+  existingDroppedButtons,
+  isUpdate = false,
 }: DroppableComboAreaProps) {
-  const [droppedButtons, setDroppedButtons] = useState<
-    (ButtonInterface | null)[]
-  >([null, null, null, null]);
+  const [droppedButtons, setDroppedButtons] = useState<(ButtonInterface | null)[]>([
+    null,
+    null,
+    null,
+    null,
+  ]);
+
+  // Carrega os botões existentes ao montar o componente se estiver em modo de atualização
+  useEffect(() => {
+    if (isUpdate) {
+      setDroppedButtons(existingDroppedButtons);
+    }
+  }, [isUpdate]);
 
   const handleReturnButton = (index: number) => {
     const button = droppedButtons[index];
     if (button) {
-      onReturnButton(button); // Retorna o botão ao clicar no "X"
       setDroppedButtons((prev) => {
         const newButtons = [...prev];
-        newButtons[index] = null;
+        newButtons[index] = null; // Remove o botão da área de drop
+        updateCombos(newButtons); // Atualiza o estado dos combos
         return newButtons;
       });
+      onReturnButton(button); // Adiciona o botão de volta à lista disponível
     }
   };
 
@@ -62,13 +79,18 @@ export default function DroppableComboArea({
     return useDrop({
       accept: "button",
       drop: (item: ButtonInterface) => {
+        if (droppedButtons[index]) {
+          return null; // Se já houver um botão, não permite soltar outro
+        }
         setDroppedButtons((prev) => {
           const newButtons = [...prev];
           newButtons[index] = item;
+          updateCombos(newButtons);
           return newButtons;
         });
-        onButtonDrop(item); // Remove da lista ao soltar
+        onButtonDrop(item); // Remove da lista de disponíveis ao soltar
       },
+      canDrop: () => !droppedButtons[index], // Permite soltar apenas se a posição estiver vazia
     })[1];
   };
 
@@ -76,14 +98,14 @@ export default function DroppableComboArea({
     <div className="w-[50%]">
       <h1>Criação de combo</h1>
       <CardDescription>Arraste o botão desejado para a posição</CardDescription>
-      <div className=" py-2 gap-3">
+      <div className="py-2 gap-3">
         {droppedButtons.map((button, index) => (
           <div
             key={index}
             ref={createDropHandler(index)}
             className="relative mb-2 w-full h-[80px] outline outline-2 border-xs border-muted outline-muted text-muted-foreground flex items-center"
           >
-            <div className="w-full flex justify-center">Posição 1</div>
+            <div className="w-full flex justify-center">Posição {index + 1}</div>
             {button ? (
               <div className="w-full flex justify-center">
                 {renderButtonByType(button)}
