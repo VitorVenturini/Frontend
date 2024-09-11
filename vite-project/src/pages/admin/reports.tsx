@@ -347,7 +347,7 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
             <div className="flex items-end justify-end">
               <TabsContent value="RptSensors" className="flex gap-2">
                 <p className="flex items-center text-[12px]">Export:</p>
-                  <PdfGerate dados={dataReport.chart} />
+                  <PdfGerate dados={dataReport.chart} keys={dataReport.keys} />
                 <Button variant="ghost" title="XLS" disabled={dataReport.chart.length === 0 ? true : false}>
                   <Sheet />
                 </Button>

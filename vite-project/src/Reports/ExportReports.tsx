@@ -1,119 +1,135 @@
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import { Margin, usePDF } from "react-to-pdf";
-import logoWecom from "../assets/10991348.jpg";
-import { GraficoExport } from "@/components/charts/lineChart";
 import { Button } from "@/components/ui/button";
 import { FileText } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Checkbox } from "@/components/ui/checkbox";
+import { GraficoExport } from "@/components/charts/lineChartExport";
+import logoWecom from "../assets/10991348.jpg";
 
 interface PdfProps {
   dados?: any[];
-
+  keys?: string[];
+  checkedKeys?: { [key: string]: boolean };
 }
 
-export function PdfGerate({ dados }: PdfProps) {
+export function PdfGerate({ dados, keys }: PdfProps) {
   const targetRef = useRef<HTMLDivElement>(null);
+  const [checkedKeys, setCheckedKeys] = useState<{ [key: string]: boolean }>(
+    {}
+  );
+
+  useEffect(() => {
+    if (keys) {
+      setCheckedKeys(
+        keys.reduce((acc, key) => ({ ...acc, [key]: true }), {})
+      );
+    }
+  }, [keys]);
 
   const openInNewTab = () => {
     const newWindow = window.open("", "_blank", "width=1200,height=900");
-    
-
     if (newWindow) {
-      // Cria um div para renderizar o React na nova janela
       const div = newWindow.document.createElement("div");
       newWindow.document.body.appendChild(div);
-
-      // Renderiza o aplicativo React na nova janela
-      const root = ReactDOM.createRoot(div);
-      root.render(<ExampleUsePDF dados={dados}  toPDF={toPDF} />);
-
-      // Estilização da nova janela (opcional)
-      const style = newWindow.document.createElement("style");
-      style.innerHTML = `
-        body {
-          font-family: Arial, sans-serif;
-          margin: 20px;
-        }
-        .card-container {
-          margin-bottom: 20px;
-        }
-        .card-image {
-          width: 100%;
-          max-width: 800px;
-        }
+      ReactDOM.createRoot(div).render(
+        <ExampleUsePDF dados={dados} checkedKeys={checkedKeys || {}} toPDF={toPDF} />
+      );
+      newWindow.document.head.appendChild(
+        document.createElement("style")
+      ).textContent = `
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .card-image { width: 100%; max-width: 800px; }
       `;
-      newWindow.document.head.appendChild(style);
     }
   };
 
   const { toPDF } = usePDF({
-    method: "save", // ou 'save', dependendo do comportamento desejado
+    method: "open",
     filename: "usepdf-example.pdf",
     page: { margin: Margin.MEDIUM, orientation: "portrait" },
     ref: targetRef,
   });
 
+  const handleCheckedChange = (key: string, checked: boolean) => {
+    setCheckedKeys((prev) => ({ ...prev, [key]: checked }));
+  };
+
+  const extractedKeys = keys?.filter(
+    (key) => !["date", "sensor_name", "deveui", "id"].includes(key)
+  );
+
   return (
     <>
-      {/* Conteúdo que será gerado no PDF */}
       <div ref={targetRef} style={{ display: "none" }}>
-        <ExampleUsePDF dados={dados} />
+        <ExampleUsePDF dados={dados} checkedKeys={checkedKeys || {}} />
       </div>
 
-      {/* Botão para abrir o conteúdo em uma nova aba */}
-      <Button variant="ghost" title="PDF" onClick={openInNewTab} disabled={dados?.length === 0 ? true : false}>
-        <FileText />
-      </Button>
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button variant="ghost" disabled={dados?.length === 0}>
+            <FileText />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-56">
+          <div className="flex justify-between items-center">
+            <h1>Filtro</h1>
+
+            <Button
+              variant="ghost"
+              title="PDF"
+              onClick={openInNewTab}
+              disabled={!dados?.length}
+            >
+              <FileText />
+            </Button>
+          </div>
+
+          {extractedKeys?.map((key) => (
+            <div key={key} className="flex gap-2 items-center">
+              <Checkbox
+                id={key}
+                checked={checkedKeys[key] || false} 
+                onCheckedChange={(checked) =>
+                  handleCheckedChange(key, !!checked)
+                }
+              />
+              <label htmlFor={key}>{key}</label>
+            </div>
+          ))}
+        </PopoverContent>
+      </Popover>
     </>
   );
 }
 
-interface ExampleUsePDFProps extends PdfProps {
-  toPDF?: () => void;
-}
+const ExampleUsePDF = ({
+  dados,
+  checkedKeys,
+  toPDF,
+}: PdfProps & { toPDF?: () => void }) => (
+  <Container>
+    <Card dados={dados} checkedKeys={checkedKeys || {}} /> {/* Fallback para objeto vazio */}
+    <button onClick={toPDF}>Gerar PDF</button>
+  </Container>
+);
 
-const ExampleUsePDF = ({ dados, toPDF }: ExampleUsePDFProps) => {
-  return (
-    <Container>
-      <Card title="usePDF hook example" dados={dados} />
-      {/* Botão para gerar o PDF */}
-      <button onClick={toPDF}>Gerar PDF</button>
-    </Container>
-  );
-};
+const Container = ({ children }: { children: React.ReactNode }) => (
+  <div className="container">{children}</div>
+);
 
-type ContainerProps = {
-  children: React.ReactNode;
-};
-
-const Container = ({ children }: ContainerProps) => {
-  return <div className="container">{children}</div>;
-};
-
-interface CardProps extends PdfProps {
-  title?: string;
-}
-
-const Card = ({ dados }: CardProps) => {
-  
-  return (
-    <div className="card-container">
-      {/* ALTERAR SOMENTE ABAIXO */}
-      <img src={logoWecom} alt="Sample" className="card-image" />
-      <h2 className="card-title text-black"></h2>
-      <p className="card-paragraph text-black">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla eget
-        libero quam. Fusce efficitur, lectus ac commodo maximus, neque augue
-        tincidunt tellus, id dictum odio eros ac nulla.
-      </p>
-      <p className="card-paragraph text-black">
-        Vivamus at urna sit amet justo auctor vestibulum ut nec nisl. Sed auctor
-        augue eget libero tincidunt, ut dictum libero facilisis. Phasellus non
-        libero at nisi eleifend tincidunt a eget ligula.
-      </p>
-      {/* Gráfico a ser exportado no PDF */}
-      
-      <GraficoExport chartData={dados as any} />
-    </div>
-  );
-};
+const Card = ({ dados, checkedKeys }: PdfProps) => (
+  <div className="flex">
+    <img src={logoWecom} alt="Sample" className="card-image" />
+    <h2 className="card-title text-black">usePDF Example</h2>
+    <p className="card-paragraph text-black">
+      Vivamus at urna sit amet justo auctor vestibulum ut nec nisl.
+    </p>
+    <GraficoExport chartData={dados as any} checkedKeys={checkedKeys || {}} />
+  </div>
+);
