@@ -79,10 +79,11 @@ export default function ComboCardButtons({
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
       .toLowerCase();
+  
     return (
       normalizedButtonName.includes(normalizedFilter) &&
-      button.button_type !== "combo" &&
-      button.button_type !== "sensor"
+      (button.page === "0" ||
+        (button.button_type !== "sensor" && button.page !== "0" && button.button_type !== "combo"))
     );
   });
 

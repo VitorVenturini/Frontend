@@ -1,6 +1,13 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { CartesianGrid, LabelList, Line, LineChart, XAxis,YAxis } from "recharts"
+import {
+  CartesianGrid,
+  LabelList,
+  Line,
+  LineChart,
+  XAxis,
+  YAxis,
+} from "recharts";
 
 import {
   Card,
@@ -43,14 +50,15 @@ export function SensorGraph({ chartData }: SensorGraphProps) {
   const [keys, setKeys] = useState<string[]>([]);
   const [actionExecDevice, setActionExecDevice] = useState("");
   const { sensors } = useSensors();
-  const [minMaxValues, setMinMaxValues] = useState<[number, number] | null>(null);
+  const [minMaxValues, setMinMaxValues] = useState<[number, number] | null>(
+    null
+  );
 
   // Função para gerar uma cor baseada em um índice
   const generateColor = (index: number): string => {
     const hue = (index * 137.5) % 360; // Distribui cores de forma uniforme
     return `hsl(${hue}, 70%, 50%)`;
   };
-
 
   useEffect(() => {
     if (chartData.length > 0) {
@@ -94,28 +102,52 @@ export function SensorGraph({ chartData }: SensorGraphProps) {
     setActionExecDevice(value);
   };
   return (
-    <Card className="w-full   lg:h-[200px] xl:h-[250px] xl2:h-[300px] xl3:h-[370px] xl4:h-[450px] relative
-     ">
+    <Card
+      className="w-full   lg:h-[200px] xl:h-[250px] xl2:h-[300px] xl3:h-[370px] xl4:h-[450px] relative
+     "
+    >
       <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
         <div className="flex flex-1 justify-center gap-1 px-2 py-2 ">
-      
-          {keys.map((key) => {
-            return (
-              <button
-                key={key}
-                data-active={activeChart === key}
-                className="flex flex-1 flex-col justify-center gap-1 border-t p-2  text-left  data-[active=true]:bg-muted/50"
-                onClick={() => setActiveChart(key)}
+          {keys.length >= 8 ? (
+            <>
+              <Label className="text-sm" htmlFor="framework" id="typeMeasure">
+                Tipo de medida
+              </Label>
+              <Select
+                value={activeChart as string}
+                onValueChange={setActiveChart}
               >
-                <span className="text-xs text-muted-foreground">
-                  {dataChartConfig[key]?.label}
-                </span>
-              </button>
-            );
-          })}
+                <SelectTrigger className="col-span-3" id="SelectTypeMeasure">
+                  <SelectValue placeholder="Selecione o tipo de medida" />
+                </SelectTrigger>
+                <SelectContent position="popper">
+                  {keys.map((key, index) => (
+                    <SelectItem key={index} value={key}>
+                      {dataChartConfig[key]?.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </>
+          ) : (
+            <>
+              {keys.map((key) => {
+                return (
+                  <button
+                    key={key}
+                    data-active={activeChart === key}
+                    className="flex flex-1 flex-col justify-center gap-1 border-t p-2  text-left  data-[active=true]:bg-muted/50"
+                    onClick={() => setActiveChart(key)}
+                  >
+                    <span className="text-xs text-muted-foreground">
+                      {dataChartConfig[key]?.label}
+                    </span>
+                  </button>
+                );
+              })}
+            </>
+          )}
         </div>
-       
-        
       </CardHeader>
       <CardContent className="h-full w-full  p-0">
         <ChartContainer
@@ -148,10 +180,14 @@ export function SensorGraph({ chartData }: SensorGraphProps) {
                 });
               }}
             />
-                        <YAxis
+            <YAxis
               tickLine={false}
               axisLine={false}
-              domain={minMaxValues ? [minMaxValues[0], minMaxValues[1]] : ['auto', 'auto']} // Define os limites do Y dinamicamente
+              domain={
+                minMaxValues
+                  ? [minMaxValues[0], minMaxValues[1]]
+                  : ["auto", "auto"]
+              } // Define os limites do Y dinamicamente
             />
 
             <ChartTooltip
@@ -162,9 +198,8 @@ export function SensorGraph({ chartData }: SensorGraphProps) {
                   labelFormatter={(value) => {
                     return new Date(value).toLocaleDateString("pt-BR", {
                       hour: "numeric",
-                     minute: "numeric",
-                     second: "numeric",
-
+                      minute: "numeric",
+                      second: "numeric",
                     });
                   }}
                 />
@@ -181,16 +216,15 @@ export function SensorGraph({ chartData }: SensorGraphProps) {
                 }}
                 activeDot={{
                   r: 6,
-                }}>
-                  <LabelList
-                position="top"
-                offset={12}
-                className="fill-foreground"
-                fontSize={12}
-              />
-                </Line>
-              
-              
+                }}
+              >
+                <LabelList
+                  position="top"
+                  offset={12}
+                  className="fill-foreground"
+                  fontSize={12}
+                />
+              </Line>
             )}
           </LineChart>
         </ChartContainer>

@@ -76,6 +76,22 @@ export interface SensorInterface {
   region_14?: string | null;
   region_15?: string | null;
   region_16?: string | null;
+  a_to_a?: string | null;
+  a_to_b?: string | null;
+  a_to_c?: string | null;
+  a_to_d?: string | null;
+  b_to_a?: string | null;
+  b_to_b?: string | null;
+  b_to_c?: string | null;
+  b_to_d?: string | null;
+  c_to_a?: string | null;
+  c_to_b?: string | null;
+  c_to_c?: string | null;
+  c_to_d?: string | null;
+  d_to_a?: string | null;
+  d_to_b?: string | null;
+  d_to_c?: string | null;
+  d_to_d?: string | null;  
   date?: string;
 }
 
