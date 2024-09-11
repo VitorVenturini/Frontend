@@ -21,7 +21,7 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
-import texts from "../../_data/texts.json";
+import texts from "@/_data/texts.json";
 import { useLanguage } from "@/components/language/LanguageContext";
 import { UserInterface, useUsers } from "../users/usersCore/UserContext";
 import { host } from "@/App";
@@ -82,7 +82,7 @@ export default function CardCreateAccount({
     if (!name) {
       toast({
         variant: "destructive",
-        description: "Nome é obrigatório",
+        description: texts[language].nameRequired,
       });
       isValid = false;
     }
@@ -90,7 +90,7 @@ export default function CardCreateAccount({
     if (!email) {
       toast({
         variant: "destructive",
-        description: "Email é obrigatório",
+        description: texts[language].emailRequired,
       });
       isValid = false;
     }
@@ -98,7 +98,7 @@ export default function CardCreateAccount({
     if (!password) {
       toast({
         variant: "destructive",
-        description: "Senha é obrigatória",
+        description: texts[language].passwordRequired,
       });
       isValid = false;
     }
@@ -106,7 +106,7 @@ export default function CardCreateAccount({
     if (!e164) {
       toast({
         variant: "destructive",
-        description: "SIP é obrigatório",
+        description: texts[language].SipRequired,
       });
       isValid = false;
     }
@@ -114,7 +114,7 @@ export default function CardCreateAccount({
     if (!type) {
       toast({
         variant: "destructive",
-        description: "Tipo de conta é obrigatório",
+        description: texts[language].accountTypeRequired,
       });
       isValid = false;
     }
@@ -126,7 +126,7 @@ export default function CardCreateAccount({
     if (password.length < 6) {
       toast({
         variant: "destructive",
-        description: "A senha deve ter pelo menos 6 caracteres",
+        description: texts[language].complexPasswordRequired,
       });
       return false;
     }
@@ -135,7 +135,7 @@ export default function CardCreateAccount({
     if (!specialCharacterRegex.test(password)) {
       toast({
         variant: "destructive",
-        description: "A senha deve conter pelo menos um caractere especial",
+        description: texts[language].specialCharacterRequired,
       });
       return false;
     }
@@ -203,7 +203,7 @@ export default function CardCreateAccount({
         if (data.error === "emailDuplicated") {
           toast({
             variant: "destructive",
-            description: "Email já está em uso",
+            description: texts[language].emailInUse,
           });
         } else {
           toast({
@@ -214,7 +214,7 @@ export default function CardCreateAccount({
         throw new Error(data.error);
       } else {
         toast({
-          description: "Conta criada com sucesso",
+          description: texts[language].accountCreated,
         });
         onSuccess?.();
         wss?.sendMessage({
@@ -269,12 +269,12 @@ export default function CardCreateAccount({
           <div className="grid gap-4 py-4 ">
             <div className="grid grid-cols-5 items-center gap-4">
               <Label className="text-end" htmlFor="name">
-                Nome
+                {texts[language].labelName}
               </Label>
               <Input
                 className="col-span-3"
                 id="name"
-                placeholder="Nome"
+                placeholder={texts[language].labelName}
                 type="text"
                 value={name}
                 onChange={handleNameChange}
@@ -282,12 +282,12 @@ export default function CardCreateAccount({
             </div>
             <div className="grid grid-cols-5 items-center gap-4">
               <Label className="text-end" htmlFor="email">
-                Email
+              {texts[language].labelEmail}
               </Label>
               <Input
                 className="col-span-3"
                 id="email"
-                placeholder="Email"
+                placeholder=  {texts[language].labelEmail}
                 type="email"
                 value={email}
                 onChange={handleEmailChange}
@@ -296,39 +296,39 @@ export default function CardCreateAccount({
 
             <div className="grid grid-cols-5 items-center gap-4">
               <Label className="text-end" htmlFor="password">
-                Senha
+              {texts[language].labelPassword}
               </Label>
               <Input
                 className="col-span-3"
                 id="password"
                 type="password"
-                placeholder="Senha"
+                placeholder=  {texts[language].labelPassword}
                 value={password}
                 onChange={handlePasswordChange}
               />
             </div>
             <div className="grid grid-cols-5 items-center gap-4">
               <Label className="text-end" htmlFor="type">
-                Tipo de conta
+              {texts[language].labelTypeOfAccount}
               </Label>
               <Select value={type} onValueChange={handleTypeChange}>
                 <SelectTrigger className="col-span-3" id="type">
-                  <SelectValue placeholder="Selecione o tipo de conta" />
+                  <SelectValue placeholder=  {texts[language].labelSelectTypeOfAccount} />
                 </SelectTrigger>
                 <SelectContent position="popper">
-                  <SelectItem value="admin">Admin</SelectItem>
-                  <SelectItem value="user">Usuario</SelectItem>
+                  <SelectItem value="admin">{texts[language].labelAdmin}</SelectItem>
+                  <SelectItem value="user">{texts[language].labelUser}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
           <div className="grid grid-cols-5 items-center gap-4">
             <Label className="text-end " htmlFor="type">
-              SIP
+              {texts[language].labelSip}
             </Label>
             <Select value={e164} onValueChange={handleSetE164}>
               <SelectTrigger className="col-span-3" id="type">
-                <SelectValue placeholder="Select a SIP" />
+                <SelectValue placeholder=  {texts[language].labelSelectSip}/>
               </SelectTrigger>
               <SelectContent>
                 {availableSIPS?.map((sip) => {
@@ -347,13 +347,13 @@ export default function CardCreateAccount({
       <CardFooter className="flex justify-end">
         {!isCreating && (
           <Button type="submit" onSubmit={handleFormSubmit}>
-            {isUpdate ? "Atualizar " : "Criar "} Conta
+            {isUpdate ? <> {texts[language].labelUpdate}</> : <> {texts[language].labelCreate}</>} {texts[language].labelAccount}
           </Button>
         )}
         {isCreating && (
           <Button disabled>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            {isUpdate ? "Atualizar " : "Criar "} Conta
+            {isUpdate ? <> {texts[language].labelUpdate}</> : <> {texts[language].labelCreate}</>} {texts[language].labelAccount}
           </Button>
         )}
       </CardFooter>
