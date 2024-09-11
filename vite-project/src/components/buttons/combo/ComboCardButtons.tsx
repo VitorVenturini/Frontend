@@ -79,10 +79,11 @@ export default function ComboCardButtons({
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
       .toLowerCase();
+  
     return (
       normalizedButtonName.includes(normalizedFilter) &&
-      button.button_type !== "combo" &&
-      button.button_type !== "sensor"
+      (button.page === "0" ||
+        (button.button_type !== "sensor" && button.page !== "0" && button.button_type !== "combo"))
     );
   });
 
@@ -109,7 +110,7 @@ export default function ComboCardButtons({
   };
 
   return (
-    <div className="flex flex-col w-[50%]">
+    <div className="flex flex-col w-[50%] h-[420px]">
       <h1>Selecione o botão</h1>
       <CardDescription>
         Arraste para o lado o botão na posição desejada
@@ -127,7 +128,7 @@ export default function ComboCardButtons({
         value={filteredButtons}
         onChange={handleFilterButtons}
       />
-      <ScrollArea className="h-[250px] border border-input mt-2 w-full">
+      <ScrollArea className="h-full border border-input mt-2 w-full">
         <div className="w-full flex flex-wrap gap-2">
           {buttonsToShow.map((button: ButtonInterface) => (
             <DraggableButton key={button.id} button={button}>

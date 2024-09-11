@@ -35,11 +35,14 @@ import { useToast } from "../ui/use-toast";
 import { useUsers } from "../users/usersCore/UserContext";
 import { host } from "@/App";
 import { useAccount } from "./AccountContext";
+import { useLanguage } from "../language/LanguageContext";
+import texts from "@/_data/texts.json"
 interface DeleteUsersProps {
   id: number;
 }
 export default function DeleteUsers({ id }: DeleteUsersProps) {
   const { toast } = useToast();
+  const {language} = useLanguage()
   const { deleteUser } = useUsers();
   const account = useAccount();
   const deleteUsers = async (id: number) => {
@@ -64,7 +67,7 @@ export default function DeleteUsers({ id }: DeleteUsersProps) {
   const handleDelete = () => {
     deleteUsers(id);
     toast({
-      description: "Conta deletada com sucesso",
+      description: texts[language].accountDeleted,
     });
   };
   return (
@@ -76,15 +79,16 @@ export default function DeleteUsers({ id }: DeleteUsersProps) {
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Voce tem certeza?</AlertDialogTitle>
+          <AlertDialogTitle>{texts[language].labelAreYouSure}</AlertDialogTitle>
           <AlertDialogDescription>
-            Ao apertar em confirmar este usuário será deletado
+          {texts[language].labelUserWillBeDeleted}
+      
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+          <AlertDialogCancel>{texts[language].cancel}</AlertDialogCancel>
           <AlertDialogAction onClick={handleDelete}>
-            Confirmar
+            {texts[language].labelConfirm}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

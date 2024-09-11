@@ -7,6 +7,7 @@ import CommandButton from "../command/CommandButton";
 import NumberButton from "../number/NumberButton";
 import UserButton from "../user/UserButton";
 import { commonClasses } from "../ButtonsComponent";
+import { useToast } from "@/components/ui/use-toast";
 
 const renderButtonByType = (button: ButtonInterface | null) => {
   if (!button) return null;
@@ -47,27 +48,96 @@ export default function DroppableComboArea({
   existingDroppedButtons,
   isUpdate = false,
 }: DroppableComboAreaProps) {
+  const { toast } = useToast();
   const [droppedButtons, setDroppedButtons] = useState<
     (ButtonInterface | null)[]
   >([null, null, null, null]);
 
-  // Carrega os botões existentes ao montar o componente se estiver em modo de atualização
   useEffect(() => {
     if (isUpdate) {
       setDroppedButtons(existingDroppedButtons);
     }
   }, [isUpdate]);
 
+  const countButtonsByPosition = (position: "1" | "2", page: string) => {
+    return droppedButtons.filter(
+      (btn) =>
+        btn?.position_y === position &&
+        btn?.page === page &&
+        !["alarm", "command"].includes(btn?.button_type || "")
+    ).length;
+  };
+  
+  const canDropButton = (button: ButtonInterface, index: number) => {
+    const countTopPage0 = countButtonsByPosition("1", "0");
+    const countBottomPage0 = countButtonsByPosition("2", "0");
+  
+    // Verifica se o botão já existe na posição "Em Cima" (position_y === "1") e página "0"
+    if (button.position_y === "1" && button.page === "0" && countTopPage0 >= 1) {
+      toast({
+        description: "Não pode adicionar mais de 1 botão na posição Em Cima",
+      });
+      return false;
+    }
+  
+    // Verifica se já existe um botão qualquer na posição "Em Baixo" (que não seja number ou user)
+    const hasNonNumberOrUserBottomButton = droppedButtons.some(
+      (btn) =>
+        btn?.position_y === "2" &&
+        btn?.page === "0" &&
+        !["number", "user", "alarm", "command"].includes(btn?.button_type || "")
+    );
+  
+    // Se já houver um botão não "number" ou "user" na posição "Em Baixo", bloquear a adição de "number" ou "user"
+    if (
+      button.position_y === "2" &&
+      ["number", "user"].includes(button.button_type) &&
+      hasNonNumberOrUserBottomButton
+    ) {
+      toast({
+        description: "Não pode adicionar mais de 1 botão na posição Em Baixo",
+      });
+      return false;
+    }
+  
+    // Verifica se já existe um botão "number" ou "user" e tenta adicionar outro tipo de botão
+    const hasNumberOrUserBottom = droppedButtons.some(
+      (btn) =>
+        btn?.position_y === "2" &&
+        ["number", "user"].includes(btn?.button_type || "")
+    );
+  
+    // Se houver botões "number" ou "user", impedir a adição de outros tipos de botão
+    if (
+      button.position_y === "2" &&
+      !["number", "user", "alarm", "command"].includes(button.button_type) &&
+      hasNumberOrUserBottom
+    ) {
+      toast({
+        description: "Não pode adicionar mais de 1 botão na posição Em Baixo",
+      });
+      return false;
+    }
+  
+    // Para botões do tipo "alarm" ou "command", permitir sempre a adição
+    if (["alarm", "command"].includes(button.button_type)) {
+      return true;
+    }
+  
+    return true;
+  };
+  
+  
   const handleReturnButton = (index: number) => {
     const button = droppedButtons[index];
     if (button) {
       setDroppedButtons((prev) => {
         const newButtons = [...prev];
-        newButtons[index] = null; // Remove o botão da área de drop
-        updateCombos(newButtons); // Atualiza o estado dos combos
+        newButtons[index] = null;
+        updateCombos(newButtons);
         return newButtons;
       });
-      onReturnButton(button); // Adiciona o botão de volta à lista disponível
+      onReturnButton(button);
     }
   };
 
@@ -76,17 +146,20 @@ export default function DroppableComboArea({
       accept: "button",
       drop: (item: ButtonInterface) => {
         if (droppedButtons[index]) {
-          return null; // Se já houver um botão, não permite soltar outro
+          return null;
         }
-        setDroppedButtons((prev) => {
-          const newButtons = [...prev];
-          newButtons[index] = item;
-          updateCombos(newButtons);
-          return newButtons;
-        });
-        onButtonDrop(item); // Remove da lista de disponíveis ao soltar
+
+        if (canDropButton(item, index)) {
+          setDroppedButtons((prev) => {
+            const newButtons = [...prev];
+            newButtons[index] = item;
+            updateCombos(newButtons);
+            return newButtons;
+          });
+          onButtonDrop(item);
+        }
       },
-      canDrop: () => !droppedButtons[index], // Permite soltar apenas se a posição estiver vazia
+      canDrop: () => !droppedButtons[index],
     })[1];
   };
 
@@ -99,7 +172,7 @@ export default function DroppableComboArea({
           <div
             key={index}
             ref={createDropHandler(index)}
-            className="relative mb-2 w-full h-[80px] outline outline-2 border-xs border-muted outline-muted text-muted-foreground flex items-center"
+            className="relative mb-2 w-full h-[70px] xl:h-[77px] xl2:h-[90px] xl3:h-[112px] xl4:h-[139px] outline outline-2 border-xs border-muted outline-muted text-muted-foreground flex items-center"
           >
             <div className="w-full flex flex-col justify-center items-center">
               <div>Posição {index + 1}</div>
@@ -123,14 +196,18 @@ export default function DroppableComboArea({
             </div>
 
             {button ? (
-              <div className="w-full flex justify-center">
-                {renderButtonByType(button)}
-                <button
-                  className="absolute top-1 right-1 text-red-500"
-                  onClick={() => handleReturnButton(index)}
-                >
-                  X
-                </button>
+              <div className="relative w-full flex justify-center items-center">
+                <div className="relative inline-block">
+                  <div className="pointer-events-none">
+                    {renderButtonByType(button)}
+                  </div>
+                  <button
+                    className="absolute top-[-8px] right-[-8px] bg-gray-200 text-black rounded-full w-6 h-6 flex justify-center items-center "
+                    onClick={() => handleReturnButton(index)}
+                  >
+                    ✖
+                  </button>
+                </div>
               </div>
             ) : (
               <div className="w-full flex justify-center">
