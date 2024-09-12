@@ -5,9 +5,43 @@
     <link rel="icon" type="image/svg+xml" href="./src/assets/iconCore.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>C.O.R.E</title>
+    <style>
+     *{
+      margin: 0;
+      border: 0;
+     }
+      #loader {
+        position: fixed;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: rgb(0, 0, 0);
+        z-index: 9999;
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <!-- Loader que será exibido durante o carregamento -->
+    <div id="loader">
+      <img src="./src/assets/LogoCore.svg" alt="Carregando..." width="50%" />
+    </div>
+
+    <!-- React root -->
+    <div id="root" style="display: none;"></div>
+
     <script type="module" src="/src/main.tsx"></script>
+
+    <script>
+      // Lógica para simular o carregamento e esconder o loader após 4 segundos
+      document.addEventListener("DOMContentLoaded", function () {
+        setTimeout(function () {
+          // Oculta o loader e mostra o app React
+          document.getElementById('loader').style.display = 'none';
+          document.getElementById('root').style.display = 'block';
+        }, 4000);
+      });
+    </script>
   </body>
 </html>

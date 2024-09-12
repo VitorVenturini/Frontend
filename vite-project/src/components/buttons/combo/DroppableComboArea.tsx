@@ -102,7 +102,7 @@ export default function DroppableComboArea({
 
   return (
     <div className="w-[50%]">
-      <div className="grid grid-cols-2">
+      <div className="grid grid-cols-2 gap-3">
         {/* Div esquerda em cima */}
         <div
           ref={createDropHandler(0, "top-left")}
@@ -112,17 +112,19 @@ export default function DroppableComboArea({
           onClick={() => onSelectDropArea("top-left")}
         >
           {droppedButtons[0] ? (
-            <div className="relative inline-block z-50">
-              {renderButtonByType(droppedButtons[0])}
-              <button
-                className="z-200 absolute top-[-8px] right-[-8px] bg-gray-200 text-black rounded-full w-6 h-6 flex justify-center items-center"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleReturnButton(0);
-                }}
-              >
-                ✖
-              </button>
+            <div className="relative w-full flex justify-center items-center">
+              <div className="relative inline-block z-50">
+                {renderButtonByType(droppedButtons[0])}
+                <button
+                  className="z-200 absolute top-[-8px] right-[-8px] bg-gray-200 text-black rounded-full w-6 h-6 flex justify-center items-center"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleReturnButton(0);
+                  }}
+                >
+                  ✖
+                </button>
+              </div>
             </div>
           ) : (
             <div> Div Esquerda (Em Cima) </div>
