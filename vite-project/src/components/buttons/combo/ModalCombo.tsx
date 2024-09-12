@@ -85,10 +85,11 @@ export default function ModalCombo({
 
   const { buttons } = useButtons();
 
-  const [dragAndDropButtons, setDragAndDropButtons] = useState<
-    ButtonInterface[]
-  >([]);
   const [removedButtons, setRemovedButtons] = useState<ButtonInterface[]>([]);
+
+  const [droppedButtons, setDroppedButtons] = useState<
+    (ButtonInterface | null)[]
+  >([null, null, null, null]);
 
   const handleButtonDrop = (button: ButtonInterface) => {
     setRemovedButtons((prev) => [...prev, button]);

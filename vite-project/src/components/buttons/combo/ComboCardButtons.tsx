@@ -12,6 +12,7 @@ import UserButton from "../user/UserButton";
 import { useDrag } from "react-dnd";
 import { Skeleton } from "@/components/ui/skeleton";
 import { commonClasses } from "../ButtonsComponent";
+import { toast, useToast } from "@/components/ui/use-toast";
 
 interface DraggableButtonProps {
   button: ButtonInterface;
@@ -61,7 +62,7 @@ export default function ComboCardButtons({
 }: ComboCardButtonsProps) {
   const [filteredButtons, setFilterButtons] = useState("");
   const { buttons } = useButtons();
-
+  const { toast } = useToast();
   const handleFilterButtons = (event: ChangeEvent<HTMLInputElement>) => {
     setFilterButtons(event.target.value);
   };
@@ -141,6 +142,16 @@ export default function ComboCardButtons({
     ));
   };
 
+  const handleClickButton = (button: ButtonInterface) => {
+    if (!selectedDropArea) {
+      toast({
+        description: "Selecione uma área para colocar o botão",
+      });
+      return;
+    }
+   // onButtonDrop(button); deixar comentado por enquanto
+  };
+
   return (
     <div className="flex flex-col w-[50%] h-[420px]">
       <h1>Selecione o botão</h1>
@@ -165,7 +176,13 @@ export default function ComboCardButtons({
           {buttonsToShow.length > 0
             ? buttonsToShow.map((button: ButtonInterface) => (
                 <DraggableButton key={button.id} button={button}>
-                  {renderButtonContent(button)}
+                  <div
+                    onClick={() => {
+                      handleClickButton(button);
+                    }}
+                  >
+                    {renderButtonContent(button)}
+                  </div>
                 </DraggableButton>
               ))
             : renderSkeletons(buttonsFromUser.length)}

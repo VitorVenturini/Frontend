@@ -29,19 +29,8 @@
     </div>
 
     <!-- React root -->
-    <div id="root" style="display: none;"></div>
+    <div id="root"></div>
 
     <script type="module" src="/src/main.tsx"></script>
-
-    <script>
-      // Lógica para simular o carregamento e esconder o loader após 4 segundos
-      document.addEventListener("DOMContentLoaded", function () {
-        setTimeout(function () {
-          // Oculta o loader e mostra o app React
-          document.getElementById('loader').style.display = 'none';
-          document.getElementById('root').style.display = 'block';
-        }, 4000);
-      });
-    </script>
   </body>
 </html>
