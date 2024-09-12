@@ -10,6 +10,7 @@ import CommandButton from "../command/CommandButton";
 import NumberButton from "../number/NumberButton";
 import UserButton from "../user/UserButton";
 import { useDrag } from "react-dnd";
+import { Skeleton } from "@/components/ui/skeleton";
 import { commonClasses } from "../ButtonsComponent";
 
 interface DraggableButtonProps {
@@ -47,6 +48,7 @@ interface ComboCardButtonsProps {
   removedButtons: ButtonInterface[]; // Botões removidos
   existingDroppedButtons: (ButtonInterface | null)[]; // Botões na área de drop
   onReturnButton: (button: ButtonInterface) => void; // Callback para retornar botão removido à lista de disponíveis
+  selectedDropArea: string | null; // Adicionada prop para saber qual área foi clicada
 }
 
 export default function ComboCardButtons({
@@ -55,21 +57,30 @@ export default function ComboCardButtons({
   removedButtons,
   existingDroppedButtons,
   onReturnButton,
+  selectedDropArea, // Recebe a área selecionada
 }: ComboCardButtonsProps) {
   const [filteredButtons, setFilterButtons] = useState("");
   const { buttons } = useButtons();
-
-  // Filtra os botões do usuário selecionado, exceto os removidos
-  const availableButtons = buttons.filter(
-    (btn) =>
-      btn.button_user === selectedUser?.guid &&
-      !removedButtons.some((removed) => removed.id === btn.id) // Removidos da lista
-  );
 
   const handleFilterButtons = (event: ChangeEvent<HTMLInputElement>) => {
     setFilterButtons(event.target.value);
   };
 
+  const buttonsFromUser = buttons.filter((btn) => {
+    return btn.button_user === selectedUser?.guid;
+  });
+
+  // Filtra os botões do usuário selecionado, exceto os removidos
+  const availableButtons = buttonsFromUser.filter(
+    (btn) =>
+      !removedButtons.some((removed) => removed.id === btn.id) &&
+      (btn.page === "0" ||
+        (btn.button_type !== "sensor" &&
+          btn.page !== "0" &&
+          btn.button_type !== "combo")) // Removidos da lista
+  );
+
+  // Lógica para filtrar botões conforme a área selecionada
   const buttonsToShow = availableButtons.filter((button: ButtonInterface) => {
     const normalizedButtonName = button.button_name
       .normalize("NFD")
@@ -79,12 +90,27 @@ export default function ComboCardButtons({
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
       .toLowerCase();
-  
-    return (
-      normalizedButtonName.includes(normalizedFilter) &&
-      (button.page === "0" ||
-        (button.button_type !== "sensor" && button.page !== "0" && button.button_type !== "combo"))
-    );
+
+    // Aplica o filtro de texto
+    if (!normalizedButtonName.includes(normalizedFilter)) {
+      return false;
+    }
+
+    // Somente exibir botões após uma área ser selecionada
+    if (!selectedDropArea) return false;
+
+    // Filtra os botões conforme a área selecionada
+    if (selectedDropArea === "top-left") {
+      return button.page === "0" && button.position_y === "1";
+    } else if (selectedDropArea === "bottom-left") {
+      return button.page === "0" && button.position_y === "2";
+    } else if (selectedDropArea === "top-right") {
+      return button.page !== "0";
+    } else if (selectedDropArea === "bottom-right") {
+      return button.page !== "0";
+    }
+
+    return true;
   });
 
   const renderButtonContent = (button: ButtonInterface) => {
@@ -109,11 +135,17 @@ export default function ComboCardButtons({
     }
   };
 
+  const renderSkeletons = (length: number) => {
+    return Array.from({ length }).map((_, index) => (
+      <Skeleton key={index} className={commonClasses} />
+    ));
+  };
+
   return (
     <div className="flex flex-col w-[50%] h-[420px]">
       <h1>Selecione o botão</h1>
       <CardDescription>
-        Arraste para o lado o botão na posição desejada
+        Selecione uma área e arraste o botão para a posição desejada
       </CardDescription>
       <Label
         className="text-end flex w-full items-center justify-center h-[30px]"
@@ -129,12 +161,14 @@ export default function ComboCardButtons({
         onChange={handleFilterButtons}
       />
       <ScrollArea className="h-full border border-input mt-2 w-full">
-        <div className="w-full flex flex-wrap gap-2">
-          {buttonsToShow.map((button: ButtonInterface) => (
-            <DraggableButton key={button.id} button={button}>
-              {renderButtonContent(button)}
-            </DraggableButton>
-          ))}
+        <div className="w-full flex flex-wrap gap-2 m-1">
+          {buttonsToShow.length > 0
+            ? buttonsToShow.map((button: ButtonInterface) => (
+                <DraggableButton key={button.id} button={button}>
+                  {renderButtonContent(button)}
+                </DraggableButton>
+              ))
+            : renderSkeletons(buttonsFromUser.length)}
         </div>
       </ScrollArea>
     </div>
