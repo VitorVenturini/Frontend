@@ -9,9 +9,13 @@ function Main() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setTimeout(() => {
+    var loader = document.getElementById("loader");
+    if (loader) {
+      loader.style.display = "none";
+      var imgLogo = loader.children[0];
+      imgLogo.setAttribute("style", "display:none");
       setIsLoading(false);
-    }, 4000);
+    }
   }, []);
 
   return <BrowserRouter>{isLoading ? <Loader /> : <App />}</BrowserRouter>;

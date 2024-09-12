@@ -52,6 +52,8 @@ import { UserInterface } from "@/components/users/usersCore/UserContext";
 import DroppableComboArea from "./DroppableComboArea";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import { TouchBackend } from "react-dnd-touch-backend";
+import { isTouchDevice } from "@/components/utils/utilityFunctions";
 interface ButtonProps {
   clickedPosition: { i: number; j: number } | null;
   selectedUser: UserInterface | null;
@@ -79,13 +81,15 @@ export default function ModalCombo({
   const [isCreating, setIsCreating] = useState(false);
   const { toast } = useToast();
   const wss = useWebSocketData();
+  const [selectedDropArea, setSelectedDropArea] = useState<string | null>(null);
 
   const { buttons } = useButtons();
 
-  const [dragAndDropButtons, setDragAndDropButtons] = useState<
-    ButtonInterface[]
-  >([]);
   const [removedButtons, setRemovedButtons] = useState<ButtonInterface[]>([]);
+
+  const [droppedButtons, setDroppedButtons] = useState<
+    (ButtonInterface | null)[]
+  >([null, null, null, null]);
 
   const handleButtonDrop = (button: ButtonInterface) => {
     setRemovedButtons((prev) => [...prev, button]);
@@ -167,8 +171,9 @@ export default function ModalCombo({
       null,
   ];
 
+
   return (
-    <DndProvider backend={HTML5Backend}>
+    <DndProvider backend={isTouchDevice() ? TouchBackend : HTML5Backend}>
       <CardHeader>
         <CardTitle>
           {isUpdate ? "Atualização" : "Criação"} de Botões Combo
@@ -200,6 +205,8 @@ export default function ModalCombo({
             updateCombos={updateCombos}
             existingDroppedButtons={existingDroppedButtons}
             isUpdate={isUpdate}
+            onSelectDropArea={setSelectedDropArea}
+            selectedArea={selectedDropArea} // Adicione esta linha para passar a área selecionada
           />
           <ComboCardButtons
             selectedUser={selectedUser}
@@ -207,7 +214,7 @@ export default function ModalCombo({
             removedButtons={removedButtons}
             existingDroppedButtons={existingDroppedButtons}
             onReturnButton={handleReturnButton}
-        
+            selectedDropArea={selectedDropArea}
           />
         </div>
       </CardContent>

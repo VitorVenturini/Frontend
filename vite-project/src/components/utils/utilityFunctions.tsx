@@ -1,6 +1,13 @@
 import { ButtonInterface } from "../buttons/buttonContext/ButtonsContext";
 import { useState, useEffect } from "react";
 
+export const isTouchDevice = () => {
+  return (
+    'ontouchstart' in window || // Verifica se o evento de toque é suportado
+    navigator.maxTouchPoints > 0 
+  );
+};
+
 function getDegreeRange(direction: string) {
   switch (direction) {
     case "N":
@@ -24,7 +31,7 @@ function getDegreeRange(direction: string) {
   }
 }
 export function limitButtonName(name: string) {
-  return name.slice(0, 9);
+  return name.slice(0, 10);
 }
 
 function isWithinRange(value: number, min: number, max: number) {

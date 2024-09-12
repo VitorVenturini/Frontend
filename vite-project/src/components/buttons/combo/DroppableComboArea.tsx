@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useDrop } from "react-dnd";
-import { CardDescription } from "@/components/ui/card";
 import { ButtonInterface } from "../buttonContext/ButtonsContext";
 import AlarmButton from "../alarm/AlarmButton";
 import CommandButton from "../command/CommandButton";
@@ -39,6 +38,8 @@ interface DroppableComboAreaProps {
   updateCombos: (droppedButtons: (ButtonInterface | null)[]) => void;
   existingDroppedButtons: (ButtonInterface | null)[]; // Recebe os botões existentes
   isUpdate?: boolean;
+  onSelectDropArea: (area: string) => void; // Função para lidar com o clique nas divs
+  selectedArea: string | null; // Indica a área selecionada
 }
 
 export default function DroppableComboArea({
@@ -47,6 +48,8 @@ export default function DroppableComboArea({
   updateCombos,
   existingDroppedButtons,
   isUpdate = false,
+  onSelectDropArea,
+  selectedArea, // Nova prop para indicar área selecionada
 }: DroppableComboAreaProps) {
   const { toast } = useToast();
   const [droppedButtons, setDroppedButtons] = useState<
@@ -59,163 +62,158 @@ export default function DroppableComboArea({
     }
   }, [isUpdate]);
 
-  const countButtonsByPosition = (position: "1" | "2", page: string) => {
-    return droppedButtons.filter(
-      (btn) =>
-        btn?.position_y === position &&
-        btn?.page === page &&
-        !["alarm", "command"].includes(btn?.button_type || "")
-    ).length;
+  const handleDrop = (button: ButtonInterface, index: number) => {
+    if (droppedButtons[index]) {
+      return null; // Não permite substituir um botão já colocado
+    }
+
+    const newDroppedButtons = [...droppedButtons];
+    newDroppedButtons[index] = button;
+    setDroppedButtons(newDroppedButtons);
+    updateCombos(newDroppedButtons); // Atualiza o combo
+    onButtonDrop(button); // Dispara o evento de "drop"
   };
-  
-  const canDropButton = (button: ButtonInterface, index: number) => {
-    const countTopPage0 = countButtonsByPosition("1", "0");
-    const countBottomPage0 = countButtonsByPosition("2", "0");
-  
-    // Verifica se o botão já existe na posição "Em Cima" (position_y === "1") e página "0"
-    if (button.position_y === "1" && button.page === "0" && countTopPage0 >= 1) {
-      toast({
-        description: "Não pode adicionar mais de 1 botão na posição Em Cima",
-      });
-      return false;
-    }
-  
-    // Verifica se já existe um botão qualquer na posição "Em Baixo" (que não seja number ou user)
-    const hasNonNumberOrUserBottomButton = droppedButtons.some(
-      (btn) =>
-        btn?.position_y === "2" &&
-        btn?.page === "0" &&
-        !["number", "user", "alarm", "command"].includes(btn?.button_type || "")
-    );
-  
-    // Se já houver um botão não "number" ou "user" na posição "Em Baixo", bloquear a adição de "number" ou "user"
-    if (
-      button.position_y === "2" &&
-      ["number", "user"].includes(button.button_type) &&
-      hasNonNumberOrUserBottomButton
-    ) {
-      toast({
-        description: "Não pode adicionar mais de 1 botão na posição Em Baixo",
-      });
-      return false;
-    }
-  
-    // Verifica se já existe um botão "number" ou "user" e tenta adicionar outro tipo de botão
-    const hasNumberOrUserBottom = droppedButtons.some(
-      (btn) =>
-        btn?.position_y === "2" &&
-        ["number", "user"].includes(btn?.button_type || "")
-    );
-  
-    // Se houver botões "number" ou "user", impedir a adição de outros tipos de botão
-    if (
-      button.position_y === "2" &&
-      !["number", "user", "alarm", "command"].includes(button.button_type) &&
-      hasNumberOrUserBottom
-    ) {
-      toast({
-        description: "Não pode adicionar mais de 1 botão na posição Em Baixo",
-      });
-      return false;
-    }
-  
-    // Para botões do tipo "alarm" ou "command", permitir sempre a adição
-    if (["alarm", "command"].includes(button.button_type)) {
-      return true;
-    }
-  
-    return true;
+
+  const createDropHandler = (index: number, area: string) => {
+    return useDrop({
+      accept: "button",
+      drop: (item: ButtonInterface) => {
+        handleDrop(item, index);
+      },
+      canDrop: () => !droppedButtons[index] && area === selectedArea,
+      // permite soltar o botão se a posição estiver vazia
+    })[1];
   };
-  
-  
+
   const handleReturnButton = (index: number) => {
     const button = droppedButtons[index];
     if (button) {
-      setDroppedButtons((prev) => {
-        const newButtons = [...prev];
-        newButtons[index] = null;
-        updateCombos(newButtons);
-        return newButtons;
-      });
+      const newDroppedButtons = [...droppedButtons];
+      newDroppedButtons[index] = null;
+      setDroppedButtons(newDroppedButtons);
+      updateCombos(newDroppedButtons);
       onReturnButton(button);
     }
   };
 
-  const createDropHandler = (index: number) => {
-    return useDrop({
-      accept: "button",
-      drop: (item: ButtonInterface) => {
-        if (droppedButtons[index]) {
-          return null;
-        }
-
-        if (canDropButton(item, index)) {
-          setDroppedButtons((prev) => {
-            const newButtons = [...prev];
-            newButtons[index] = item;
-            updateCombos(newButtons);
-            return newButtons;
-          });
-          onButtonDrop(item);
-        }
-      },
-      canDrop: () => !droppedButtons[index],
-    })[1];
+  const getBorderClass = (area: string) => {
+    return selectedArea === area ? "border-red-500" : "border-muted";
   };
 
   return (
     <div className="w-[50%]">
-      <h1>Criação de combo</h1>
-      <CardDescription>Arraste o botão desejado para a posição</CardDescription>
-      <div className="py-2 gap-3">
-        {droppedButtons.map((button, index) => (
-          <div
-            key={index}
-            ref={createDropHandler(index)}
-            className="relative mb-2 w-full h-[70px] xl:h-[77px] xl2:h-[90px] xl3:h-[112px] xl4:h-[139px] outline outline-2 border-xs border-muted outline-muted text-muted-foreground flex items-center"
-          >
-            <div className="w-full flex flex-col justify-center items-center">
-              <div>Posição {index + 1}</div>
-              {button?.page === "0" ? (
-                <p className="text-sm">
-                  {button.position_y === "1"
-                    ? "Em Cima"
-                    : button.position_y === "2"
-                    ? "Em Baixo"
-                    : ""}
-                </p>
-              ) : (
-                <p className="text-sm">
-                  {button?.button_type === "number"
-                    ? "Em Baixo"
-                    : button?.button_type === "user"
-                    ? "Em Baixo"
-                    : ""}
-                </p>
-              )}
+      <div className="grid grid-cols-2 gap-3">
+        {/* Div esquerda em cima */}
+        <div
+          ref={createDropHandler(0, "top-left")}
+          className={`border-2 p-4 cursor-pointer relative h-[150px] ${getBorderClass(
+            "top-left"
+          )}`}
+          onClick={() => onSelectDropArea("top-left")}
+        >
+          {droppedButtons[0] ? (
+            <div className="relative w-full flex justify-center items-center">
+              <div className="relative inline-block z-50">
+                {renderButtonByType(droppedButtons[0])}
+                <button
+                  className="z-200 absolute top-[-8px] right-[-8px] bg-gray-200 text-black rounded-full w-6 h-6 flex justify-center items-center"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleReturnButton(0);
+                  }}
+                >
+                  ✖
+                </button>
+              </div>
             </div>
+          ) : (
+            <div> Div Esquerda (Em Cima) </div>
+          )}
+        </div>
 
-            {button ? (
-              <div className="relative w-full flex justify-center items-center">
-                <div className="relative inline-block">
-                  <div className="pointer-events-none">
-                    {renderButtonByType(button)}
-                  </div>
-                  <button
-                    className="absolute top-[-8px] right-[-8px] bg-gray-200 text-black rounded-full w-6 h-6 flex justify-center items-center "
-                    onClick={() => handleReturnButton(index)}
-                  >
-                    ✖
-                  </button>
-                </div>
+        {/* Div direita em cima */}
+        <div
+          ref={createDropHandler(2, "top-right")}
+          className={`border-2 p-4 cursor-pointer relative h-[150px] ${getBorderClass(
+            "top-right"
+          )}`}
+          onClick={() => onSelectDropArea("top-right")}
+        >
+          {droppedButtons[2] ? (
+            <div className="relative w-full flex justify-center items-center">
+              <div className="relative inline-block">
+                {renderButtonByType(droppedButtons[2])}
+                <button
+                  className="absolute top-[-8px] right-[-8px] bg-gray-200 text-black rounded-full w-6 h-6 flex justify-center items-center"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleReturnButton(2);
+                  }}
+                >
+                  ✖
+                </button>
               </div>
-            ) : (
-              <div className="w-full flex justify-center">
-                Solte o botão aqui
+            </div>
+          ) : (
+            <div> Div Direita (Em Cima)</div>
+          )}
+        </div>
+
+        {/* Div esquerda embaixo */}
+        <div
+          ref={createDropHandler(1, "bottom-left")}
+          className={`border-2 p-4 cursor-pointer relative h-[150px] ${getBorderClass(
+            "bottom-left"
+          )}`}
+          onClick={() => onSelectDropArea("bottom-left")}
+        >
+          {droppedButtons[1] ? (
+            <div className="relative w-full flex justify-center items-center">
+              <div className="relative inline-block">
+                {renderButtonByType(droppedButtons[1])}
+                <button
+                  className="absolute top-[-8px] right-[-8px] bg-gray-200 text-black rounded-full w-6 h-6 flex justify-center items-center"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleReturnButton(1);
+                  }}
+                >
+                  ✖
+                </button>
               </div>
-            )}
-          </div>
-        ))}
+            </div>
+          ) : (
+            <div>Div Esquerda (Em Baixo)</div>
+          )}
+        </div>
+
+        {/* Div direita embaixo */}
+        <div
+          ref={createDropHandler(3, "bottom-right")}
+          className={`border-2 p-4 cursor-pointer relative h-[150px] ${getBorderClass(
+            "bottom-right"
+          )}`}
+          onClick={() => onSelectDropArea("bottom-right")}
+        >
+          {droppedButtons[3] ? (
+            <div className="relative w-full flex justify-center items-center">
+              <div className="relative inline-block">
+                {renderButtonByType(droppedButtons[3])}
+                <button
+                  className="absolute top-[-8px] right-[-8px] bg-gray-200 text-black rounded-full w-6 h-6 flex justify-center items-center"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleReturnButton(3);
+                  }}
+                >
+                  ✖
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div>Div Direita (Em Baixo)</div>
+          )}
+        </div>
       </div>
     </div>
   );
