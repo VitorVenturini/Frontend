@@ -39,12 +39,12 @@ export default function HeaderUser() {
             </Button>
             <FullScreenButton />
             <LanguageToggle />
-            <ModeToggle />
+            {/* <ModeToggle /> */}
             <Logout />
           </div>
         </div>
         <div className="basis-1/2">
-        <NaoSeiAinda />
+        {/* <NaoSeiAinda /> */}
         </div>
         <img src={LogoWecom2} className="h-4 opacity-30" />
         <Button className="flex justify-center basis-1/8" variant="secondary">

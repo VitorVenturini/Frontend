@@ -103,7 +103,7 @@ export default function MenuOptions() {
           Notificações
         </Button>
       </div>
-      <div className="flex align-middle justify-center items-center w-full">
+      <div className="flex justify-center items-start w-full">
         {renderActiveComponent()}
       </div>
     </div>

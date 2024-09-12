@@ -31,7 +31,7 @@ function getDegreeRange(direction: string) {
   }
 }
 export function limitButtonName(name: string) {
-  return name.slice(0, 9);
+  return name.slice(0, 10);
 }
 
 function isWithinRange(value: number, min: number, max: number) {

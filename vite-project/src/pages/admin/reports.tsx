@@ -226,7 +226,7 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
   };
 
   return (
-    <Card className="w-full h-full p-2">
+    <Card className="w-full h-full p-2 m-2">
       <div className="flex gap-3">
         <Tabs defaultValue="account" className="w-full h-full flex-col">
           <div className="flex gap-4 justify-between">
