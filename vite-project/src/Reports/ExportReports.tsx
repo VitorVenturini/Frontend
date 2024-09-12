@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
-import ReactDOM from "react-dom/client"; // Certifique-se de importar corretamente
+import ReactDOM from "react-dom/client";
 import { Button } from "@/components/ui/button";
 import { FileText } from "lucide-react";
 import { GraficoExport } from "@/components/charts/lineChartExport";
@@ -25,9 +25,7 @@ export function PdfGerate({ dados, keys }: PdfProps) {
 
   useEffect(() => {
     if (keys) {
-      setCheckedKeys(
-        keys.reduce((acc, key) => ({ ...acc, [key]: true }), {})
-      );
+      setCheckedKeys(keys.reduce((acc, key) => ({ ...acc, [key]: true }), {}));
     }
   }, [keys]);
 
@@ -56,7 +54,6 @@ export function PdfGerate({ dados, keys }: PdfProps) {
         const imgData = canvas.toDataURL("image/jpeg", 1.0);
 
         const imgWidth = 297; // Largura em mm para A4 no modo paisagem
-        const pageHeight = 210; // Altura em mm para A4 no modo paisagem
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
         doc.addImage(imgData, "JPEG", 0, 0, imgWidth, imgHeight);
@@ -67,22 +64,17 @@ export function PdfGerate({ dados, keys }: PdfProps) {
         }
       }
     }
-    useEffect(() => {
-      if (keys) {
-        setCheckedKeys(
-          keys.reduce((acc, key) => ({ ...acc, [key]: true }), {})
-        );
-      }
-    }, [keys]);
-
     doc.save(fileName); // Usar o nome de arquivo dinâmico
   };
+
   const extractedKeys = keys?.filter(
     (key) => !["date", "sensor_name", "deveui", "id"].includes(key)
   );
+  
   const handleCheckedChange = (key: string, checked: boolean) => {
     setCheckedKeys((prev) => ({ ...prev, [key]: checked }));
   };
+
   const openInNewTab = async () => {
     const newWindow = window.open("", "_blank", "width=1200,height=900");
 
@@ -130,47 +122,49 @@ export function PdfGerate({ dados, keys }: PdfProps) {
         .page-break { page-break-before: always; }
       `;
 
-      setTimeout(() => generatePDF(), 3000); // Gera o PDF após 1 segundo para garantir o carregamento
-      setTimeout(() => newWindow.close(), 5000); // Fecha a aba após 2 segundos
+      setTimeout(() => {
+        generatePDF(); // Gera o PDF após o carregamento do conteúdo
+      }, 1500); // Tempo de espera para garantir o carregamento
     }
   };
-  // Função para alternar o estado "checked" de uma chave
 
   return (
     <>
-    <Popover>
+      <Popover>
         <PopoverTrigger
           asChild
           className="flex justify-between align-middle items-center"
         >
-      <Button variant="ghost" disabled={dados?.length === 0}>
-        <FileText />
-      </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-56">
-      <div className="flex justify-between items-center">
+          <Button variant="ghost" disabled={dados?.length === 0}>
+            <FileText />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-56">
+          <div className="flex justify-between items-center">
             <h1>Filtro</h1>
 
-            <Button
-              variant="ghost"
-              title="PDF"
-              onClick={openInNewTab}
-            >
+            <Button variant="ghost" title="PDF" onClick={openInNewTab}>
               <FileText />
             </Button>
           </div>
-      {extractedKeys?.map((key) => (
+          {extractedKeys?.map((key) => (
             <div className="flex gap-2 items-center">
               <Checkbox
                 id={key}
                 checked={checkedKeys[key] || false} // Usa o estado "checkedKeys"
-                onCheckedChange={(checked) => handleCheckedChange(key, checked)}
+                onCheckedChange={(checked) =>
+                  handleCheckedChange(key, checked as any)
+                }
               >
                 {" "}
               </Checkbox>
               <label>{key}</label>
             </div>
           ))}
+        </PopoverContent>
+      </Popover>
+
+      {/* Conteúdo oculto para renderizar os gráficos */}
       <div style={{ display: "none" }}>
         <div className="container">
           <div className="card-container">
@@ -198,8 +192,6 @@ export function PdfGerate({ dados, keys }: PdfProps) {
           </div>
         </div>
       </div>
-      </PopoverContent>
-      </Popover>
     </>
   );
 }
