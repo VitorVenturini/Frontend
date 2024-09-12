@@ -55,7 +55,7 @@ export default function HeaderApp() {
   };
 
   return (
-    <header className="flex justify-between items-center p-2 mb-3">
+    <header className="flex justify-between items-center p-2">
       <div className="flex items-center gap-5">
         <Button className="h-16" variant="ghost" onClick={handleUserViewClick}>
         <img src={LogoCore} alt="Logo" className="w- h-16" />
