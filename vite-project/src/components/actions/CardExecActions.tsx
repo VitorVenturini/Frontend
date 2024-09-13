@@ -1,19 +1,8 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import React, { useEffect, useState, ChangeEvent } from "react";
-import { Value } from "@radix-ui/react-select";
-import { Loader2, Pencil } from "lucide-react";
 import { Info } from "lucide-react";
 import {
   Select,
@@ -26,16 +15,12 @@ import {
 } from "@/components/ui/select";
 import texts from "@/_data/texts.json";
 import { useLanguage } from "@/components/language/LanguageContext";
-import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { useSensors } from "@/components/sensor/SensorContext";
 import { ActionsInteface } from "./ActionsContext";
 import { useButtons } from "../buttons/buttonContext/ButtonsContext";
 import { useUsers } from "../users/usersCore/UserContext";
-interface User {
-  id: string;
-  name: string;
-  guid: string;
-}
+import { useUsersPbx } from "@/components/users/usersPbx/UsersPbxContext";
+
 interface UpdateActionsProps {
   action?: ActionsInteface;
   onUpdateExecActionDetails: (key: string, value: string) => void;
@@ -46,7 +31,7 @@ export default function CardExecActions({
   onUpdateExecActionDetails,
 }: UpdateActionsProps) {
   const { users } = useUsers();
-
+  const { usersPbx } = useUsersPbx();
   const [actionExecType, setType] = useState(action?.action_exec_type || "");
   //   const [actionExecValue, setActionValue] = useState(""); //SEM USO NO MOMENTO
   const [selectedUser, setSelectedUser] = useState(
@@ -65,12 +50,15 @@ export default function CardExecActions({
   const [actionExecTypeCommandMode, setActionExecTypeCommandMode] = useState(
     action?.action_exec_type_command_mode || ""
   );
+  const filteredDevices = usersPbx?.filter((u) => {
+    return u.guid === selectedUser;
+  })[0];
 
   const { language } = useLanguage();
   const { toast } = useToast();
   const { sensors } = useSensors();
   const { buttons } = useButtons();
-
+  console.log("ACTION SELECTUSER", selectedUser, filteredDevices);
   const handleType = (value: string) => {
     setType(value);
     onUpdateExecActionDetails("actionExecType", value);
@@ -91,7 +79,7 @@ export default function CardExecActions({
   };
 
   const handleUserSelect = (value: string) => {
-    const user = users.find((user) => user.id as any === value);
+    const user = users.find((user) => (user.id as any) === value);
     setSelectedUser(value);
     onUpdateExecActionDetails("selectedUser", value);
   };
@@ -162,66 +150,92 @@ export default function CardExecActions({
         </div>
         {shouldRenderDevice && (
           <div className="grid grid-cols-4 items-center gap-4">
+            <Label className="text-end" htmlFor="name">
+              User
+            </Label>
+            <Select
+              onValueChange={handleUserSelect}
+              value={action?.action_exec_user}
+            >
+              <SelectTrigger className="col-span-3">
+                <SelectValue
+                  placeholder={texts[language].selectUserPlaceholder}
+                />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>{texts[language].users}</SelectLabel>
+                  {users.map((user) => (
+                    <SelectItem key={user.id} value={user.sip}>
+                      {user.name}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
             <Label className="text-end" htmlFor="paramDest">
               Dispositivo
             </Label>
-            <Select onValueChange={handleDeviceDest} value={deviceDest}>
+            <Select value={deviceDest} onValueChange={handleDeviceDest}>
               <SelectTrigger className="col-span-3">
-                <SelectValue placeholder="Dispositivo" />
+                <SelectValue placeholder="Selecione um Dispositivo" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Softphone">Softphone</SelectItem>
+                <SelectGroup>
+                  <SelectLabel>Dispositivos</SelectLabel>
+                  {filteredDevices?.devices.map((dev, index) => (
+                    <SelectItem key={index} value={dev.hw as string}>
+                      {dev.text}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
               </SelectContent>
             </Select>
           </div>
         )}
         {shouldRenderType && (
-          <div>
-            <div className="grid grid-cols-7 items-center gap-4">
-              <Label className="text-end" htmlFor="name">
-                User
-              </Label>
-              <Select
-                onValueChange={handleUserSelect}
-                value={action?.action_exec_user}
-              >
-                <SelectTrigger className="col-span-6">
-                  <SelectValue
-                    placeholder={texts[language].selectUserPlaceholder}
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>{texts[language].users}</SelectLabel>
-                    {users.map((user) => (
-                      <SelectItem key={user.id} value={user.guid}>
-                        {user.name}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label className="text-end" htmlFor="paramDest">
-                Botão
-              </Label>
-              <Select onValueChange={handleButtonSelect} value={actionExecPrt}>
-                <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="Selecione" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>{texts[language].headerButtons}</SelectLabel>
-                    {userButtons.map((button) => (
-                      <SelectItem key={button.id} value={button.id as any}>
-                        {button.button_name}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label className="text-end" htmlFor="name">
+              User
+            </Label>
+            <Select
+              onValueChange={handleUserSelect}
+              value={action?.action_exec_user}
+            >
+              <SelectTrigger className="col-span-3">
+                <SelectValue
+                  placeholder={texts[language].selectUserPlaceholder}
+                />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>{texts[language].users}</SelectLabel>
+                  {users.map((user) => (
+                    <SelectItem key={user.id} value={user.guid}>
+                      {user.name}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+            <Label className="text-end" htmlFor="paramDest">
+              Botão
+            </Label>
+            <Select onValueChange={handleButtonSelect} value={actionExecPrt}>
+              <SelectTrigger className="col-span-3">
+                <SelectValue placeholder="Selecione" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>{texts[language].headerButtons}</SelectLabel>
+                  {userButtons.map((button) => (
+                    <SelectItem key={button.id} value={button.id as any}>
+                      {button.button_name}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </div>
         )}
 
