@@ -45,16 +45,11 @@ import {
 import { ButtonInterface } from "@/components/buttons/buttonContext/ButtonsContext";
 import { Loader2 } from "lucide-react";
 import { limitButtonName } from "../utils/utilityFunctions";
+import { UserInterface } from "../users/usersCore/UserContext";
 
-interface User {
-  id: string;
-  name: string;
-  guid: string;
-  // Adicione aqui outros campos se necessário
-}
 interface OptCameraProps {
   clickedPosition: { i: number; j: number } | null;
-  selectedUser: User | null;
+  selectedUser: UserInterface | null;
   selectedOpt: string;
   existingButton?: ButtonInterface;
   isUpdate?: boolean;

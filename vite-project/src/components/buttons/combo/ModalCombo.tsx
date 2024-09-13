@@ -47,7 +47,7 @@ import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { ButtonInterface } from "@/components/buttons/buttonContext/ButtonsContext";
 import { useButtons } from "@/components/buttons/buttonContext/ButtonsContext";
 import { limitButtonName } from "@/components/utils/utilityFunctions";
-import ComboCardButtons from "./ComboCardButtons";
+import DraggableComboButtons from "@/components/buttons/combo/DraggableComboButtons";
 import { UserInterface } from "@/components/users/usersCore/UserContext";
 import DroppableComboArea from "./DroppableComboArea";
 import { DndProvider } from "react-dnd";
@@ -74,6 +74,11 @@ export default function ModalCombo({
   const [nameButton, setNameButton] = useState(
     existingButton?.button_name || ""
   );
+  const [droppedButtons, setDroppedButtons] = useState<
+  (ButtonInterface | null)[]
+>([null, null, null, null]);
+
+
   const [combo1, setCombo1] = useState(existingButton?.button_type_1 || "");
   const [combo2, setCombo2] = useState(existingButton?.button_type_2 || "");
   const [combo3, setCombo3] = useState(existingButton?.button_type_3 || "");
@@ -87,9 +92,6 @@ export default function ModalCombo({
 
   const [removedButtons, setRemovedButtons] = useState<ButtonInterface[]>([]);
 
-  const [droppedButtons, setDroppedButtons] = useState<
-    (ButtonInterface | null)[]
-  >([null, null, null, null]);
 
   const handleButtonDrop = (button: ButtonInterface) => {
     setRemovedButtons((prev) => [...prev, button]);
@@ -105,7 +107,11 @@ export default function ModalCombo({
   };
   const handleCreateButton = () => {
     try {
-      if (nameButton && combo1 && combo2 && combo3 && combo4) {
+      const filledCombos = [combo1, combo2, combo3, combo4].filter(
+        Boolean
+      ).length;
+
+      if (nameButton && filledCombos >= 2) {
         setIsCreating(true);
         const message = {
           api: "admin",
@@ -158,6 +164,13 @@ export default function ModalCombo({
     setCombo3((droppedButtons[2]?.id as any) || "");
     setCombo4((droppedButtons[3]?.id as any) || "");
   };
+  
+  useEffect(() =>{
+    setCombo1((droppedButtons[0]?.id as any) || "");
+    setCombo2((droppedButtons[1]?.id as any) || "");
+    setCombo3((droppedButtons[2]?.id as any) || "");
+    setCombo4((droppedButtons[3]?.id as any) || "");
+  },[droppedButtons])
 
   // Pega os botões já existentes, se houver, para carregar na área de drop
   const existingDroppedButtons = [
@@ -170,7 +183,6 @@ export default function ModalCombo({
     buttons.find((btn) => String(btn.id) === existingButton?.button_type_4) ||
       null,
   ];
-
 
   return (
     <DndProvider backend={isTouchDevice() ? TouchBackend : HTML5Backend}>
@@ -206,15 +218,19 @@ export default function ModalCombo({
             existingDroppedButtons={existingDroppedButtons}
             isUpdate={isUpdate}
             onSelectDropArea={setSelectedDropArea}
-            selectedArea={selectedDropArea} // Adicione esta linha para passar a área selecionada
+            selectedArea={selectedDropArea} // área selecionada
+            droppedButtons={droppedButtons}
+            setDroppedButtons={setDroppedButtons}
           />
-          <ComboCardButtons
+          <DraggableComboButtons
             selectedUser={selectedUser}
             onButtonDrop={handleButtonDrop}
             removedButtons={removedButtons}
             existingDroppedButtons={existingDroppedButtons}
             onReturnButton={handleReturnButton}
             selectedDropArea={selectedDropArea}
+            setDroppedButtons={setDroppedButtons}
+            droppedButtons={droppedButtons}
           />
         </div>
       </CardContent>

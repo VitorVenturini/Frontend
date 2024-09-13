@@ -60,18 +60,13 @@ import CardOptSensor from "@/components/sensor/CardOptSensor";
 // import CardOptCamera from "@/components/camera/CardOptCamera"; // Importe o componente CardOptCamera
 import CardOptGeneric from "./CardOptGeneric";
 import CardOptCamera from "../cameras/CardOptCamera";
+import { UserInterface } from "../users/usersCore/UserContext";
 
-interface User {
-  id: string;
-  name: string;
-  guid: string;
-  // Adicione aqui outros campos se necessário
-}
 interface OptProps {
   button: ButtonInterface;
   onClick: () => void; // Adicione esta linha
   clickedPosition: { i: number; j: number } | null;
-  selectedUser: User | null;
+  selectedUser: UserInterface | null;
   selectedOpt: string;
   isClicked: boolean;
 }

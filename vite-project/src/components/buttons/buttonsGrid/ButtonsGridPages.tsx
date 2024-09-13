@@ -19,17 +19,11 @@ import {
   AccountContext,
   useAccount,
 } from "@/components/account/AccountContext";
-
-interface User {
-  id: string;
-  name: string;
-  guid: string;
-  // Adicione aqui outros campos se necessário
-}
+import { UserInterface } from "@/components/users/usersCore/UserContext";
 
 interface ButtonsGridPagesProps {
   buttonsGrid: ButtonInterface[];
-  selectedUser: User;
+  selectedUser: UserInterface;
 }
 
 export default function ButtonsGridPages({

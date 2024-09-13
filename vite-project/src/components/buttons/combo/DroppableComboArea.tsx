@@ -40,21 +40,23 @@ interface DroppableComboAreaProps {
   isUpdate?: boolean;
   onSelectDropArea: (area: string) => void; // Função para lidar com o clique nas divs
   selectedArea: string | null; // Indica a área selecionada
+  droppedButtons: (ButtonInterface | null)[]; // Nova prop para receber o estado droppedButtons
+  setDroppedButtons: React.Dispatch<React.SetStateAction<(ButtonInterface | null)[]>>; // Nova prop para passar a função setDroppedButtons
 }
+
 
 export default function DroppableComboArea({
   onButtonDrop,
   onReturnButton,
   updateCombos,
+  setDroppedButtons,
+  droppedButtons,
   existingDroppedButtons,
   isUpdate = false,
   onSelectDropArea,
   selectedArea, // Nova prop para indicar área selecionada
 }: DroppableComboAreaProps) {
   const { toast } = useToast();
-  const [droppedButtons, setDroppedButtons] = useState<
-    (ButtonInterface | null)[]
-  >([null, null, null, null]);
 
   useEffect(() => {
     if (isUpdate) {
@@ -169,7 +171,7 @@ export default function DroppableComboArea({
         {/* Div direita unificada (em cima e embaixo) */}
         <div
           ref={createDropHandler(2, "right-side")}
-          className={`border-2 p-4 cursor-pointer relative h-[300px] flex flex-col justify-evenly row-span-4 col-span-6 ${getBorderClass(
+          className={`border-2 p-4 cursor-pointer relative h-[320px] flex flex-col justify-evenly row-span-4 col-span-6 ${getBorderClass(
             "right-side"
           )}`}
           onClick={() => onSelectDropArea("right-side")}

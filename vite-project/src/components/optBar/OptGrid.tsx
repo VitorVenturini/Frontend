@@ -7,7 +7,7 @@ import OptComponent from "@/components/optBar/OptComponent";
 import { useAccount } from "@/components/account/AccountContext";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import UserComponent from "../chat/MessageList";
-import { useUsers } from "../users/usersCore/UserContext";
+import { UserInterface, useUsers } from "../users/usersCore/UserContext";
 import OptUser from "../chat/MessageList";
 import MessageList from "../chat/MessageList";
 import { useChat } from "../chat/ChatContext";
@@ -15,7 +15,7 @@ import { Button } from "react-chat-elements";
 
 interface OptGridProps {
   buttons: ButtonInterface[];
-  selectedUser: User | null;
+  selectedUser: UserInterface | null;
   selectedOpt: string;
   interactive: string;
   setClickedButtonId: (id: number | null, grid: string) => void; // Updated type
@@ -25,11 +25,6 @@ interface OptGridProps {
   //   selectedPage : string
 }
 
-interface User {
-  id: string;
-  name: string;
-  guid: string;
-}
 
 export default function OptGrid({
   buttons,

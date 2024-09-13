@@ -6,16 +6,12 @@ import InteractiveOpt from "./interactiveOpt";
 import { ButtonInterface } from "@/components/buttons/buttonContext/ButtonsContext";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { UserInterface } from "../users/usersCore/UserContext";
 
-interface User {
-  id: string;
-  name: string;
-  guid: string;
-}
 
 interface InteractiveridCopyProps {
   buttons: ButtonInterface[];
-  selectedUser: User | null;
+  selectedUser: UserInterface | null;
   selectedOpt: string;
   interactive: string;
   onKeyChange: (key: string) => void;

@@ -47,16 +47,11 @@ import { useToast } from "@/components/ui/use-toast";
 import { host } from "@/App";
 import { useAccount } from "../account/AccountContext";
 import { limitButtonName } from "../utils/utilityFunctions";
+import { UserInterface } from "../users/usersCore/UserContext";
 
-interface User {
-  id: string;
-  name: string;
-  guid: string;
-  // Adicione aqui outros campos se necessário
-}
 interface OptGenericProps {
   clickedPosition: { i: number; j: number } | null;
-  selectedUser: User | null;
+  selectedUser: UserInterface | null;
   selectedOpt: string;
   existingButton?: ButtonInterface;
   isUpdate?: boolean;
