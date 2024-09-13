@@ -63,11 +63,30 @@ export default function DroppableComboArea({
   }, [isUpdate]);
 
   const handleDrop = (button: ButtonInterface, index: number) => {
-    if (droppedButtons[index]) {
-      return null; // Não permite substituir um botão já colocado
-    }
-
     const newDroppedButtons = [...droppedButtons];
+
+    // Verifica quantos botões já foram adicionados à área direita unificada
+    const rightAreaButtonsCount = [
+      newDroppedButtons[2],
+      newDroppedButtons[3],
+    ].filter(Boolean).length;
+
+    // Impede que mais de 2 botões sejam soltos na área direita
+    if (index === 2 || index === 3) {
+      if (rightAreaButtonsCount >= 2) {
+        toast({
+          description: "Você não pode adicionar mais de 2 botões nesta área.",
+        });
+        return;
+      } else {
+        const indexToUse = newDroppedButtons[2] === null ? 2 : 3;
+        newDroppedButtons[indexToUse] = button;
+        setDroppedButtons(newDroppedButtons);
+        updateCombos(newDroppedButtons);
+        onButtonDrop(button);
+        return;
+      }
+    }
     newDroppedButtons[index] = button;
     setDroppedButtons(newDroppedButtons);
     updateCombos(newDroppedButtons); // Atualiza o combo
@@ -80,8 +99,22 @@ export default function DroppableComboArea({
       drop: (item: ButtonInterface) => {
         handleDrop(item, index);
       },
-      canDrop: () => !droppedButtons[index] && area === selectedArea,
-      // permite soltar o botão se a posição estiver vazia
+      canDrop: () => {
+        const rightAreaButtonsCount = [
+          droppedButtons[2],
+          droppedButtons[3],
+        ].filter(Boolean).length;
+
+        // Permite o drop apenas se houver espaço na área direita e a área estiver selecionada
+        if (area === "right-side") {
+          if (rightAreaButtonsCount >= 2) {
+            return false;
+          } else {
+            return area === selectedArea;
+          }
+        }
+        return !droppedButtons[index] && area === selectedArea;
+      },
     })[1];
   };
 
@@ -102,11 +135,11 @@ export default function DroppableComboArea({
 
   return (
     <div className="w-[50%]">
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-12 grid-rows-5 gap-4">
         {/* Div esquerda em cima */}
         <div
           ref={createDropHandler(0, "top-left")}
-          className={`border-2 p-4 cursor-pointer relative h-[150px] ${getBorderClass(
+          className={`border-2 p-4 cursor-pointer relative h-[150px] row-span-2 col-span-6 items-center flex ${getBorderClass(
             "top-left"
           )}`}
           onClick={() => onSelectDropArea("top-left")}
@@ -127,42 +160,73 @@ export default function DroppableComboArea({
               </div>
             </div>
           ) : (
-            <div> Div Esquerda (Em Cima) </div>
+            <div className="text-center w-full text-muted-foreground text-sm">
+              Selecione a área para soltar os botões
+            </div>
           )}
         </div>
 
-        {/* Div direita em cima */}
+        {/* Div direita unificada (em cima e embaixo) */}
         <div
-          ref={createDropHandler(2, "top-right")}
-          className={`border-2 p-4 cursor-pointer relative h-[150px] ${getBorderClass(
-            "top-right"
+          ref={createDropHandler(2, "right-side")}
+          className={`border-2 p-4 cursor-pointer relative h-[300px] flex flex-col justify-evenly row-span-4 col-span-6 ${getBorderClass(
+            "right-side"
           )}`}
-          onClick={() => onSelectDropArea("top-right")}
+          onClick={() => onSelectDropArea("right-side")}
         >
-          {droppedButtons[2] ? (
-            <div className="relative w-full flex justify-center items-center">
-              <div className="relative inline-block">
-                {renderButtonByType(droppedButtons[2])}
-                <button
-                  className="absolute top-[-8px] right-[-8px] bg-gray-200 text-black rounded-full w-6 h-6 flex justify-center items-center"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleReturnButton(2);
-                  }}
-                >
-                  ✖
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div> Div Direita (Em Cima)</div>
-          )}
+          {droppedButtons.map((button, realIndex) => {
+            // Verifica se o botão está em uma das áreas 2 ou 3
+            if (realIndex === 2 || realIndex === 3) {
+              if (button) {
+                return (
+                  <div
+                    className="relative w-full flex justify-center items-center"
+                    key={realIndex}
+                  >
+                    <div className="relative inline-block">
+                      {renderButtonByType(button)}
+                      <button
+                        className="absolute top-[-8px] right-[-8px] bg-gray-200 text-black rounded-full w-6 h-6 flex justify-center items-center"
+                        onClick={(e) => { 
+                          e.stopPropagation();
+                          handleReturnButton(realIndex); // excluir o botão pelo INDÍCE NO ARRAY
+                        }}
+                      >
+                        ✖
+                      </button>
+                    </div>
+                  </div>
+                );
+              }
+            }
+            return null;
+          })}
+          {(() => {
+            const rightButtonsCount = [
+              droppedButtons[2],
+              droppedButtons[3],
+            ].filter(Boolean).length;
+
+            if (rightButtonsCount === 0) {
+              return (
+                <div className="text-center w-full text-muted-foreground text-sm">
+                  Selecione a área para soltar os botões
+                </div>
+              );
+            } else if (rightButtonsCount === 1) {
+              return (
+                <div className="text-center w-full text-muted-foreground text-sm">
+                  Você pode adicionar mais 1 botão
+                </div>
+              );
+            }
+          })()}
         </div>
 
         {/* Div esquerda embaixo */}
         <div
           ref={createDropHandler(1, "bottom-left")}
-          className={`border-2 p-4 cursor-pointer relative h-[150px] ${getBorderClass(
+          className={`border-2 p-4 cursor-pointer relative h-[150px] row-span-4 col-span-6 items-center flex ${getBorderClass(
             "bottom-left"
           )}`}
           onClick={() => onSelectDropArea("bottom-left")}
@@ -183,35 +247,9 @@ export default function DroppableComboArea({
               </div>
             </div>
           ) : (
-            <div>Div Esquerda (Em Baixo)</div>
-          )}
-        </div>
-
-        {/* Div direita embaixo */}
-        <div
-          ref={createDropHandler(3, "bottom-right")}
-          className={`border-2 p-4 cursor-pointer relative h-[150px] ${getBorderClass(
-            "bottom-right"
-          )}`}
-          onClick={() => onSelectDropArea("bottom-right")}
-        >
-          {droppedButtons[3] ? (
-            <div className="relative w-full flex justify-center items-center">
-              <div className="relative inline-block">
-                {renderButtonByType(droppedButtons[3])}
-                <button
-                  className="absolute top-[-8px] right-[-8px] bg-gray-200 text-black rounded-full w-6 h-6 flex justify-center items-center"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleReturnButton(3);
-                  }}
-                >
-                  ✖
-                </button>
-              </div>
+            <div className="text-center w-full text-muted-foreground text-sm">
+              Selecione a área para soltar os botões
             </div>
-          ) : (
-            <div>Div Direita (Em Baixo)</div>
           )}
         </div>
       </div>

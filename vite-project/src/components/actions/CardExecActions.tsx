@@ -33,7 +33,6 @@ export default function CardExecActions({
   const { users } = useUsers();
   const { usersPbx } = useUsersPbx();
   const [actionExecType, setType] = useState(action?.action_exec_type || "");
-  //   const [actionExecValue, setActionValue] = useState(""); //SEM USO NO MOMENTO
   const [selectedUser, setSelectedUser] = useState(
     action?.action_exec_user || ""
   );
@@ -58,7 +57,7 @@ export default function CardExecActions({
   const { toast } = useToast();
   const { sensors } = useSensors();
   const { buttons } = useButtons();
-  console.log("ACTION SELECTUSER", selectedUser, filteredDevices);
+
   const handleType = (value: string) => {
     setType(value);
     onUpdateExecActionDetails("actionExecType", value);
@@ -107,16 +106,9 @@ export default function CardExecActions({
     return p.deveui === actionExecDevice;
   })[0];
 
-  const selectedExecSensorValue = sensors.filter((p) => {
-    return p.deveui === actionExecDevice;
-  })[0];
-  const filteredSelectExecSensor = selectedExecSensorValue
-    ? selectedExecSensorValue.parameters
+  const filteredSelectExecSensor = selectedExecSensor
+    ? selectedExecSensor.parameters
     : [];
-
-  const updateExecSensorValue = sensors.filter((p) => {
-    return p.deveui === actionExecDevice;
-  })[0];
 
   const shouldRenderDevice = actionExecType === "number";
   const shouldRenderType = actionExecType === "button";
@@ -126,24 +118,26 @@ export default function CardExecActions({
       {/* CARD CREATE EXEC ACTIONS*/}
       <div className="gap-4 flex flex-col align-top">
         <CardDescription>
-          Configuração dos parâmetros de execução
+          {texts[language].execParametersDescription}
         </CardDescription>
 
         <div className="grid grid-cols-4 items-center gap-4">
           <Label className="text-end" htmlFor="name">
-            Tipo
+            {texts[language].type}
           </Label>
           <Select onValueChange={handleType} value={actionExecType}>
             <SelectTrigger className="col-span-3">
-              <SelectValue placeholder="Selecione o Tipo" />
+              <SelectValue placeholder={texts[language].selectType} />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectLabel>Gatilho</SelectLabel>
-                <SelectItem value="alarm">Alarme</SelectItem>
-                <SelectItem value="number">Número</SelectItem>
-                <SelectItem value="button">Botão</SelectItem>
-                <SelectItem value="command">Comando</SelectItem>
+                <SelectLabel>{texts[language].trigger}</SelectLabel>
+                <SelectItem value="alarm">{texts[language].alarm}</SelectItem>
+                <SelectItem value="number">{texts[language].number}</SelectItem>
+                <SelectItem value="button">{texts[language].button}</SelectItem>
+                <SelectItem value="command">
+                  {texts[language].command}
+                </SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
@@ -151,7 +145,7 @@ export default function CardExecActions({
         {shouldRenderDevice && (
           <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-end" htmlFor="name">
-              User
+              {texts[language].user}
             </Label>
             <Select
               onValueChange={handleUserSelect}
@@ -174,15 +168,15 @@ export default function CardExecActions({
               </SelectContent>
             </Select>
             <Label className="text-end" htmlFor="paramDest">
-              Dispositivo
+              {texts[language].device}
             </Label>
             <Select value={deviceDest} onValueChange={handleDeviceDest}>
               <SelectTrigger className="col-span-3">
-                <SelectValue placeholder="Selecione um Dispositivo" />
+                <SelectValue placeholder={texts[language].selectDevice} />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectLabel>Dispositivos</SelectLabel>
+                  <SelectLabel>{texts[language].devices}</SelectLabel>
                   {filteredDevices?.devices.map((dev, index) => (
                     <SelectItem key={index} value={dev.hw as string}>
                       {dev.text}
@@ -196,7 +190,7 @@ export default function CardExecActions({
         {shouldRenderType && (
           <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-end" htmlFor="name">
-              User
+              {texts[language].user}
             </Label>
             <Select
               onValueChange={handleUserSelect}
@@ -219,11 +213,11 @@ export default function CardExecActions({
               </SelectContent>
             </Select>
             <Label className="text-end" htmlFor="paramDest">
-              Botão
+              {texts[language].button}
             </Label>
             <Select onValueChange={handleButtonSelect} value={actionExecPrt}>
               <SelectTrigger className="col-span-3">
-                <SelectValue placeholder="Selecione" />
+                <SelectValue placeholder={texts[language].selectButton} />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
@@ -244,11 +238,8 @@ export default function CardExecActions({
             <div className="gap-1">
               <div className="grid grid-cols-4 items-center gap-4 mb-4">
                 <div className="flex justify-end gap-1">
-                  <Label
-                    htmlFor="name"
-                    title="Qual contexto irá executar essa ação"
-                  >
-                    IoT Device
+                  <Label htmlFor="name" title={texts[language].iotContext}>
+                    {texts[language].iotDevice}
                   </Label>
                 </div>
                 <Select
@@ -256,11 +247,11 @@ export default function CardExecActions({
                   onValueChange={handleExecDevice}
                 >
                   <SelectTrigger className="col-span-3">
-                    <SelectValue placeholder="Selecione um Sensor" />
+                    <SelectValue placeholder={texts[language].selectSensor} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                      <SelectLabel>Sensores</SelectLabel>
+                      <SelectLabel>{texts[language].sensors}</SelectLabel>
                       {sensors.map((sensor) => (
                         <SelectItem
                           key={sensor.sensor_name}
@@ -275,12 +266,8 @@ export default function CardExecActions({
               </div>
               <div className="grid grid-cols-4 items-center gap-4 mb-4">
                 <div className="flex justify-end gap-1">
-                  <Label
-                    className="text-end"
-                    htmlFor="framework"
-                    id="typeMeasure"
-                  >
-                    Tipo de medida
+                  <Label className="text-end" htmlFor="framework">
+                    {texts[language].measureType}
                   </Label>
                 </div>
                 <Select
@@ -289,11 +276,11 @@ export default function CardExecActions({
                   disabled={!actionExecDevice}
                 >
                   <SelectTrigger className="col-span-3" id="SelectTypeMeasure">
-                    <SelectValue placeholder="Selecione o tipo de medida" />
+                    <SelectValue placeholder={texts[language].selectMeasure} />
                   </SelectTrigger>
                   <SelectContent position="popper">
                     <SelectGroup>
-                      <SelectLabel>Sensores</SelectLabel>
+                      <SelectLabel>{texts[language].sensors}</SelectLabel>
                       {filteredSelectExecSensor.map((parameters, i) => (
                         <SelectItem key={i} value={parameters.parameter}>
                           {parameters.name}
@@ -306,7 +293,7 @@ export default function CardExecActions({
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label className="text-end" htmlFor="name">
-                Comando
+                {texts[language].command}
               </Label>
               <Select
                 onValueChange={handleActionExecTypeCommandMode}
@@ -314,11 +301,11 @@ export default function CardExecActions({
                 disabled={!actionExecPrt}
               >
                 <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="Selecione o Tipo" />
+                  <SelectValue placeholder={texts[language].selectCommand} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectLabel>Comando On / Off</SelectLabel>
+                    <SelectLabel>{texts[language].onOffCommand}</SelectLabel>
                     <SelectItem value="on">On</SelectItem>
                     <SelectItem value="off">Off</SelectItem>
                   </SelectGroup>
@@ -331,18 +318,15 @@ export default function CardExecActions({
         {!shouldRenderType && actionExecType !== "command" && (
           <div className="grid grid-cols-4 items-center gap-4">
             <div className="flex justify-end gap-1">
-              <Label
-                htmlFor="name"
-                title="Para qual ramal ou ID do botão a ser chamado/alertado"
-              >
-                Valor
+              <Label htmlFor="name" title={texts[language].triggerInfo}>
+                {texts[language].value}
               </Label>
               <Info className="size-[12px]" />
             </div>
             <Input
               className="col-span-3"
               id="name"
-              placeholder="Valor"
+              placeholder={texts[language].valuePlaceholder}
               type="text"
               value={actionExecPrt}
               onChange={handleActionValue}
