@@ -19,26 +19,7 @@ import {
     const account = useAccount();
     const wss = useWebSocketData();
     const [initiatedByUser, setInitiatedByUser] = useState(false);
-  
-    useEffect(() => {
-      if (!initiatedByUser) { // quando nao foi iniciado pelo usuario
-        if (button.triggered && !button.clicked) {  // quando o usuario recebeu um alarme
-          setClickedClass("bg-red-800");
-        } else if (button.triggered && button.clicked) { // quando o usuario disparou um combo
-          setClickedClass("bg-red-800");
-          wss?.sendMessage({
-            api: "user",
-            mt: "TriggerAlarm",
-            prt: button.button_prt,
-            btn_id: button.id,
-          });
-        } else { // quando alguem desativou o alarme do usuario
-          setClickedClass("");
-        }
-      } else { 
-        setInitiatedByUser(false); 
-      }
-    }, [button.triggered]);
+
   
     const handleClickAlarm = () => {
       handleClick?.();
