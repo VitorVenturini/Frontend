@@ -43,6 +43,8 @@ import ModalUser from "./user/ModalUser";
 import UserButton from "./user/UserButton";
 import ModalNumber from "./number/ModalNumber";
 import NumberButton from "./number/NumberButton";
+import ModalClock from "./Clock/ModalClock";
+import ClockButton from "./Clock/ClockButton";
 import { useSearchParams } from "react-router-dom";
 import { useSensors } from "../sensor/SensorContext";
 import { UserInterface } from "../users/usersCore/UserContext";
@@ -128,6 +130,15 @@ export default function ButtonsComponent({
             onClose={() => setIsDialogOpen(false)}
           />
         );
+        case "clock":
+          return (
+            <ModalClock
+              selectedPage={selectedPage}
+              selectedUser={selectedUser}
+              clickedPosition={clickedPosition}
+              onClose={() => setIsDialogOpen(false)}
+            />
+          );
       // Add other cases here as needed
       default:
         return null;
@@ -179,6 +190,7 @@ export default function ButtonsComponent({
                       <SelectItem value="user">Usuário</SelectItem>
                       <SelectItem value="sensor">Sensor</SelectItem>
                       <SelectItem value="command">Comando</SelectItem>
+                      <SelectItem value="clock">Relegio</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -330,7 +342,7 @@ export default function ButtonsComponent({
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <div>
-                  <CommandButton button={button} handleClick={handleClick} />
+                  <ClockButton button={button} handleClick={handleClick} />
                 </div>
               </DialogTrigger>
               {isAdmin && (
@@ -350,6 +362,32 @@ export default function ButtonsComponent({
             </Dialog>
           </div>
         );
+        case "Clock":
+          return (
+            <div>
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogTrigger asChild>
+                  <div>
+                    <ClockButton button={button} handleClick={handleClick} />
+                  </div>
+                </DialogTrigger>
+                {isAdmin && (
+                  <div>
+                    <DialogContent>
+                      <ModalClock
+                        selectedPage={selectedPage}
+                        selectedUser={selectedUser}
+                        clickedPosition={clickedPosition}
+                        existingButton={button}
+                        isUpdate={true}
+                        onClose={() => setIsDialogOpen(false)}
+                      />
+                    </DialogContent>
+                  </div>
+                )}
+              </Dialog>
+            </div>
+          );
       default:
         if (isAdmin) {
           return (
