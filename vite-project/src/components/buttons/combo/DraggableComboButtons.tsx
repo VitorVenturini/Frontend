@@ -13,6 +13,8 @@ import { useDrag } from "react-dnd";
 import { Skeleton } from "@/components/ui/skeleton";
 import { commonClasses } from "../ButtonsComponent";
 import { toast, useToast } from "@/components/ui/use-toast";
+import CronometerButton from "../cronometer/cronometerButton";
+import ClockButton from "../Clock/ClockButton";
 
 interface DraggableButtonProps {
   button: ButtonInterface;
@@ -128,6 +130,10 @@ export default function DraggableComboButtons({
         return <NumberButton button={button} />;
       case "user":
         return <UserButton button={button} />;
+        case "cronometer":
+          return <CronometerButton button={button} />;
+          case "clock":
+            return <ClockButton button={button} />;
       default:
         return (
           <div className={`flex-col flex ${commonClasses} cursor-pointer`}>
