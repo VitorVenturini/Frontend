@@ -138,7 +138,7 @@ export default function ModalAlarm({
           </CardDescription>
         </CardHeader>
       )}
-      <CardContent className="grid gap-4 py-4">
+      <CardContent className="grid gap-5 py-4 ">
         <div className="grid grid-cols-4 items-center gap-4">
           <Label className="text-end" htmlFor="buttonName">
             Nome do botão
@@ -166,8 +166,9 @@ export default function ModalAlarm({
           />
         </div>
       </CardContent>
-      <CardFooter className="flex justify-between">
+      <CardFooter className="flex justify-end w-full">
         {isUpdate && (
+          <div className="flex w-full justify-between">
           <Button variant="secondary">
             <AlertDialog>
               <AlertDialogTrigger>Excluir</AlertDialogTrigger>
@@ -188,6 +189,8 @@ export default function ModalAlarm({
               </AlertDialogContent>
             </AlertDialog>
           </Button>
+          </div>
+
         )}
         {!isCreating && (
           <Button onClick={handleCreateButton}>

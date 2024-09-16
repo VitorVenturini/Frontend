@@ -195,8 +195,9 @@ export default function ModalUser({
           </Select>
         </div>
       </CardContent>
-      <CardFooter className="flex justify-between">
+      <CardFooter className="flex justify-end w-full">
         {isUpdate && (
+          <div className="flex w-full justify-between">
           <Button variant="secondary">
             <AlertDialog>
               <AlertDialogTrigger>Excluir</AlertDialogTrigger>
@@ -217,6 +218,7 @@ export default function ModalUser({
               </AlertDialogContent>
             </AlertDialog>
           </Button>
+          </div>
         )}
         {!isCreating && (
           <Button onClick={handleCreateButton}>
