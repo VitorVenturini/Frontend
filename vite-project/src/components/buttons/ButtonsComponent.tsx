@@ -354,7 +354,7 @@ export default function ButtonsComponent({
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <div>
-                  <ClockButton button={button} handleClick={handleClick} />
+                  <CommandButton button={button} handleClick={handleClick} />
                 </div>
               </DialogTrigger>
               {isAdmin && (
