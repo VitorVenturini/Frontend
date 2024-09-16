@@ -39,6 +39,8 @@ import ModalCombo from "@/components/buttons/combo/ModalCombo";
 import ComboButton from "./combo/ComboButton";
 import ModalCommand from "./command/ModalCommand";
 import CommandButton from "./command/CommandButton";
+import ModalCronometer from "./cronometer/modalCronometer";
+import CronometerButton from "./cronometer/cronometerButton";
 import ModalUser from "./user/ModalUser";
 import UserButton from "./user/UserButton";
 import ModalNumber from "./number/ModalNumber";
@@ -94,6 +96,15 @@ export default function ButtonsComponent({
             onClose={() => setIsDialogOpen(false)}
           />
         );
+        case "cronometer":
+          return (
+            <ModalCronometer
+              selectedPage={selectedPage}
+              selectedUser={selectedUser}
+              clickedPosition={clickedPosition}
+              onClose={() => setIsDialogOpen(false)}
+            />
+          );
       case "user":
         return (
           <ModalUser
@@ -191,6 +202,7 @@ export default function ButtonsComponent({
                       <SelectItem value="sensor">Sensor</SelectItem>
                       <SelectItem value="command">Comando</SelectItem>
                       <SelectItem value="clock">Relegio</SelectItem>
+                      <SelectItem value="cronometer">Cronometro</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -388,6 +400,32 @@ export default function ButtonsComponent({
               </Dialog>
             </div>
           );
+          case "cronometer":
+            return (
+              <div>
+                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                  <DialogTrigger asChild>
+                    <div>
+                      <CronometerButton button={button} handleClick={handleClick} />
+                    </div>
+                  </DialogTrigger>
+                  {isAdmin && (
+                    <div>
+                      <DialogContent>
+                        <ModalCronometer
+                          selectedPage={selectedPage}
+                          selectedUser={selectedUser}
+                          clickedPosition={clickedPosition}
+                          existingButton={button}
+                          isUpdate={true}
+                          onClose={() => setIsDialogOpen(false)}
+                        />
+                      </DialogContent>
+                    </div>
+                  )}
+                </Dialog>
+              </div>
+            );
       default:
         if (isAdmin) {
           return (
