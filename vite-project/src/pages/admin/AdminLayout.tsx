@@ -71,10 +71,10 @@ function AdminLayout() {
   const [receivedFragments, setReceivedFragments] = useState<any[]>([]);
   const { addDataReport, clearDataReport } = useData();
   const myAccountInfo = JSON.parse(localStorage.getItem("Account") || "{}");
-  const [isLoading,setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(true);
   var pbxUser: UserPbxInterface[];
-  const { setLoadBarData, clearLoadBarData,setApiKeyInfo,setPbxStatus } = useAppConfig();
-
+  const { setLoadBarData, clearLoadBarData, setApiKeyInfo, setPbxStatus } =
+    useAppConfig();
 
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
@@ -130,7 +130,7 @@ function AdminLayout() {
         setSensors([]);
         clearSensors();
         addSensorName(sensorData);
-        setIsLoading(false)
+        setIsLoading(false);
         break;
       case "SelectActionsMessageSuccess":
         console.log("allActions ", JSON.stringify(message.result));
@@ -186,6 +186,18 @@ function AdminLayout() {
         // Envia a informação combinada ao contexto
         setPbxStatus(pbxData);
 
+        break;
+      case "PbxStatusResult":
+        if (message.result) {
+          const status = String(message.result); 
+          setPbxStatus((prevPbxStatus) => {
+            return prevPbxStatus.map((pbx) =>
+              pbx.entry === "urlPbxTableUsers"
+                ? { ...pbx, status } 
+                : pbx
+            );
+          });
+        }
         break;
       case "ConfigLicenseResult":
         console.log("Received ConfigLicenseResult message:", message);
@@ -274,10 +286,10 @@ function AdminLayout() {
         break;
       case "ConnRemovedByAdmin":
         const currentSession = localStorage.getItem("currentSession");
-        localStorage.removeItem(currentSession as string)
-        localStorage.removeItem("currentSession")
+        localStorage.removeItem(currentSession as string);
+        localStorage.removeItem("currentSession");
         navigate("/login");
-        localStorage.setItem("disconnected",message.from)
+        localStorage.setItem("disconnected", message.from);
         // message.from
         break;
       case "CoreUserOnline":
@@ -292,8 +304,8 @@ function AdminLayout() {
             description: "Relatório não gerado, revise seus parâmetros",
           });
         } else {
-          clearDataReport()
-          clearLoadBarData()
+          clearDataReport();
+          clearLoadBarData();
           setLoadBarData({
             total: message.totalFragments,
             unitValue: message.thisFragment,
@@ -353,7 +365,11 @@ function AdminLayout() {
                   }
                   // Formatar colunas que começam com 'call' e possuem valor
                   Object.keys(item).forEach((key) => {
-                    if (key.startsWith("call") && item[key] && !key.startsWith("call_innovaphone")) {
+                    if (
+                      key.startsWith("call") &&
+                      item[key] &&
+                      !key.startsWith("call_innovaphone")
+                    ) {
                       item[key] = formatDate(item[key]);
                     }
                   });
@@ -387,7 +403,7 @@ function AdminLayout() {
                         break;
                     }
                     switch (item.direction) {
-                      case 'out':
+                      case "out":
                         item.direction = "Saída";
                         break;
                       case "inc":
@@ -396,20 +412,18 @@ function AdminLayout() {
                       default:
                         break;
                     }
-                    
                   }
-               
+
                   return item;
                 });
-                if(message.src === 'RptIotHistory'){
-                  console.log('RPT IOT HYSTORY', parsedData)
-                  addDataReport(parsedData, 'img', jsonKeys, message.src)
-                  clearLoadBarData()
-                }else {
+                if (message.src === "RptIotHistory") {
+                  console.log("RPT IOT HYSTORY", parsedData);
+                  addDataReport(parsedData, "img", jsonKeys, message.src);
+                  clearLoadBarData();
+                } else {
                   addDataReport(parsedData, "table", jsonKeys, message.src);
-                  clearLoadBarData()
+                  clearLoadBarData();
                 }
-                
               }
 
               return []; // Limpa os fragmentos recebidos
@@ -419,12 +433,7 @@ function AdminLayout() {
           });
         }
         break;
-      case "PbxStatusResult":
-        if (message.result) {
-          const status = String(message.result);
-          setPbxStatus([{ status }]);
-        }
-        break;
+
       case "AddGatewayError":
         toast({
           variant: "destructive",
@@ -450,25 +459,22 @@ function AdminLayout() {
       token={account.accessToken}
       onMessage={handleWebSocketMessage}
     >
-      {
-        isLoading ? (
-          <Loader/>
-        ): (
-          <>
-             <HeaderApp />
-      {/* Your admin layout here */}
-      <Routes>
-        <Route path="account" element={<Account />} />
-        <Route path="buttons" element={<ButtonsPage />} />
-        <Route path="actions" element={<ActionsPage />} />
-        <Route path="options" element={<Options />} />
-        <Route path="reports" element={<Reports />} />
-        {/* Add more admin routes as needed */}
-      </Routes>
-          </>
-        )
-      }
-   
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <>
+          <HeaderApp />
+          {/* Your admin layout here */}
+          <Routes>
+            <Route path="account" element={<Account />} />
+            <Route path="buttons" element={<ButtonsPage />} />
+            <Route path="actions" element={<ActionsPage />} />
+            <Route path="options" element={<Options />} />
+            <Route path="reports" element={<Reports />} />
+            {/* Add more admin routes as needed */}
+          </Routes>
+        </>
+      )}
     </WebSocketProvider>
   );
 }

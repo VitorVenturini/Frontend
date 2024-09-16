@@ -8,14 +8,12 @@ export interface LoaderBarProps {
 
 export interface PbxInterface {
   id?: number;
-  status?: string;
   entry?: string;
   value?: string;
+  status?: string;
   createdAt?: string | null;
   updatedAt?: string | null;
-
 }
-
 
 export interface GoogleApiKeyInterface {
   id?: number;
@@ -62,6 +60,14 @@ export interface License {
   licenseInstallDate: string | null;
 }
 
+export interface Notifications {
+  id?: number;
+  entry: string;
+  value: string;
+  createdAt?: string | null;
+  updatedAt?: string | null;
+}
+
 interface AppConfigContextType {
   pbxStatus: PbxInterface[];
   apiKeyInfo: GoogleApiKeyInterface[];
@@ -85,7 +91,9 @@ interface AppConfigContextType {
   clearLoadBarData: () => void;
 }
 
-const AppConfigContext = createContext<AppConfigContextType | undefined>(undefined);
+const AppConfigContext = createContext<AppConfigContextType | undefined>(
+  undefined
+);
 
 export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
   const [pbxStatus, setPbxStatus] = useState<PbxInterface[]>([]);
@@ -113,23 +121,36 @@ export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
 
   const clearPbxStatus = () => setPbxStatus([]);
   const clearApiKeyInfo = () => setApiKeyInfo([]);
-  const clearLicense = () => setLicense({
-    status: "active",
-    licenseKey: { value: "", createdAt: null, updatedAt: null },
-    licenseFile: { value: "", createdAt: null, updatedAt: null },
-    licenseActive: {
-      pbx: { total: 0, used: 0 },
-      users: { total: 0, used: 0 },
-      admins: { total: 0, used: 0 },
-      online: { total: 0, used: 0 },
-      gateways: { total: 0, used: 0 },
-    },
-    licenseInstallDate: null,
-  });
+  const clearLicense = () =>
+    setLicense({
+      status: "active",
+      licenseKey: { value: "", createdAt: null, updatedAt: null },
+      licenseFile: { value: "", createdAt: null, updatedAt: null },
+      licenseActive: {
+        pbx: { total: 0, used: 0 },
+        users: { total: 0, used: 0 },
+        admins: { total: 0, used: 0 },
+        online: { total: 0, used: 0 },
+        gateways: { total: 0, used: 0 },
+      },
+      licenseInstallDate: null,
+    });
   const clearLoadBarData = () => setLoadBarData({ total: 0, unitValue: 0 });
 
   const addPbx = (pbx: PbxInterface) => {
-    setPbxStatus((prevPbxInfo) => [...prevPbxInfo, pbx]);
+    setPbxStatus((prevPbxStatus) => {
+      const existingEntryIndex = prevPbxStatus.findIndex(
+        (entry) => entry.entry === pbx.entry
+      );
+
+      if (existingEntryIndex !== -1) {
+        const updatedPbxStatus = [...prevPbxStatus];
+        updatedPbxStatus[existingEntryIndex] = { ...pbx };
+        return updatedPbxStatus;
+      } else {
+        return [...prevPbxStatus, pbx];
+      }
+    });
   };
 
   const addApiKey = (apiKey: GoogleApiKeyInterface) => {

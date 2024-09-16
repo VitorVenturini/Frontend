@@ -202,6 +202,7 @@ export default function ButtonsComponent({
                       <SelectItem value="sensor">Sensor</SelectItem>
                       <SelectItem value="command">Comando</SelectItem>
                       <SelectItem value="clock">Relógio</SelectItem>
+                      <SelectItem value="cronometer">Cronometro</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

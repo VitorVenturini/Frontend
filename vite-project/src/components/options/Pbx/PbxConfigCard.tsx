@@ -29,42 +29,25 @@ import { PbxInterface, useAppConfig } from "../ConfigContext";
 
 export default function PbxConfigCard() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { pbxStatus, setPbxStatus, addPbx } = useAppConfig();
   const { toast } = useToast();
   const wss = useWebSocketData();
-  const { pbxStatus, setPbxStatus, addPbx } = useAppConfig();
 
-  const filteredPbxInfo = pbxStatus.filter((url) => {
-    return url.entry === "urlPbxTableUsers";
-  })[0];
-  const filteredPbxType = pbxStatus.filter((url) => {
-    return url.entry === "pbxType";
-  })[0];
+  const filteredPbxInfo = pbxStatus.filter(
+    (url) => url.entry === "urlPbxTableUsers"
+  )[0];
+  const filteredPbxType = pbxStatus.filter((url) => url.entry === "pbxType")[0];
+
   const [selectPbx, setSelectPbx] = useState(
     filteredPbxType?.value?.toUpperCase() || ""
   );
   const [urlPbx, setUrlPbx] = useState(filteredPbxInfo?.value || "");
 
-  console.log("PBXCONFIG", pbxStatus);
-  const handleUrlPbx = (event: ChangeEvent<HTMLInputElement>) => {
-    setUrlPbx(event.target.value);
-  };
-  const handleSelect = (value: string) => {
-    setSelectPbx(value);
-  };
-  useEffect(() => {
-    wss?.sendMessage({
-      api: "admin",
-      mt: "PbxStatus",
-    });
-    wss?.sendMessage({
-      api: "admin",
-      mt: "TableUsers",
-    });
-  }, []);
-
+  // Atualiza as informações de PBX quando o formulário é submetido
   const handleSendPbxUrl = () => {
     setIsLoading(true);
     if (urlPbx) {
+      // Envia as mensagens WebSocket para atualizar as informações
       wss?.sendMessage({
         api: "admin",
         mt: "UpdateConfig",
@@ -77,25 +60,27 @@ export default function PbxConfigCard() {
         entry: "urlPbxTableUsers",
         vl: urlPbx,
       });
-      setPbxStatus([
-        {
-          entry: "urlPbxTableUsers",
-          value: urlPbx,
-        },
-      ] as PbxInterface[]);
-      // adicionar no contexto caso o admin troca de aba para manter o valor no input
-      // pois so consultamos o valor da pbx api quando ele loga no app , nao quando ele fizer alterações
+
+      // Atualiza no contexto
+      addPbx({ entry: "urlPbxTableUsers", value: urlPbx });
+      addPbx({ entry: "pbxType", value: selectPbx });
+
       toast({
-        description: "Url cadastrada com Sucesso!",
+        description: "URL e PBX Modelo atualizados com sucesso!",
+      });
+      wss?.sendMessage({
+        api: "admin",
+        mt: "PbxStatus",
       });
     } else {
       toast({
         variant: "destructive",
-        description: "Favor Inserir a Url do PBX",
+        description: "Por favor, insira a URL do PBX.",
       });
     }
     setIsLoading(false);
   };
+
   return (
     <Card className="">
       <CardHeader>
@@ -110,7 +95,7 @@ export default function PbxConfigCard() {
             </Button>
           )}
         </div>
-        <CardDescription>Modelo e URL do pbx</CardDescription>
+        <CardDescription>Modelo e URL do PBX</CardDescription>
       </CardHeader>
       <CardContent className="grid w-full items-center gap-6">
         <div className="w-full flex flex-col gap-5">
@@ -118,14 +103,13 @@ export default function PbxConfigCard() {
             <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
               Modelo
             </h4>
-            <Select onValueChange={handleSelect} value={selectPbx}>
+            <Select onValueChange={setSelectPbx} value={selectPbx}>
               <SelectTrigger className="col-span-1">
                 <SelectValue placeholder="Selecione um PBX" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
                   <SelectLabel>PBX</SelectLabel>
-
                   <SelectItem value={"INNOVAPHONE"}>Innovaphone</SelectItem>
                   <SelectItem value={"EPYGI"}>Epygi</SelectItem>
                 </SelectGroup>
@@ -140,12 +124,12 @@ export default function PbxConfigCard() {
               type="url"
               placeholder="URL"
               className="w-full"
-              onChange={handleUrlPbx}
+              onChange={(e) => setUrlPbx(e.target.value)}
               value={urlPbx}
             />
           </div>
           <div className="grid grid-cols-2 items-center gap-4">
-            <h4 className="scroll-m-20 text-xl font-semibold tracking-tight ">
+            <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
               Status
             </h4>
             {pbxStatus[0]?.status === "200" ? (

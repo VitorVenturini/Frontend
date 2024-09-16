@@ -9,16 +9,23 @@ import PbxConfigCard from "@/components/options/Pbx/PbxConfigCard";
 import APIGoogleCard from "@/components/options/ApiGoogle/APIGoogleCard";
 import IotCameraCard from "@/components/options/IotCameraCard";
 import Notify from "@/components/options/Notifications";
+import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 
 export default function MenuOptions() {
   const [activeButton, setActiveButton] = useState<string | null>(null);
-
+  const wss = useWebSocketData();
   const handleClick = (buttonMenu: string) => {
+    if (buttonMenu === "TelephonePBX") {
+      wss?.sendMessage({
+        api: "admin",
+        mt: "PbxStatus",
+      });
+    }
     setActiveButton(buttonMenu);
   };
   useEffect(() => {
     setActiveButton("License");
-  }, []);
+  }, []); // setar License como default sempre
 
   const renderActiveComponent = () => {
     switch (activeButton) {
@@ -47,7 +54,7 @@ export default function MenuOptions() {
     <div className="flex w-full h-full justify-between">
       <div className="flex flex-col justify-start p-2 gap-4 h-[calc(100vh-92px)] bg-card">
         <Button
-          className="focus:bg-accent"
+          className={ `${activeButton === "License" ? "bg-accent" : ""} focus:bg-accent`} 
           variant={"ghost"}
           onClick={() => handleClick("License")}
         >
