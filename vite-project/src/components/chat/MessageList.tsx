@@ -16,6 +16,8 @@ import { User } from "lucide-react";
 import { getInitials, generateAvatar } from "../utils/utilityFunctions";
 import OptChat from "../optBar/OptChat";
 import { useAccount } from "../account/AccountContext";
+import SoundPlayer from "../soundPlayer/SoundPlayer";
+import bleep from "@/assets/sounds/bleep.wav";
 
 interface OptProps {
   user: UserInterface;
@@ -25,9 +27,12 @@ interface OptProps {
 
 export default function MessageList({ user, onClick, clickedUser }: OptProps) {
   const [lastestMessage, setLastestMessage] = useState<ChatInterface[]>();
+  const [playSound, setPlaySound] = useState<boolean>(false);
   const { chat } = useChat();
-  const account = useAccount()
-  const myAccountInfo = JSON.parse(localStorage.getItem(account.session) || "{}");
+  const account = useAccount();
+  const myAccountInfo = JSON.parse(
+    localStorage.getItem(account.session) || "{}"
+  );
   const userToChat = user.guid === clickedUser ? user : null;
 
   useEffect(() => {
@@ -46,6 +51,18 @@ export default function MessageList({ user, onClick, clickedUser }: OptProps) {
         new Date(a.date || "").getTime() - new Date(b.date || "").getTime()
     );
 
+    // const unread = lastestMessage
+    //   ? lastestMessage.filter(
+    //       (message) => message.read === null && message.from_guid === user.guid
+    //     )
+    //   : undefined;
+
+    // // if (unread && unread?.length >= 1) {
+    // //   setPlaySound(true);
+    // // }else{
+    // //   setPlaySound(false);
+    // // }
+
     setLastestMessage(sortedMessages);
   }, [chat]);
 
@@ -54,6 +71,7 @@ export default function MessageList({ user, onClick, clickedUser }: OptProps) {
 
   return (
     <div>
+      {/* <SoundPlayer soundSrc={bleep} play={playSound} /> */}
       <div onClick={onClick}>
         <ChatList
           id={user.id}
@@ -69,8 +87,10 @@ export default function MessageList({ user, onClick, clickedUser }: OptProps) {
               subtitle: lastestMessage
                 ? lastestMessage[lastestMessage.length - 1]?.msg
                 : "",
-                avatarSize: "large",
-              date: lastestMessage ? lastestMessage[lastestMessage.length - 1]?.date as Date : undefined,
+              avatarSize: "large",
+              date: lastestMessage
+                ? (lastestMessage[lastestMessage.length - 1]?.date as Date)
+                : undefined,
               statusColor: user?.status === "online" ? "#16A34A" : "#A9A9A9 ",
               // date: lastestMessage
               //   ? new Date(
@@ -85,7 +105,6 @@ export default function MessageList({ user, onClick, clickedUser }: OptProps) {
                 : undefined,
             },
           ]}
-          
         />
       </div>
       <OptChat userToChat={userToChat as UserInterface} onClick={onClick} />

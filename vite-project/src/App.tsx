@@ -56,56 +56,50 @@ function App() {
     <>
       <ThemeProvider>
         <LanguageProvider>
-              <AppConfigProvider>
-                <ChatProvider>
-                  <DataProvider>
-                    <HistoryProvider>
-                      <ActionProvider>
-                        <GatewayProvider>
-                          <AccountProvider>
-                            <UserProvider>
-                              <UserPbxProvider>
-                                <ButtonProvider>
-                                  <CallProvider>
-                                    <SensorProvider>
-                                      <CameraProvider>
-                                        <Routes>
-                                          <Route
-                                            path="/"
-                                            element={<RootRoute />}
-                                          />
-                                          <Route
-                                            path="/login"
-                                            element={<LoginPage />}
-                                          />
-                                          <Route
-                                            path="/admin/*"
-                                            element={<AdminRoute />}
-                                          />
-                                          <Route
-                                            path="/user/*"
-                                            element={<UserRoute />}
-                                          />
-                                          <Route
-                                            path="*"
-                                            element={<NoPage />}
-                                          />
-                                        </Routes>
-                                        <Toaster />
-                                        <TokenRenewer/>
-                                      </CameraProvider>
-                                    </SensorProvider>
-                                  </CallProvider>
-                                </ButtonProvider>
-                              </UserPbxProvider>
-                            </UserProvider>
-                          </AccountProvider>
-                        </GatewayProvider>
-                      </ActionProvider>
-                    </HistoryProvider>
-                  </DataProvider>
-                </ChatProvider>
-              </AppConfigProvider>
+          <ChatProvider>
+            <AppConfigProvider>
+              <DataProvider>
+                <HistoryProvider>
+                  <ActionProvider>
+                    <GatewayProvider>
+                      <AccountProvider>
+                        <UserProvider>
+                          <UserPbxProvider>
+                            <ButtonProvider>
+                              <CallProvider>
+                                <SensorProvider>
+                                  <CameraProvider>
+                                    <Routes>
+                                      <Route path="/" element={<RootRoute />} />
+                                      <Route
+                                        path="/login"
+                                        element={<LoginPage />}
+                                      />
+                                      <Route
+                                        path="/admin/*"
+                                        element={<AdminRoute />}
+                                      />
+                                      <Route
+                                        path="/user/*"
+                                        element={<UserRoute />}
+                                      />
+                                      <Route path="*" element={<NoPage />} />
+                                    </Routes>
+                                    <Toaster />
+                                    <TokenRenewer />
+                                  </CameraProvider>
+                                </SensorProvider>
+                              </CallProvider>
+                            </ButtonProvider>
+                          </UserPbxProvider>
+                        </UserProvider>
+                      </AccountProvider>
+                    </GatewayProvider>
+                  </ActionProvider>
+                </HistoryProvider>
+              </DataProvider>
+            </AppConfigProvider>
+          </ChatProvider>
         </LanguageProvider>
       </ThemeProvider>
     </>

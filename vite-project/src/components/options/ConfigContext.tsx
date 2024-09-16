@@ -60,7 +60,7 @@ export interface License {
   licenseInstallDate: string | null;
 }
 
-export interface Notifications {
+export interface NotificationsInterface {
   id?: number;
   entry: string;
   value: string;
@@ -73,6 +73,8 @@ interface AppConfigContextType {
   apiKeyInfo: GoogleApiKeyInterface[];
   licenseApi: License;
   loadBarData: LoaderBarProps;
+  notification: NotificationsInterface[];
+  addNotifications: (notification: NotificationsInterface) => void;
   setPbxStatus: React.Dispatch<React.SetStateAction<PbxInterface[]>>;
   setApiKeyInfo: React.Dispatch<React.SetStateAction<GoogleApiKeyInterface[]>>;
   setLicense: React.Dispatch<React.SetStateAction<License>>;
@@ -98,6 +100,7 @@ const AppConfigContext = createContext<AppConfigContextType | undefined>(
 export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
   const [pbxStatus, setPbxStatus] = useState<PbxInterface[]>([]);
   const [apiKeyInfo, setApiKeyInfo] = useState<GoogleApiKeyInterface[]>([]);
+  const [notification, setNotifications] = useState<NotificationsInterface[]>([]);
   const [licenseApi, setLicense] = useState<License>({
     status: "active",
     licenseKey: { value: "", createdAt: null, updatedAt: null },
@@ -152,6 +155,13 @@ export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
       }
     });
   };
+  
+  const addNotifications = (notification: NotificationsInterface) => {
+    setNotifications((prevNotifications) => [
+      ...prevNotifications,
+      notification,
+    ]);
+  };
 
   const addApiKey = (apiKey: GoogleApiKeyInterface) => {
     setApiKeyInfo((prevApiKeys) => [...prevApiKeys, apiKey]);
@@ -179,7 +189,9 @@ export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
         apiKeyInfo,
         licenseApi,
         loadBarData,
+        notification,
         setPbxStatus,
+        addNotifications,
         setApiKeyInfo,
         setLicense,
         setLoadBarData,

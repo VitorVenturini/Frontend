@@ -41,7 +41,10 @@ import {
 import { useCalls } from "@/components/calls/CallContext";
 import Loader from "@/components/Loader";
 import HeaderUser from "@/components/header/HeaderUser";
-import { useAppConfig } from "@/components/options/ConfigContext";
+import {
+  NotificationsInterface,
+  useAppConfig,
+} from "@/components/options/ConfigContext";
 interface User {
   id: string;
   name: string;
@@ -112,7 +115,7 @@ function UserLayout() {
     null
   );
   const [openDialog, setOpenDialog] = useState(false);
-  const {setApiKeyInfo} = useAppConfig()
+  const { setApiKeyInfo, addNotifications } = useAppConfig();
   //const [clickedUser , setClickedUser] = useState<UserInterface[]>([])
   const navigate = useNavigate();
   const { guid } = useContext(AccountContext);
@@ -430,7 +433,7 @@ function UserLayout() {
             "bg-orange-500",
             message.note
           );
-          return
+          return;
         }
         setButtonNumberCallStatus(
           message.number,
@@ -485,8 +488,29 @@ function UserLayout() {
         setCommandValue(commandBtn_id, commandPrt, commandValue);
         break;
       case "ConfigResult":
-        setApiKeyInfo(message.result);
+        const apiKeyEntries = message.result.filter(
+          (item: any) => item.entry === "googleApiKey"
+        );
+        const sensorNotification = message.result.find(
+          (item: NotificationsInterface) => item.entry === "sensorNotification"
+        );
+        const alarmNotification = message.result.find(
+          (item: NotificationsInterface) => item.entry === "alarmNotification"
+        );
+        const chatNotification = message.result.find(
+          (item: NotificationsInterface) => item.entry === "chatNotification"
+        );
+        const soundsInfo = [
+          ...(sensorNotification ? [sensorNotification] : []),
+          ...(alarmNotification ? [alarmNotification] : []),
+          ...(chatNotification ? [chatNotification] : []),
+        ];
+
+        soundsInfo.forEach((sound) => addNotifications(sound));
+        setApiKeyInfo(apiKeyEntries);
+
         break;
+
       case "ComboStartButton":
         comboStarted(message.btn_id);
         const comboButtons = allBtn?.filter((btn) => {
