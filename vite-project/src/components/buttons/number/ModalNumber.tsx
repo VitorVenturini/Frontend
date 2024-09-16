@@ -242,30 +242,32 @@ export default function ModalNumber({
             </TabsList>
           </Tabs>
         </div>
-        <CardFooter className="flex justify-between">
+        <CardFooter className="flex justify-end w-full">
           {isUpdate && (
-            <Button variant="secondary">
-              <AlertDialog>
-                <AlertDialogTrigger className="w-full h-full">
-                  Excluir
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Essa ação não pode ser desfeita. Isso irá deletar
-                      permanentemente o botão Sensor.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleDeleteButton}>
-                      Excluir
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </Button>
+            <div className="flex w-full justify-between">
+              <Button variant="secondary">
+                <AlertDialog>
+                  <AlertDialogTrigger className="w-full h-full">
+                    Excluir
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Essa ação não pode ser desfeita. Isso irá deletar
+                        permanentemente o botão Sensor.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleDeleteButton}>
+                        Excluir
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </Button>
+            </div>
           )}
           {!isCreating && (
             <Button onClick={handleCreateDest}>

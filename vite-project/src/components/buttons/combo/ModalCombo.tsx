@@ -234,9 +234,10 @@ export default function ModalCombo({
           />
         </div>
       </CardContent>
-      <CardFooter className="flex justify-between">
+      <CardFooter className="flex justify-end w-full">
         {isUpdate && (
-          <Button variant="secondary">
+          <div className="flex w-full justify-between">
+                      <Button variant="secondary">
             <AlertDialog>
               <AlertDialogTrigger>Excluir</AlertDialogTrigger>
               <AlertDialogContent>
@@ -256,6 +257,8 @@ export default function ModalCombo({
               </AlertDialogContent>
             </AlertDialog>
           </Button>
+          </div>
+
         )}
         {!isCreating && (
           <Button onClick={handleCreateButton}>

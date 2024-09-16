@@ -176,14 +176,14 @@ export default function ButtonsComponent({
         clickedPosition?.j >= 1 &&
         clickedPosition?.j <= 5:
         return (
-          <div className="max-w-5xl">
+          <div className="">
             <Card className="border-none bg-transparent">
               <CardHeader>
                 <CardTitle>Criar Botão</CardTitle>
                 <CardDescription>Selecione um tipo de botão</CardDescription>
               </CardHeader>
               <CardContent className="gap-4">
-                <div className=" grid grid-cols-4 items-center gap-4 mt-3 mb-3">
+                <div className=" grid grid-cols-5 items-center gap-4 mt-3 mb-6">
                   <Label
                     className="text-end"
                     htmlFor="framework"
@@ -192,7 +192,7 @@ export default function ButtonsComponent({
                     Tipo de botão
                   </Label>
                   <Select onValueChange={handleTypeSelected}>
-                    <SelectTrigger className="col-span-3" id="SelectTypeButton">
+                    <SelectTrigger className="col-span-4" id="SelectTypeButton">
                       <SelectValue placeholder="Selecione o tipo de Botão" />
                     </SelectTrigger>
                     <SelectContent position="popper">
@@ -206,7 +206,7 @@ export default function ButtonsComponent({
                     </SelectContent>
                   </Select>
                 </div>
-                <div>{renderModalByType()}</div>
+                <div className="space-y-6">{renderModalByType()}</div>
               </CardContent>
             </Card>
           </div>
