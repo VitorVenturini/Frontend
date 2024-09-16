@@ -12,6 +12,7 @@ import UserButton from "../user/UserButton";
 import { useDrag } from "react-dnd";
 import { Skeleton } from "@/components/ui/skeleton";
 import { commonClasses } from "../ButtonsComponent";
+import { toast, useToast } from "@/components/ui/use-toast";
 
 interface DraggableButtonProps {
   button: ButtonInterface;
@@ -49,19 +50,23 @@ interface ComboCardButtonsProps {
   existingDroppedButtons: (ButtonInterface | null)[]; // Botões na área de drop
   onReturnButton: (button: ButtonInterface) => void; // Callback para retornar botão removido à lista de disponíveis
   selectedDropArea: string | null; // Adicionada prop para saber qual área foi clicada
+  setDroppedButtons: React.Dispatch<React.SetStateAction<(ButtonInterface | null)[]>>;
+  droppedButtons: (ButtonInterface | null)[];
 }
 
-export default function ComboCardButtons({
+export default function DraggableComboButtons({
   selectedUser,
   onButtonDrop,
   removedButtons,
+  setDroppedButtons,
+  droppedButtons,
   existingDroppedButtons,
   onReturnButton,
   selectedDropArea, // Recebe a área selecionada
 }: ComboCardButtonsProps) {
   const [filteredButtons, setFilterButtons] = useState("");
   const { buttons } = useButtons();
-
+  const { toast } = useToast();
   const handleFilterButtons = (event: ChangeEvent<HTMLInputElement>) => {
     setFilterButtons(event.target.value);
   };
@@ -104,9 +109,9 @@ export default function ComboCardButtons({
       return button.page === "0" && button.position_y === "1";
     } else if (selectedDropArea === "bottom-left") {
       return button.page === "0" && button.position_y === "2";
-    } else if (selectedDropArea === "top-right") {
+    } else if (selectedDropArea === "right-side") {
       return button.page !== "0";
-    } else if (selectedDropArea === "bottom-right") {
+    } else if (selectedDropArea === "right-side") {
       return button.page !== "0";
     }
 
@@ -141,6 +146,56 @@ export default function ComboCardButtons({
     ));
   };
 
+  const handleClickButton = (button: ButtonInterface) => {
+    if (!selectedDropArea) {
+      toast({
+        description: "Selecione uma área para colocar o botão",
+      });
+      return;
+    }
+  
+    // Definir o índice com base na área selecionada
+    let indexToDrop = 0;
+    switch (selectedDropArea) {
+      case "top-left":
+        indexToDrop = 0;
+        break;
+      case "bottom-left":
+        indexToDrop = 1;
+        break;
+      case "right-side":
+        // Verifica qual das duas áreas da direita está disponível
+        const rightAreaButtonsCount = [droppedButtons[2], droppedButtons[3]].filter(Boolean).length;
+        indexToDrop = droppedButtons[2] ? 3 : 2;
+        if (rightAreaButtonsCount >= 2) {
+          toast({
+            description: "Você não pode adicionar mais de 2 botões nesta área.",
+          });
+          return;
+        }
+        break;
+      default:
+        return;
+    }
+  
+    // Se já houver um botão na posição selecionada (top-left ou bottom-left), removê-lo
+    const currentButton = droppedButtons[indexToDrop];
+    if (currentButton) {
+      // Retorna o botão atual para a lista de disponíveis
+      onReturnButton(currentButton);
+    }
+  
+    // Atualizar o array de droppedButtons com o novo botão no índice correto
+    const newDroppedButtons = [...droppedButtons];
+    newDroppedButtons[indexToDrop] = button;
+    setDroppedButtons(newDroppedButtons);
+  
+    // Disparar o callback para onButtonDrop
+    onButtonDrop(button);
+  };
+  
+  
+
   return (
     <div className="flex flex-col w-[50%] h-[420px]">
       <h1>Selecione o botão</h1>
@@ -165,7 +220,13 @@ export default function ComboCardButtons({
           {buttonsToShow.length > 0
             ? buttonsToShow.map((button: ButtonInterface) => (
                 <DraggableButton key={button.id} button={button}>
-                  {renderButtonContent(button)}
+                  <div
+                    onClick={() => {
+                      handleClickButton(button);
+                    }}
+                  >
+                    {renderButtonContent(button)}
+                  </div>
                 </DraggableButton>
               ))
             : renderSkeletons(buttonsFromUser.length)}

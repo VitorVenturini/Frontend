@@ -34,61 +34,26 @@ import { useAccount } from "@/components/account/AccountContext";
 import texts from "@/_data/texts.json";
 import { useLanguage } from "@/components/language/LanguageContext";
 import { host } from "@/App";
+import { UserInterface, useUsers } from "@/components/users/usersCore/UserContext";
 
-interface User {
-  id: string;
-  name: string;
-  guid: string;
-  // Adicione aqui outros campos se necessário
-}
 
 interface ButtonsPageProp {
   buttons: ButtonInterface[];
 }
 
 export default function ButtonsPage() {
-  const [users, setUsers] = useState<User[]>([]);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null); // Inicialmente, o primeiro usuário é selecionado
+  const {users} = useUsers()
+  const [selectedUser, setSelectedUser] = useState<UserInterface | null>(null); // Inicialmente, o primeiro usuário é selecionado
   const [selectedOptTop, setSelectedOptTop] = useState<string>("floor"); // default for top
   const [selectedOptBottom, setSelectedOptBottom] = useState<string>("floor"); // default for bottom
 
   const account = useAccount();
   const { language } = useLanguage();
-  // const { data: websocketData, sendMessage } = useWebSocket(
-  //   account.accessToken
-  // );
   const { buttons } = useButtons();
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await fetch(`${host}/api/listUsers`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "x-auth": account.accessToken || "",
-          },
-        });
-        const data = await response.json();
-        setUsers(data);
-        // console.log("ALL USERS" + JSON.stringify(data))
-        // sendMessage({
-        //   api: account.isAdmin ? "admin" : "user",
-        //   mt: "SelectMessage",
-        // });
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchUsers();
-  }, []);
-
-  // Exemplo de uso do sendMessage para enviar uma mensagem ao carregar a página
-
   const handleUserSelect = (value: string) => {
-    const user = users.find((user) => user.id === value);
-    setSelectedUser(user || null);
+    const user = users.find((user) => String(user.id) === value);
+   setSelectedUser(user || null);
   };
 
   const handleOptChangeTop = (newOpt: string) => {
@@ -119,7 +84,7 @@ export default function ButtonsPage() {
             <SelectGroup>
               <SelectLabel>{texts[language].users}</SelectLabel>
               {users.map((user) => (
-                <SelectItem key={user.id} value={user.id}>
+                <SelectItem key={user.id} value={String(user.id)}>
                   {user.name}
                 </SelectItem>
               ))}

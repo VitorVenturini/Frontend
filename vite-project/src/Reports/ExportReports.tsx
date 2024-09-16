@@ -1,16 +1,17 @@
-import React, { useRef, useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 import ReactDOM from "react-dom/client";
-import { Margin, usePDF } from "react-to-pdf";
 import { Button } from "@/components/ui/button";
 import { FileText } from "lucide-react";
+import { GraficoExport } from "@/components/charts/lineChartExport";
+import logoWecom from "../assets/10991348.jpg";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
-import { GraficoExport } from "@/components/charts/lineChartExport";
-import logoWecom from "../assets/10991348.jpg";
 
 interface PdfProps {
   dados?: any[];
@@ -19,59 +20,121 @@ interface PdfProps {
 }
 
 export function PdfGerate({ dados, keys }: PdfProps) {
-  const targetRef = useRef<HTMLDivElement>(null);
-  const [checkedKeys, setCheckedKeys] = useState<{ [key: string]: boolean }>(
-    {}
-  );
+  const targetRefs = useRef<HTMLDivElement[]>([]); // Array de referências para gráficos
+  const [checkedKeys, setCheckedKeys] = useState<{ [key: string]: boolean }>({});
 
   useEffect(() => {
     if (keys) {
-      setCheckedKeys(
-        keys.reduce((acc, key) => ({ ...acc, [key]: true }), {})
-      );
+      setCheckedKeys(keys.reduce((acc, key) => ({ ...acc, [key]: true }), {}));
     }
   }, [keys]);
 
-  const openInNewTab = () => {
-    const newWindow = window.open("", "_blank", "width=1200,height=900");
-    if (newWindow) {
-      const div = newWindow.document.createElement("div");
-      newWindow.document.body.appendChild(div);
-      ReactDOM.createRoot(div).render(
-        <ExampleUsePDF dados={dados} checkedKeys={checkedKeys || {}} toPDF={toPDF} />
-      );
-      newWindow.document.head.appendChild(
-        document.createElement("style")
-      ).textContent = `
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        .card-image { width: 100%; max-width: 800px; }
-      `;
+  const generatePDF = async () => {
+    const doc = new jsPDF("landscape", "mm", "a4");
+
+    // Obtenção do sensor_name do primeiro item de dados
+    const sensorName = dados && dados[0]?.sensor_name ? dados[0].sensor_name : "sensor";
+
+    // Obtenção da data e hora atuais
+    const currentDate = new Date();
+    const formattedDate = `${currentDate.getFullYear()}-${String(
+      currentDate.getMonth() + 1
+    ).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}`;
+    const formattedTime = `${String(currentDate.getHours()).padStart(2, "0")}-${String(
+      currentDate.getMinutes()
+    ).padStart(2, "0")}-${String(currentDate.getSeconds()).padStart(2, "0")}`;
+
+    const fileName = `${sensorName}_${formattedDate}_${formattedTime}.pdf`;
+
+    for (let i = 0; i < targetRefs.current.length; i++) {
+      const input = targetRefs.current[i];
+
+      if (input) {
+        const canvas = await html2canvas(input, { scale: 2 });
+        const imgData = canvas.toDataURL("image/jpeg", 1.0);
+
+        const imgWidth = 297; // Largura em mm para A4 no modo paisagem
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+        doc.addImage(imgData, "JPEG", 0, 0, imgWidth, imgHeight);
+
+        // Adiciona uma nova página, exceto no último gráfico
+        if (i < targetRefs.current.length - 1) {
+          doc.addPage();
+        }
+      }
     }
-  };
-
-  const { toPDF } = usePDF({
-    method: "open",
-    filename: "usepdf-example.pdf",
-    page: { margin: Margin.MEDIUM, orientation: "portrait" },
-    ref: targetRef,
-  });
-
-  const handleCheckedChange = (key: string, checked: boolean) => {
-    setCheckedKeys((prev) => ({ ...prev, [key]: checked }));
+    doc.save(fileName); // Usar o nome de arquivo dinâmico
   };
 
   const extractedKeys = keys?.filter(
     (key) => !["date", "sensor_name", "deveui", "id"].includes(key)
   );
+  
+  const handleCheckedChange = (key: string, checked: boolean) => {
+    setCheckedKeys((prev) => ({ ...prev, [key]: checked }));
+  };
+
+  const openInNewTab = async () => {
+    const newWindow = window.open("", "_blank", "width=1200,height=900");
+
+    if (newWindow) {
+      const div = newWindow.document.createElement("div");
+      newWindow.document.body.appendChild(div);
+
+      const root = ReactDOM.createRoot(div); // Utilizando createRoot para React 18
+
+      root.render(
+        <div>
+          <div className="container">
+            <div className="card-container">
+              <img src={logoWecom} alt="Sample" className="card-image" />
+              <h2 className="card-title text-black">usePDF Example</h2>
+              <p className="card-paragraph text-black">
+                Vivamus at urna sit amet justo auctor vestibulum ut nec nisl.
+              </p>
+              {/* Gerar gráficos para cada "key" filtrada */}
+              {keys &&
+                keys
+                  .filter((key) => checkedKeys[key]) // Filtrar apenas as keys que foram "checked"
+                  .map((key, index) => (
+                    <div
+                      key={index}
+                      ref={(el) => (targetRefs.current[index] = el!)} // Salva a referência de cada gráfico
+                      className="page-break"
+                    >
+                      <GraficoExport
+                        chartData={dados as any}
+                        checkedKeys={{ [key]: true }} // Passar a key específica
+                      />
+                    </div>
+                  ))}
+            </div>
+          </div>
+        </div>
+      );
+
+      newWindow.document.head.appendChild(
+        document.createElement("style")
+      ).textContent = `
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .card-image { width: 100%; max-width: 800px; }
+        .page-break { page-break-before: always; }
+      `;
+
+      setTimeout(() => {
+        generatePDF(); // Gera o PDF após o carregamento do conteúdo
+      }, 1500); // Tempo de espera para garantir o carregamento
+    }
+  };
 
   return (
     <>
-      <div ref={targetRef} style={{ display: "none" }}>
-        <ExampleUsePDF dados={dados} checkedKeys={checkedKeys || {}} />
-      </div>
-
       <Popover>
-        <PopoverTrigger asChild>
+        <PopoverTrigger
+          asChild
+          className="flex justify-between align-middle items-center"
+        >
           <Button variant="ghost" disabled={dados?.length === 0}>
             <FileText />
           </Button>
@@ -80,56 +143,55 @@ export function PdfGerate({ dados, keys }: PdfProps) {
           <div className="flex justify-between items-center">
             <h1>Filtro</h1>
 
-            <Button
-              variant="ghost"
-              title="PDF"
-              onClick={openInNewTab}
-              disabled={!dados?.length}
-            >
+            <Button variant="ghost" title="PDF" onClick={openInNewTab}>
               <FileText />
             </Button>
           </div>
-
           {extractedKeys?.map((key) => (
-            <div key={key} className="flex gap-2 items-center">
+            <div className="flex gap-2 items-center">
               <Checkbox
                 id={key}
-                checked={checkedKeys[key] || false} 
+                checked={checkedKeys[key] || false} // Usa o estado "checkedKeys"
                 onCheckedChange={(checked) =>
-                  handleCheckedChange(key, !!checked)
+                  handleCheckedChange(key, checked as any)
                 }
-              />
-              <label htmlFor={key}>{key}</label>
+              >
+                {" "}
+              </Checkbox>
+              <label>{key}</label>
             </div>
           ))}
         </PopoverContent>
       </Popover>
+
+      {/* Conteúdo oculto para renderizar os gráficos */}
+      <div style={{ display: "none" }}>
+        <div className="container">
+          <div className="card-container">
+            <img src={logoWecom} alt="Sample" className="card-image" />
+            <h2 className="card-title text-black">usePDF Example</h2>
+            <p className="card-paragraph text-black">
+              Vivamus at urna sit amet justo auctor vestibulum ut nec nisl.
+            </p>
+            {/* Gerar gráficos para cada "key" filtrada */}
+            {keys &&
+              keys
+                .filter((key) => checkedKeys[key]) // Filtrar apenas as keys que foram "checked"
+                .map((key, index) => (
+                  <div
+                    key={index}
+                    ref={(el) => (targetRefs.current[index] = el!)} // Salva a referência de cada gráfico
+                    className="page-break"
+                  >
+                    <GraficoExport
+                      chartData={dados as any}
+                      checkedKeys={{ [key]: true }} // Passar a key específica
+                    />
+                  </div>
+                ))}
+          </div>
+        </div>
+      </div>
     </>
   );
 }
-
-const ExampleUsePDF = ({
-  dados,
-  checkedKeys,
-  toPDF,
-}: PdfProps & { toPDF?: () => void }) => (
-  <Container>
-    <Card dados={dados} checkedKeys={checkedKeys || {}} /> {/* Fallback para objeto vazio */}
-    <button onClick={toPDF}>Gerar PDF</button>
-  </Container>
-);
-
-const Container = ({ children }: { children: React.ReactNode }) => (
-  <div className="container">{children}</div>
-);
-
-const Card = ({ dados, checkedKeys }: PdfProps) => (
-  <div className="flex">
-    <img src={logoWecom} alt="Sample" className="card-image" />
-    <h2 className="card-title text-black">usePDF Example</h2>
-    <p className="card-paragraph text-black">
-      Vivamus at urna sit amet justo auctor vestibulum ut nec nisl.
-    </p>
-    <GraficoExport chartData={dados as any} checkedKeys={checkedKeys || {}} />
-  </div>
-);

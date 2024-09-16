@@ -541,7 +541,7 @@ function UserLayout() {
                       interactive="top"
                       onKeyChange={handleOptChangeTop}
                       buttons={buttons}
-                      selectedUser={account}
+                      selectedUser={account as any}
                       selectedOpt={selectedOptTop}
                       clickedUser={clickedUserTop}
                       setClickedUser={handleClickedUserTop}
@@ -550,7 +550,7 @@ function UserLayout() {
                       interactive="bottom"
                       onKeyChange={handleOptChangeBottom}
                       buttons={buttons}
-                      selectedUser={account}
+                      selectedUser={account as any}
                       selectedOpt={selectedOptBottom}
                       clickedUser={clickedUserBottom}
                       setClickedUser={handleClickedUserBottom}
@@ -559,7 +559,7 @@ function UserLayout() {
 
                   <ButtonsGridPage
                     buttonsGrid={buttons}
-                    selectedUser={account}
+                    selectedUser={account as any}
                     // selectedOpt={selectedOpt}
                     // onOptChange={handleOptChange}
                     // clickedUser={clickedUser}

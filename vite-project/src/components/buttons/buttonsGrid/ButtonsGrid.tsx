@@ -2,19 +2,13 @@ import { Separator } from "@/components/ui/separator";
 import { ButtonInterface, useButtons } from "@/components/buttons/buttonContext/ButtonsContext";
 import ButtonsComponent from "@/components/buttons/ButtonsComponent"
 import { useState } from "react";
+import { UserInterface } from "@/components/users/usersCore/UserContext";
 
 
 interface ButtonsGridProps {
   buttons: ButtonInterface[];
-  selectedUser: User | null;
+  selectedUser: UserInterface | null;
   selectedPage: string;
-}
-
-interface User {
-  id: string;
-  name: string;
-  guid: string;
-  // Adicione aqui outros campos se necessário
 }
 
 export default function ButtonsGrid({

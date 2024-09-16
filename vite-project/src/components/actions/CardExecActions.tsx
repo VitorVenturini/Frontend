@@ -1,19 +1,8 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import React, { useEffect, useState, ChangeEvent } from "react";
-import { Value } from "@radix-ui/react-select";
-import { Loader2, Pencil } from "lucide-react";
 import { Info } from "lucide-react";
 import {
   Select,
@@ -26,16 +15,12 @@ import {
 } from "@/components/ui/select";
 import texts from "@/_data/texts.json";
 import { useLanguage } from "@/components/language/LanguageContext";
-import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { useSensors } from "@/components/sensor/SensorContext";
 import { ActionsInteface } from "./ActionsContext";
 import { useButtons } from "../buttons/buttonContext/ButtonsContext";
 import { useUsers } from "../users/usersCore/UserContext";
-interface User {
-  id: string;
-  name: string;
-  guid: string;
-}
+import { useUsersPbx } from "@/components/users/usersPbx/UsersPbxContext";
+
 interface UpdateActionsProps {
   action?: ActionsInteface;
   onUpdateExecActionDetails: (key: string, value: string) => void;
@@ -46,9 +31,8 @@ export default function CardExecActions({
   onUpdateExecActionDetails,
 }: UpdateActionsProps) {
   const { users } = useUsers();
-
+  const { usersPbx } = useUsersPbx();
   const [actionExecType, setType] = useState(action?.action_exec_type || "");
-  //   const [actionExecValue, setActionValue] = useState(""); //SEM USO NO MOMENTO
   const [selectedUser, setSelectedUser] = useState(
     action?.action_exec_user || ""
   );
@@ -65,6 +49,9 @@ export default function CardExecActions({
   const [actionExecTypeCommandMode, setActionExecTypeCommandMode] = useState(
     action?.action_exec_type_command_mode || ""
   );
+  const filteredDevices = usersPbx?.filter((u) => {
+    return u.guid === selectedUser;
+  })[0];
 
   const { language } = useLanguage();
   const { toast } = useToast();
@@ -91,7 +78,7 @@ export default function CardExecActions({
   };
 
   const handleUserSelect = (value: string) => {
-    const user = users.find((user) => user.id as any === value);
+    const user = users.find((user) => (user.id as any) === value);
     setSelectedUser(value);
     onUpdateExecActionDetails("selectedUser", value);
   };
@@ -119,16 +106,9 @@ export default function CardExecActions({
     return p.deveui === actionExecDevice;
   })[0];
 
-  const selectedExecSensorValue = sensors.filter((p) => {
-    return p.deveui === actionExecDevice;
-  })[0];
-  const filteredSelectExecSensor = selectedExecSensorValue
-    ? selectedExecSensorValue.parameters
+  const filteredSelectExecSensor = selectedExecSensor
+    ? selectedExecSensor.parameters
     : [];
-
-  const updateExecSensorValue = sensors.filter((p) => {
-    return p.deveui === actionExecDevice;
-  })[0];
 
   const shouldRenderDevice = actionExecType === "number";
   const shouldRenderType = actionExecType === "button";
@@ -138,90 +118,118 @@ export default function CardExecActions({
       {/* CARD CREATE EXEC ACTIONS*/}
       <div className="gap-4 flex flex-col align-top">
         <CardDescription>
-          Configuração dos parâmetros de execução
+          {texts[language].execParametersDescription}
         </CardDescription>
 
         <div className="grid grid-cols-4 items-center gap-4">
           <Label className="text-end" htmlFor="name">
-            Tipo
+            {texts[language].type}
           </Label>
           <Select onValueChange={handleType} value={actionExecType}>
             <SelectTrigger className="col-span-3">
-              <SelectValue placeholder="Selecione o Tipo" />
+              <SelectValue placeholder={texts[language].selectType} />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectLabel>Gatilho</SelectLabel>
-                <SelectItem value="alarm">Alarme</SelectItem>
-                <SelectItem value="number">Número</SelectItem>
-                <SelectItem value="button">Botão</SelectItem>
-                <SelectItem value="command">Comando</SelectItem>
+                <SelectLabel>{texts[language].trigger}</SelectLabel>
+                <SelectItem value="alarm">{texts[language].alarm}</SelectItem>
+                <SelectItem value="number">{texts[language].number}</SelectItem>
+                <SelectItem value="button">{texts[language].button}</SelectItem>
+                <SelectItem value="command">
+                  {texts[language].command}
+                </SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
         </div>
         {shouldRenderDevice && (
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-end" htmlFor="paramDest">
-              Dispositivo
+            <Label className="text-end" htmlFor="name">
+              {texts[language].user}
             </Label>
-            <Select onValueChange={handleDeviceDest} value={deviceDest}>
+            <Select
+              onValueChange={handleUserSelect}
+              value={action?.action_exec_user}
+            >
               <SelectTrigger className="col-span-3">
-                <SelectValue placeholder="Dispositivo" />
+                <SelectValue
+                  placeholder={texts[language].selectUserPlaceholder}
+                />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Softphone">Softphone</SelectItem>
+                <SelectGroup>
+                  <SelectLabel>{texts[language].users}</SelectLabel>
+                  {users.map((user) => (
+                    <SelectItem key={user.id} value={user.sip}>
+                      {user.name}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+            <Label className="text-end" htmlFor="paramDest">
+              {texts[language].device}
+            </Label>
+            <Select value={deviceDest} onValueChange={handleDeviceDest}>
+              <SelectTrigger className="col-span-3">
+                <SelectValue placeholder={texts[language].selectDevice} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>{texts[language].devices}</SelectLabel>
+                  {filteredDevices?.devices.map((dev, index) => (
+                    <SelectItem key={index} value={dev.hw as string}>
+                      {dev.text}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
               </SelectContent>
             </Select>
           </div>
         )}
         {shouldRenderType && (
-          <div>
-            <div className="grid grid-cols-7 items-center gap-4">
-              <Label className="text-end" htmlFor="name">
-                User
-              </Label>
-              <Select
-                onValueChange={handleUserSelect}
-                value={action?.action_exec_user}
-              >
-                <SelectTrigger className="col-span-6">
-                  <SelectValue
-                    placeholder={texts[language].selectUserPlaceholder}
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>{texts[language].users}</SelectLabel>
-                    {users.map((user) => (
-                      <SelectItem key={user.id} value={user.guid}>
-                        {user.name}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label className="text-end" htmlFor="paramDest">
-                Botão
-              </Label>
-              <Select onValueChange={handleButtonSelect} value={actionExecPrt}>
-                <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="Selecione" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>{texts[language].headerButtons}</SelectLabel>
-                    {userButtons.map((button) => (
-                      <SelectItem key={button.id} value={button.id as any}>
-                        {button.button_name}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label className="text-end" htmlFor="name">
+              {texts[language].user}
+            </Label>
+            <Select
+              onValueChange={handleUserSelect}
+              value={action?.action_exec_user}
+            >
+              <SelectTrigger className="col-span-3">
+                <SelectValue
+                  placeholder={texts[language].selectUserPlaceholder}
+                />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>{texts[language].users}</SelectLabel>
+                  {users.map((user) => (
+                    <SelectItem key={user.id} value={user.guid}>
+                      {user.name}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+            <Label className="text-end" htmlFor="paramDest">
+              {texts[language].button}
+            </Label>
+            <Select onValueChange={handleButtonSelect} value={actionExecPrt}>
+              <SelectTrigger className="col-span-3">
+                <SelectValue placeholder={texts[language].selectButton} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>{texts[language].headerButtons}</SelectLabel>
+                  {userButtons.map((button) => (
+                    <SelectItem key={button.id} value={button.id as any}>
+                      {button.button_name}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </div>
         )}
 
@@ -230,11 +238,8 @@ export default function CardExecActions({
             <div className="gap-1">
               <div className="grid grid-cols-4 items-center gap-4 mb-4">
                 <div className="flex justify-end gap-1">
-                  <Label
-                    htmlFor="name"
-                    title="Qual contexto irá executar essa ação"
-                  >
-                    IoT Device
+                  <Label htmlFor="name" title={texts[language].iotContext}>
+                    {texts[language].iotDevice}
                   </Label>
                 </div>
                 <Select
@@ -242,11 +247,11 @@ export default function CardExecActions({
                   onValueChange={handleExecDevice}
                 >
                   <SelectTrigger className="col-span-3">
-                    <SelectValue placeholder="Selecione um Sensor" />
+                    <SelectValue placeholder={texts[language].selectSensor} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                      <SelectLabel>Sensores</SelectLabel>
+                      <SelectLabel>{texts[language].sensors}</SelectLabel>
                       {sensors.map((sensor) => (
                         <SelectItem
                           key={sensor.sensor_name}
@@ -261,12 +266,8 @@ export default function CardExecActions({
               </div>
               <div className="grid grid-cols-4 items-center gap-4 mb-4">
                 <div className="flex justify-end gap-1">
-                  <Label
-                    className="text-end"
-                    htmlFor="framework"
-                    id="typeMeasure"
-                  >
-                    Tipo de medida
+                  <Label className="text-end" htmlFor="framework">
+                    {texts[language].measureType}
                   </Label>
                 </div>
                 <Select
@@ -275,11 +276,11 @@ export default function CardExecActions({
                   disabled={!actionExecDevice}
                 >
                   <SelectTrigger className="col-span-3" id="SelectTypeMeasure">
-                    <SelectValue placeholder="Selecione o tipo de medida" />
+                    <SelectValue placeholder={texts[language].selectMeasure} />
                   </SelectTrigger>
                   <SelectContent position="popper">
                     <SelectGroup>
-                      <SelectLabel>Sensores</SelectLabel>
+                      <SelectLabel>{texts[language].sensors}</SelectLabel>
                       {filteredSelectExecSensor.map((parameters, i) => (
                         <SelectItem key={i} value={parameters.parameter}>
                           {parameters.name}
@@ -292,7 +293,7 @@ export default function CardExecActions({
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label className="text-end" htmlFor="name">
-                Comando
+                {texts[language].command}
               </Label>
               <Select
                 onValueChange={handleActionExecTypeCommandMode}
@@ -300,11 +301,11 @@ export default function CardExecActions({
                 disabled={!actionExecPrt}
               >
                 <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="Selecione o Tipo" />
+                  <SelectValue placeholder={texts[language].selectCommand} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectLabel>Comando On / Off</SelectLabel>
+                    <SelectLabel>{texts[language].onOffCommand}</SelectLabel>
                     <SelectItem value="on">On</SelectItem>
                     <SelectItem value="off">Off</SelectItem>
                   </SelectGroup>
@@ -317,18 +318,15 @@ export default function CardExecActions({
         {!shouldRenderType && actionExecType !== "command" && (
           <div className="grid grid-cols-4 items-center gap-4">
             <div className="flex justify-end gap-1">
-              <Label
-                htmlFor="name"
-                title="Para qual ramal ou ID do botão a ser chamado/alertado"
-              >
-                Valor
+              <Label htmlFor="name" title={texts[language].triggerInfo}>
+                {texts[language].value}
               </Label>
               <Info className="size-[12px]" />
             </div>
             <Input
               className="col-span-3"
               id="name"
-              placeholder="Valor"
+              placeholder={texts[language].valuePlaceholder}
               type="text"
               value={actionExecPrt}
               onChange={handleActionValue}

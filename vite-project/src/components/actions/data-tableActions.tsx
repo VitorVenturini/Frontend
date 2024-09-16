@@ -26,6 +26,8 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { useUsers } from "@/components/users/usersCore/UserContext";
 import LogoCore from "@/assets/Vector.svg";
+import texts from "@/_data/texts.json";
+import { useLanguage } from "@/components/language/LanguageContext"; // Importação do contexto de idioma
 
 interface User {
   id: string;
@@ -47,17 +49,18 @@ export function DataTable<TData extends TableData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+  const { language } = useLanguage(); // Acessando o idioma
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [loading, setLoading] = useState<boolean>(true);
-  const {users} = useUsers()
+  const {users} = useUsers();
   
-    const handleRowClick = () =>{
-    console.log("Linha Clicada")
-  }
+  const handleRowClick = () => {
+    console.log("Linha Clicada");
+  };
 
   const table = useReactTable({
     data,
@@ -85,21 +88,19 @@ export function DataTable<TData extends TableData, TValue>({
     <div className="rounded-md w-full border">
       <div className="flex items-center justify-between p-4">
         <Input
-          placeholder="Filter User..."
+          placeholder={texts[language].filterUser} // Usando o texto de tradução
           value={
             (table.getColumn("create_user")?.getFilterValue() as string) || ""
           }
           onChange={(event) =>
             table.getColumn("create_user")?.setFilterValue(event.target.value)
-            
           }
           className="max-w-sm"
-          
         />
         
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger>
-            <Button>Criar Ação</Button>
+            <Button>{texts[language].createAction}</Button> {/* Texto de tradução */}
           </DialogTrigger>
           <DialogContent className="max-w-5xl">
             <CardCreateAction onSuccess={() => setIsDialogOpen(false)} />
@@ -140,12 +141,12 @@ export function DataTable<TData extends TableData, TValue>({
                   if (cell.column.id === "action_exec_user") {
                     const userId = (cell.row.original as TableData).action_exec_user;
                     const user = users.find((u) => u.guid === userId);
-                    cellValue = user ? user.name : "Unknown User";
+                    cellValue = user ? user.name : texts[language].unknownUser; // Texto de tradução
                   }
                   if (cell.column.id === "create_user") {
                     const userId = (cell.row.original as TableData).create_user;
                     const user = users.find((u) => u.guid === userId);
-                    cellValue = user ? user.name : "Unknown User";
+                    cellValue = user ? user.name : texts[language].unknownUser; // Texto de tradução
                   }
                   return <TableCell key={cell.id}>{cellValue}</TableCell>;
                 })}
@@ -156,11 +157,10 @@ export function DataTable<TData extends TableData, TValue>({
               <TableCell colSpan={columns.length} className="h-24 text-center">
                 {loading && (
                   <div className="flex w-full justify-center">
-                 <img src={LogoCore} className="p-6 h-64 animate-spin" />
+                    <img src={LogoCore} className="p-6 h-64 animate-spin" />
                   </div>
-
                 )}
-                <h1 className="m-4">No Result</h1>
+                <h1 className="m-4">{texts[language].noResult}</h1> {/* Texto de tradução */}
               </TableCell>
             </TableRow>
           )}

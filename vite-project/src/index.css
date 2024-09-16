@@ -97,8 +97,6 @@
   }
 }
 
-
-
 @font-face {
   font-family: "inter";
   font-style: normal;
@@ -154,5 +152,13 @@
   .hide-scrollbar {
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
+  }
+
+}
+
+@media print {
+  .page-break {
+    page-break-before: always !important;
+    page-break-inside: avoid !important;
   }
 }

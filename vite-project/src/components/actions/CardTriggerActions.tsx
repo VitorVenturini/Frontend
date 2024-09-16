@@ -25,18 +25,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import texts from "@/_data/texts.json";
-import { useLanguage } from "@/components/language/LanguageContext";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
+import { useLanguage } from "@/components/language/LanguageContext";
 import { useSensors } from "@/components/sensor/SensorContext";
 import { ActionsInteface } from "./ActionsContext";
-import { useButtons } from "../buttons/buttonContext/ButtonsContext";
-import CardExecActions from "./CardExecActions";
-
-interface User {
-  id: string;
-  name: string;
-  guid: string;
-}
 
 interface UpdateActionsProps {
   action?: ActionsInteface;
@@ -47,6 +39,7 @@ export default function CardTriggerActions({
   action,
   onUpdateTriggerActionDetails,
 }: UpdateActionsProps) {
+  const { language } = useLanguage(); // Adicionando o suporte ao idioma
   const [actionStartType, setActionType] = useState(
     action?.action_start_type || ""
   );
@@ -60,6 +53,7 @@ export default function CardTriggerActions({
     action?.action_start_device_parameter || ""
   );
   const { sensors } = useSensors();
+
   const handleActionStartType = (value: string) => {
     setActionType(value);
     onUpdateTriggerActionDetails("actionStartType", value);
@@ -77,9 +71,6 @@ export default function CardTriggerActions({
     setNameSensor(value);
     onUpdateTriggerActionDetails("actionStartDevice", value);
   };
-  // const handleParameterSensor = (value: string) => {
-  //   setParameterSensor(value);
-  // };
   const handleStartDevicePrt = (value: string) => {
     setStartDevicePrt(value);
     onUpdateTriggerActionDetails("actionStartDevicePrt", value);
@@ -99,27 +90,38 @@ export default function CardTriggerActions({
     <div>
       <div className="gap-4 flex flex-col align-top">
         <CardDescription>
-          Configuração dos parâmetros de Gatilho
+          {texts[language].triggerParameterConfig}
         </CardDescription>
         <div className="grid grid-cols-3 items-center gap-4">
           <div className="flex justify-end gap-1">
-            <Label htmlFor="name" title="Qual contexto irá executar essa ação">
-              Tipo de Gatilho
+            <Label
+              htmlFor="name"
+              title={texts[language].actionContextTooltip}
+            >
+              {texts[language].triggerType}
             </Label>
             <Info className="size-[12px]" />
           </div>
           <Select onValueChange={handleActionStartType} value={actionStartType}>
             <SelectTrigger className="col-span-2">
-              <SelectValue placeholder="Selecione o Gatilho" />
+              <SelectValue placeholder={texts[language].selectTrigger} />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectLabel>Gatilho</SelectLabel>
-                <SelectItem value="alarm">Alarme</SelectItem>
-                <SelectItem value="origemNumber">Número Origem</SelectItem>
-                <SelectItem value="destNumber">Número Destino</SelectItem>
-                <SelectItem value="minValue">Sensor Valor Minímo</SelectItem>
-                <SelectItem value="maxValue">Sensor Valor Maxímo</SelectItem>
+                <SelectLabel>{texts[language].trigger}</SelectLabel>
+                <SelectItem value="alarm">{texts[language].alarm}</SelectItem>
+                <SelectItem value="origemNumber">
+                  {texts[language].sourceNumber}
+                </SelectItem>
+                <SelectItem value="destNumber">
+                  {texts[language].destNumber}
+                </SelectItem>
+                <SelectItem value="minValue">
+                  {texts[language].sensorMinValue}
+                </SelectItem>
+                <SelectItem value="maxValue">
+                  {texts[language].sensorMaxValue}
+                </SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
@@ -131,18 +133,23 @@ export default function CardTriggerActions({
               <div className="flex justify-end gap-1">
                 <Label
                   htmlFor="name"
-                  title="Qual contexto irá executar essa ação"
+                  title={texts[language].deviceContextTooltip}
                 >
-                  IoT Device
+                  {texts[language].iotDevice}
                 </Label>
               </div>
-              <Select value={actionSensorName} onValueChange={handleNameSensor}>
+              <Select
+                value={actionSensorName}
+                onValueChange={handleNameSensor}
+              >
                 <SelectTrigger className="col-span-2">
-                  <SelectValue placeholder="Selecione um Sensor" />
+                  <SelectValue
+                    placeholder={texts[language].selectSensorPlaceholder}
+                  />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectLabel>Sensores</SelectLabel>
+                    <SelectLabel>{texts[language].sensors}</SelectLabel>
                     {sensors.map((sensor) => (
                       <SelectItem
                         key={sensor.sensor_name}
@@ -162,7 +169,7 @@ export default function CardTriggerActions({
                   htmlFor="framework"
                   id="typeMeasure"
                 >
-                  Tipo de medida
+                  {texts[language].measureType}
                 </Label>
               </div>
               <Select
@@ -170,11 +177,13 @@ export default function CardTriggerActions({
                 onValueChange={handleStartDevicePrt}
               >
                 <SelectTrigger className="col-span-2" id="SelectTypeMeasure">
-                  <SelectValue placeholder="Selecione o tipo de medida" />
+                  <SelectValue
+                    placeholder={texts[language].selectMeasureType}
+                  />
                 </SelectTrigger>
                 <SelectContent position="popper">
                   <SelectGroup>
-                    <SelectLabel>Sensores</SelectLabel>
+                    <SelectLabel>{texts[language].sensors}</SelectLabel>
                     {filteredStartSensor.map((sensor, i) => (
                       <SelectItem key={i} value={sensor.parameter}>
                         {sensor.name}
@@ -190,20 +199,22 @@ export default function CardTriggerActions({
         actionSensorParameter === "tamper_status" ? (
           <div className="grid grid-cols-3 items-center gap-4">
             <Label className="text-end" htmlFor="name">
-              Comando
+              {texts[language].command}
             </Label>
             <Select
               onValueChange={handleParameterSelect}
               value={actionStartParameter}
             >
               <SelectTrigger className="col-span-2">
-                <SelectValue placeholder="Selecione o Tipo" />
+                <SelectValue placeholder={texts[language].selectType} />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectLabel>Comando Open / Closed</SelectLabel>
-                  <SelectItem value="open">Aberto</SelectItem>
-                  <SelectItem value="closed">Fechado</SelectItem>
+                  <SelectLabel>{texts[language].commandOpenClose}</SelectLabel>
+                  <SelectItem value="open">{texts[language].open}</SelectItem>
+                  <SelectItem value="closed">
+                    {texts[language].closed}
+                  </SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
@@ -213,9 +224,9 @@ export default function CardTriggerActions({
             <div className="flex justify-end gap-1">
               <Label
                 htmlFor="name"
-                title="Qual será o valor que irá executar essa ação"
+                title={texts[language].triggerValueTooltip}
               >
-                Parâmetro Gatilho
+                {texts[language].triggerParameter}
               </Label>
               <Info className="size-[12px]" />
             </div>
@@ -223,7 +234,7 @@ export default function CardTriggerActions({
             <Input
               className="col-span-2"
               id="name"
-              placeholder="Parâmetro Gatilho"
+              placeholder={texts[language].triggerParameterPlaceholder}
               type="text"
               value={actionStartParameter}
               onChange={handleParameterInsert}

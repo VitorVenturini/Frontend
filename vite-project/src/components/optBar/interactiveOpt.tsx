@@ -5,16 +5,12 @@ import OptLayoutCopy from "./OptLayout copy";
 import OptHistory from "./OptHistory";
 import { useWebSocketData } from "../websocket/WebSocketProvider";
 import OptCall from "./OptCall";
+import { UserInterface } from "../users/usersCore/UserContext";
 
-interface User {
-  id: string;
-  name: string;
-  guid: string;
-}
 
 interface InteractiveOptProps {
   buttons: ButtonInterface[];
-  selectedUser: User | null;
+  selectedUser: UserInterface | null;
   selectedOpt: string;
   interactive: string;
   clickedUser: string | null;

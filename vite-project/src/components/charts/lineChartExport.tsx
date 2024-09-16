@@ -88,7 +88,7 @@ export function GraficoExport({ chartData, checkedKeys }: GraficoProps) {
         <div className="flex">
           {/* Renderizar os botões apenas para as chaves "checked" */}
           {keys
-            .filter((key) => checkedKeys[key] && dataChartConfig[key]) // Verifica se checkedKeys e dataChartConfig contêm a chave
+            .filter((key) => checkedKeys[key]) // Filtra as chaves com base no estado "checked"
             .map((key) => (
               <button
                 key={key}
@@ -96,76 +96,79 @@ export function GraficoExport({ chartData, checkedKeys }: GraficoProps) {
                 className="flex flex-1 flex-col justify-center gap-1 border-t px-6 py-4 text-left even:border-l data-[active=true]:bg-muted/50 sm:border-l sm:border-t-0 sm:px-8 sm:py-6"
               >
                 <span className="text-xs text-muted-foreground">
-                  {dataChartConfig[key]?.label || key}{" "}
-                  {/* Fallback para a chave se o label estiver ausente */}
+                  {dataChartConfig[key]?.label}
                 </span>
               </button>
             ))}
         </div>
       </CardHeader>
-      <CardContent className="px-2 sm:p-6">
+      <CardContent className="px-2 sm:p-6  max-h-[2000px] max-w-[3000px]">
         {/* Renderizar os gráficos apenas para as chaves "checked" */}
         {keys
           .filter((key) => checkedKeys[key]) // Filtra as chaves "checked"
           .map((key) => (
-            <ChartContainer
-              key={key}
-              config={dataChartConfig}
-              className="aspect-auto h-[400px] w-full mb-6"
-            >
-              <LineChart
-                data={chartData}
-                margin={{
-                  top: 20,
-                  bottom: 20,
-                  left: 12,
-                  right: 12,
-                }}
+            <div key={key}>
+              <ChartContainer
+                key={key}
+                config={dataChartConfig}
+                className="aspect-auto h-[400px] w-full mb-6"
               >
-                <CartesianGrid vertical={false} />
-                <XAxis
-                  dataKey="date"
-                  tickLine={false}
-                  axisLine={false}
-                  tickMargin={12}
-                  minTickGap={12}
-                  tickFormatter={(value) => {
-                    const date = new Date(value);
-                    return date.toLocaleDateString("pt-BR", {
-                      month: "short",
-                      day: "numeric",
-                    });
+                <LineChart
+                  data={chartData}
+                  margin={{
+                    top: 20,
+                    bottom: 20,
+                    left: 12,
+                    right: 12,
                   }}
-                />
-                <YAxis
-                  tickLine={false}
-                  axisLine={false}
-                  domain={minMaxValues[key] || ["auto", "auto"]} // Define os limites do Y dinamicamente
-                />
-                <ChartTooltip
-                  content={
-                    <ChartTooltipContent
-                      className="w-[150px]"
-                      nameKey={key}
-                      labelFormatter={(value) => {
-                        return new Date(value).toLocaleDateString("pt-BR", {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        });
-                      }}
-                    />
-                  }
-                />
-                <Line
-                  dataKey={key}
-                  type="monotone"
-                  stroke={dataChartConfig[key]?.color}
-                  strokeWidth={2}
-                  dot={false}
-                  clipPath="url(#clip)" // Adiciona o clipPath
-                />
-              </LineChart>
-            </ChartContainer>
+                >
+                  <CartesianGrid vertical={false} />
+                  <XAxis
+                    dataKey="date"
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={12}
+                    minTickGap={12}
+                    tickFormatter={(value) => {
+                      const date = new Date(value);
+                      return date.toLocaleDateString("pt-BR", {
+                        month: "short",
+                        day: "numeric",
+                      });
+                    }}
+                  />
+                  <YAxis
+                    tickLine={false}
+                    axisLine={false}
+                    domain={minMaxValues[key] || ["auto", "auto"]} // Define os limites do Y dinamicamente
+                  />
+                  <ChartTooltip
+                    content={
+                      <ChartTooltipContent
+                        className="w-[150px]"
+                        nameKey={key}
+                        labelFormatter={(value) => {
+                          return new Date(value).toLocaleDateString("pt-BR", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          });
+                        }}
+                      />
+                    }
+                  />
+                  <Line
+                    dataKey={key}
+                    type="monotone"
+                    stroke={dataChartConfig[key]?.color}
+                    strokeWidth={2}
+                    dot={false}
+                    clipPath="url(#clip)" // Adiciona o clipPath
+                  />
+                </LineChart>
+              </ChartContainer>
+              {/* Adiciona a quebra de página após cada gráfico */}
+              <div className="page-break"></div>
+            </div>
           ))}
       </CardContent>
     </Card>

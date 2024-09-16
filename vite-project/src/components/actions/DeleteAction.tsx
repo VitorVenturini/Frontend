@@ -33,50 +33,59 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/components/ui/use-toast";
 import { ActionsInteface } from "./ActionsContext";
+import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
+import { useLanguage } from "@/components/language/LanguageContext"; // Importando o contexto de idioma
+import texts from "@/_data/texts.json"; // Importando o arquivo de textos
+
 interface DeleteActionsProps {
   id: string;
 }
-import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 
-export default function DeleteActions({ id }: DeleteActionsProps){
+export default function DeleteActions({ id }: DeleteActionsProps) {
   const [actions] = useState<ActionsInteface[]>([]);
-  const {toast} = useToast()
-  const wss = useWebSocketData()
+  const { toast } = useToast();
+  const wss = useWebSocketData();
+  const { language } = useLanguage(); // Usando o contexto de idioma
 
-    const deleteActions = async (id: string) => {
-      console.log(`Delete Actions id: ${id}`);
-      wss?.sendMessage({
-        api: 'admin',
-        mt: 'DeleteActions',
-        id: id,
-      })
-    }
+  const deleteActions = async (id: string) => {
+    console.log(`Delete Actions id: ${id}`);
+    wss?.sendMessage({
+      api: "admin",
+      mt: "DeleteActions",
+      id: id,
+    });
+  };
 
-    const handleDelete = () => {
-      deleteActions(id);
-      // toast({
-      //   description: "Ação deletada com sucesso",
-      // });
-    };
-  return(
-      <AlertDialog>
-          <AlertDialogTrigger>
-            <Button variant="ghost" size="icon">
-              <Trash2 size={23} />
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Voce tem certeza?</AlertDialogTitle>
-              <AlertDialogDescription>
-                Ao apertar em confirmar este usuário será deletado
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancelar</AlertDialogCancel>
-              <AlertDialogAction onClick={handleDelete}>Confirmar</AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-  )
+  const handleDelete = () => {
+    deleteActions(id);
+    // toast({
+    //   description: texts[language].actionDeletedSuccess, // Usando texto de tradução
+    // });
+  };
+
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger>
+        <Button variant="ghost" size="icon">
+          <Trash2 size={23} />
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>
+            {texts[language].labelAreYouSure} {/* Texto de tradução */}
+          </AlertDialogTitle>
+          <AlertDialogDescription>
+            {texts[language].labelActionWillBeDeleted} {/* Texto de tradução */}
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>{texts[language].cancel}</AlertDialogCancel>
+          <AlertDialogAction onClick={handleDelete}>
+            {texts[language].labelConfirm}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
 }

@@ -33,11 +33,6 @@ import { useButtons } from "../buttons/buttonContext/ButtonsContext";
 import CardExecActions from "./CardExecActions";
 import CardTriggerActions from "./CardTriggerActions";
 import { setPriority } from "os";
-interface User {
-  id: string;
-  name: string;
-  guid: string;
-}
 
 interface UpdateActionsProps {
   action?: ActionsInteface;
@@ -48,10 +43,10 @@ interface UpdateActionsProps {
 export default function CardCreateAction({
   action,
   isUpdate = false,
-  onSuccess
+  onSuccess,
 }: UpdateActionsProps) {
   const [actionName, setActionName] = useState(action?.action_name || "");
-  const [priority, setPriority]= useState('')
+  const [priority, setPriority] = useState("");
   const [isCreating, setIsCreating] = useState(false);
 
   const [triggerActionDetails, setTriggerActionDetails] = useState({
@@ -68,15 +63,18 @@ export default function CardCreateAction({
     actionExecPrt: action?.action_exec_prt || "",
     actionExecTypeCommandMode: action?.action_exec_type_command_mode || "",
   });
+
   const handleUpdateTriggerActionDetails = (key: string, value: string) => {
     setTriggerActionDetails((prevDetails) => ({ ...prevDetails, [key]: value }));
   };
+
   const handleUpdateExecActionDetails = (key: string, value: string) => {
     setExecActionDetails((prevDetails) => ({ ...prevDetails, [key]: value }));
   };
+
   const handlePriority = (value: string) => {
-    setPriority(value)
-  }
+    setPriority(value);
+  };
 
   const wss = useWebSocketData();
   const { language } = useLanguage();
@@ -88,16 +86,13 @@ export default function CardCreateAction({
     setActionName(event.target.value);
   };
 
-  // parametros para enviar
-  //
-  // execType: execActionDetails.actionExecType,
-  // execDevice: execActionDetails.actionExecDevice,
-  // commandMode: execActionDetails.actionExecTypeCommandMode,
-  // execPrt: execActionDetails.actionExecPrt,
-
   const handleCreateAction = () => {
-
-    if (actionName && triggerActionDetails.actionStartPrt && triggerActionDetails.actionStartType && execActionDetails.actionExecType) {
+    if (
+      actionName &&
+      triggerActionDetails.actionStartPrt &&
+      triggerActionDetails.actionStartType &&
+      execActionDetails.actionExecType
+    ) {
       setIsCreating(true);
       wss?.sendMessage({
         api: "admin",
@@ -120,40 +115,39 @@ export default function CardCreateAction({
     } else {
       toast({
         variant: "destructive",
-        description:
-          "Por favor, preencha todos os campos antes de criar o botão.",
+        description: texts[language].fillAllFields, // Adicione uma nova chave no JSON de textos para essa mensagem
       });
     }
   };
 
   return (
-    //div que contem os cards
     <div className="w-full">
       <CardHeader>
-        <CardTitle>{isUpdate == true ? (
-          "Update Action"
-        ) : (
-          "Create Action"
-        )}</CardTitle>
-        <CardDescription>{isUpdate == true ? (
-          "Update TEXT Action"
-        ) : (
-          "Create TEXT Action"
-        )}</CardDescription>
+        <CardTitle>
+          {isUpdate
+            ? texts[language].updateAction // Tradução para "Update Action"
+            : texts[language].createAction // Tradução para "Create Action"
+          }
+        </CardTitle>
+        <CardDescription>
+          {isUpdate
+            ? texts[language].updateActionDescription // Tradução para descrição da ação de atualização
+            : texts[language].createActionDescription // Tradução para descrição da criação de ação
+          }
+        </CardDescription>
       </CardHeader>
       <CardContent>
-        {/* Card de criação da ação */}
         <div className="w-full">
           <div className="grid gap-4 p-4">
-            <CardDescription>Action Name</CardDescription>
+            <CardDescription>{texts[language].actionName}</CardDescription> {/* Tradução do label "Action Name" */}
             <div className="grid grid-cols-6 items-center gap-4">
               <Label className="text-end" htmlFor="name">
-                Nome da ação
+                {texts[language].actionNameLabel} {/* Tradução do label "Nome da ação" */}
               </Label>
               <Input
                 className="col-span-5"
                 id="name"
-                placeholder="Nome da ação"
+                placeholder={texts[language].actionNamePlaceholder}
                 type="text"
                 value={actionName}
                 onChange={handleActionName}
@@ -161,27 +155,30 @@ export default function CardCreateAction({
             </div>
           </div>
           <div className="flex columns gap-4 p-4 justify-between">
-            {/*div parametro Trigger */}
-            <CardTriggerActions action={action}
-            onUpdateTriggerActionDetails={handleUpdateTriggerActionDetails}
-             />
-            {/* END div parametro Trigger */}
+            {/* Div parâmetro Trigger */}
+            <CardTriggerActions
+              action={action}
+              onUpdateTriggerActionDetails={handleUpdateTriggerActionDetails}
+            />
+            {/* Fim div parâmetro Trigger */}
 
-            {/*div parametro execução */}
+            {/* Div parâmetro Execução */}
             <CardExecActions
               action={action}
               onUpdateExecActionDetails={handleUpdateExecActionDetails}
             />
-            {/* END div parametro execução */}
+            {/* Fim div parâmetro Execução */}
           </div>
           <CardFooter className="flex justify-end">
             {!isCreating && (
-              <Button onClick={handleCreateAction}>Criar Ação</Button>
+              <Button onClick={handleCreateAction}>
+                {texts[language].createAction} {/* Tradução do botão "Criar Ação" */}
+              </Button>
             )}
             {isCreating && (
               <Button disabled>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Criar Ação
+                {texts[language].creatingAction} {/* Tradução para "Criando Ação" */}
               </Button>
             )}
           </CardFooter>
