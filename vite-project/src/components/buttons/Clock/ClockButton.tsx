@@ -16,8 +16,6 @@ import {
   
   export default function ClockmButton({ button, handleClick }: ButtonProps) {
     const [clickedClass, setClickedClass] = useState("");
-    const {setClickedButton, removeClickedButton } =
-      useButtons();
     const account = useAccount();
     const wss = useWebSocketData();
     const [initiatedByUser, setInitiatedByUser] = useState(false);
@@ -45,40 +43,6 @@ import {
     const handleClickAlarm = () => {
       handleClick?.();
       setInitiatedByUser(true);
-      if (!account.isAdmin) {
-        const isClicked = button.clicked;
-        //isClicked || 
-        if (button.triggered) {
-          removeClickedButton(button.id);
-          setClickedClass("");
-          wss?.sendMessage({
-            api: "user",
-            mt: "TriggerStopAlarm",
-            prt: button.button_prt,
-            btn_id: button.id,
-          });
-        }
-        else if (isClicked && !button.triggered) {
-          setClickedButton(button.id);
-          setClickedClass("bg-red-800");
-          wss?.sendMessage({
-            api: "user",
-            mt: "TriggerAlarm",
-            prt: button.button_prt,
-            btn_id: button.id,
-          });
-        }
-        else {
-          setClickedButton(button.id);
-          setClickedClass("bg-red-800");
-          wss?.sendMessage({
-            api: "user",
-            mt: "TriggerAlarm",
-            prt: button.button_prt,
-            btn_id: button.id,
-          });
-        }
-      }
     };
     return (
       <div

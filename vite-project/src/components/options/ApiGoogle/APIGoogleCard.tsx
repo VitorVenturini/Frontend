@@ -13,7 +13,7 @@ import { useWebSocketData } from "../../websocket/WebSocketProvider";
 import React, { ChangeEvent } from "react";
 import { Loader2 } from "lucide-react";
 import { toast, useToast } from "../../ui/use-toast";
-import { useGoogleApiKey,GoogleApiKeyInterface } from "./GooglApiContext";
+import { GoogleApiKeyInterface, useAppConfig } from "../ConfigContext";
 
 // import * from React
 
@@ -22,7 +22,7 @@ export default function APIGoogleCard() {
 
   const { toast } = useToast();
   const wss = useWebSocketData();
-  const { apiKeyInfo, setApiKeyInfo } = useGoogleApiKey();
+  const {setApiKeyInfo,apiKeyInfo} = useAppConfig()
 
   const filteredGoogleAPI = apiKeyInfo.filter((key) => {
     return key.entry === "googleApiKey";

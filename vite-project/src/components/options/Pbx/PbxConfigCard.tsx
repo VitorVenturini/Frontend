@@ -14,7 +14,6 @@ import { useWebSocketData } from "../../websocket/WebSocketProvider";
 import { ChangeEvent } from "react";
 import { Loader2 } from "lucide-react";
 import { useToast } from "../../ui/use-toast";
-import { usePbx, PbxInterface } from "./PbxContext";
 import {
   Select,
   SelectContent,
@@ -24,25 +23,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useAppConfig } from "../ConfigContext";
+import { PbxInterface, useAppConfig } from "../ConfigContext";
 
 // import * from React
 
 export default function PbxConfigCard() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { pbxStatus } = useAppConfig();
   const { toast } = useToast();
   const wss = useWebSocketData();
-  const { pbxInfo, setPbxInfo } = usePbx();
+  const { pbxStatus, setPbxStatus, addPbx } = useAppConfig();
 
-  const filteredPbxInfo = pbxInfo.filter((url) => {
+  const filteredPbxInfo = pbxStatus.filter((url) => {
     return url.entry === "urlPbxTableUsers";
   })[0];
-  const filteredPbxType = pbxInfo.filter((url) => {
+  const filteredPbxType = pbxStatus.filter((url) => {
     return url.entry === "pbxType";
   })[0];
   const [selectPbx, setSelectPbx] = useState(
-    filteredPbxType?.value.toUpperCase() || ""
+    filteredPbxType?.value?.toUpperCase() || ""
   );
   const [urlPbx, setUrlPbx] = useState(filteredPbxInfo?.value || "");
 
@@ -79,7 +77,7 @@ export default function PbxConfigCard() {
         entry: "urlPbxTableUsers",
         vl: urlPbx,
       });
-      setPbxInfo([
+      setPbxStatus([
         {
           entry: "urlPbxTableUsers",
           value: urlPbx,

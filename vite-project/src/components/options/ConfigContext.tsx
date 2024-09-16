@@ -7,8 +7,15 @@ export interface LoaderBarProps {
 }
 
 export interface PbxInterface {
-  status: string;
+  id?: number;
+  status?: string;
+  entry?: string;
+  value?: string;
+  createdAt?: string | null;
+  updatedAt?: string | null;
+
 }
+
 
 export interface GoogleApiKeyInterface {
   id?: number;

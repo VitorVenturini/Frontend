@@ -49,9 +49,10 @@ import { limitButtonName } from "@/components/utils/utilityFunctions";
 import { UserInterface } from "@/components/users/usersCore/UserContext";
 
 interface TimeZone {
-    zoneName: string;
-    // Adicione outras propriedades se necessário
-  }
+  zoneName: string;
+  gmtOffset: string;
+  // Adicione outras propriedades se necessário
+}
 
 interface ButtonProps {
   clickedPosition: { i: number; j: number } | null;
@@ -93,7 +94,9 @@ export default function ModalClock({
   useEffect(() => {
     const fetchTimeZones = async () => {
       try {
-        const response = await fetch(`http://api.timezonedb.com/v2.1/list-time-zone?key==json`);
+        const response = await fetch(
+          `http://api.timezonedb.com/v2.1/list-time-zone?key=G76YA12PUTYG&format=json`
+        );
         const data = await response.json();
         setTimeZones(data.zones as TimeZone[]);
       } catch (e) {
@@ -111,13 +114,16 @@ export default function ModalClock({
   const handleCreateButton = () => {
     try {
       if (nameButton && selectedTimeZone) {
+        const gmtOffset = timeZones.filter((gmt) => {
+          gmt.zoneName = selectedTimeZone;
+        })[0];
         setIsCreating(true);
         const message = {
           api: "admin",
           mt: isUpdate ? "UpdateButton" : "InsertButton",
           ...(isUpdate && { id: existingButton?.id }),
           name: nameButton,
-          value: selectedTimeZone,
+          value: gmtOffset,
           guid: selectedUser?.guid,
           type: "clock",
           page: selectedPage,
@@ -182,10 +188,7 @@ export default function ModalClock({
           <Label className="text-end" htmlFor="timeZone">
             Fuso Horário
           </Label>
-          <Select
-            value={selectedTimeZone}
-            onValueChange={handleTimeZoneChange}
-          >
+          <Select value={selectedTimeZone} onValueChange={handleTimeZoneChange}>
             <SelectTrigger>
               <SelectValue placeholder="Selecione um Fuso Horário" />
             </SelectTrigger>
@@ -193,7 +196,7 @@ export default function ModalClock({
               <SelectGroup>
                 <SelectLabel>Fusos Horários</SelectLabel>
                 {timeZones.map((tz, index) => (
-                  <SelectItem key={index} value={tz.zoneName}>
+                  <SelectItem key={index} value={String(tz.zoneName)}>
                     {tz.zoneName}
                   </SelectItem>
                 ))}
@@ -212,7 +215,7 @@ export default function ModalClock({
                   <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
                   <AlertDialogDescription>
                     Essa ação nao pode ser desfeita. Isso irá deletar
-                    permanentemente o botão de Alarme.
+                    permanentemente o botão de Relógio.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>

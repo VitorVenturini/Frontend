@@ -6,14 +6,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useGoogleApiKey } from "../options/ApiGoogle/GooglApiContext";
+
 import { ButtonInterface } from "@/components/buttons/buttonContext/ButtonsContext";
+import { useAppConfig } from "../options/ConfigContext";
 interface OptMapProps {
   clickedButton: ButtonInterface;
 }
 
 export default function OptMap({ clickedButton }: OptMapProps) {
-  const { apiKeyInfo } = useGoogleApiKey();
+  const { apiKeyInfo } =  useAppConfig()
   const filteredGoogleAPI = apiKeyInfo.filter((key) => {
     return key.entry === "googleApiKey";
   })[0];

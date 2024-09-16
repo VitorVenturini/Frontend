@@ -190,7 +190,7 @@ export default function ButtonsComponent({
                       <SelectItem value="user">Usuário</SelectItem>
                       <SelectItem value="sensor">Sensor</SelectItem>
                       <SelectItem value="command">Comando</SelectItem>
-                      <SelectItem value="clock">Relegio</SelectItem>
+                      <SelectItem value="clock">Relógio</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -342,7 +342,7 @@ export default function ButtonsComponent({
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <div>
-                  <ClockButton button={button} handleClick={handleClick} />
+                  <CommandButton button={button} handleClick={handleClick} />
                 </div>
               </DialogTrigger>
               {isAdmin && (
@@ -362,7 +362,7 @@ export default function ButtonsComponent({
             </Dialog>
           </div>
         );
-        case "Clock":
+        case "clock":
           return (
             <div>
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>

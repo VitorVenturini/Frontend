@@ -37,12 +37,10 @@ import {
   CamerasInterface,
   useCameras,
 } from "@/components/cameras/CameraContext";
-import { useGoogleApiKey } from "@/components/options/ApiGoogle/GooglApiContext";
 import ColumnsReports from "@/Reports/collumnsReports";
 import { Grafico } from "@/components/charts/lineChart";
 import { DataProvider, useData } from "@/Reports/DataContext";
 import Reports from "./reports";
-import { usePbx } from "@/components/options/Pbx/PbxContext";
 import {
   UserPbxInterface,
   useUsersPbx,
@@ -54,9 +52,7 @@ function AdminLayout() {
   const account = useAccount();
   const { setUsers, updateUserStauts } = useUsers();
   const { updateUserPbxStauts } = useUsersPbx();
-  const { setApiKeyInfo } = useGoogleApiKey();
-  const { setPbxInfo } = usePbx();
-  const { updateLicense, setPbxStatus } = useAppConfig();
+  const { updateLicense } = useAppConfig();
   const wss = useWebSocketData();
   const { buttons, setButtons, addButton, updateButton, deleteButton } =
     useButtons();
@@ -77,7 +73,7 @@ function AdminLayout() {
   const myAccountInfo = JSON.parse(localStorage.getItem("Account") || "{}");
   const [isLoading,setIsLoading] = useState(true)
   var pbxUser: UserPbxInterface[];
-  const { setLoadBarData, clearLoadBarData } = useAppConfig();
+  const { setLoadBarData, clearLoadBarData,setApiKeyInfo,setPbxStatus } = useAppConfig();
 
 
   // vamos trtar todas as mensagens recebidas pelo wss aqui
@@ -188,7 +184,7 @@ function AdminLayout() {
         const pbxData = [...pbxEntries, ...pbxType];
 
         // Envia a informação combinada ao contexto
-        setPbxInfo(pbxData);
+        setPbxStatus(pbxData);
 
         break;
       case "ConfigLicenseResult":

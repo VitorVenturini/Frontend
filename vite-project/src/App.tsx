@@ -18,19 +18,17 @@ import { HistoryProvider } from "./components/history/HistoryContext";
 import { Toaster } from "./components/ui/toaster";
 import { UserProvider } from "./components/users/usersCore/UserContext";
 import { ChatProvider } from "@/components/chat/ChatContext";
-import { GoogleApiKeyProvider } from "./components/options/ApiGoogle/GooglApiContext";
 import { GatewayProvider } from "./components/Gateways/GatewaysContext";
 import { CameraProvider } from "./components/cameras/CameraContext";
 import { DataProvider } from "./Reports/DataContext";
 import { UserPbxProvider } from "./components/users/usersPbx/UsersPbxContext";
-import { PbxProvider } from "./components/options/Pbx/PbxContext";
 import { AppConfigProvider } from "./components/options/ConfigContext";
 import { CallProvider } from "./components/calls/CallContext";
 import Loader from "./components/Loader";
 import TokenRenewer from "./components/validateToken/TokenRenewer";
 
 export const host = "https://core.wecom.com.br";
-//const currentUrl = window.location.hostname;
+//export const host = `https://${window.location.hostname}`;
 
 function App() {
   const account = useContext(AccountContext);
@@ -58,8 +56,6 @@ function App() {
     <>
       <ThemeProvider>
         <LanguageProvider>
-          <PbxProvider>
-            <GoogleApiKeyProvider>
               <AppConfigProvider>
                 <ChatProvider>
                   <DataProvider>
@@ -110,8 +106,6 @@ function App() {
                   </DataProvider>
                 </ChatProvider>
               </AppConfigProvider>
-            </GoogleApiKeyProvider>
-          </PbxProvider>
         </LanguageProvider>
       </ThemeProvider>
     </>

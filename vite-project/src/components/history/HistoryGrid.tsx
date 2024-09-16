@@ -26,7 +26,7 @@ export default function HistoryGrid() {
       if (isWarning) {
         addHistory({
           message: `${filteredSensor?.sensor_name} Disparou `,
-          date: formattedDate,
+          date: format(new Date(), "dd/MM HH:mm"),
         });
       }
     });

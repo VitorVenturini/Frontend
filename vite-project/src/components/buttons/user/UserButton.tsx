@@ -29,8 +29,9 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
   })[0];
 
   const [statusClass, setStatusClass] = useState("");
-  const [callStatusClass, setCallStatusClass] = useState("");
-  const [clickedButton, setClickedButton] = useState(false);
+  const [callStatusClass, setCallStatusClass] = useState(button?.colorClass || "");
+  // const [clickedButton, setClickedButton] = useState(false);
+  const {setClickedButton,removeClickedButton} = useButtons()
   const account = useAccount();
   const wss = useWebSocketData();
 
@@ -38,14 +39,14 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
   useEffect(() => {
     if (button.comboStart) {
       if (!account.isAdmin) {
-        if (!clickedButton && filteredUser.status !== "offline") {
+        if (!button.clicked && filteredUser.status !== "offline") {
           // ligar
           wss?.sendMessage({
             api: "user",
             mt: "TriggerCall",
             btn_id: button.id,
           });
-          setClickedButton(true);
+          setClickedButton(button.id)
           setStopCombo(button.id);
         }
       }
@@ -55,7 +56,7 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
   const handleClickCall = () => {
     handleClick?.(); // para setar a posição na hora de criar botão
     if (!account.isAdmin) {
-      if (!clickedButton && filteredUser.status !== "offline") {
+      if (!button.clicked && filteredUser.status !== "offline") {
         // ligar
         wss?.sendMessage({
           api: "user",
@@ -63,8 +64,8 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
           btn_id: button.id,
         });
         //setStatusClass("bg-red-800");
-        setClickedButton(true);
-      } else if (clickedButton && filteredUser.status !== "offline") {
+        setClickedButton(button.id)
+      } else if (button.clicked && filteredUser.status !== "offline") {
         if (button.incomingCall) {
           wss?.sendMessage({
             api: "user",
@@ -83,7 +84,7 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
         }
 
         //setStatusClass("bg-green-800");
-        setClickedButton(false);
+        removeClickedButton(button.id);
         setStopCombo(button.id);
       }
     }
@@ -112,7 +113,7 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
       // default: // default sempre offline
       //   setStatusClass("bg-neutral-900");
     }
-  }, [usersPbx]); // monitorar as alterações no contexto de usuario
+  }, [usersPbx]);
 
   //CORES PARA O BOTÃO INTEIRO
   useEffect(() => {
@@ -122,11 +123,11 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
         setCallStatusClass("bg-red-900");
         break;
       case "incomingCallConnected":
-        setClickedButton(true);
+        setClickedButton(button.id);
         setCallStatusClass("bg-red-900");
         break;
       case "callInCurse":
-        setClickedButton(true);
+        setClickedButton(button.id);
         setCallStatusClass("bg-red-900");
         break;
       case "callRinging":
@@ -134,7 +135,7 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
         setCallStatusClass("bg-orange-700");
         break;
       case "callDisconnected":
-        setClickedButton(false);
+        removeClickedButton(button.id);
         break;
       case "userCallHeld":
         //setStatusClass("bg-orange-500")
@@ -158,7 +159,7 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
   return (
     <div
       className={`${commonClasses} flex flex-col justify-between  cursor-pointer ${
-        clickedButton
+        button.clicked
           ? callStatusClass
           : filteredUser?.status === "offline"
           ? "bg-neutral-900"

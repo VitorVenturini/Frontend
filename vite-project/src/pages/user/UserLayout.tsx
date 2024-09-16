@@ -19,28 +19,7 @@ import {
 } from "@/components/buttons/buttonContext/ButtonsContext";
 import { FullScreenButton } from "@/components/FullScreanButton";
 
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Ghost, Pause, Phone, User } from "lucide-react";
 import { SensorInterface, useSensors } from "@/components/sensor/SensorContext";
-import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { useHistory } from "@/components/history/HistoryContext";
 import { useEffect } from "react";
 import { format } from "date-fns";
@@ -54,17 +33,15 @@ import {
   ChatProvider,
   useChat,
 } from "@/components/chat/ChatContext";
-import { useGoogleApiKey } from "@/components/options/ApiGoogle/GooglApiContext";
 import InteractiveGridCopy from "@/components/optBar/InteractiveGridCopy";
 import {
   UserPbxInterface,
   useUsersPbx,
 } from "@/components/users/usersPbx/UsersPbxContext";
-import { PbxInterface } from "@/components/options/Pbx/PbxContext";
 import { useCalls } from "@/components/calls/CallContext";
 import Loader from "@/components/Loader";
 import HeaderUser from "@/components/header/HeaderUser";
-import { connected } from "process";
+import { useAppConfig } from "@/components/options/ConfigContext";
 interface User {
   id: string;
   name: string;
@@ -110,7 +87,6 @@ function UserLayout() {
   const { setUsersPbx } = useUsersPbx();
   const { updateUserStauts } = useUsers();
   const { addHistory } = useHistory();
-  const { setApiKeyInfo } = useGoogleApiKey();
   const {
     setChat,
     allMessages,
@@ -121,8 +97,14 @@ function UserLayout() {
     chatRead,
     clearChat,
   } = useChat();
-  const { addCall, addIncomingCall, removeIncomingCall, removeCall,setHeldIncomingCall,setHeldIncomingCallByUser } =
-    useCalls();
+  const {
+    addCall,
+    addIncomingCall,
+    removeIncomingCall,
+    removeCall,
+    setHeldIncomingCall,
+    setHeldIncomingCallByUser,
+  } = useCalls();
   const [selectedOptTop, setSelectedOptTop] = useState<string>("floor"); // default for top
   const [clickedUserTop, setClickedUserTop] = useState<string | null>(null);
   const [selectedOptBottom, setSelectedOptBottom] = useState<string>("floor"); // default for bottom
@@ -130,6 +112,7 @@ function UserLayout() {
     null
   );
   const [openDialog, setOpenDialog] = useState(false);
+  const {setApiKeyInfo} = useAppConfig()
   //const [clickedUser , setClickedUser] = useState<UserInterface[]>([])
   const navigate = useNavigate();
   const { guid } = useContext(AccountContext);
@@ -278,7 +261,12 @@ function UserLayout() {
 
               setSelectedOptBottom("call");
               if (btn_id) {
-                setButtonClickedStatus(btn_id, "callInCurse", true);
+                setButtonClickedStatus(
+                  btn_id,
+                  "callInCurse",
+                  "bg-red-900",
+                  true
+                );
                 const button = allBtn.find((btn) => btn.id === btn_id);
                 if (button) {
                   console.log(`Adding call for button: ${button.button_name}`);
@@ -350,37 +338,57 @@ function UserLayout() {
         removeIncomingCall(String(message.call));
         break;
       case "CallRinging":
-        setButtonClickedStatus(message.btn_id, "callRinging");
+        setButtonClickedStatus(message.btn_id, "callRinging", "bg-orange-700");
         break;
       case "CallConnected":
         setSelectedOptBottom("call");
-        setButtonClickedStatus(message.btn_id, "callConnected", true);
+        setButtonClickedStatus(
+          message.btn_id,
+          "callConnected",
+          "bg-red-900",
+          true
+        );
         break;
       case "CallHeld":
         // usuario me colocou em espera
         if (message.btn_id !== "") {
           console.log("Chamada que eu realizei");
-          setButtonClickedStatus(message.btn_id, "callHeld", true);
+          setButtonClickedStatus(
+            message.btn_id,
+            "callHeld",
+            "bg-purple-900",
+            true
+          );
           setHeldCallByUser(message.btn_id, true);
         } else {
           console.log("Chamada que eu recebi");
-          setHeldIncomingCallByUser(String(message.call),true)
+          setHeldIncomingCallByUser(String(message.call), true);
         }
         break;
       case "CallRetrieved":
         if (message.btn_id !== "") {
-          setButtonClickedStatus(message.btn_id, "callRetrieved", true);
+          setButtonClickedStatus(
+            message.btn_id,
+            "callRetrieved",
+            "bg-red-900",
+            true
+          );
           setHeldCallByUser(message.btn_id, false);
-        }else{
+        } else {
           console.log("Chamada que eu recebi");
-          setHeldIncomingCallByUser(String(message.call),false)
+          setHeldIncomingCallByUser(String(message.call), false);
         }
         // usuario retomou a chamada
         break;
       case "UserCallRetrieved":
         if (message.btn_id !== "") {
           console.log("Chamada que eu realizei");
-          setButtonClickedStatus(message.btn_id, "userCallRetrieved", true);
+          setButtonClickedStatus(
+            message.btn_id,
+            "userCallRetrieved",
+            "bg-red-900",
+            true
+          );
           setHeldCall(message.btn_id, false);
         } else {
           setHeldIncomingCall(String(message.call), false);
@@ -390,7 +398,12 @@ function UserLayout() {
       case "UserCallHeld":
         if (message.btn_id !== "") {
           console.log("Chamada que eu realizei");
-          setButtonClickedStatus(message.btn_id, "userCallHeld", true);
+          setButtonClickedStatus(
+            message.btn_id,
+            "userCallHeld",
+            "!bg-blue-800",
+            true
+          );
           setHeldCall(message.btn_id, true);
         } else {
           setHeldIncomingCall(String(message.call), true);
@@ -398,14 +411,34 @@ function UserLayout() {
         //eu coloquei em espera
         break;
       case "CallDisconnected":
-        setButtonClickedStatus(message.btn_id, "callDisconnected", false);
+        setButtonClickedStatus(message.btn_id, "callDisconnected", "", false);
         removeCall(message.btn_id);
         break;
       case "NumberOnline":
-        setButtonNumberCallStatus(message.number, message.color, message.note);
+        setButtonNumberCallStatus(
+          message.number,
+          message.color,
+          "bg-green-600",
+          message.note
+        );
         break;
       case "NumberBusy":
-        setButtonNumberCallStatus(message.number, message.color, message.note);
+        if (message.color === "ringing") {
+          setButtonNumberCallStatus(
+            message.number,
+            message.color,
+            "bg-orange-500",
+            message.note
+          );
+          return
+        }
+        setButtonNumberCallStatus(
+          message.number,
+          message.color,
+          "bg-red-900",
+          message.note
+        );
+
         break;
       case "CoreUserOnline":
         updateUserStauts(message.guid, "online");

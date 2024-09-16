@@ -23,25 +23,28 @@ export default function NumberButton({ button, onClick }: NumberProps) {
     ] as React.ElementType;
   }
   const account = useAccount();
-  const [callStatusClass, setCallStatusClass] = useState("");
-  const [clickedStatusClass, setClickedStatusClass] = useState("");
+  const [callStatusClass, setCallStatusClass] = useState(
+    button.colorClass || ""
+  );
+  const [clickedStatusClass, setClickedStatusClass] = useState(
+    button.colorClass || ""
+  );
   const { language } = useLanguage();
   const wss = useWebSocketData();
-  const [clickedButton, setClickedButton] = useState(false);
-  const { setStopCombo } = useButtons();
+  const { setStopCombo, setClickedButton, removeClickedButton } = useButtons();
 
   //combo ligação
   useEffect(() => {
     if (button.comboStart) {
       if (!account.isAdmin) {
-        if (!clickedButton) {
+        if (!button.clicked) {
           // ligar
           wss?.sendMessage({
             api: "user",
             mt: "TriggerCall",
             btn_id: button.id,
           });
-          setClickedButton(true);
+          setClickedButton(button.id);
           setClickedStatusClass("bg-red-800");
           setStopCombo(button.id);
         }
@@ -52,7 +55,7 @@ export default function NumberButton({ button, onClick }: NumberProps) {
   const handleClick = () => {
     onClick?.(); // para setar a posição na hora de criar botão
     if (!account.isAdmin) {
-      if (!clickedButton) {
+      if (!button.clicked) {
         // ligar
         wss?.sendMessage({
           api: "user",
@@ -60,7 +63,7 @@ export default function NumberButton({ button, onClick }: NumberProps) {
           btn_id: button.id,
         });
         setClickedStatusClass("bg-red-800");
-        setClickedButton(true);
+        setClickedButton(button.id);
       } else {
         // desligar
         wss?.sendMessage({
@@ -69,7 +72,7 @@ export default function NumberButton({ button, onClick }: NumberProps) {
           btn_id: button.id,
         });
         setClickedStatusClass("bg-green-800");
-        setClickedButton(false);
+        setClickedButton(button.id);
         setStopCombo(button.id);
       }
     }
@@ -87,7 +90,7 @@ export default function NumberButton({ button, onClick }: NumberProps) {
         setCallStatusClass("bg-red-900");
         break;
       case "callInCurse":
-        setClickedButton(true);
+        setClickedButton(button.id);
         setCallStatusClass("bg-red-900");
         break;
       case "callRinging":
@@ -96,7 +99,7 @@ export default function NumberButton({ button, onClick }: NumberProps) {
         break;
       case "callDisconnected":
         setClickedStatusClass("bg-green-800");
-        setClickedButton(false);
+        removeClickedButton(button.id);
         break;
       case "userCallHeld":
         //setStatusClass("bg-orange-500")
@@ -108,7 +111,7 @@ export default function NumberButton({ button, onClick }: NumberProps) {
         break;
       case "callRetrieved":
         //setStatusClass("bg-orange-500")
-        setClickedStatusClass("bg-red-600");
+        setClickedStatusClass("bg-red-900");
         break;
       case "callHeld":
         //setStatusClass("bg-orange-500")
@@ -119,7 +122,6 @@ export default function NumberButton({ button, onClick }: NumberProps) {
 
   // CORES PARA PARTE DE BAIXO DO BOTÃO (LISTRINHA)
   useEffect(() => {
-    // setStatusClass("bg-red-900");
     switch (button.callStatus) {
       case "online":
         setCallStatusClass("bg-green-600");
@@ -136,7 +138,7 @@ export default function NumberButton({ button, onClick }: NumberProps) {
   return (
     <div
       className={`${commonClasses} flex flex-col cursor-pointer ${
-        clickedButton ? clickedStatusClass : "bg-green-800"
+        button.clicked ? clickedStatusClass : "bg-green-800"
       }  `}
       onClick={handleClick}
     >

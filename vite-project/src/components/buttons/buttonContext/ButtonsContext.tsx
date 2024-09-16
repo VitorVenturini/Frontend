@@ -37,6 +37,7 @@ export interface ButtonInterface {
   heldByUser?: boolean;
   muted?: boolean;
   incomingCall?: boolean;
+  colorClass?: string;
 }
 
 interface ButtonContextType {
@@ -54,8 +55,8 @@ interface ButtonContextType {
     sensorName: string,
     value: number | undefined
   ) => void;
-  setHeldCall : (id: number, isHeld: boolean) => void;
-  setHeldCallByUser : (id: number, isHeld: boolean) => void;
+  setHeldCall: (id: number, isHeld: boolean) => void;
+  setHeldCallByUser: (id: number, isHeld: boolean) => void;
   setClickedButton: (id: number) => void;
   removeClickedButton: (id: number) => void;
   clearButtons: () => void;
@@ -63,6 +64,7 @@ interface ButtonContextType {
   setButtonClickedStatus: (
     id: number,
     clickedStatus: string,
+    colorClass: string,
     onCall?: boolean,
     incomingCall?: boolean,
     note?: string
@@ -70,9 +72,11 @@ interface ButtonContextType {
   setButtonNumberCallStatus: (
     number: string,
     callStatus: string,
+    colorClass: string,
     note: string
   ) => void;
   setStopButtonTriggered: (alarm: string, triggered: boolean) => void;
+  setClickedStatusClass: (id: number, className: string) => void;
   setStopWarningTreshold: (id: number, triggered: boolean) => void;
   setCommandValue: (btn_id: number, prt: string, value: string) => void;
   setButtonLoading: (id: number, loading: boolean) => void;
@@ -150,6 +154,14 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
       )
     );
   };
+
+  const setClickedStatusClass = (id: number, className: string) => {
+    setButtons((prevButtons) =>
+      prevButtons.map((button) =>
+        button.id === id ? { ...button, callStatus: className } : button
+      )
+    );
+  };
   const setHeldCall = (id: number, isHeld: boolean) => {
     setButtons((prevButtons) =>
       prevButtons.map((button) =>
@@ -189,14 +201,16 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
   const setButtonClickedStatus = (
     id: number,
     clickedStatus: string,
+    colorClass: string,
     onCall?: boolean,
     incomingCall?: boolean,
     note?: string
   ) => {
-    console.log("clickedStatus" + clickedStatus)
     setButtons((prevButtons) =>
       prevButtons.map((button) =>
-        button.id === id ? { ...button, clickedStatus, onCall,incomingCall,note } : button
+        button.id === id
+          ? { ...button, clickedStatus, colorClass, onCall, incomingCall, note }
+          : button
       )
     );
   };
@@ -204,11 +218,14 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
   const setButtonNumberCallStatus = (
     number: string,
     callStatus: string,
+    colorClass: string,
     note: string
   ) => {
     setButtons((prevButtons) =>
       prevButtons.map((button) =>
-        button.button_prt === number ? { ...button, callStatus, note } : button
+        button.button_prt === number
+          ? { ...button, callStatus, colorClass, note }
+          : button
       )
     );
   };
@@ -261,6 +278,7 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
       value={{
         buttons,
         setButtons,
+        setClickedStatusClass,
         setHeldCall,
         setHeldCallByUser,
         addButton,
