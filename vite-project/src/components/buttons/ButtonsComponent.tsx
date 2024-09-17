@@ -1,7 +1,5 @@
 import { useContext, useEffect } from "react";
-import {
-  Plus,
-} from "lucide-react";
+import { Plus } from "lucide-react";
 import { AccountContext } from "../account/AccountContext";
 import {
   ButtonInterface,
@@ -18,7 +16,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-
 import {
   Card,
   CardContent,
@@ -28,11 +25,7 @@ import {
 } from "@/components/ui/card";
 import ModalSensor from "../sensor/ModalSensor";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import ModalAlarm from "@/components/buttons/alarm/ModalAlarm";
 import AlarmButton from "@/components/buttons/alarm/AlarmButton";
 import ModalCombo from "@/components/buttons/combo/ModalCombo";
@@ -96,15 +89,15 @@ export default function ButtonsComponent({
             onClose={() => setIsDialogOpen(false)}
           />
         );
-        case "cronometer":
-          return (
-            <ModalCronometer
-              selectedPage={selectedPage}
-              selectedUser={selectedUser}
-              clickedPosition={clickedPosition}
-              onClose={() => setIsDialogOpen(false)}
-            />
-          );
+      case "cronometer":
+        return (
+          <ModalCronometer
+            selectedPage={selectedPage}
+            selectedUser={selectedUser}
+            clickedPosition={clickedPosition}
+            onClose={() => setIsDialogOpen(false)}
+          />
+        );
       case "user":
         return (
           <ModalUser
@@ -141,18 +134,22 @@ export default function ButtonsComponent({
             onClose={() => setIsDialogOpen(false)}
           />
         );
-        case "clock":
-          return (
-            <ModalClock
-              selectedPage={selectedPage}
-              selectedUser={selectedUser}
-              clickedPosition={clickedPosition}
-              onClose={() => setIsDialogOpen(false)}
-            />
-          );
+      case "clock":
+        return (
+          <ModalClock
+            selectedPage={selectedPage}
+            selectedUser={selectedUser}
+            clickedPosition={clickedPosition}
+            onClose={() => setIsDialogOpen(false)}
+          />
+        );
       // Add other cases here as needed
       default:
-        return null;
+        return (
+          <div className="flex justify-center items-center h-full w-full min-h-[200px]">
+            <p className="">selecione um tipo de botão</p>
+          </div>
+        );
     }
   };
 
@@ -177,7 +174,7 @@ export default function ButtonsComponent({
         clickedPosition?.j <= 5:
         return (
           <div className="">
-            <Card className="border-none bg-transparent">
+            <Card className="border-none bg-transparent min-w-[500px]">
               <CardHeader>
                 <CardTitle>Criar Botão</CardTitle>
                 <CardDescription>Selecione um tipo de botão</CardDescription>
@@ -206,7 +203,9 @@ export default function ButtonsComponent({
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="space-y-6">{renderModalByType()}</div>
+                <Card className="space-y-6 min-h-[250px] flex flex-col content-between p-0">
+                  {renderModalByType()}
+                </Card>
               </CardContent>
             </Card>
           </div>
@@ -228,7 +227,7 @@ export default function ButtonsComponent({
                 </div>
               </DialogTrigger>
               {isAdmin && (
-                <DialogContent>
+                <DialogContent className="space-y-6 min-h-[250px] flex flex-col content-between p-0 min-w-[600px]">
                   {
                     <ModalAlarm
                       selectedPage={selectedPage}
@@ -254,7 +253,7 @@ export default function ButtonsComponent({
                 </div>
               </DialogTrigger>
               {isAdmin && (
-                <DialogContent>
+                <DialogContent className="space-y-6 min-h-[250px] flex flex-col content-between p-0 min-w-[600px]">
                   {
                     <ModalUser
                       selectedPage={selectedPage}
@@ -280,7 +279,7 @@ export default function ButtonsComponent({
                 </div>
               </DialogTrigger>
               {isAdmin && (
-                <DialogContent>
+                <DialogContent className="space-y-6 min-h-[250px] flex flex-col content-between p-0 min-w-[900px]">
                   {
                     <ModalNumber
                       selectedPage={selectedPage}
@@ -306,7 +305,7 @@ export default function ButtonsComponent({
                 </div>
               </DialogTrigger>
               {isAdmin && (
-                <DialogContent className="max-w-5xl">
+                <DialogContent className="max-w-5xl space-y-6 min-h-[250px] flex flex-col content-between p-0 min-w-[600px]">
                   {
                     <ModalCombo
                       selectedPage={selectedPage}
@@ -332,9 +331,9 @@ export default function ButtonsComponent({
                 </div>
               </DialogTrigger>
               {isAdmin && (
-                <div >
-                  <DialogContent className="max-w-5xl"  >
-                    <ModalSensor 
+                <div>
+                  <DialogContent className="max-w-5xl space-y-6 min-h-[250px] flex flex-col content-between p-0 min-w-[600px]">
+                    <ModalSensor
                       selectedPage={selectedPage}
                       selectedUser={selectedUser}
                       clickedPosition={clickedPosition}
@@ -359,7 +358,7 @@ export default function ButtonsComponent({
               </DialogTrigger>
               {isAdmin && (
                 <div>
-                  <DialogContent>
+                  <DialogContent className="space-y-6 min-h-[250px] flex flex-col content-between p-0 min-w-[600px]">
                     <ModalCommand
                       selectedPage={selectedPage}
                       selectedUser={selectedUser}
@@ -374,58 +373,58 @@ export default function ButtonsComponent({
             </Dialog>
           </div>
         );
-        case "clock":
-          return (
-            <div>
-              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogTrigger asChild>
-                  <div>
-                    <ClockButton button={button} handleClick={handleClick} />
-                  </div>
-                </DialogTrigger>
-                {isAdmin && (
-                  <div>
-                    <DialogContent>
-                      <ModalClock
-                        selectedPage={selectedPage}
-                        selectedUser={selectedUser}
-                        clickedPosition={clickedPosition}
-                        existingButton={button}
-                        isUpdate={true}
-                        onClose={() => setIsDialogOpen(false)}
-                      />
-                    </DialogContent>
-                  </div>
-                )}
-              </Dialog>
-            </div>
-          );
-          case "cronometer":
-            return (
-              <div>
-                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                  <DialogTrigger asChild>
-                    <div>
-                      <CronometerButton button={button} handleClick={handleClick} />
-                    </div>
-                  </DialogTrigger>
-                  {isAdmin && (
-                    <div>
-                      <DialogContent>
-                        <ModalCronometer
-                          selectedPage={selectedPage}
-                          selectedUser={selectedUser}
-                          clickedPosition={clickedPosition}
-                          existingButton={button}
-                          isUpdate={true}
-                          onClose={() => setIsDialogOpen(false)}
-                        />
-                      </DialogContent>
-                    </div>
-                  )}
-                </Dialog>
-              </div>
-            );
+      case "clock":
+        return (
+          <div>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <div>
+                  <ClockButton button={button} handleClick={handleClick} />
+                </div>
+              </DialogTrigger>
+              {isAdmin && (
+                <div>
+                  <DialogContent className="space-y-6 min-h-[250px] flex flex-col content-between p-0 min-w-[600px]">
+                    <ModalClock
+                      selectedPage={selectedPage}
+                      selectedUser={selectedUser}
+                      clickedPosition={clickedPosition}
+                      existingButton={button}
+                      isUpdate={true}
+                      onClose={() => setIsDialogOpen(false)}
+                    />
+                  </DialogContent>
+                </div>
+              )}
+            </Dialog>
+          </div>
+        );
+      case "cronometer":
+        return (
+          <div>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <div>
+                  <CronometerButton button={button} handleClick={handleClick} />
+                </div>
+              </DialogTrigger>
+              {isAdmin && (
+                <div>
+                  <DialogContent className="space-y-6 min-h-[250px] flex flex-col content-between p-0 min-w-[600px]">
+                    <ModalCronometer
+                      selectedPage={selectedPage}
+                      selectedUser={selectedUser}
+                      clickedPosition={clickedPosition}
+                      existingButton={button}
+                      isUpdate={true}
+                      onClose={() => setIsDialogOpen(false)}
+                    />
+                  </DialogContent>
+                </div>
+              )}
+            </Dialog>
+          </div>
+        );
       default:
         if (isAdmin) {
           return (
@@ -439,12 +438,13 @@ export default function ButtonsComponent({
                   onClick={handleClick}
                 >
                   <div className="flex w-full items-center justify-center">
-                  <Plus />
+                    <Plus />
                   </div>
-                  
                 </div>
               </DialogTrigger>
-              <DialogContent className="max-w-5xl">{getDialogContent()}</DialogContent>
+              <DialogContent className="max-w-5xl">
+                {getDialogContent()}
+              </DialogContent>
             </Dialog>
           );
         } else {

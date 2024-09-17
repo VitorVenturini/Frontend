@@ -173,8 +173,9 @@ export default function CardOptSensor({
             </Select>
           </div>
         </CardContent>
-        <CardFooter className="flex justify-between">
+        <CardFooter className="flex justify-end w-full">
           {isUpdate && (
+            <div className="flex w-full justify-between">
             <Button variant="secondary">
               <AlertDialog>
                 <AlertDialogTrigger className="w-full h-full">
@@ -197,6 +198,8 @@ export default function CardOptSensor({
                 </AlertDialogContent>
               </AlertDialog>
             </Button>
+            </div>
+
           )}
           {!isCreating && (
             <Button onClick={handleCreateOpt}>

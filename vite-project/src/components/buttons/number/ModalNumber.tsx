@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2 } from "lucide-react";
+import { Loader2, CircleAlert } from "lucide-react";
 
 import {
   Select,
@@ -35,6 +35,7 @@ import {
   Zap,
   Waves,
   User,
+  Phone,
   Hospital,
   Flame,
   Siren,
@@ -73,7 +74,7 @@ export default function ModalNumber({
   const [paramButton, setParamButton] = useState(
     existingButton?.button_prt || ""
   );
-  const [iconButton, setIconButton] = useState(existingButton?.img || "");
+  const [iconButton, setIconButton] = useState(existingButton?.img || "Phone");
   const [deviceButton, setDeviceButton] = useState(
     existingButton?.button_device || ""
   );
@@ -162,86 +163,120 @@ export default function ModalNumber({
         </CardHeader>
       )}
       <CardContent>
-        <div className="grid grid-cols-5 items-center gap-4 mt-3 mb-3">
-          <Label className="text-end" htmlFor="destName">
-            Nome do Botão
-          </Label>
-          <Input
-            className="col-span-4"
-            id="destName"
-            placeholder="Nome do Botão"
-            value={nameButton}
-            onChange={handleNameButton}
-            required
-          />
-        </div>
-        <div className="grid grid-cols-5 items-center gap-4 mb-3">
-          <Label className="text-end" htmlFor="paramDest">
-            Número
-          </Label>
-          <Input
-            className="col-span-4"
-            id="paramDest"
-            placeholder="Número"
-            value={paramButton}
-            onChange={handleParamButton}
-            required
-          />
-        </div>
-        <div className="grid grid-cols-5 items-center gap-4 mb-3">
-          <Label className="text-end" htmlFor="paramDest">
-            Dispositivo
-          </Label>
-          <Select value={deviceButton} onValueChange={handleDeviceButton}>
-            <SelectTrigger className="col-span-3">
-              <SelectValue placeholder="Selecione um Dispositivo" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Dispositivos</SelectLabel>
-                {filteredDevices?.devices.map((dev, index) => (
-                  <SelectItem key={index} value={dev.hw as string}>
-                    {dev.text}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="grid grid-cols-5 items-center gap-4 mb-3">
-          <Label className="text-end" htmlFor="paramDest">
-            Ícone
-          </Label>
-          <Tabs
-            className="col-span-4"
-            onValueChange={handleIconButton}
-            value={iconButton}
-          >
-            <TabsList>
-              <TabsTrigger value="Megaphone">
-                <Megaphone size={iconSize} />
-              </TabsTrigger>
-              <TabsTrigger value="Siren">
+        <div className="grid grid-cols-6 grid-rows-3 gap-4 py-4">
+          <div className="flex align-middle justify-end items-center">
+            <Label className="text-end" htmlFor="destName">
+              Nome do Botão
+            </Label>
+          </div>
+          <div className="col-span-2">
+            <Input
+              className="col-span-4"
+              id="destName"
+              placeholder="Nome do Botão"
+              value={nameButton}
+              onChange={handleNameButton}
+              required
+            />
+          </div>
+          <div className="col-start-4">
+           
+            {nameButton.trim() === "" && (
+              <div className="text-[10px] text-red-400 flex gap-1 align-middle items-center p-2 col-start-4">
+                <CircleAlert size={15} />
+                Campo obrigatório
+              </div>
+            )}
+          </div>
+          <div className="col-start-1 row-start-2 align-middle flex justify-end items-center">
+         
+            <Label className="text-end" htmlFor="paramDest">
+              Número
+            </Label>
+          </div>
+          <div className="col-span-2 col-start-2 row-start-2">
+        
+            <Input
+              className="col-span-4"
+              id="paramDest"
+              placeholder="Número"
+              value={paramButton}
+              onChange={handleParamButton}
+              required
+            />
+          </div>
+          <div className="col-start-4 row-start-2">
+          
+            {paramButton.trim() === "" && (
+              <div className="text-[10px] text-red-400 flex gap-1 align-middle items-center p-2 col-start-4">
+                <CircleAlert size={15} />
+                Campo obrigatório
+              </div>
+            )}
+          </div>
+          <div className="col-start-1 row-start-3 align-middle flex justify-end items-center">
+         
+            <Label className="text-end" htmlFor="paramDest">
+              Dispositivo
+            </Label>
+          </div>
+          <div className="col-span-2 col-start-2 row-start-3">
+         
+            <Select value={deviceButton} onValueChange={handleDeviceButton}>
+              <SelectTrigger className="col-span-3">
+                <SelectValue placeholder="Selecione um Dispositivo" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Dispositivos</SelectLabel>
+                  {filteredDevices?.devices.map((dev, index) => (
+                    <SelectItem key={index} value={dev.hw as string}>
+                      {dev.text}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="col-start-4 row-start-3">
+  
+            {deviceButton.trim() === "" && (
+              <div className="text-[10px] text-red-400 flex gap-1 align-middle items-center p-2 col-start-4">
+                <CircleAlert size={15} />
+                Campo obrigatório
+              </div>
+            )}
+          </div>
+          <div className="col-span-2 row-span-3 col-start-5 row-start-1">
+          <Label>
+              Selecione um Ícone
+            </Label>
+            <div className="grid grid-cols-3 gap-4 p-2 align-middle items-center justify-center bg-muted h-ful">
+              <div onClick={() => handleIconButton('Phone')} className={`cursor-pointer flex justify-center p-2 ${iconButton === 'Phone' ? 'bg-background' : ''}`}>
+                <Phone size={iconSize} />
+              </div>
+              <div onClick={() => handleIconButton('Siren')} className={`cursor-pointer flex justify-center p-2 ${iconButton === 'Siren' ? 'bg-background' : ''}`}>
                 <Siren size={iconSize} />
-              </TabsTrigger>
-              <TabsTrigger value="Waves">
+              </div>
+              <div onClick={() => handleIconButton('Waves')} className={`cursor-pointer flex justify-center p-2 ${iconButton === 'Waves' ? 'bg-background' : ''}`}>
                 <Waves size={iconSize} />
-              </TabsTrigger>
-              <TabsTrigger value="Home">
+              </div>
+              <div onClick={() => handleIconButton('Home')} className={`cursor-pointer flex justify-center p-2 ${iconButton === 'Home' ? 'bg-background' : ''}`}>
                 <Home size={iconSize} />
-              </TabsTrigger>
-              <TabsTrigger value="Zap">
+              </div>
+              <div onClick={() => handleIconButton('Zap')} className={`cursor-pointer flex justify-center p-2 ${iconButton === 'Zap' ? 'bg-background' : ''}`}>
                 <Zap size={iconSize} />
-              </TabsTrigger>
-              <TabsTrigger value="Hospital">
+              </div>
+              <div onClick={() => handleIconButton('Hospital')} className={`cursor-pointer flex justify-center p-2 ${iconButton === 'Hospital' ? 'bg-background' : ''}`}>
                 <Hospital size={iconSize} />
-              </TabsTrigger>
-              <TabsTrigger value="Flame">
+              </div>
+              <div onClick={() => handleIconButton('Flame')} className={`cursor-pointer flex justify-center p-2 ${iconButton === 'Flame' ? 'bg-background' : ''}`}>
                 <Flame size={iconSize} />
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
+              </div>
+            </div>
+          </div>
         </div>
+
         <CardFooter className="flex justify-end w-full">
           {isUpdate && (
             <div className="flex w-full justify-between">
