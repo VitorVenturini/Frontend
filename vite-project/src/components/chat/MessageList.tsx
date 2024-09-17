@@ -16,8 +16,6 @@ import { User } from "lucide-react";
 import { getInitials, generateAvatar } from "../utils/utilityFunctions";
 import OptChat from "../optBar/OptChat";
 import { useAccount } from "../account/AccountContext";
-import SoundPlayer from "../soundPlayer/SoundPlayer";
-import bleep from "@/assets/sounds/bleep.wav";
 
 interface OptProps {
   user: UserInterface;
@@ -71,7 +69,6 @@ export default function MessageList({ user, onClick, clickedUser }: OptProps) {
 
   return (
     <div>
-      {/* <SoundPlayer soundSrc={bleep} play={playSound} /> */}
       <div onClick={onClick}>
         <ChatList
           id={user.id}
