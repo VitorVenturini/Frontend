@@ -304,9 +304,10 @@ export default function CardOptGeneric({
             </div>
           )}
         </CardContent>
-        <CardFooter className="flex justify-between">
+        <CardFooter className="flex justify-end w-full">
           {isUpdate && (
-            <Button variant="secondary">
+            <div className="flex w-full justify-between">
+                          <Button variant="secondary">
               <AlertDialog>
                 <AlertDialogTrigger className="w-full h-full">
                   Excluir
@@ -328,6 +329,8 @@ export default function CardOptGeneric({
                 </AlertDialogContent>
               </AlertDialog>
             </Button>
+            </div>
+
           )}
           {!isCreating && (
             <Button onClick={handleCreateOpt}>

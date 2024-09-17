@@ -31,7 +31,7 @@ import {
 
 import { useToast } from "@/components/ui/use-toast";
 import { useState, ChangeEvent } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, CircleAlert } from "lucide-react";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { ButtonInterface } from "@/components/buttons/buttonContext/ButtonsContext";
 import { useUsersPbx } from "@/components/users/usersPbx/UsersPbxContext";
@@ -140,26 +140,32 @@ export default function ModalUser({
           </CardDescription>
         </CardHeader>
       )}
-      <CardContent className="grid gap-4 py-4">
-        <div className="grid grid-cols-4 items-center gap-4">
+      <CardContent className="grid gap-5 py-4">
+        <div className="grid grid-cols-4 items-center gap-4 content-start align-top ">
           <Label className="text-end" htmlFor="buttonName">
             Nome do botão
           </Label>
           <Input
-            className="col-span-3"
+            className="col-span-2 content-start"
             id="buttonName"
             placeholder="Nome do botão"
             value={nameButton}
             onChange={handleNameButton}
             required
           />
+                 {nameButton.trim() === "" && (
+              <div className="text-sm text-red-400 flex gap-1 align-middle items-center p-2 col-start-4">
+                <CircleAlert size={15} />
+                Campo obrigatório
+              </div>
+            )}
         </div>
         <div className="grid grid-cols-4 items-center gap-4">
           <Label className="text-end" htmlFor="buttonName">
             Selecione o Usuário
           </Label>
           <Select value={buttonValue} onValueChange={handleButtonValue}>
-            <SelectTrigger className="col-span-3">
+            <SelectTrigger className="col-span-2">
               <SelectValue placeholder="Selecione um Usuário" />
             </SelectTrigger>
             <SelectContent>
@@ -173,13 +179,19 @@ export default function ModalUser({
               </SelectGroup>
             </SelectContent>
           </Select>
+          {buttonValue.trim() === "" && (
+              <div className="text-sm text-red-400 flex gap-1 align-middle items-center p-2 col-start-4">
+                <CircleAlert size={15} />
+                Campo obrigatório
+              </div>
+            )}
         </div>
         <div className="grid grid-cols-4 items-center gap-4">
           <Label className="text-end" htmlFor="buttonName">
             Selecione o Dispositivo
           </Label>
           <Select value={buttonDevice} onValueChange={handleButtonDevice}>
-            <SelectTrigger className="col-span-3">
+            <SelectTrigger className="col-span-2">
               <SelectValue placeholder="Selecione um Dispositivo" />
             </SelectTrigger>
             <SelectContent>
@@ -193,6 +205,12 @@ export default function ModalUser({
               </SelectGroup>
             </SelectContent>
           </Select>
+          {buttonDevice.trim() === "" && (
+              <div className="text-sm text-red-400 flex gap-1 align-middle items-center p-2 col-start-4">
+                <CircleAlert size={15} />
+                Campo obrigatório
+              </div>
+            )}
         </div>
       </CardContent>
       <CardFooter className="flex justify-end w-full">

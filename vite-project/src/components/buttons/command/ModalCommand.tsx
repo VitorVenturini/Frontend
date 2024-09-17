@@ -42,7 +42,7 @@ import {
 
 import { useToast } from "@/components/ui/use-toast";
 import React, { useEffect, useState, ChangeEvent } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, CircleAlert } from "lucide-react";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { ButtonInterface } from "@/components/buttons/buttonContext/ButtonsContext";
 import { useSensors } from "@/components/sensor/SensorContext";
@@ -187,20 +187,26 @@ export default function ModalCommand({
             Nome do botão
           </Label>
           <Input
-            className="col-span-3"
+            className="col-span-2"
             id="buttonName"
             placeholder="Nome do botão"
             value={nameButton}
             onChange={handleNameButton}
             required
           />
+                      {nameButton.trim() === "" && (
+              <div className="text-sm text-red-400 flex gap-1 align-middle items-center p-2 col-start-4">
+                <CircleAlert size={15} />
+                Campo obrigatório
+              </div>
+            )}
         </div>
         <div className="grid grid-cols-4 items-center gap-4">
           <Label className="text-end" htmlFor="buttonName">
             Selecione o Dispostivo
           </Label>
           <Select value={deviceEUID} onValueChange={handleDeviceIot}>
-            <SelectTrigger className="col-span-3">
+            <SelectTrigger className="col-span-2">
               <SelectValue placeholder="Selecione um Dispostivo" />
             </SelectTrigger>
             <SelectContent>
@@ -217,6 +223,12 @@ export default function ModalCommand({
               </SelectGroup>
             </SelectContent>
           </Select>
+          {deviceEUID.trim() === "" && (
+              <div className="text-sm text-red-400 flex gap-1 align-middle items-center p-2 col-start-4">
+                <CircleAlert size={15} />
+                Campo obrigatório
+              </div>
+            )}
         </div>
         <div className="grid grid-cols-4 items-center gap-4 ">
           <div className="flex justify-end gap-1">
@@ -229,7 +241,7 @@ export default function ModalCommand({
             onValueChange={handleNameCommand}
             disabled={!deviceEUID}
           >
-            <SelectTrigger className="col-span-3" id="SelectTypeMeasure">
+            <SelectTrigger className="col-span-2" id="SelectTypeMeasure">
               <SelectValue placeholder="Selecione o tipo de medida" />
             </SelectTrigger>
             <SelectContent position="popper">
@@ -243,10 +255,17 @@ export default function ModalCommand({
               </SelectGroup>
             </SelectContent>
           </Select>
+          {nameCommand.trim() === "" && (
+              <div className="text-sm text-red-400 flex gap-1 align-middle items-center p-2 col-start-4">
+                <CircleAlert size={15} />
+                Campo obrigatório
+              </div>
+            )}
         </div>
       </CardContent>
-      <CardFooter className="flex justify-between">
+      <CardFooter className="flex justify-end w-full">
         {isUpdate && (
+          <div className="flex w-full justify-between ">
           <Button variant="secondary">
             <AlertDialog>
               <AlertDialogTrigger>Excluir</AlertDialogTrigger>
@@ -267,6 +286,8 @@ export default function ModalCommand({
               </AlertDialogContent>
             </AlertDialog>
           </Button>
+          </div>
+
         )}
         {!isCreating && (
           <Button onClick={handleCreateButton}>

@@ -42,7 +42,7 @@ import {
 
 import { useToast } from "@/components/ui/use-toast";
 import React, { useEffect, useState, ChangeEvent } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, CircleAlert } from "lucide-react";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { ButtonInterface } from "@/components/buttons/buttonContext/ButtonsContext";
 import { limitButtonName } from "@/components/utils/utilityFunctions";
@@ -62,7 +62,7 @@ export default function ModalAlarm({
   clickedPosition,
   existingButton,
   isUpdate = false,
-  onClose
+  onClose,
 }: ButtonProps) {
   const [numberAlarm, setNumberAlarm] = useState(
     existingButton?.button_prt || ""
@@ -100,7 +100,7 @@ export default function ModalAlarm({
         };
         wss?.sendMessage(message);
         setIsCreating(false);
-        onClose?.()
+        onClose?.();
       } else {
         toast({
           variant: "destructive",
@@ -120,7 +120,7 @@ export default function ModalAlarm({
         mt: "DeleteButtons",
         id: existingButton?.id,
       });
-      onClose?.()
+      onClose?.();
     } catch (e) {
       console.error(e);
     }
@@ -139,58 +139,71 @@ export default function ModalAlarm({
         </CardHeader>
       )}
       <CardContent className="grid gap-5 py-4 ">
-        <div className="grid grid-cols-4 items-center gap-4">
+        <div className="grid grid-cols-4 items-center gap-4 content-start align-top ">
           <Label className="text-end" htmlFor="buttonName">
             Nome do botão
           </Label>
-          <Input
-            className="col-span-3"
-            id="buttonName"
-            placeholder="Nome do botão"
-            value={nameButton}
-            onChange={handleNameButton}
-            required
-          />
+         
+            <Input
+              className="col-span-2 content-start"
+              id="buttonName"
+              placeholder="Nome do botão"
+              value={nameButton}
+              onChange={handleNameButton}
+              required
+            />
+            {nameButton.trim() === "" && (
+              <div className="text-sm text-red-400 flex gap-1 align-middle items-center p-2 col-start-4">
+                <CircleAlert size={15} />
+                Campo obrigatório
+              </div>
+            )}
+          
         </div>
         <div className="grid grid-cols-4 items-center gap-4">
           <Label className="text-end" htmlFor="buttonName">
             Número do Alarme
           </Label>
           <Input
-            className="col-span-3"
+            className="col-span-2"
             id="buttonName"
             placeholder="Número do Alarme"
             value={numberAlarm}
             onChange={handleNumberAlarm}
             required
           />
+                      {numberAlarm.trim() === "" && (
+              <div className="text-sm text-red-400 flex gap-1 align-middle items-center p-2 col-start-4">
+                <CircleAlert size={15} />
+                Campo obrigatório
+              </div>
+            )}
         </div>
       </CardContent>
       <CardFooter className="flex justify-end w-full">
         {isUpdate && (
           <div className="flex w-full justify-between">
-          <Button variant="secondary">
-            <AlertDialog>
-              <AlertDialogTrigger>Excluir</AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Essa ação nao pode ser desfeita. Isso irá deletar
-                    permanentemente o botão de Alarme.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleDeleteButton}>
-                    Excluir
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </Button>
+            <Button variant="secondary">
+              <AlertDialog>
+                <AlertDialogTrigger>Excluir</AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Essa ação nao pode ser desfeita. Isso irá deletar
+                      permanentemente o botão de Alarme.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDeleteButton}>
+                      Excluir
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </Button>
           </div>
-
         )}
         {!isCreating && (
           <Button onClick={handleCreateButton}>
