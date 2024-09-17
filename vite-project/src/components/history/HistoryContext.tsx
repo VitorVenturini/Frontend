@@ -3,6 +3,7 @@ import { createContext, useState, useContext, ReactNode } from "react";
 export interface HistoryInterface {
   message: string; // campo para mensagem personalizada
   date: string;
+  type: string;
 }
 
 interface HistoryContextType {

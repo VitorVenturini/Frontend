@@ -27,6 +27,7 @@ export default function HistoryGrid() {
         addHistory({
           message: `${filteredSensor?.sensor_name} Disparou `,
           date: format(new Date(), "dd/MM HH:mm"),
+          type: "sensor"
         });
       }
     });

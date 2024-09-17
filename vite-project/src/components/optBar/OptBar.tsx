@@ -8,7 +8,6 @@ import { ChatInterface, useChat } from "../chat/ChatContext";
 import { useButtons } from "../buttons/buttonContext/ButtonsContext";
 import { useAccount } from "../account/AccountContext";
 import { Button } from "@/components/ui/button"
-import { setTimeout } from "timers";
 import { useSelectSingle } from "react-day-picker";
 import SoundPlayer from "../soundPlayer/SoundPlayer";
 import minor from "@/assets/sounds/minor.wav"

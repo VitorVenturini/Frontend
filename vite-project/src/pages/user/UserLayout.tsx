@@ -199,6 +199,7 @@ function UserLayout() {
             ? format(new Date(message.date), "dd/MM HH:mm")
             : format(new Date(), "dd/MM HH:mm"),
           message: `${userStartAlarm?.name} disparou o alarme ${message.alarm}`,
+          type: "alarm",
         });
         toast({
           description: "Alarme Recebido" + message.alarm,
@@ -214,6 +215,7 @@ function UserLayout() {
             ? format(new Date(message.date), "dd/MM HH:mm")
             : format(new Date(), "dd/MM HH:mm"),
           message: `${userStopAlarm?.name} parou o alarme ${message.alarm}`,
+          type: "alarm",
         });
         toast({
           description: "Alarme Parou " + message.alarm,
@@ -462,6 +464,16 @@ function UserLayout() {
       case "Message": // mensagem do cara
         const newMsgFrom: ChatInterface = message.result[0];
         addChatMessage(newMsgFrom);
+        const userMsg = allUsers.filter((user) => {
+          return user.guid === message.src;
+        })[0];
+        addHistory({
+          date: message.result.date
+            ? format(new Date(message.result.date), "dd/MM HH:mm")
+            : format(new Date(), "dd/MM HH:mm"),
+          message: `Mensagem recebida de ${userMsg?.name}`,
+          type: "msg",
+        });
         break;
       case "MessageResult": // minha mensagem
         const newMsgTo: ChatInterface = message.result[0];
