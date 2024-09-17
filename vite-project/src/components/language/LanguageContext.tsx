@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 
-type Language = 'en' | 'pt' | 'es'; // Adicione mais idiomas conforme necessário
+type Language =  'pt' ; // Adicione mais idiomas conforme necessário
 
 interface LanguageProviderProps {
   children: React.ReactNode;

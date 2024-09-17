@@ -15,6 +15,8 @@ import { commonClasses } from "../ButtonsComponent";
 import { toast, useToast } from "@/components/ui/use-toast";
 import CronometerButton from "../cronometer/cronometerButton";
 import ClockButton from "../Clock/ClockButton";
+import texts from "@/_data/texts.json";
+import { useLanguage } from "@/components/language/LanguageContext";
 
 interface DraggableButtonProps {
   button: ButtonInterface;
@@ -53,7 +55,7 @@ interface ComboCardButtonsProps {
   onReturnButton: (button: ButtonInterface) => void; // Callback para retornar botão removido à lista de disponíveis
   selectedDropArea: string | null; // Adicionada prop para saber qual área foi clicada
   setDroppedButtons: React.Dispatch<React.SetStateAction<(ButtonInterface | null)[]>>;
-  droppedButtons: (ButtonInterface | null)[];
+  droppedButtons: (ButtonInterface | null)[]; 
 }
 
 export default function DraggableComboButtons({
@@ -64,11 +66,13 @@ export default function DraggableComboButtons({
   droppedButtons,
   existingDroppedButtons,
   onReturnButton,
-  selectedDropArea, // Recebe a área selecionada
+  selectedDropArea,
 }: ComboCardButtonsProps) {
   const [filteredButtons, setFilterButtons] = useState("");
   const { buttons } = useButtons();
   const { toast } = useToast();
+  const { language } = useLanguage();
+
   const handleFilterButtons = (event: ChangeEvent<HTMLInputElement>) => {
     setFilterButtons(event.target.value);
   };
@@ -77,17 +81,15 @@ export default function DraggableComboButtons({
     return btn.button_user === selectedUser?.guid;
   });
 
-  // Filtra os botões do usuário selecionado, exceto os removidos
   const availableButtons = buttonsFromUser.filter(
     (btn) =>
       !removedButtons.some((removed) => removed.id === btn.id) &&
       (btn.page === "0" ||
         (btn.button_type !== "sensor" &&
           btn.page !== "0" &&
-          btn.button_type !== "combo")) // Removidos da lista
+          btn.button_type !== "combo"))
   );
 
-  // Lógica para filtrar botões conforme a área selecionada
   const buttonsToShow = availableButtons.filter((button: ButtonInterface) => {
     const normalizedButtonName = button.button_name
       .normalize("NFD")
@@ -98,21 +100,16 @@ export default function DraggableComboButtons({
       .replace(/[\u0300-\u036f]/g, "")
       .toLowerCase();
 
-    // Aplica o filtro de texto
     if (!normalizedButtonName.includes(normalizedFilter)) {
       return false;
     }
 
-    // Somente exibir botões após uma área ser selecionada
     if (!selectedDropArea) return false;
 
-    // Filtra os botões conforme a área selecionada
     if (selectedDropArea === "top-left") {
       return button.page === "0" && button.position_y === "1";
     } else if (selectedDropArea === "bottom-left") {
       return button.page === "0" && button.position_y === "2";
-    } else if (selectedDropArea === "right-side") {
-      return button.page !== "0";
     } else if (selectedDropArea === "right-side") {
       return button.page !== "0";
     }
@@ -130,10 +127,10 @@ export default function DraggableComboButtons({
         return <NumberButton button={button} />;
       case "user":
         return <UserButton button={button} />;
-        case "cronometer":
-          return <CronometerButton button={button} />;
-          case "clock":
-            return <ClockButton button={button} />;
+      case "cronometer":
+        return <CronometerButton button={button} />;
+      case "clock":
+        return <ClockButton button={button} />;
       default:
         return (
           <div className={`flex-col flex ${commonClasses} cursor-pointer`}>
@@ -155,12 +152,11 @@ export default function DraggableComboButtons({
   const handleClickButton = (button: ButtonInterface) => {
     if (!selectedDropArea) {
       toast({
-        description: "Selecione uma área para colocar o botão",
+        description: texts[language].selectAreaMessage,
       });
       return;
     }
-  
-    // Definir o índice com base na área selecionada
+
     let indexToDrop = 0;
     switch (selectedDropArea) {
       case "top-left":
@@ -170,12 +166,11 @@ export default function DraggableComboButtons({
         indexToDrop = 1;
         break;
       case "right-side":
-        // Verifica qual das duas áreas da direita está disponível
         const rightAreaButtonsCount = [droppedButtons[2], droppedButtons[3]].filter(Boolean).length;
         indexToDrop = droppedButtons[2] ? 3 : 2;
         if (rightAreaButtonsCount >= 2) {
           toast({
-            description: "Você não pode adicionar mais de 2 botões nesta área.",
+            description: texts[language].maxButtonsRightSideMessage,
           });
           return;
         }
@@ -183,41 +178,35 @@ export default function DraggableComboButtons({
       default:
         return;
     }
-  
-    // Se já houver um botão na posição selecionada (top-left ou bottom-left), removê-lo
+
     const currentButton = droppedButtons[indexToDrop];
     if (currentButton) {
-      // Retorna o botão atual para a lista de disponíveis
       onReturnButton(currentButton);
     }
-  
-    // Atualizar o array de droppedButtons com o novo botão no índice correto
+
     const newDroppedButtons = [...droppedButtons];
     newDroppedButtons[indexToDrop] = button;
     setDroppedButtons(newDroppedButtons);
-  
-    // Disparar o callback para onButtonDrop
+
     onButtonDrop(button);
   };
-  
-  
 
   return (
     <div className="flex flex-col w-[50%] h-[420px]">
-      <h1>Selecione o botão</h1>
+      <h1>{texts[language].selectButtonTitle}</h1>
       <CardDescription>
-        Selecione uma área e arraste o botão para a posição desejada
+        {texts[language].selectButtonDescription}
       </CardDescription>
       <Label
         className="text-end flex w-full items-center justify-center h-[30px]"
         htmlFor="buttonName"
       >
-        Filtrar o botão
+        {texts[language].filterButtonLabel}
       </Label>
       <Input
         className="w-full"
         id="buttonName"
-        placeholder="Filtrar..."
+        placeholder={texts[language].filterButtonPlaceholder}
         value={filteredButtons}
         onChange={handleFilterButtons}
       />

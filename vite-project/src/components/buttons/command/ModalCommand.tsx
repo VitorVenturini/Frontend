@@ -48,6 +48,8 @@ import { ButtonInterface } from "@/components/buttons/buttonContext/ButtonsConte
 import { useSensors } from "@/components/sensor/SensorContext";
 import { limitButtonName } from "@/components/utils/utilityFunctions";
 import { UserInterface } from "@/components/users/usersCore/UserContext";
+import texts from "@/_data/texts.json";
+import { useLanguage } from "@/components/language/LanguageContext";
 
 interface ButtonProps {
   clickedPosition: { i: number; j: number } | null;
@@ -64,12 +66,13 @@ export default function ModalCommand({
   clickedPosition,
   existingButton,
   isUpdate = false,
-  onClose
+  onClose,
 }: ButtonProps) {
   const [isCreating, setIsCreating] = useState(false);
   const { toast } = useToast();
   const wss = useWebSocketData();
   const { sensors } = useSensors();
+  const { language } = useLanguage();
 
   const [nameButton, setNameButton] = useState(
     existingButton?.button_name || ""
@@ -79,11 +82,7 @@ export default function ModalCommand({
   );
   const [deviceEUID, setDeviceEUID] = useState(
     existingButton?.button_device || ""
-    //  existingButton?.button_device ? sensors.filter((sensor) =>{
-    //     return sensor.devEUI === existingButton?.button_device
-    //   })[0].sensor_name : ""
   );
-
   const [typeMeasure, setTypeMeasure] = useState(
     existingButton?.sensor_type || ""
   );
@@ -92,6 +91,7 @@ export default function ModalCommand({
     const limitedName = limitButtonName(event.target.value);
     setNameButton(limitedName);
   };
+
   const handleNameCommand = (value: string) => {
     setNameCommand(value);
   };
@@ -128,12 +128,11 @@ export default function ModalCommand({
         };
         wss?.sendMessage(message);
         setIsCreating(false);
-        onClose?.()
+        onClose?.();
       } else {
         toast({
           variant: "destructive",
-          description:
-            "Por favor, preencha todos os campos antes de criar o botão.",
+          description: texts[language].fillFieldsForCommandButton,
         });
       }
     } catch (e) {
@@ -148,24 +147,26 @@ export default function ModalCommand({
         mt: "DeleteButtons",
         id: existingButton?.id,
       });
-      onClose?.()
+      onClose?.();
     } catch (e) {
       console.error(e);
     }
   };
 
   const IotControllers = sensors.filter((sensor) => {
-    return sensor.description?.startsWith("UC")
-  })
+    return sensor.description?.startsWith("UC");
+  });
+
   const selectedSensor = sensors.filter((sensor) => {
     return sensor.deveui === deviceEUID;
   })[0];
 
   let commandParameters = selectedSensor ? selectedSensor.parameters : [];
 
-  // manter parâmetros que contêm "out" no nome se a descrição do sensor começar com "UC"
   if (selectedSensor?.description?.startsWith("UC")) {
-    commandParameters = commandParameters.filter(param => param.parameter.includes("out"));
+    commandParameters = commandParameters.filter((param) =>
+      param.parameter.includes("out")
+    );
   }
 
   return (
@@ -173,45 +174,50 @@ export default function ModalCommand({
       {isUpdate && (
         <CardHeader>
           <CardTitle>
-            {isUpdate ? "Atualização" : "Criação"} de Botões de Comando
+            {isUpdate
+              ? texts[language].updateCommandButton
+              : texts[language].createCommandButton}
           </CardTitle>
           <CardDescription>
-            Para {isUpdate ? "atualizar" : "criar"} um botão de comando complete
-            os campos abaixo
+            {isUpdate
+              ? texts[language].updateCommandButtonDescription
+              : texts[language].createCommandButtonDescription}
           </CardDescription>
         </CardHeader>
       )}
       <CardContent className="grid gap-4 py-4">
         <div className="grid grid-cols-4 items-center gap-4">
           <Label className="text-end" htmlFor="buttonName">
-            Nome do botão
+            {texts[language].commandButtonNameLabel}
           </Label>
           <Input
             className="col-span-2"
             id="buttonName"
-            placeholder="Nome do botão"
+            placeholder={texts[language].commandButtonNamePlaceholder}
             value={nameButton}
             onChange={handleNameButton}
             required
           />
-                      {nameButton.trim() === "" && (
-              <div className="text-sm text-red-400 flex gap-1 align-middle items-center p-2 col-start-4">
-                <CircleAlert size={15} />
-                Campo obrigatório
-              </div>
-            )}
+          {nameButton.trim() === "" && (
+            <div className="text-sm text-red-400 flex gap-1 align-middle items-center p-2 col-start-4">
+              <CircleAlert size={15} />
+              {texts[language].requiredField}
+            </div>
+          )}
         </div>
         <div className="grid grid-cols-4 items-center gap-4">
           <Label className="text-end" htmlFor="buttonName">
-            Selecione o Dispostivo
+            {texts[language].selectDeviceLabel}
           </Label>
           <Select value={deviceEUID} onValueChange={handleDeviceIot}>
             <SelectTrigger className="col-span-2">
-              <SelectValue placeholder="Selecione um Dispostivo" />
+              <SelectValue
+                placeholder={texts[language].selectDevicePlaceholder}
+              />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectLabel>Dispositivos</SelectLabel>
+                <SelectLabel>{texts[language].devices}</SelectLabel>
                 {IotControllers.map((sensor) => (
                   <SelectItem
                     key={sensor.deveui}
@@ -224,16 +230,16 @@ export default function ModalCommand({
             </SelectContent>
           </Select>
           {deviceEUID.trim() === "" && (
-              <div className="text-sm text-red-400 flex gap-1 align-middle items-center p-2 col-start-4">
-                <CircleAlert size={15} />
-                Campo obrigatório
-              </div>
-            )}
+            <div className="text-sm text-red-400 flex gap-1 align-middle items-center p-2 col-start-4">
+              <CircleAlert size={15} />
+              {texts[language].requiredField}
+            </div>
+          )}
         </div>
         <div className="grid grid-cols-4 items-center gap-4 ">
           <div className="flex justify-end gap-1">
             <Label className="text-end" htmlFor="framework" id="typeMeasure">
-              Tipo de medida
+              {texts[language].measureTypeLabel}
             </Label>
           </div>
           <Select
@@ -242,11 +248,13 @@ export default function ModalCommand({
             disabled={!deviceEUID}
           >
             <SelectTrigger className="col-span-2" id="SelectTypeMeasure">
-              <SelectValue placeholder="Selecione o tipo de medida" />
+              <SelectValue
+                placeholder={texts[language].selectMeasureTypePlaceholder}
+              />
             </SelectTrigger>
             <SelectContent position="popper">
               <SelectGroup>
-                <SelectLabel>Medidas</SelectLabel>
+                <SelectLabel>{texts[language].measures}</SelectLabel>
                 {commandParameters.map((parameters, i) => (
                   <SelectItem key={i} value={parameters.parameter}>
                     {parameters.name}
@@ -256,48 +264,52 @@ export default function ModalCommand({
             </SelectContent>
           </Select>
           {nameCommand.trim() === "" && (
-              <div className="text-sm text-red-400 flex gap-1 align-middle items-center p-2 col-start-4">
-                <CircleAlert size={15} />
-                Campo obrigatório
-              </div>
-            )}
+            <div className="text-sm text-red-400 flex gap-1 align-middle items-center p-2 col-start-4">
+              <CircleAlert size={15} />
+              {texts[language].requiredField}
+            </div>
+          )}
         </div>
       </CardContent>
       <CardFooter className="flex justify-end w-full">
         {isUpdate && (
-          <div className="flex w-full justify-between ">
-          <Button variant="secondary">
-            <AlertDialog>
-              <AlertDialogTrigger>Excluir</AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Essa ação nao pode ser desfeita. Isso irá deletar
-                    permanentemente o botão de Comando.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleDeleteButton}>
-                    Excluir
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </Button>
+          <div className="flex w-full justify-between">
+            <Button variant="secondary">
+              <AlertDialog>
+                <AlertDialogTrigger>{texts[language].delete}</AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      {texts[language].confirmDeleteTitle}
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      {texts[language].confirmDeleteDescriptionCommand}
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>{texts[language].cancel}</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDeleteButton}>
+                      {texts[language].delete}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </Button>
           </div>
-
         )}
         {!isCreating && (
           <Button onClick={handleCreateButton}>
-            {isUpdate ? "Atualizar" : "Criar"} Botão
+            {isUpdate
+              ? texts[language].updateCommandButton
+              : texts[language].createCommandButton}
           </Button>
         )}
         {isCreating && (
           <Button disabled>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            {isUpdate ? "Atualizar" : "Criar"} Botão
+            {isUpdate
+              ? texts[language].updateCommandButton
+              : texts[language].createCommandButton}
           </Button>
         )}
       </CardFooter>

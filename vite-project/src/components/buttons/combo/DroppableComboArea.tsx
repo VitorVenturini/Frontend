@@ -9,6 +9,8 @@ import { commonClasses } from "../ButtonsComponent";
 import { useToast } from "@/components/ui/use-toast";
 import CronometerButton from "../cronometer/cronometerButton";
 import ClockmButton from "../Clock/ClockButton";
+import texts from "@/_data/texts.json";
+import { useLanguage } from "@/components/language/LanguageContext";
 
 const renderButtonByType = (button: ButtonInterface | null) => {
   if (!button) return null;
@@ -61,9 +63,10 @@ export default function DroppableComboArea({
   existingDroppedButtons,
   isUpdate = false,
   onSelectDropArea,
-  selectedArea, // Nova prop para indicar área selecionada
+  selectedArea,
 }: DroppableComboAreaProps) {
   const { toast } = useToast();
+  const { language } = useLanguage();
 
   useEffect(() => {
     if (isUpdate) {
@@ -74,17 +77,15 @@ export default function DroppableComboArea({
   const handleDrop = (button: ButtonInterface, index: number) => {
     const newDroppedButtons = [...droppedButtons];
 
-    // Verifica quantos botões já foram adicionados à área direita unificada
     const rightAreaButtonsCount = [
       newDroppedButtons[2],
       newDroppedButtons[3],
     ].filter(Boolean).length;
 
-    // Impede que mais de 2 botões sejam soltos na área direita
     if (index === 2 || index === 3) {
       if (rightAreaButtonsCount >= 2) {
         toast({
-          description: "Você não pode adicionar mais de 2 botões nesta área.",
+          description: texts[language].maxButtonsRightSideMessage,
         });
         return;
       } else {
@@ -98,8 +99,8 @@ export default function DroppableComboArea({
     }
     newDroppedButtons[index] = button;
     setDroppedButtons(newDroppedButtons);
-    updateCombos(newDroppedButtons); // Atualiza o combo
-    onButtonDrop(button); // Dispara o evento de "drop"
+    updateCombos(newDroppedButtons);
+    onButtonDrop(button);
   };
 
   const createDropHandler = (index: number, area: string) => {
@@ -114,7 +115,6 @@ export default function DroppableComboArea({
           droppedButtons[3],
         ].filter(Boolean).length;
 
-        // Permite o drop apenas se houver espaço na área direita e a área estiver selecionada
         if (area === "right-side") {
           if (rightAreaButtonsCount >= 2) {
             return false;
@@ -170,7 +170,7 @@ export default function DroppableComboArea({
             </div>
           ) : (
             <div className="text-center w-full text-muted-foreground text-sm">
-              Selecione a área para soltar os botões
+              {texts[language].selectAreaDropMessage}
             </div>
           )}
         </div>
@@ -184,7 +184,6 @@ export default function DroppableComboArea({
           onClick={() => onSelectDropArea("right-side")}
         >
           {droppedButtons.map((button, realIndex) => {
-            // Verifica se o botão está em uma das áreas 2 ou 3
             if (realIndex === 2 || realIndex === 3) {
               if (button) {
                 return (
@@ -198,7 +197,7 @@ export default function DroppableComboArea({
                         className="absolute top-[-8px] right-[-8px] bg-gray-200 text-black rounded-full w-6 h-6 flex justify-center items-center"
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleReturnButton(realIndex); // excluir o botão pelo INDÍCE NO ARRAY
+                          handleReturnButton(realIndex);
                         }}
                       >
                         ✖
@@ -219,13 +218,13 @@ export default function DroppableComboArea({
             if (rightButtonsCount === 0) {
               return (
                 <div className="text-center w-full text-muted-foreground text-sm">
-                  Selecione a área para soltar os botões
+                  {texts[language].selectAreaDropMessage}
                 </div>
               );
             } else if (rightButtonsCount === 1) {
               return (
                 <div className="text-center w-full text-muted-foreground text-sm">
-                  Você pode adicionar mais 1 botão
+                  {texts[language].addOneMoreButtonMessage}
                 </div>
               );
             }
@@ -257,7 +256,7 @@ export default function DroppableComboArea({
             </div>
           ) : (
             <div className="text-center w-full text-muted-foreground text-sm">
-              Selecione a área para soltar os botões
+              {texts[language].selectAreaDropMessage}
             </div>
           )}
         </div>

@@ -16,18 +16,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  SelectGroup,
-  SelectLabel,
-} from "@/components/ui/select";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -40,13 +28,19 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
-import React, { useEffect, useState, ChangeEvent } from "react";
+import React, { useState, ChangeEvent } from "react";
 import { Loader2, CircleAlert } from "lucide-react";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { ButtonInterface } from "@/components/buttons/buttonContext/ButtonsContext";
 import { limitButtonName } from "@/components/utils/utilityFunctions";
 import { UserInterface } from "@/components/users/usersCore/UserContext";
+import texts from "@/_data/texts.json";
+import { useLanguage } from "@/components/language/LanguageContext";
+
 interface ButtonProps {
   clickedPosition: { i: number; j: number } | null;
   selectedUser: UserInterface | null;
@@ -73,6 +67,7 @@ export default function ModalAlarm({
   const [isCreating, setIsCreating] = useState(false);
   const { toast } = useToast();
   const wss = useWebSocketData();
+  const { language } = useLanguage();
 
   const handleNameButton = (event: ChangeEvent<HTMLInputElement>) => {
     const limitedName = limitButtonName(event.target.value);
@@ -104,8 +99,7 @@ export default function ModalAlarm({
       } else {
         toast({
           variant: "destructive",
-          description:
-            "Por favor, preencha todos os campos antes de criar o botão.",
+          description: texts[language].fillAllFieldsForAlarm,
         });
       }
     } catch (e) {
@@ -125,59 +119,61 @@ export default function ModalAlarm({
       console.error(e);
     }
   };
+
   return (
     <>
       {isUpdate && (
         <CardHeader>
           <CardTitle>
-            {isUpdate ? "Atualização" : "Criação"} de Botões de Alarme
+            {isUpdate
+              ? texts[language].updateAlarmButton
+              : texts[language].createAlarmButton}
           </CardTitle>
           <CardDescription>
-            Para {isUpdate ? "atualizar" : "criar"} um botão de alarme complete
-            os campos abaixo
+            {isUpdate
+              ? texts[language].updateAlarmButtonDescription
+              : texts[language].createAlarmButtonDescription}
           </CardDescription>
         </CardHeader>
       )}
-      <CardContent className="grid gap-5 py-4 ">
-        <div className="grid grid-cols-4 items-center gap-4 content-start align-top ">
-          <Label className="text-end" htmlFor="buttonName">
-            Nome do botão
-          </Label>
-         
-            <Input
-              className="col-span-2 content-start"
-              id="buttonName"
-              placeholder="Nome do botão"
-              value={nameButton}
-              onChange={handleNameButton}
-              required
-            />
-            {nameButton.trim() === "" && (
-              <div className="text-sm text-red-400 flex gap-1 align-middle items-center p-2 col-start-4">
-                <CircleAlert size={15} />
-                Campo obrigatório
-              </div>
-            )}
-          
-        </div>
+      <CardContent className="grid gap-5 py-4">
         <div className="grid grid-cols-4 items-center gap-4">
           <Label className="text-end" htmlFor="buttonName">
-            Número do Alarme
+            {texts[language].alarmButtonNameLabel}
           </Label>
           <Input
             className="col-span-2"
             id="buttonName"
-            placeholder="Número do Alarme"
+            placeholder={texts[language].alarmButtonNamePlaceholder}
+            value={nameButton}
+            onChange={handleNameButton}
+            required
+          />
+          {nameButton.trim() === "" && (
+            <div className="text-sm text-red-400 flex gap-1 align-middle items-center p-2 col-start-4">
+              <CircleAlert size={15} />
+              {texts[language].alarmButtonRequired}
+            </div>
+          )}
+        </div>
+        <div className="grid grid-cols-4 items-center gap-4">
+          <Label className="text-end" htmlFor="numberAlarm">
+            {texts[language].alarmNumberLabel}
+          </Label>
+          <Input
+            className="col-span-2"
+            id="numberAlarm"
+            placeholder={texts[language].alarmNumberPlaceholder}
             value={numberAlarm}
             onChange={handleNumberAlarm}
             required
           />
-                      {numberAlarm.trim() === "" && (
-              <div className="text-sm text-red-400 flex gap-1 align-middle items-center p-2 col-start-4">
-                <CircleAlert size={15} />
-                Campo obrigatório
-              </div>
-            )}
+          {numberAlarm.trim() === "" && (
+            <div className="text-sm text-red-400 flex gap-1 align-middle items-center p-2 col-start-4">
+              <CircleAlert size={15} />
+              {texts[language].alarmNumberRequired}
+            </div>
+          )}
         </div>
       </CardContent>
       <CardFooter className="flex justify-end w-full">
@@ -185,19 +181,20 @@ export default function ModalAlarm({
           <div className="flex w-full justify-between">
             <Button variant="secondary">
               <AlertDialog>
-                <AlertDialogTrigger>Excluir</AlertDialogTrigger>
+                <AlertDialogTrigger>{texts[language].delete}</AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+                    <AlertDialogTitle>
+                      {texts[language].confirmDeleteTitle}
+                    </AlertDialogTitle>
                     <AlertDialogDescription>
-                      Essa ação nao pode ser desfeita. Isso irá deletar
-                      permanentemente o botão de Alarme.
+                      {texts[language].confirmDeleteDescription}
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                    <AlertDialogCancel>{texts[language].cancel}</AlertDialogCancel>
                     <AlertDialogAction onClick={handleDeleteButton}>
-                      Excluir
+                      {texts[language].delete}
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
@@ -207,13 +204,17 @@ export default function ModalAlarm({
         )}
         {!isCreating && (
           <Button onClick={handleCreateButton}>
-            {isUpdate ? "Atualizar" : "Criar"} Botão
+            {isUpdate
+              ? texts[language].updateAlarmButton
+              : texts[language].createAlarmButton}
           </Button>
         )}
         {isCreating && (
           <Button disabled>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            {isUpdate ? "Atualizar" : "Criar"} Botão
+            {isUpdate
+              ? texts[language].updatingAlarmButton
+              : texts[language].creatingAlarmButton}
           </Button>
         )}
       </CardFooter>

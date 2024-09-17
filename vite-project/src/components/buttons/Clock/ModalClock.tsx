@@ -19,15 +19,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  SelectGroup,
-  SelectLabel,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup, SelectLabel } from "@/components/ui/select";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -47,11 +39,12 @@ import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { ButtonInterface } from "@/components/buttons/buttonContext/ButtonsContext";
 import { limitButtonName } from "@/components/utils/utilityFunctions";
 import { UserInterface } from "@/components/users/usersCore/UserContext";
+import texts from "@/_data/texts.json";
+import { useLanguage } from "@/components/language/LanguageContext";
 
 interface TimeZone {
   zoneName: string;
   gmtOffset: string;
-  // Adicione outras propriedades se necessário
 }
 
 interface ButtonProps {
@@ -71,32 +64,23 @@ export default function ModalClock({
   isUpdate = false,
   onClose,
 }: ButtonProps) {
-  const [numberAlarm, setNumberAlarm] = useState(
-    existingButton?.button_prt || ""
-  );
-  const [nameButton, setNameButton] = useState(
-    existingButton?.button_name || ""
-  );
+  const [nameButton, setNameButton] = useState(existingButton?.button_name || "");
   const [isCreating, setIsCreating] = useState(false);
   const { toast } = useToast();
   const wss = useWebSocketData();
   const [selectedTimeZone, setSelectedTimeZone] = useState("");
   const [timeZones, setTimeZones] = useState<TimeZone[]>([]);
+  const { language } = useLanguage();
 
   const handleNameButton = (event: ChangeEvent<HTMLInputElement>) => {
     const limitedName = limitButtonName(event.target.value);
     setNameButton(limitedName);
   };
-  const handleNumberAlarm = (event: ChangeEvent<HTMLInputElement>) => {
-    setNumberAlarm(event.target.value);
-  };
 
   useEffect(() => {
     const fetchTimeZones = async () => {
       try {
-        const response = await fetch(
-          `http://api.timezonedb.com/v2.1/list-time-zone?key=G76YA12PUTYG&format=json`
-        );
+        const response = await fetch(`http://api.timezonedb.com/v2.1/list-time-zone?key=G76YA12PUTYG&format=json`);
         const data = await response.json();
         setTimeZones(data.zones as TimeZone[]);
       } catch (e) {
@@ -114,16 +98,14 @@ export default function ModalClock({
   const handleCreateButton = () => {
     try {
       if (nameButton && selectedTimeZone) {
-        const gmtOffset = timeZones.filter((gmt) => {
-          gmt.zoneName = selectedTimeZone;
-        })[0];
+        const gmtOffset = timeZones.find((tz) => tz.zoneName === selectedTimeZone);
         setIsCreating(true);
         const message = {
           api: "admin",
           mt: isUpdate ? "UpdateButton" : "InsertButton",
           ...(isUpdate && { id: existingButton?.id }),
           name: nameButton,
-          value: gmtOffset,
+          value: gmtOffset?.gmtOffset,
           guid: selectedUser?.guid,
           type: "clock",
           page: selectedPage,
@@ -136,8 +118,7 @@ export default function ModalClock({
       } else {
         toast({
           variant: "destructive",
-          description:
-            "Por favor, preencha todos os campos antes de criar o botão.",
+          description: texts[language].fillAllFieldsForClock,
         });
       }
     } catch (e) {
@@ -157,44 +138,51 @@ export default function ModalClock({
       console.error(e);
     }
   };
+
   return (
     <>
       {isUpdate && (
         <CardHeader>
           <CardTitle>
-            {isUpdate ? "Atualização" : "Criação"} de Botões de Relegio
+            {isUpdate ? texts[language].updateClockButton : texts[language].createClockButton}
           </CardTitle>
           <CardDescription>
-            Para {isUpdate ? "atualizar" : "criar"} um botão de alarme complete
-            os campos abaixo
+            {isUpdate
+              ? texts[language].updateClockButtonDescription
+              : texts[language].createClockButtonDescription}
           </CardDescription>
         </CardHeader>
       )}
       <CardContent className="grid gap-4 py-4">
         <div className="grid grid-cols-4 items-center gap-4">
           <Label className="text-end" htmlFor="buttonName">
-            Nome do botão
+            {texts[language].clockButtonNameLabel}
           </Label>
           <Input
             className="col-span-3"
             id="buttonName"
-            placeholder="Nome do botão"
+            placeholder={texts[language].clockButtonNamePlaceholder}
             value={nameButton}
             onChange={handleNameButton}
             required
           />
+          {nameButton.trim() === "" && (
+            <div className="text-sm text-red-400 flex gap-1 align-middle items-center p-2 col-start-4">
+              {texts[language].clockButtonRequired}
+            </div>
+          )}
         </div>
         <div className="grid grid-cols-4 items-center gap-4">
           <Label className="text-end" htmlFor="timeZone">
-            Fuso Horário
+            {texts[language].timeZoneLabel}
           </Label>
           <Select value={selectedTimeZone} onValueChange={handleTimeZoneChange}>
             <SelectTrigger>
-              <SelectValue placeholder="Selecione um Fuso Horário" />
+              <SelectValue placeholder={texts[language].selectTimeZonePlaceholder} />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectLabel>Fusos Horários</SelectLabel>
+                <SelectLabel>{texts[language].timeZones}</SelectLabel>
                 {timeZones.map((tz, index) => (
                   <SelectItem key={index} value={String(tz.zoneName)}>
                     {tz.zoneName}
@@ -203,43 +191,42 @@ export default function ModalClock({
               </SelectGroup>
             </SelectContent>
           </Select>
+          {selectedTimeZone === "" && (
+            <div className="text-sm text-red-400 flex gap-1 align-middle items-center p-2 col-start-4">
+              {texts[language].timeZoneRequired}
+            </div>
+          )}
         </div>
       </CardContent>
       <CardFooter className="flex justify-end w-full">
         {isUpdate && (
           <div className="flex w-full justify-between">
-                      <Button variant="secondary">
-            <AlertDialog>
-              <AlertDialogTrigger>Excluir</AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Essa ação nao pode ser desfeita. Isso irá deletar
-                    permanentemente o botão de Relógio.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleDeleteButton}>
-                    Excluir
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </Button>
+            <Button variant="secondary">
+              <AlertDialog>
+                <AlertDialogTrigger>{texts[language].delete}</AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>{texts[language].confirmDeleteTitle}</AlertDialogTitle>
+                    <AlertDialogDescription>{texts[language].confirmDeleteDescriptionClock}</AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>{texts[language].cancel}</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDeleteButton}>{texts[language].delete}</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </Button>
           </div>
-
         )}
         {!isCreating && (
           <Button onClick={handleCreateButton}>
-            {isUpdate ? "Atualizar" : "Criar"} Botão
+            {isUpdate ? texts[language].updateClockButton : texts[language].createClockButton}
           </Button>
         )}
         {isCreating && (
           <Button disabled>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            {isUpdate ? "Atualizar" : "Criar"} Botão
+            {isUpdate ? texts[language].updatingClockButton : texts[language].creatingClockButton}
           </Button>
         )}
       </CardFooter>

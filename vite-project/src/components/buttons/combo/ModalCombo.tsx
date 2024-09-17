@@ -54,6 +54,9 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { TouchBackend } from "react-dnd-touch-backend";
 import { isTouchDevice } from "@/components/utils/utilityFunctions";
+import texts from "@/_data/texts.json";
+import { useLanguage } from "@/components/language/LanguageContext";
+
 interface ButtonProps {
   clickedPosition: { i: number; j: number } | null;
   selectedUser: UserInterface | null;
@@ -75,9 +78,8 @@ export default function ModalCombo({
     existingButton?.button_name || ""
   );
   const [droppedButtons, setDroppedButtons] = useState<
-  (ButtonInterface | null)[]
->([null, null, null, null]);
-
+    (ButtonInterface | null)[]
+  >([null, null, null, null]);
 
   const [combo1, setCombo1] = useState(existingButton?.button_type_1 || "");
   const [combo2, setCombo2] = useState(existingButton?.button_type_2 || "");
@@ -89,9 +91,9 @@ export default function ModalCombo({
   const [selectedDropArea, setSelectedDropArea] = useState<string | null>(null);
 
   const { buttons } = useButtons();
+  const { language } = useLanguage();
 
   const [removedButtons, setRemovedButtons] = useState<ButtonInterface[]>([]);
-
 
   const handleButtonDrop = (button: ButtonInterface) => {
     setRemovedButtons((prev) => [...prev, button]);
@@ -105,11 +107,11 @@ export default function ModalCombo({
     const limitedName = limitButtonName(event.target.value);
     setNameButton(limitedName);
   };
+
   const handleCreateButton = () => {
     try {
-      const filledCombos = [combo1, combo2, combo3, combo4].filter(
-        Boolean
-      ).length;
+      const filledCombos = [combo1, combo2, combo3, combo4].filter(Boolean)
+        .length;
 
       if (nameButton && filledCombos >= 2) {
         setIsCreating(true);
@@ -136,8 +138,7 @@ export default function ModalCombo({
       } else {
         toast({
           variant: "destructive",
-          description:
-            "Por favor, preencha todos os campos antes de criar o botão.",
+          description: texts[language].fillFieldsForComboButton,
         });
       }
     } catch (e) {
@@ -164,15 +165,14 @@ export default function ModalCombo({
     setCombo3((droppedButtons[2]?.id as any) || "");
     setCombo4((droppedButtons[3]?.id as any) || "");
   };
-  
-  useEffect(() =>{
+
+  useEffect(() => {
     setCombo1((droppedButtons[0]?.id as any) || "");
     setCombo2((droppedButtons[1]?.id as any) || "");
     setCombo3((droppedButtons[2]?.id as any) || "");
     setCombo4((droppedButtons[3]?.id as any) || "");
-  },[droppedButtons])
+  }, [droppedButtons]);
 
-  // Pega os botões já existentes, se houver, para carregar na área de drop
   const existingDroppedButtons = [
     buttons.find((btn) => String(btn.id) === existingButton?.button_type_1) ||
       null,
@@ -188,23 +188,26 @@ export default function ModalCombo({
     <DndProvider backend={isTouchDevice() ? TouchBackend : HTML5Backend}>
       <CardHeader>
         <CardTitle>
-          {isUpdate ? "Atualização" : "Criação"} de Botões Combo
+          {isUpdate
+            ? texts[language].updateComboButton
+            : texts[language].createComboButton}
         </CardTitle>
         <CardDescription>
-          Para {isUpdate ? "atualizar" : "criar"} um botão de combo complete os
-          campos abaixo
+          {isUpdate
+            ? texts[language].updateComboButtonDescription
+            : texts[language].createComboButtonDescription}
         </CardDescription>
       </CardHeader>
 
       <CardContent className="grid gap-4 py-1">
         <div className="grid grid-cols-4 items-center gap-4">
           <Label className="text-end" htmlFor="buttonName">
-            Nome do botão
+            {texts[language].comboButtonNameLabel}
           </Label>
           <Input
             className="col-span-3"
             id="buttonName"
-            placeholder="Nome do botão"
+            placeholder={texts[language].comboButtonNamePlaceholder}
             value={nameButton}
             onChange={handleNameButton}
             required
@@ -218,7 +221,7 @@ export default function ModalCombo({
             existingDroppedButtons={existingDroppedButtons}
             isUpdate={isUpdate}
             onSelectDropArea={setSelectedDropArea}
-            selectedArea={selectedDropArea} // área selecionada
+            selectedArea={selectedDropArea}
             droppedButtons={droppedButtons}
             setDroppedButtons={setDroppedButtons}
           />
@@ -237,38 +240,42 @@ export default function ModalCombo({
       <CardFooter className="flex justify-end w-full">
         {isUpdate && (
           <div className="flex w-full justify-between">
-                      <Button variant="secondary">
-            <AlertDialog>
-              <AlertDialogTrigger>Excluir</AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Essa ação nao pode ser desfeita. Isso irá deletar
-                    permanentemente o botão de Alarme.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleDeleteButton}>
-                    Excluir
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </Button>
+            <Button variant="secondary">
+              <AlertDialog>
+                <AlertDialogTrigger>{texts[language].delete}</AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      {texts[language].confirmDeleteTitle}
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      {texts[language].confirmDeleteDescriptionCombo}
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>{texts[language].cancel}</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDeleteButton}>
+                      {texts[language].delete}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </Button>
           </div>
-
         )}
         {!isCreating && (
           <Button onClick={handleCreateButton}>
-            {isUpdate ? "Atualizar" : "Criar"} Botão
+            {isUpdate
+              ? texts[language].updateComboButton
+              : texts[language].createComboButton}
           </Button>
         )}
         {isCreating && (
           <Button disabled>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            {isUpdate ? "Atualizar" : "Criar"} Botão
+            {isUpdate
+              ? texts[language].updateComboButton
+              : texts[language].createComboButton}
           </Button>
         )}
       </CardFooter>
