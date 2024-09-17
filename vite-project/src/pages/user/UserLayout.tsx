@@ -465,11 +465,11 @@ function UserLayout() {
         const newMsgFrom: ChatInterface = message.result[0];
         addChatMessage(newMsgFrom);
         const userMsg = allUsers.filter((user) => {
-          return user.guid === message.src;
+          return user.guid === message.result[0].from_guid;
         })[0];
         addHistory({
-          date: message.result.date
-            ? format(new Date(message.result.date), "dd/MM HH:mm")
+          date: message.result[0].date
+            ? format(new Date(message.result[0].date), "dd/MM HH:mm")
             : format(new Date(), "dd/MM HH:mm"),
           message: `Mensagem recebida de ${userMsg?.name}`,
           type: "msg",
