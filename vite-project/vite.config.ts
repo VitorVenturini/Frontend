@@ -16,7 +16,7 @@ export default defineConfig({
   //     cert: fs.readFileSync(path.resolve(__dirname, '/home/wecom/wecom.com.br.pem')),
   //   },
   //   host: '0.0.0.0', // para permitir acesso externo, se necessário
-  //   port: 443, // você pode definir a porta desejada
+  //   port: 4343, // você pode definir a porta desejada
   //   hmr: {
   //     overlay: false, // Desabilita o overlay de erros
   //   },
