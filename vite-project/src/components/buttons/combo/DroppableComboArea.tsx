@@ -7,6 +7,8 @@ import NumberButton from "../number/NumberButton";
 import UserButton from "../user/UserButton";
 import { commonClasses } from "../ButtonsComponent";
 import { useToast } from "@/components/ui/use-toast";
+import CronometerButton from "../cronometer/cronometerButton";
+import ClockmButton from "../Clock/ClockButton";
 
 const renderButtonByType = (button: ButtonInterface | null) => {
   if (!button) return null;
@@ -20,6 +22,10 @@ const renderButtonByType = (button: ButtonInterface | null) => {
       return <NumberButton button={button} />;
     case "user":
       return <UserButton button={button} />;
+    case "cronometer":
+      return <CronometerButton button={button} />;
+    case "clock":
+      return <ClockmButton button={button} />;
     default:
       return (
         <div className={`flex-col flex ${commonClasses}`}>
@@ -41,9 +47,10 @@ interface DroppableComboAreaProps {
   onSelectDropArea: (area: string) => void; // Função para lidar com o clique nas divs
   selectedArea: string | null; // Indica a área selecionada
   droppedButtons: (ButtonInterface | null)[]; // Nova prop para receber o estado droppedButtons
-  setDroppedButtons: React.Dispatch<React.SetStateAction<(ButtonInterface | null)[]>>; // Nova prop para passar a função setDroppedButtons
+  setDroppedButtons: React.Dispatch<
+    React.SetStateAction<(ButtonInterface | null)[]>
+  >; // Nova prop para passar a função setDroppedButtons
 }
-
 
 export default function DroppableComboArea({
   onButtonDrop,
@@ -189,7 +196,7 @@ export default function DroppableComboArea({
                       {renderButtonByType(button)}
                       <button
                         className="absolute top-[-8px] right-[-8px] bg-gray-200 text-black rounded-full w-6 h-6 flex justify-center items-center"
-                        onClick={(e) => { 
+                        onClick={(e) => {
                           e.stopPropagation();
                           handleReturnButton(realIndex); // excluir o botão pelo INDÍCE NO ARRAY
                         }}

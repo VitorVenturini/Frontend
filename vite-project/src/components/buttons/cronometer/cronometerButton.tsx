@@ -14,6 +14,8 @@ interface ButtonProps {
 
 export default function CronometerButton({ button, handleClick }: ButtonProps) {
   const [clickedClass, setClickedClass] = useState("");
+  const { isAdmin } = useAccount();
+  const { setStopCombo } = useButtons();
   const [isRunning, setIsRunning] = useState(false);
   const [time, setTime] = useState(0);
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
@@ -35,9 +37,18 @@ export default function CronometerButton({ button, handleClick }: ButtonProps) {
     };
   }, [isRunning]);
 
+  useEffect(() => {
+    if (button.comboStart) {
+      setIsRunning(true);
+      setStopCombo(button.id);
+    }
+  }, [button]);
+
   const handleStartClick = () => {
     handleClick?.();
-    setIsRunning(true);
+    if (!isAdmin) {
+      setIsRunning(true);
+    }
   };
 
   const handleStopClick = () => {
@@ -57,15 +68,22 @@ export default function CronometerButton({ button, handleClick }: ButtonProps) {
     const minutes = Math.floor(time / 60000);
     const seconds = Math.floor((time % 60000) / 1000);
     const milliseconds = Math.floor((time % 1000) / 10);
-    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${String(milliseconds).padStart(2, '0')}`;
+    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
+      2,
+      "0"
+    )}.${String(milliseconds).padStart(2, "0")}`;
   };
 
   return (
     <div
       className={`${commonClasses} flex flex-col justify-between cursor-pointer ${clickedClass}`}
     >
-      <p className="text-sm font-medium leading-none text-white xl3:text-lg xl4:text-xl">{button.button_name}</p>
-      <div className="font-extrabold xl3:text-2xl xl4:text-3xl font-mono w-[10ch] text-center">{formatTime(time)}</div>
+      <p className="text-sm font-medium leading-none text-white xl3:text-lg xl4:text-xl">
+        {button.button_name}
+      </p>
+      <div className="font-extrabold xl3:text-2xl xl4:text-3xl font-mono w-[10ch] text-center">
+        {formatTime(time)}
+      </div>
       <div className="flex w-full justify-end">
         {isRunning ? (
           <button

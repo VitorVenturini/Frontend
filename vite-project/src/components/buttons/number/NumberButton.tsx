@@ -37,7 +37,6 @@ export default function NumberButton({ button, onClick }: NumberProps) {
   useEffect(() => {
     if (button.comboStart) {
       if (!account.isAdmin) {
-        if (!button.clicked) {
           // ligar
           wss?.sendMessage({
             api: "user",
@@ -45,12 +44,11 @@ export default function NumberButton({ button, onClick }: NumberProps) {
             btn_id: button.id,
           });
           setClickedButton(button.id);
-          setClickedStatusClass("bg-red-800");
+          setClickedStatusClass("bg-red-900");
           setStopCombo(button.id);
-        }
       }
     }
-  }, [button.comboStart]);
+  }, [button]);
 
   const handleClick = () => {
     onClick?.(); // para setar a posição na hora de criar botão

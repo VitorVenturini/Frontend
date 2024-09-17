@@ -39,8 +39,9 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
   useEffect(() => {
     if (button.comboStart) {
       if (!account.isAdmin) {
-        if (!button.clicked && filteredUser.status !== "offline") {
+        if (filteredUser.status !== "offline") {
           // ligar
+          setCallStatusClass("bg-red-900")
           wss?.sendMessage({
             api: "user",
             mt: "TriggerCall",
