@@ -45,6 +45,10 @@ import {
   NotificationsInterface,
   useAppConfig,
 } from "@/components/options/ConfigContext";
+import SoundPlayer from "@/components/soundPlayer/SoundPlayer";
+import bleep from "@/assets/sounds/bleep.wav";
+import mobile from "@/assets/sounds/mobile.wav";
+import { checkButtonWarning } from "@/components/utils/utilityFunctions";
 interface User {
   id: string;
   name: string;
@@ -86,10 +90,11 @@ function UserLayout() {
     addImages,
     addSensorsButton,
     updateGalleryImages,
+    buttonSensors,
   } = useSensors();
   const { setUsersPbx } = useUsersPbx();
   const { updateUserStauts } = useUsers();
-  const { addHistory } = useHistory();
+  const { history, addHistory } = useHistory();
   const {
     setChat,
     allMessages,
@@ -121,6 +126,8 @@ function UserLayout() {
   const { guid } = useContext(AccountContext);
   const [comboStart, setComboStart] = useState(false);
   const { users } = useUsers();
+  const [playNotificationSound, setPlayNotificationSound] = useState(false); // som para notificação
+  const [playCallSound, setPlayCallSound] = useState(false); //som para chamada
 
   const isAllowedButtonType = (type: string) => {
     const allowedTypes = [
@@ -201,9 +208,8 @@ function UserLayout() {
           message: `${userStartAlarm?.name} disparou o alarme ${message.alarm}`,
           type: "alarm",
         });
-        toast({
-          description: "Alarme Recebido" + message.alarm,
-        });
+        setPlayNotificationSound(true); // Toca o som de notificação
+        setTimeout(() => setPlayNotificationSound(false), 500); 
         break;
       case "AlarmStopReceived":
         setStopButtonTriggered(message.alarm, false);
@@ -216,9 +222,6 @@ function UserLayout() {
             : format(new Date(), "dd/MM HH:mm"),
           message: `${userStopAlarm?.name} parou o alarme ${message.alarm}`,
           type: "alarm",
-        });
-        toast({
-          description: "Alarme Parou " + message.alarm,
         });
         break;
       case "DeleteButtonsSuccess":
@@ -325,6 +328,7 @@ function UserLayout() {
           connected: false,
         };
         addIncomingCall(incomingCallRing);
+        // setPlayCallSound(true);
         setSelectedOptBottom("call");
         break;
       case "IncomingCallConnected":
@@ -341,6 +345,7 @@ function UserLayout() {
         break;
       case "IncomingCallDisconnected":
         removeIncomingCall(String(message.call));
+        // setPlayCallSound(false);
         break;
       case "CallRinging":
         setButtonClickedStatus(message.btn_id, "callRinging", "bg-orange-700");
@@ -474,6 +479,8 @@ function UserLayout() {
           message: `Mensagem recebida de ${userMsg?.name}`,
           type: "msg",
         });
+        setPlayNotificationSound(true); // Toca o som de notificação
+        setTimeout(() => setPlayNotificationSound(false), 500); 
         break;
       case "MessageResult": // minha mensagem
         const newMsgTo: ChatInterface = message.result[0];
@@ -552,15 +559,18 @@ function UserLayout() {
         break;
       case "SmartButtonReceived":
         setButtonTriggered(message.btn_id, true);
-        // addHistory({
-        //   button_name: "Alarm" + message.alarm,
-        //   date: message.date
-        //     ? format(new Date(message.date), "dd/MM HH:mm")
-        //     : format(new Date(), "dd/MM HH:mm"),
-        // });
+        addHistory({
+          date: message.date
+            ? format(new Date(message.date), "dd/MM HH:mm")
+            : format(new Date(), "dd/MM HH:mm"),
+            type: "sensor",
+            message: "Botão Vermelho Disparou"
+        });
         toast({
           description: "Botão Vermelho Disparou",
         });
+        setPlayNotificationSound(true); // Toca o som de notificação
+        setTimeout(() => setPlayNotificationSound(false), 500); 
         break;
       case "TriggerStopAlarmResult":
         setButtonTriggered(message.btn_id, false);
@@ -591,6 +601,29 @@ function UserLayout() {
   const handleClickedUserBottom = (newUser: string | null) => {
     setClickedUserBottom(newUser);
   };
+
+  const buttonState = buttons.filter((b) => b.button_type === "sensor");
+
+  useEffect(() => {
+    buttonState.forEach((btn) => {
+      const isWarning = checkButtonWarning(btn, btn.newValue);
+      const filteredSensor = buttonSensors.find(
+        (sensor) => sensor.deveui === btn.button_prt
+      );
+      if (isWarning) {
+        addHistory({
+          message: `${filteredSensor?.sensor_name} Disparou`,
+          date: format(new Date(filteredSensor?.date as string), "dd/MM HH:mm"),
+          type: "sensor",
+          muted: btn.muted,
+        });
+        if (!btn.muted) {
+          setPlayNotificationSound(true); // Toca o som de notificação
+          setTimeout(() => setPlayNotificationSound(false), 1000); // Para de tocar após 1 segundo
+        }
+      }
+    });
+  }, [buttonSensors]);
 
   return (
     <>
@@ -640,6 +673,10 @@ function UserLayout() {
           </>
         )}
       </WebSocketProvider>
+      {/* soundPlayer para Notificações Gerais */}
+      <SoundPlayer soundSrc={mobile} play={playNotificationSound} />
+      {/* soundPlayer para Chamadas
+      <SoundPlayer soundSrc={mobile} play={playCallSound} /> */}
     </>
   );
 }

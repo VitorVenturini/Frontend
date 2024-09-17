@@ -12,7 +12,7 @@ import DigitalClock from "../digitalClock";
 import LogoWecom2 from "@/assets/LogoWecom2.svg";
 import { ModeToggle } from "@/components/mode-toggle";
 import { LanguageToggle } from "@/components/language/LanguageToggle";
-import NaoSeiAinda from "@/components/nSeiAinda";
+import CoreToast from "@/components/CoreToast";
 
 export default function HeaderUser() {
   const account = useAccount();
@@ -44,7 +44,7 @@ export default function HeaderUser() {
           </div>
         </div>
         <div className="basis-1/2">
-        {/* <NaoSeiAinda /> */}
+        <CoreToast />
         </div>
         <img src={LogoWecom2} className="h-4 opacity-30" />
         <Button className="flex justify-center basis-1/8" variant="secondary">

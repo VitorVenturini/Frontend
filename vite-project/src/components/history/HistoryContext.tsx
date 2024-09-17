@@ -4,6 +4,7 @@ export interface HistoryInterface {
   message: string; // campo para mensagem personalizada
   date: string;
   type: string;
+  muted?: boolean;
 }
 
 interface HistoryContextType {
@@ -19,7 +20,17 @@ export const HistoryProvider = ({ children }: { children: ReactNode }) => {
   const [history, setHistoryState] = useState<HistoryInterface[]>([]);
 
   const addHistory = (newHistory: HistoryInterface) => {
-    setHistoryState((prevHistory) => [newHistory, ...prevHistory]);
+    // Verifica se já existe uma entrada com a mesma mensagem e data
+    const isDuplicate = history.some(
+      (hist) =>
+        hist.message === newHistory.message &&
+        hist.date === newHistory.date
+    );
+
+    // Só adiciona se não for duplicado
+    if (!isDuplicate) {
+      setHistoryState((prevHistory) => [newHistory, ...prevHistory]);
+    }
   };
 
   // const updateHistory = (updatedHistory: HistoryInterface) => {

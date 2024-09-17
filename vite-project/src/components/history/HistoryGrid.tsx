@@ -10,28 +10,6 @@ import { format, parse } from "date-fns";
 
 export default function HistoryGrid() {
   const { history, addHistory } = useHistory();
-  const { buttons } = useButtons();
-  const { buttonSensors } = useSensors();
-
-  const buttonState = buttons.filter((b) => b.button_type === "sensor");
-  const currentDate = new Date();
-  const formattedDate = format(currentDate, "dd/mm hh:mm");
-
-  useEffect(() => {
-    buttonState.forEach((btn) => {
-      const isWarning = checkButtonWarning(btn, btn.newValue);
-      const filteredSensor = buttonSensors.find(
-        (sensor) => sensor.deveui === btn.button_prt
-      );
-      if (isWarning) {
-        addHistory({
-          message: `${filteredSensor?.sensor_name} Disparou`,
-          date: format(new Date(filteredSensor?.date as string), "dd/MM HH:mm"),
-          type: "sensor"
-        });
-      }
-    });
-  }, [buttonSensors]);
 
   // ordenar por data 
   const sortedHistory = [...history].sort((a, b) => {

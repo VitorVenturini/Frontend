@@ -27,8 +27,10 @@ import { CallProvider } from "./components/calls/CallContext";
 import Loader from "./components/Loader";
 import TokenRenewer from "./components/validateToken/TokenRenewer";
 
-export const host = "https://core.wecom.com.br";
-//export const host = `https://${window.location.hostname}`;
+export const host =
+  window.location.hostname === "localhost"
+    ? "https://core.wecom.com.br"
+    : `https://${window.location.hostname}`;
 
 function App() {
   const account = useContext(AccountContext);
