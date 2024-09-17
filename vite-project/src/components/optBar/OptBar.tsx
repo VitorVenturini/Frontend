@@ -8,7 +8,11 @@ import { ChatInterface, useChat } from "../chat/ChatContext";
 import { useButtons } from "../buttons/buttonContext/ButtonsContext";
 import { useAccount } from "../account/AccountContext";
 import { Button } from "@/components/ui/button"
-
+import { setTimeout } from "timers";
+import { useSelectSingle } from "react-day-picker";
+import SoundPlayer from "../soundPlayer/SoundPlayer";
+import minor from "@/assets/sounds/minor.wav"
+import { min } from "date-fns";
 
 type OnOptChange = (opt: string) => void;
 
@@ -32,7 +36,7 @@ export default function OptBar({
   const account = useAccount()
   const myAccountInfo = JSON.parse(localStorage.getItem(account.session) || "{}");
   const [initiatedByUser, setInitiatedByUser] = useState(false);
-
+  const [playSound , setPlaySound] = useState(false)
   const handleOptChange = (newOpt: string) => {
     onOptChange(newOpt);
   };
@@ -49,6 +53,10 @@ export default function OptBar({
         // Verifica se o chat está aberto com o remetente da mensagem
         if (!clickedUser || message.from_guid !== clickedUser) {
           hasUnreadMessage = true;
+          setPlaySound(true)
+          setTimeout(() =>{
+            setPlaySound(false)
+          },2000)
         }
       }
     });
@@ -140,7 +148,7 @@ export default function OptBar({
         
       </TabsList>
   
-      
+      <SoundPlayer soundSrc={minor} play={playSound}/>
     </TabsOpt>
     
   );
