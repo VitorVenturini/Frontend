@@ -85,7 +85,7 @@ export default function OptComponent({
   const [sensorType, setSensorType] = useState("");
 
   const handleClick = () => {
-    setSensorType("")
+    setSensorType("");
     onClick();
   };
 
@@ -112,34 +112,43 @@ export default function OptComponent({
       case "sensor":
         return (
           <>
-          <CardHeader>Selecione o Tipo</CardHeader>
-            <Select onValueChange={handleSensorTypeChange}>
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione o tipo" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="camera">Câmera</SelectItem>
-                <SelectItem value="sensor">Sensor</SelectItem>
-              </SelectContent>
-            </Select>
-            {sensorType === "sensor" && (
-              <CardOptSensor
-                selectedUser={selectedUser}
-                selectedOpt={selectedOpt}
-                clickedPosition={clickedPosition}
-                onClose={() => setIsDialogOpen(false)}
-              />
-            )}
-            {sensorType === "camera" && (
-              <CardOptCamera
-                selectedUser={selectedUser}
-                selectedOpt={selectedOpt}
-                clickedPosition={clickedPosition}
-                onClose={() => setIsDialogOpen(false)}
-              />
-            )}
+            <CardHeader>
+              <CardTitle>Selecione o Tipo</CardTitle>
+              <CardDescription>
+                Selecione o tipo de botão: Sensor ou Câmera
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="grid py-1">
+              <Select onValueChange={handleSensorTypeChange}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione o tipo" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="camera">Câmera</SelectItem>
+                  <SelectItem value="sensor">Sensor</SelectItem>
+                </SelectContent>
+              </Select>
+
+              {sensorType === "sensor" && (
+                <CardOptSensor
+                  selectedUser={selectedUser}
+                  selectedOpt={selectedOpt}
+                  clickedPosition={clickedPosition}
+                  onClose={() => setIsDialogOpen(false)}
+                />
+              )}
+              {sensorType === "camera" && (
+                <CardOptCamera
+                  selectedUser={selectedUser}
+                  selectedOpt={selectedOpt}
+                  clickedPosition={clickedPosition}
+                  onClose={() => setIsDialogOpen(false)}
+                />
+              )}
+            </CardContent>
           </>
         );
+
       case "radio":
         return <DialogTitle>RADIO COMING SOON</DialogTitle>;
       default:
@@ -205,7 +214,7 @@ export default function OptComponent({
           </Dialog>
         </div>
       );
-    }else if (button.button_type === "camera") {
+    } else if (button.button_type === "camera") {
       // caso específico para edição de botão do tipo "camera"
       return (
         <div>
@@ -239,8 +248,7 @@ export default function OptComponent({
           </Dialog>
         </div>
       );
-    }
-    else {
+    } else {
       // edição de botões que nao forem do tipo "sensor"
       return (
         <div>

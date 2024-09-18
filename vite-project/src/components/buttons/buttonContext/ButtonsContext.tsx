@@ -36,8 +36,12 @@ export interface ButtonInterface {
   held?: boolean;
   heldByUser?: boolean;
   muted?: boolean;
+
   incomingCall?: boolean;
   colorClass?: string;
+  isRunning?: boolean;
+  startTime?: number | null;
+  time?: number;
 }
 
 interface ButtonContextType {

@@ -74,7 +74,7 @@ export default function HeaderApp() {
         <div className="flex items-center gap-1">
 
           <Button variant="ghost" onClick={handleUserViewClick}>
-            {texts[language].headerUser}
+            {texts[language].headerConsole}
           </Button>
           <Button variant="ghost" onClick={handleButtonsClick}>
             {texts[language].headerButtons}

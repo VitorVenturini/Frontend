@@ -2,11 +2,10 @@ import {
   ButtonInterface,
   useButtons,
 } from "@/components/buttons/buttonContext/ButtonsContext";
-
 import { useEffect, useState } from "react";
-import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { useAccount } from "@/components/account/AccountContext";
 import { commonClasses } from "../ButtonsComponent";
+
 interface ButtonProps {
   button: ButtonInterface;
   handleClick?: () => void;
@@ -15,15 +14,18 @@ interface ButtonProps {
 export default function CronometerButton({ button, handleClick }: ButtonProps) {
   const [clickedClass, setClickedClass] = useState("");
   const { isAdmin } = useAccount();
-  const { setStopCombo } = useButtons();
-  const [isRunning, setIsRunning] = useState(false);
-  const [time, setTime] = useState(0);
+  const { setStopCombo, updateButton } = useButtons();
+  const [isRunning, setIsRunning] = useState(button.isRunning || false);
+  const [time, setTime] = useState(button.time || 0); // O tempo que já passou
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    if (isRunning) {
+    if (isRunning && button.startTime) {
+      const startTime = button.startTime;
+      const elapsedTime = Date.now() - startTime + (button.time || 0);
+      setTime(elapsedTime);
       const id = setInterval(() => {
-        setTime((prevTime) => prevTime + 10);
+        setTime(Date.now() - startTime + (button.time || 0));
       }, 10);
       setIntervalId(id);
     } else if (!isRunning && intervalId) {
@@ -39,29 +41,39 @@ export default function CronometerButton({ button, handleClick }: ButtonProps) {
 
   useEffect(() => {
     if (button.comboStart) {
+      const startTime = Date.now();
       setIsRunning(true);
+      updateButton({ ...button, isRunning: true, startTime }); 
       setStopCombo(button.id);
     }
   }, [button]);
 
   const handleStartClick = () => {
     handleClick?.();
-    if (!isAdmin) {
+    if (!isAdmin && !isRunning) {
+      const startTime = Date.now();
       setIsRunning(true);
+      updateButton({ ...button, isRunning: true, startTime }); 
     }
   };
 
   const handleStopClick = () => {
     setIsRunning(false);
+    updateButton({ ...button, isRunning: false, time: time });
   };
 
   const handleRestoreClick = () => {
     setTime(0);
     setIsRunning(false);
+    updateButton({ ...button, isRunning: false, time: 0, startTime: null }); 
   };
 
   const handleResumeClick = () => {
-    setIsRunning(true);
+    if (!isRunning) {
+      const newStartTime = Date.now();
+      setIsRunning(true);
+      updateButton({ ...button, isRunning: true, startTime: newStartTime });
+    }
   };
 
   const formatTime = (time: number) => {
@@ -87,7 +99,7 @@ export default function CronometerButton({ button, handleClick }: ButtonProps) {
       <div className="flex w-full justify-end">
         {isRunning ? (
           <button
-            className="bg-red-500 text-white p-1 px-2 rounded flex justify-end "
+            className="bg-red-500 text-white p-1 px-2 rounded flex justify-end"
             onClick={handleStopClick}
           >
             Parar
@@ -96,7 +108,7 @@ export default function CronometerButton({ button, handleClick }: ButtonProps) {
           <>
             {time === 0 ? (
               <button
-                className="bg-green-500 text-white p-1 px-2 rounded "
+                className="bg-green-500 text-white p-1 px-2 rounded"
                 onClick={handleStartClick}
               >
                 Iniciar

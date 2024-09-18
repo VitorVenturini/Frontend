@@ -12,6 +12,8 @@ import { UserInterface } from "../users/usersCore/UserContext";
 import { ChatInterface, useChat } from "./ChatContext";
 import { useState, useEffect } from "react";
 import { ChatList } from "react-chat-elements";
+import "react-chat-elements/dist/main.css";
+
 import { User } from "lucide-react";
 import { getInitials, generateAvatar } from "../utils/utilityFunctions";
 import OptChat from "../optBar/OptChat";
@@ -72,7 +74,6 @@ export default function MessageList({ user, onClick, clickedUser }: OptProps) {
       <div onClick={onClick}>
         <ChatList
           id={user.id}
-          className="chat-list text-black"
           lazyLoadingImage=""
           dataSource={[
             {
