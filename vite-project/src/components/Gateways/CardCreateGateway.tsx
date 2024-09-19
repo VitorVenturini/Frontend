@@ -95,101 +95,102 @@ export default function CardCreateGateway({
   return (
     //div que contem os cards
     <div className="flex flex-col md:flex-row gap-5 justify-center">
-        <CardContent>
-          <CardHeader>
-            <CardTitle>
-              {isUpdate == true ? "Update Gateway" : "Create Gateway"}
-            </CardTitle>
-            <CardDescription>
-              {isUpdate == true
-                ? "Update Gateway Description TEXT"
-                : "Create Gateway Description TEXT"}
-            </CardDescription>
-          </CardHeader>
-          {/* Card de criação de usuario */}
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-3 items-center gap-4">
-              <Label className="text-end" htmlFor="name">
-                Nickname
-              </Label>
-              <Input
-                className="col-span-2"
-                id="nickname"
-                placeholder="Apelido"
-                type="text"
-                value={nicknameHost}
-                onChange={handleNicknameHost}
-              />
-            </div>
-
-            <div className="grid grid-cols-3 items-center gap-4">
-              <Label className="text-end" htmlFor="name">
-                Host
-              </Label>
-
-              <Input
-                className="col-span-2"
-                id="host"
-                placeholder="IP ou URL do Gateway"
-                type="text"
-                value={host}
-                title="https://192.168.1.1 ou https://www.hostname.com"
-                onChange={handleHost}
-              />
-            </div>
-
-            <div className="grid grid-cols-3 items-center gap-4">
-              <Label className="text-end" htmlFor="name">
-                User
-              </Label>
-              <Input
-                className="col-span-2"
-                id="user"
-                placeholder="Username"
-                title="username de acesso ex."
-                type="text"
-                value={hostUser}
-                onChange={handleHostUser}
-              />
-            </div>
-            <div className="grid grid-cols-3 items-center gap-4">
-              <Label className="text-end" htmlFor="name">
-                Password
-              </Label>
-              {isUpdate == true ? (
-                <Input
-                  className="col-span-2"
-                  id="password"
-                  type="password"
-                  placeholder="Nova Senha"
-                  value={hostPassword}
-                  onChange={handleHostPassword}
-                />
-              ) : (
-                <Input
-                  className="col-span-2"
-                  id="password"
-                  type="password"
-                  placeholder="Senha"
-                  value={hostPassword}
-                  onChange={handleHostPassword}
-                />
-              )}
-            </div>
-            <CardFooter className="flex justify-end">
-              {!isCreating && (
-                <Button onClick={handleCreateGateway}>Atualizar Gateway</Button>
-              )}
-              {isCreating && (
-                <Button disabled>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Criar Gateway
-                </Button>
-              )}
-            </CardFooter>
+      <CardContent>
+        <CardHeader>
+          <CardTitle>
+            {isUpdate == true ? "Update Gateway" : "Create Gateway"}
+          </CardTitle>
+          <CardDescription>
+            {isUpdate == true
+              ? "Update Gateway Description TEXT"
+              : "Create Gateway Description TEXT"}
+          </CardDescription>
+        </CardHeader>
+        {/* Card de criação de usuario */}
+        <div className="grid gap-4 py-4">
+          <div className="grid grid-cols-3 items-center gap-4">
+            <Label className="text-end" htmlFor="name">
+              Nickname
+            </Label>
+            <Input
+              className="col-span-2"
+              id="nickname"
+              placeholder="Apelido"
+              type="text"
+              value={nicknameHost}
+              onChange={handleNicknameHost}
+            />
           </div>
-        </CardContent>
 
+          <div className="grid grid-cols-3 items-center gap-4">
+            <Label className="text-end" htmlFor="name">
+              Host
+            </Label>
+
+            <Input
+              className="col-span-2"
+              id="host"
+              placeholder="IP ou URL do Gateway"
+              type="text"
+              value={host}
+              title="https://192.168.1.1 ou https://www.hostname.com"
+              onChange={handleHost}
+            />
+          </div>
+
+          <div className="grid grid-cols-3 items-center gap-4">
+            <Label className="text-end" htmlFor="name">
+              User
+            </Label>
+            <Input
+              className="col-span-2"
+              id="user"
+              placeholder="Username"
+              title="username de acesso ex."
+              type="text"
+              value={hostUser}
+              onChange={handleHostUser}
+            />
+          </div>
+          <div className="grid grid-cols-3 items-center gap-4">
+            <Label className="text-end" htmlFor="name">
+              Password
+            </Label>
+            {isUpdate == true ? (
+              <Input
+                className="col-span-2"
+                id="password"
+                type="password"
+                placeholder="Nova Senha"
+                value={hostPassword}
+                onChange={handleHostPassword}
+              />
+            ) : (
+              <Input
+                className="col-span-2"
+                id="password"
+                type="password"
+                placeholder="Senha"
+                value={hostPassword}
+                onChange={handleHostPassword}
+              />
+            )}
+          </div>
+          <CardFooter className="flex justify-end">
+            {!isCreating && (
+              <Button onClick={handleCreateGateway}>
+                {isUpdate ? "Atualizar Gateway" : "Criar Gateway"}{" "}
+              </Button>
+            )}
+            {isCreating && (
+              <Button disabled>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                {isUpdate ? "Atualizar Gateway" : "Criar Gateway"}
+              </Button>
+            )}
+          </CardFooter>
+        </div>
+      </CardContent>
     </div>
   );
 }

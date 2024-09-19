@@ -27,6 +27,7 @@ export interface ButtonInterface {
   clicked?: boolean; // adicionado para rastrear se o botão foi clicado
   loading?: boolean;
   triggered: boolean;
+  warning?: boolean;
   commandValue?: string;
   comboStart?: boolean;
   clickedStatus?: string;
