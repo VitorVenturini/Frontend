@@ -618,8 +618,8 @@ function UserLayout() {
           muted: btn.muted,
         });
         if (!btn.muted) {
-          setPlayNotificationSound(true); // Toca o som de notificação
-          setTimeout(() => setPlayNotificationSound(false), 1000); // Para de tocar após 1 segundo
+          setPlayNotificationSound(true); 
+          setTimeout(() => setPlayNotificationSound(false), 500); 
         }
       }
     });
