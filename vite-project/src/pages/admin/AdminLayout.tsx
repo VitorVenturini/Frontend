@@ -235,8 +235,8 @@ function AdminLayout() {
         });
         break;
       case "UpdateGatewaySuccess":
-        const updatedGateway: GatewaysInterface = message.result;
-        console.log("UpdateGatewaySuccess", JSON.stringify(message.result));
+        const updatedGateway: GatewaysInterface = message.gateways;
+        console.log("UpdateGatewaySuccess", JSON.stringify(message.gateways));
         updateGateway(updatedGateway);
         toast({
           description: "Gateway atualizado com sucesso",

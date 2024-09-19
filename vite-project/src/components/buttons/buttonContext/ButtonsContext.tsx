@@ -27,6 +27,7 @@ export interface ButtonInterface {
   clicked?: boolean; // adicionado para rastrear se o botão foi clicado
   loading?: boolean;
   triggered: boolean;
+  warning?: boolean;
   commandValue?: string;
   comboStart?: boolean;
   clickedStatus?: string;
@@ -36,8 +37,12 @@ export interface ButtonInterface {
   held?: boolean;
   heldByUser?: boolean;
   muted?: boolean;
+
   incomingCall?: boolean;
   colorClass?: string;
+  isRunning?: boolean;
+  startTime?: number | null;
+  time?: number;
 }
 
 interface ButtonContextType {

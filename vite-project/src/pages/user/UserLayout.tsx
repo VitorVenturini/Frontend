@@ -602,25 +602,29 @@ function UserLayout() {
     setClickedUserBottom(newUser);
   };
 
+  // tratar os thresholds aqui 
   const buttonState = buttons.filter((b) => b.button_type === "sensor");
-
   useEffect(() => {
     buttonState.forEach((btn) => {
       const isWarning = checkButtonWarning(btn, btn.newValue);
       const filteredSensor = buttonSensors.find(
         (sensor) => sensor.deveui === btn.button_prt
       );
-      if (isWarning) {
+      if (isWarning && !btn.warning) {
         addHistory({
           message: `${filteredSensor?.sensor_name} Disparou`,
           date: format(new Date(filteredSensor?.date as string), "dd/MM HH:mm"),
           type: "sensor",
-          muted: btn.muted,
         });
         if (!btn.muted) {
-          setPlayNotificationSound(true); // Toca o som de notificação
-          setTimeout(() => setPlayNotificationSound(false), 1000); // Para de tocar após 1 segundo
+          setPlayNotificationSound(true); 
+          setTimeout(() => setPlayNotificationSound(false), 500); 
         }
+        // atualizar o botão no contexto com warning True indicando que está alarmado
+        updateButton({ ...btn, warning: true });
+      }else if(!isWarning && btn.warning){
+        //se o sensor parou de apitar , reseta o estado warning 
+        updateButton({ ...btn, warning: false });
       }
     });
   }, [buttonSensors]);

@@ -4,7 +4,6 @@ export interface HistoryInterface {
   message: string; // campo para mensagem personalizada
   date: string;
   type: string;
-  muted?: boolean;
 }
 
 interface HistoryContextType {

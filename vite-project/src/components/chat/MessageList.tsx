@@ -12,6 +12,8 @@ import { UserInterface } from "../users/usersCore/UserContext";
 import { ChatInterface, useChat } from "./ChatContext";
 import { useState, useEffect } from "react";
 import { ChatList } from "react-chat-elements";
+import "react-chat-elements/dist/main.css";
+
 import { User } from "lucide-react";
 import { getInitials, generateAvatar } from "../utils/utilityFunctions";
 import OptChat from "../optBar/OptChat";
@@ -48,21 +50,25 @@ export default function MessageList({ user, onClick, clickedUser }: OptProps) {
       (a, b) =>
         new Date(a.date || "").getTime() - new Date(b.date || "").getTime()
     );
-
-    // const unread = lastestMessage
-    //   ? lastestMessage.filter(
-    //       (message) => message.read === null && message.from_guid === user.guid
-    //     )
-    //   : undefined;
-
-    // // if (unread && unread?.length >= 1) {
-    // //   setPlaySound(true);
-    // // }else{
-    // //   setPlaySound(false);
-    // // }
-
     setLastestMessage(sortedMessages);
   }, [chat]);
+
+  //OCULTAR O JUST NOW
+  
+  // useEffect(() => {
+  //   const dateElements = document.querySelectorAll(".rce-citem-body--top-time");
+  //   dateElements.forEach((element) => {
+  //     if (
+  //       element.textContent?.toLowerCase() === "just now" &&
+  //       lastestMessage &&
+  //       !lastestMessage[lastestMessage.length - 1]?.date
+  //     ) {
+  //       (element as HTMLElement).style.display = "none";
+  //     } else {
+  //       (element as HTMLElement).style.display = "block";
+  //     }
+  //   });
+  // }, [lastestMessage]);
 
   const initials = getInitials(user.name || "Usuário");
   const avatarBase64 = generateAvatar(initials as string);
@@ -72,7 +78,6 @@ export default function MessageList({ user, onClick, clickedUser }: OptProps) {
       <div onClick={onClick}>
         <ChatList
           id={user.id}
-          className="chat-list text-black"
           lazyLoadingImage=""
           dataSource={[
             {

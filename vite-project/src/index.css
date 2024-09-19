@@ -38,6 +38,17 @@
   animation: blinkBackground 1s infinite;
 }
 
+ /* CLASSE DA CHAT LIST  */
+.rce-citem{
+  background-color: var(--card) !important;
+}
+.rce-citem-body--bottom-title{
+  color: hsl(215 20.2% 65.1%);
+}
+
+.rce-citem-body--top-time{
+  color: white !important;
+}
 
 
 @layer base {
