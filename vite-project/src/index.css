@@ -161,4 +161,7 @@
     page-break-before: always !important;
     page-break-inside: avoid !important;
   }
+  .avoid-page-break {
+    page-break-inside: avoid;
+  }
 }

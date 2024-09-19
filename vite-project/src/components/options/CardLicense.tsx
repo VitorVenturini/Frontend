@@ -86,6 +86,9 @@ export default function LicenseCard() {
   };
 
   return (
+
+    <div>
+     {} 
     <Card className="min-w-[900px]">
       <CardHeader className="grid grid-cols-3 justify-between items-center">
         <CardTitle>Licenciamento</CardTitle>
@@ -151,7 +154,7 @@ export default function LicenseCard() {
                 id="key"
                 placeholder="Chave de Licença"
                 onChange={handleLicenseKey}
-                value={licenseKey as string}
+                value={licenseApi.licenseFile.value}
               />
             </div>
           </div>
@@ -175,5 +178,7 @@ export default function LicenseCard() {
         </div>
       </CardContent>
     </Card>
+    
+    </div>
   );
 }

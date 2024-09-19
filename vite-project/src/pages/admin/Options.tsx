@@ -25,6 +25,7 @@ export default function MenuOptions() {
   };
   useEffect(() => {
     setActiveButton("License");
+    
   }, []); // setar License como default sempre
 
   const renderActiveComponent = () => {
