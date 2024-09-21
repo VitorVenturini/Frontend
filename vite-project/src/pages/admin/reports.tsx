@@ -33,7 +33,7 @@ import {
   DialogContent,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { host } from "@/App";
+
 type DateRange = {
   from: Date;
   to: Date;
@@ -46,7 +46,7 @@ import { useAppConfig } from "@/components/options/ConfigContext";
 import { LoaderBar } from "@/components/LoaderBar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Margin, usePDF } from "react-to-pdf";
-import { Sheet } from "lucide-react";
+
 import { PdfGerate } from "@/Reports/ExportReports";
 
 export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
@@ -71,14 +71,13 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
   const { targetRef, toPDF } = usePDF({
     method: "open",
     filename: "usepdf-example.pdf",
-    page: { margin: Margin.NONE, orientation: 'landscape', },
+    page: { margin: Margin.NONE, orientation: "landscape" },
   });
 
   const handleClear = () => {
-    clearDataReport()
-    clearLoadBarData()
-  }
-
+    clearDataReport();
+    clearLoadBarData();
+  };
 
   const handleStartHour = (event: ChangeEvent<HTMLInputElement>) => {
     setStartHour(event.target.value);
@@ -287,11 +286,21 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
                 <TabsTrigger value="RptAvailability">
                   Disponibilidade
                 </TabsTrigger>
-                <TabsTrigger value="RptCalls" onClick={handleClear}>Chamadas</TabsTrigger>
-                <TabsTrigger value="RptActivities" onClick={handleClear}>Atividade</TabsTrigger>
-                <TabsTrigger value="RptMessages" onClick={handleClear}>Mensagens</TabsTrigger>
-                <TabsTrigger value="RptSensors" onClick={handleClear}>Sensores</TabsTrigger>
-                <TabsTrigger value="RptIotDevices" onClick={handleClear}>Iot Câmeras</TabsTrigger>
+                <TabsTrigger value="RptCalls" onClick={handleClear}>
+                  Chamadas
+                </TabsTrigger>
+                <TabsTrigger value="RptActivities" onClick={handleClear}>
+                  Atividade
+                </TabsTrigger>
+                <TabsTrigger value="RptMessages" onClick={handleClear}>
+                  Mensagens
+                </TabsTrigger>
+                <TabsTrigger value="RptSensors" onClick={handleClear}>
+                  Sensores
+                </TabsTrigger>
+                <TabsTrigger value="RptIotDevices" onClick={handleClear}>
+                  Iot Câmeras
+                </TabsTrigger>
               </TabsList>
               <TabsContent value="RptSensors" className="gap-4">
                 <div className="grid items-center justify-start grid-cols-4 gap-4 h-[10px] ">
@@ -347,10 +356,7 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
             <div className="flex items-end justify-end">
               <TabsContent value="RptSensors" className="flex gap-2">
                 <p className="flex items-center text-[12px]">Export:</p>
-                  <PdfGerate dados={dataReport.chart} keys={dataReport.keys} />
-                <Button variant="ghost" title="XLS" disabled={dataReport.chart.length === 0 ? true : false}>
-                  <Sheet />
-                </Button>
+                <PdfGerate />
                 <Button onClick={() => handleExecDevice()}>Consultar</Button>
               </TabsContent>
               <TabsContent value="RptIotDevices" className="flex">
@@ -362,6 +368,8 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
                 </Button>
               </TabsContent>
               <TabsContent value="RptAvailability" className="flex">
+                <p className="flex items-center text-[12px]">Export:</p>
+                  <PdfGerate />
                 <Button
                   className="flex justify-end"
                   onClick={() => handleMenu("RptAvailability")}
@@ -370,6 +378,8 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
                 </Button>
               </TabsContent>
               <TabsContent value="RptCalls" className="flex">
+                <p className="flex items-center text-[12px]">Export:</p>
+                <PdfGerate />
                 <Button
                   className="flex justify-end"
                   onClick={() => handleMenu("RptCalls")}
@@ -378,6 +388,8 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
                 </Button>
               </TabsContent>
               <TabsContent value="RptActivities" className="flex">
+                <p className="flex items-center text-[12px]">Export:</p>
+                <PdfGerate />
                 <Button
                   className="flex justify-end"
                   onClick={() => handleMenu("RptActivities")}
@@ -386,6 +398,8 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
                 </Button>
               </TabsContent>
               <TabsContent value="RptMessages" className="flex">
+                <p className="flex items-center text-[12px]">Export:</p>
+                <PdfGerate />
                 <Button
                   className="flex justify-end"
                   onClick={() => handleMenu("RptMessages")}
@@ -454,7 +468,7 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
                 />
               </div>
             ) : (
-              <div className="w-full">
+              <div className="w-full" data-print='print'>
                 <ColumnsReports
                   data={dataReport.table}
                   keys={dataReport.keys}

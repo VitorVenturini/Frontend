@@ -21,7 +21,13 @@ const ColumnsReports: React.FC<ColumnsReportsProps> = ({
   const columns: ColumnDef<any, any>[] = useMemo(() => {
     // Filtra as colunas que não devem ser exibidas
     const baseColumns: ColumnDef<any, any>[] = keys
-      .filter((key) => key !== "record_link" && key !== "record_id" && key !== "btn_id" && key !== "call_innovaphone")
+      .filter(
+        (key) =>
+          key !== "record_link" &&
+          key !== "record_id" &&
+          key !== "btn_id" &&
+          key !== "call_innovaphone"
+      )
       .map((key) => ({
         accessorKey: key,
         header: key.toUpperCase(),
@@ -100,7 +106,9 @@ const ColumnsReports: React.FC<ColumnsReportsProps> = ({
 
   return (
     <div className="space-y-2">
-                  <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">{report}</h4>
+      <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
+        {report}
+      </h4>
       <DataTable columns={columns} data={data} filter={filter} />
     </div>
   );

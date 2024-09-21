@@ -32,6 +32,7 @@ import texts from "@/_data/texts.json";
 import { useLanguage } from "@/components/language/LanguageContext";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
+import { PdfProps } from "./ExportReports";
 interface DataTableProps<TData> {
   columns: ColumnDef<TData, any>[];
   data: TData[];
@@ -77,7 +78,7 @@ export function DataTable<TData>({
     setSelectedUser(value);
   };
   
-  
+
   return (
     <div className="rounded-md w-full border">
       {useFilter !== "" && (
