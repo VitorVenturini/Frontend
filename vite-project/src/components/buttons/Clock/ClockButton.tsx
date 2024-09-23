@@ -54,7 +54,7 @@ export default function ClockmButton({ button, handleClick }: ButtonProps) {
   };
   return (
     <div
-      className={`${commonClasses} flex flex-col justify-center items-center ${clickedClass}`}
+      className={`${commonClasses} flex flex-col justify-center items-center cursor-pointer ${clickedClass}`}
       onClick={handleClickAlarm}
     >
       <div className="flex items-center gap-1 ">

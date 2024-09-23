@@ -45,6 +45,8 @@ import { useLanguage } from "@/components/language/LanguageContext";
 interface TimeZone {
   zoneName: string;
   gmtOffset: string;
+  countryName: string;
+  countryCode: string;
 }
 
 interface ButtonProps {
@@ -97,15 +99,15 @@ export default function ModalClock({
 
   const handleCreateButton = () => {
     try {
-      if (nameButton && selectedTimeZone) {
-        const gmtOffset = timeZones.find((tz) => tz.zoneName === selectedTimeZone);
+      if (selectedTimeZone) {
+        const timeZoneSelected = timeZones.find((tz) => tz.zoneName === selectedTimeZone);
         setIsCreating(true);
         const message = {
           api: "admin",
           mt: isUpdate ? "UpdateButton" : "InsertButton",
           ...(isUpdate && { id: existingButton?.id }),
-          name: nameButton,
-          value: gmtOffset?.gmtOffset,
+          name: timeZoneSelected?.countryName,
+          value: timeZoneSelected?.gmtOffset,
           guid: selectedUser?.guid,
           type: "clock",
           page: selectedPage,
@@ -155,24 +157,6 @@ export default function ModalClock({
       )}
       <CardContent className="grid gap-4 py-4">
         <div className="grid grid-cols-4 items-center gap-4">
-          <Label className="text-end" htmlFor="buttonName">
-            {texts[language].clockButtonNameLabel}
-          </Label>
-          <Input
-            className="col-span-2"
-            id="buttonName"
-            placeholder={texts[language].clockButtonNamePlaceholder}
-            value={nameButton}
-            onChange={handleNameButton}
-            required
-          />
-          {nameButton.trim() === "" && (
-            <div className="text-sm text-red-400 flex gap-1 align-middle items-center p-2 col-start-4">
-              {texts[language].clockButtonRequired}
-            </div>
-          )}
-        </div>
-        <div className="grid grid-cols-4 items-center gap-4">
           <Label className="text-end" htmlFor="timeZone">
             {texts[language].timeZoneLabel}
           </Label>
@@ -185,7 +169,7 @@ export default function ModalClock({
                 <SelectLabel>{texts[language].timeZones}</SelectLabel>
                 {timeZones.map((tz, index) => (
                   <SelectItem key={index} value={String(tz.zoneName)}>
-                    {tz.zoneName}
+                    {tz.zoneName + " - " + tz.countryCode}
                   </SelectItem>
                 ))}
               </SelectGroup>
