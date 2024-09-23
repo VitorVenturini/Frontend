@@ -61,7 +61,7 @@ export default function ClockmButton({ button, handleClick }: ButtonProps) {
         {button.button_name}
         
       </div>
-      <div className=" items-center gap-1 font-extrabold text-3xl font-mono h-full ">
+      <div className=" items-center gap-1 font-extrabold  text-2xl xl3:text-3xl xl4:text-4xl font-mono h-full ">
       
         {localTime}
       </div>
