@@ -103,7 +103,7 @@ export default function OptComponent({
       case "video":
       case "chat":
         return (
-          <CardOptGeneric
+          <CardOptGeneric 
             selectedUser={selectedUser}
             selectedOpt={selectedOpt}
             clickedPosition={clickedPosition}
@@ -170,7 +170,9 @@ export default function OptComponent({
                 <Plus />
               </div>
             </DialogTrigger>
-            <DialogContent>{getDialogContent()}</DialogContent>
+            <DialogContent 
+            className="min-w-[600px] max-w-5xl w-full"
+            >{getDialogContent()}</DialogContent>
           </Dialog>
         );
       } else {
@@ -200,7 +202,7 @@ export default function OptComponent({
               </div>
             </DialogTrigger>
             {isAdmin && (
-              <DialogContent>
+              <DialogContent className="min-w-[600px] max-w-5xl w-full">
                 <CardOptSensor
                   selectedUser={selectedUser}
                   selectedOpt={selectedOpt}
@@ -218,7 +220,7 @@ export default function OptComponent({
       // caso específico para edição de botão do tipo "camera"
       return (
         <div>
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen} >
             <DialogTrigger asChild>
               <div
                 className={`${commonClasses} flex flex-col cursor-pointer text-wrap ${
@@ -234,7 +236,7 @@ export default function OptComponent({
               </div>
             </DialogTrigger>
             {isAdmin && (
-              <DialogContent>
+              <DialogContent className="min-w-[600px] max-w-5xl w-full">
                 <CardOptCamera
                   selectedUser={selectedUser}
                   selectedOpt={selectedOpt}
@@ -268,7 +270,7 @@ export default function OptComponent({
               </div>
             </DialogTrigger>
             {isAdmin && (
-              <DialogContent>
+              <DialogContent className="min-w-[600px] max-w-5xl w-full">
                 <CardOptGeneric
                   selectedUser={selectedUser}
                   selectedOpt={selectedOpt}

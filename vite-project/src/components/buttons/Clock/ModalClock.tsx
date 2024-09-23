@@ -159,7 +159,7 @@ export default function ModalClock({
             {texts[language].clockButtonNameLabel}
           </Label>
           <Input
-            className="col-span-3"
+            className="col-span-2"
             id="buttonName"
             placeholder={texts[language].clockButtonNamePlaceholder}
             value={nameButton}
