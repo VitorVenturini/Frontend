@@ -52,18 +52,17 @@ export default function ClockmButton({ button, handleClick }: ButtonProps) {
     handleClick?.();
     setInitiatedByUser(true);
   };
-
   return (
     <div
-      className={`${commonClasses} flex flex-col justify-between cursor-pointer bg-green-700 ${clickedClass}`}
+      className={`${commonClasses} flex flex-col justify-center items-center ${clickedClass}`}
       onClick={handleClickAlarm}
     >
-      <div className="flex items-center gap-1 cursor-pointer ">
-        <p className="text-sm font-medium leading-none text-white xl3:text-xl xl4:text-2xl">
-          {button.button_name}
-        </p>
+      <div className="flex items-center gap-1 ">
+        {button.button_name}
+        
       </div>
-      <div className="flex font-extrabold text-xl justify-end text-white xl3:text-3xl xl4:text-4xl">
+      <div className=" items-center gap-1 font-extrabold text-3xl font-mono h-full ">
+      
         {localTime}
       </div>
     </div>
