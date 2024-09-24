@@ -11,7 +11,7 @@ import texts from "@/_data/texts.json";
 import { useLanguage } from "@/components/language/LanguageContext";
 
 import { Label } from "@/components/ui/label";
-import * as React from "react";
+import React, {useState} from "react";
 import { format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 
@@ -39,6 +39,7 @@ import { host } from "@/App";
 export default function CardDataBase() {
   const [date, setDate] = React.useState<Date>();
   const { language } = useLanguage();
+  const [ selected, setSelected] = useState();
 
   const backUp = async () => {
     try {
@@ -54,7 +55,7 @@ export default function CardDataBase() {
         // Cria um link temporário para o download do PDF
         const a = document.createElement("a");
         a.href = url;
-        a.download = "BACKUP" + ".dump"; // Define o nome do arquivo de download
+        a.download = "Backup_" + selected + ".dump"; // Define o nome do arquivo de download
         document.body.appendChild(a);
         a.click(); // Simula um clique no link para iniciar o download
 
@@ -74,13 +75,13 @@ export default function CardDataBase() {
   return (
     <Card className="w-[630px] h-fit">
       <CardHeader>
-        <CardTitle>Backup do Banco de Dados</CardTitle>
-        <CardDescription>Download do backup do banco de dados</CardDescription>
+        <CardTitle>{texts[language].backUpDBTitle}</CardTitle>
+        <CardDescription>{texts[language].backUpDBDescription}</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4 py-9">
         <div className="grid grid-cols-2 items-center gap-4">
           <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
-            Com início em
+          {texts[language].startDate}
           </h4>
           <Popover>
             <PopoverTrigger asChild>
@@ -111,26 +112,26 @@ export default function CardDataBase() {
         </div>
         <div className="grid grid-cols-2 items-center gap-4">
           <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
-          Recorrencia
+          {texts[language].recurrence}
           </h4>
-          <Select>
+          <Select onValueChange={selected}>
             <SelectTrigger>
               <SelectValue placeholder={texts[language].options} />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>{texts[language].options}</SelectLabel>
-                <SelectItem value="RptCalls">
-                  Semanal
+                <SelectItem value="week">
+                {texts[language].week}
                 </SelectItem>
-                <SelectItem value="RptActivities">
-                  Díario
+                <SelectItem value="daily">
+                {texts[language].daily}
                 </SelectItem>
-                <SelectItem value="RptAvailability">
-                  Mensal
+                <SelectItem value="monthly">
+                {texts[language].monthly}
                 </SelectItem>
-                <SelectItem value="RptMessages">
-                  Bimestral
+                <SelectItem value="bimestri">
+                {texts[language].bimestri}
                 </SelectItem>
               </SelectGroup>
             </SelectContent>
@@ -138,7 +139,7 @@ export default function CardDataBase() {
         </div>
       </CardContent>
       <CardFooter className="flex justify-end">
-        <Button onClick={backUp}> Download </Button>
+        <Button onClick={backUp}> {texts[language].donwload} </Button>
       </CardFooter>
     </Card>
   );

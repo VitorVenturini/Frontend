@@ -475,7 +475,7 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
                     data={dataReport.table}
                     keys={dataReport.keys}
                     report={dataReport.src as any}
-                    filter={"user"}
+                    filter={"Filtro"}
                   />
                 </div>
               )}
@@ -489,12 +489,14 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
                   />
                 </div>
               ) : (
-                <ColumnsReports
-                  data={ajustData}
-                  keys={dataReport.keys}
-                  report={dataReport.src as any}
-                  filter={"user"}
-                />
+                <div className="w-full" data-print="print">
+                  <ColumnsReports
+                    data={dataReport.table}
+                    keys={dataReport.keys}
+                    report={dataReport.src as any}
+                    filter={"Filtro"}
+                  />
+                </div>
               )}
             </TabsContent>
             <TabsContent value="RptMessages" className="gap-4 py-4">
@@ -506,12 +508,14 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
                   />
                 </div>
               ) : (
-                <ColumnsReports
-                  data={dataReport.table}
-                  keys={dataReport.keys}
-                  report={dataReport.src as any}
-                  filter={"user"}
-                />
+                <div className="w-full" data-print="print">
+                  <ColumnsReports
+                    data={dataReport.table}
+                    keys={dataReport.keys}
+                    report={dataReport.src as any}
+                    filter={"Filtro"}
+                  />
+                </div>
               )}
             </TabsContent>
             <TabsContent value="RptCalls" className="gap-4 py-4">
@@ -523,12 +527,14 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
                   />
                 </div>
               ) : (
-                <ColumnsReports
-                  data={dataReport.table}
-                  keys={dataReport.keys}
-                  report={dataReport.src as any}
-                  filter={"user"}
-                />
+                <div className="w-full" data-print="print">
+                  <ColumnsReports
+                    data={dataReport.table}
+                    keys={dataReport.keys}
+                    report={dataReport.src as any}
+                    filter={"Filtro"}
+                  />
+                </div>
               )}
             </TabsContent>
           </Tabs>

@@ -207,13 +207,6 @@ function AdminLayout() {
         const licenseActive = JSON.parse(message.licenseActive);
         const licenseInstallDate = message.licenseInstallDate;
 
-        console.log("Updating license with:", {
-          licenseKey,
-          licenseFile,
-          licenseActive,
-          licenseInstallDate,
-        });
-
         updateLicense(
           licenseKey,
           licenseFile,

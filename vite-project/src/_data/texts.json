@@ -205,7 +205,17 @@
     "RptActivities": "Atividades",
     "RptMessages": "Mensagens",
     "RptCalls": "Chamadas",
-    "report": "Relatório"
-  
+    "report": "Relatório",
+    "startDate": "Com início em",
+    "week":"Semanal",
+    "daily": "Diário",
+    "monthly":"Mensal",
+    "bimestri": "Bimestral",
+    "donwload": "Baixar",
+    "recurrence": "Recorrencia",
+    "backUpDBTitle": "Backup do Banco de dados",
+    "backUpDBDescription": "Download do backup do banco de dados",
+    "filter": "Filtro",
+    "export": "Exportar em..."
   }
 }
