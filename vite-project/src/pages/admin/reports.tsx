@@ -226,312 +226,314 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
   };
 
   return (
-    <Card className="w-full h-full p-2 m-2">
-      <div className="flex gap-3">
-        <Tabs defaultValue="account" className="w-full h-full flex-col">
-          <div className="flex gap-4 justify-between">
-            <div className="flex justify-start gap-4">
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    id="date"
-                    variant={"outline"}
-                    className={cn(
-                      "w-[300px] justify-start text-left font-normal",
-                      !date && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {date?.from ? (
-                      date.to ? (
-                        <>
-                          {format(date.from, "dd LLL, yy")} -{" "}
-                          {format(date.to, "dd LLL, yy")}
-                        </>
+    <div className="flex justify-center">
+      <Card className="w-full h-full p-2 m-2 max-w-[1800px]">
+        <div className="flex gap-3">
+          <Tabs defaultValue="account" className="w-full h-full flex-col">
+            <div className="flex gap-4 justify-between">
+              <div className="flex justify-start gap-4">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      id="date"
+                      variant={"outline"}
+                      className={cn(
+                        "w-[300px] justify-start text-left font-normal",
+                        !date && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {date?.from ? (
+                        date.to ? (
+                          <>
+                            {format(date.from, "LLL dd, y")} -{" "}
+                            {format(date.to, "LLL dd, y")}
+                          </>
+                        ) : (
+                          format(date.from, "LLL dd, y")
+                        )
                       ) : (
-                        format(date.from, "dd LLL, yy")
-                      )
-                    ) : (
-                      <span>{texts[language].chooseDate}</span>
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    initialFocus
-                    mode="range"
-                    defaultMonth={date?.from}
-                    selected={date}
-                    onSelect={setDate as any}
-                    numberOfMonths={2}
-                  />
-                  <div className="flex align-middle items-center w-full p-2 justify-between">
-                    <Label>Hora inicial</Label>
-                    <Input
-                      className="w-[150px]"
-                      type="time"
-                      onChange={(e) => setStartHour(e.target.value)}
-                      value={startHour}
+                        <span>Pick a date</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      initialFocus
+                      mode="range"
+                      defaultMonth={date?.from}
+                      selected={date}
+                      onSelect={setDate as any}
+                      numberOfMonths={2}
                     />
-                    <Label>Hora Final</Label>
-                    <Input
-                      className="w-[150px]"
-                      type="time"
-                      value={endHour}
-                      onChange={(e) => setEndHour(e.target.value)}
-                    />
+                    <div className="flex align-middle items-center w-full p-2 justify-between">
+                      <Label>Hora inicial</Label>
+                      <Input
+                        className="w-[150px]"
+                        type="time"
+                        onChange={(e) => setStartHour(e.target.value)}
+                        value={startHour}
+                      />
+                      <Label>Hora Final</Label>
+                      <Input
+                        className="w-[150px]"
+                        type="time"
+                        value={endHour}
+                        onChange={(e) => setEndHour(e.target.value)}
+                      />
+                    </div>
+                  </PopoverContent>
+                </Popover>
+                <TabsList>
+                  <TabsTrigger value="RptAvailability">
+                    Disponibilidade
+                  </TabsTrigger>
+                  <TabsTrigger value="RptCalls" onClick={handleClear}>
+                    Chamadas
+                  </TabsTrigger>
+                  <TabsTrigger value="RptActivities" onClick={handleClear}>
+                    Atividade
+                  </TabsTrigger>
+                  <TabsTrigger value="RptMessages" onClick={handleClear}>
+                    Mensagens
+                  </TabsTrigger>
+                  <TabsTrigger value="RptSensors" onClick={handleClear}>
+                    Sensores
+                  </TabsTrigger>
+                  <TabsTrigger value="RptIotDevices" onClick={handleClear}>
+                    Iot Câmeras
+                  </TabsTrigger>
+                </TabsList>
+                <TabsContent value="RptSensors" className="gap-4">
+                  <div className="grid items-center justify-start grid-cols-4 gap-4 h-[10px] ">
+                    <div className="grid justify-start col-span-1 gap-1 ">
+                      <Label htmlFor="name">Sensor</Label>
+                    </div>
+                    <Select onValueChange={setSelectRpt}>
+                      <SelectTrigger className="col-span-2">
+                        <SelectValue placeholder="Selecione um Sensor" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectLabel>Sensores</SelectLabel>
+                          {sensors.map((sensor) => (
+                            <SelectItem
+                              key={sensor.sensor_name}
+                              value={sensor?.deveui as string}
+                            >
+                              {sensor.sensor_name}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
                   </div>
-                </PopoverContent>
-              </Popover>
-              <TabsList>
-                <TabsTrigger value="RptAvailability">
-                  Disponibilidade
-                </TabsTrigger>
-                <TabsTrigger value="RptCalls" onClick={handleClear}>
-                  Chamadas
-                </TabsTrigger>
-                <TabsTrigger value="RptActivities" onClick={handleClear}>
-                  Atividade
-                </TabsTrigger>
-                <TabsTrigger value="RptMessages" onClick={handleClear}>
-                  Mensagens
-                </TabsTrigger>
-                <TabsTrigger value="RptSensors" onClick={handleClear}>
-                  Sensores
-                </TabsTrigger>
-                <TabsTrigger value="RptIotDevices" onClick={handleClear}>
-                  Iot Câmeras
-                </TabsTrigger>
-              </TabsList>
-              <TabsContent value="RptSensors" className="gap-4">
-                <div className="grid items-center justify-start grid-cols-4 gap-4 h-[10px] ">
-                  <div className="grid justify-start col-span-1 gap-1 ">
-                    <Label htmlFor="name">Sensor</Label>
+                </TabsContent>
+                <TabsContent value="RptIotDevices" className="gap-4 ">
+                  <div className="grid items-center justify-start grid-cols-4 gap-4 h-[10px] ">
+                    <div className="grid justify-start col-span-1 gap-1 ">
+                      <Label htmlFor="name">Iot Câmeras</Label>
+                    </div>
+                    <Select onValueChange={setSelectRpt}>
+                      <SelectTrigger className="col-span-2">
+                        <SelectValue placeholder="Selecione um Device" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectLabel>Iot Câmeras</SelectLabel>
+                          {cameras.map((camera) => (
+                            <SelectItem
+                              key={camera.nickname}
+                              value={camera?.mac as string}
+                            >
+                              {camera.nickname}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
                   </div>
-                  <Select onValueChange={setSelectRpt}>
-                    <SelectTrigger className="col-span-2">
-                      <SelectValue placeholder="Selecione um Sensor" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel>Sensores</SelectLabel>
-                        {sensors.map((sensor) => (
-                          <SelectItem
-                            key={sensor.sensor_name}
-                            value={sensor?.deveui as string}
-                          >
-                            {sensor.sensor_name}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </TabsContent>
-              <TabsContent value="RptIotDevices" className="gap-4 ">
-                <div className="grid items-center justify-start grid-cols-4 gap-4 h-[10px] ">
-                  <div className="grid justify-start col-span-1 gap-1 ">
-                    <Label htmlFor="name">Iot Câmeras</Label>
-                  </div>
-                  <Select onValueChange={setSelectRpt}>
-                    <SelectTrigger className="col-span-2">
-                      <SelectValue placeholder="Selecione um Device" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel>Iot Câmeras</SelectLabel>
-                        {cameras.map((camera) => (
-                          <SelectItem
-                            key={camera.nickname}
-                            value={camera?.mac as string}
-                          >
-                            {camera.nickname}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </TabsContent>
-            </div>
-            <div className="flex items-end justify-end">
-              <TabsContent value="RptSensors" className="flex gap-2">
-                <p className="flex items-center text-[12px]">Export:</p>
-                <PdfGerate />
-                <Button onClick={() => handleExecDevice()}>Consultar</Button>
-              </TabsContent>
-              <TabsContent value="RptIotDevices" className="flex">
-                <Button
-                  className="flex justify-end"
-                  onClick={() => handleIotDevice()}
-                >
-                  Consultar
-                </Button>
-              </TabsContent>
-              <TabsContent value="RptAvailability" className="flex">
-                <p className="flex items-center text-[12px]">Export:</p>
+                </TabsContent>
+              </div>
+              <div className="flex items-end justify-end">
+                <TabsContent value="RptSensors" className="flex gap-2">
+                  <p className="flex items-center text-[12px]">Export:</p>
                   <PdfGerate />
-                <Button
-                  className="flex justify-end"
-                  onClick={() => handleMenu("RptAvailability")}
-                >
-                  Consultar
-                </Button>
-              </TabsContent>
-              <TabsContent value="RptCalls" className="flex">
-                <p className="flex items-center text-[12px]">Export:</p>
-                <PdfGerate />
-                <Button
-                  className="flex justify-end"
-                  onClick={() => handleMenu("RptCalls")}
-                >
-                  Consultar
-                </Button>
-              </TabsContent>
-              <TabsContent value="RptActivities" className="flex">
-                <p className="flex items-center text-[12px]">Export:</p>
-                <PdfGerate />
-                <Button
-                  className="flex justify-end"
-                  onClick={() => handleMenu("RptActivities")}
-                >
-                  Consultar
-                </Button>
-              </TabsContent>
-              <TabsContent value="RptMessages" className="flex">
-                <p className="flex items-center text-[12px]">Export:</p>
-                <PdfGerate />
-                <Button
-                  className="flex justify-end"
-                  onClick={() => handleMenu("RptMessages")}
-                >
-                  Consultar
-                </Button>
-              </TabsContent>
+                  <Button onClick={() => handleExecDevice()}>Consultar</Button>
+                </TabsContent>
+                <TabsContent value="RptIotDevices" className="flex">
+                  <Button
+                    className="flex justify-end"
+                    onClick={() => handleIotDevice()}
+                  >
+                    Consultar
+                  </Button>
+                </TabsContent>
+                <TabsContent value="RptAvailability" className="flex">
+                  <p className="flex items-center text-[12px]">Export:</p>
+                  <PdfGerate />
+                  <Button
+                    className="flex justify-end"
+                    onClick={() => handleMenu("RptAvailability")}
+                  >
+                    Consultar
+                  </Button>
+                </TabsContent>
+                <TabsContent value="RptCalls" className="flex">
+                  <p className="flex items-center text-[12px]">Export:</p>
+                  <PdfGerate />
+                  <Button
+                    className="flex justify-end"
+                    onClick={() => handleMenu("RptCalls")}
+                  >
+                    Consultar
+                  </Button>
+                </TabsContent>
+                <TabsContent value="RptActivities" className="flex">
+                  <p className="flex items-center text-[12px]">Export:</p>
+                  <PdfGerate />
+                  <Button
+                    className="flex justify-end"
+                    onClick={() => handleMenu("RptActivities")}
+                  >
+                    Consultar
+                  </Button>
+                </TabsContent>
+                <TabsContent value="RptMessages" className="flex">
+                  <p className="flex items-center text-[12px]">Export:</p>
+                  <PdfGerate />
+                  <Button
+                    className="flex justify-end"
+                    onClick={() => handleMenu("RptMessages")}
+                  >
+                    Consultar
+                  </Button>
+                </TabsContent>
+              </div>
             </div>
-          </div>
-          <TabsContent value="RptSensors" className="gap-4 py-4">
-            {dataReport.chart.length == 0 && loadBarData.unitValue > 0 ? (
-              <div className="w-full align-middle items-center justify-center h-[600px] flex">
-                <LoaderBar
-                  total={loadBarData.total}
-                  unitValue={loadBarData.unitValue}
-                />
-              </div>
-            ) : (
-              <div ref={targetRef}>
-                <Grafico chartData={dataReport.chart} />
-              </div>
-            )}
-          </TabsContent>
-          <TabsContent value="RptIotDevices" className="gap-4 py-4">
-            {dataReport.img.length == 0 && loadBarData.unitValue > 0 ? (
-              <div className="w-full align-middle items-center justify-center h-[600px] flex">
-                <LoaderBar
-                  total={loadBarData.total}
-                  unitValue={loadBarData.unitValue}
-                />
-              </div>
-            ) : (
-              <ScrollArea className="w-full align-middle items-center justify-center h-full">
-                <div className="flex flex-wrap gap-4">
-                  {dataReport.img.map((item, index) => (
-                    <Dialog key={item.id}>
-                      <DialogTrigger>
-                        <div className="flex flex-col items-center">
+            <TabsContent value="RptSensors" className="gap-4 py-4">
+              {dataReport.chart.length == 0 && loadBarData.unitValue > 0 ? (
+                <div className="w-full align-middle items-center justify-center h-[600px] flex">
+                  <LoaderBar
+                    total={loadBarData.total}
+                    unitValue={loadBarData.unitValue}
+                  />
+                </div>
+              ) : (
+                <div ref={targetRef}>
+                  <Grafico chartData={dataReport.chart} />
+                </div>
+              )}
+            </TabsContent>
+            <TabsContent value="RptIotDevices" className="gap-4 py-4">
+              {dataReport.img.length == 0 && loadBarData.unitValue > 0 ? (
+                <div className="w-full align-middle items-center justify-center h-[600px] flex">
+                  <LoaderBar
+                    total={loadBarData.total}
+                    unitValue={loadBarData.unitValue}
+                  />
+                </div>
+              ) : (
+                <ScrollArea className="w-full align-middle items-center justify-center h-full">
+                  <div className="flex flex-wrap gap-4">
+                    {dataReport.img.map((item, index) => (
+                      <Dialog key={item.id}>
+                        <DialogTrigger>
+                          <div className="flex flex-col items-center">
+                            <img
+                              src={item.image}
+                              alt={`Image ${index}`}
+                              className="object-cover w-32 h-32"
+                            />
+                            <p className="text-xs">{item.date}</p>
+                          </div>
+                        </DialogTrigger>
+                        <DialogContent className="h-full max-w-5xl">
                           <img
                             src={item.image}
                             alt={`Image ${index}`}
-                            className="object-cover w-32 h-32"
+                            className="w-full h-full"
                           />
-                          <p className="text-xs">{item.date}</p>
-                        </div>
-                      </DialogTrigger>
-                      <DialogContent className="h-full max-w-5xl">
-                        <img
-                          src={item.image}
-                          alt={`Image ${index}`}
-                          className="w-full h-full"
-                        />
-                      </DialogContent>
-                    </Dialog>
-                  ))}
+                        </DialogContent>
+                      </Dialog>
+                    ))}
+                  </div>
+                </ScrollArea>
+              )}
+            </TabsContent>
+            <TabsContent value="RptAvailability" className="gap-4 py-4">
+              {dataReport.table.length == 0 ? (
+                <div className="w-full align-middle items-center justify-center h-[600px] flex">
+                  <LoaderBar
+                    total={loadBarData.total}
+                    unitValue={loadBarData.unitValue}
+                  />
                 </div>
-              </ScrollArea>
-            )}
-          </TabsContent>
-          <TabsContent value="RptAvailability" className="gap-4 py-4">
-            {dataReport.table.length == 0 ? (
-              <div className="w-full align-middle items-center justify-center h-[600px] flex">
-                <LoaderBar
-                  total={loadBarData.total}
-                  unitValue={loadBarData.unitValue}
+              ) : (
+                <div className="w-full" data-print="print">
+                  <ColumnsReports
+                    data={dataReport.table}
+                    keys={dataReport.keys}
+                    report={dataReport.src as any}
+                    filter={"user"}
+                  />
+                </div>
+              )}
+            </TabsContent>
+            <TabsContent value="RptActivities" className="gap-4 py-4">
+              {dataReport.table.length == 0 ? (
+                <div className="w-full align-middle items-center justify-center h-[600px] flex">
+                  <LoaderBar
+                    total={loadBarData.total}
+                    unitValue={loadBarData.unitValue}
+                  />
+                </div>
+              ) : (
+                <ColumnsReports
+                  data={ajustData}
+                  keys={dataReport.keys}
+                  report={dataReport.src as any}
+                  filter={"user"}
                 />
-              </div>
-            ) : (
-              <div className="w-full" data-print='print'>
+              )}
+            </TabsContent>
+            <TabsContent value="RptMessages" className="gap-4 py-4">
+              {dataReport.table.length == 0 ? (
+                <div className="w-full align-middle items-center justify-center h-[600px] flex">
+                  <LoaderBar
+                    total={loadBarData.total}
+                    unitValue={loadBarData.unitValue}
+                  />
+                </div>
+              ) : (
                 <ColumnsReports
                   data={dataReport.table}
                   keys={dataReport.keys}
                   report={dataReport.src as any}
                   filter={"user"}
                 />
-              </div>
-            )}
-          </TabsContent>
-          <TabsContent value="RptActivities" className="gap-4 py-4">
-            {dataReport.table.length == 0 ? (
-              <div className="w-full align-middle items-center justify-center h-[600px] flex">
-                <LoaderBar
-                  total={loadBarData.total}
-                  unitValue={loadBarData.unitValue}
+              )}
+            </TabsContent>
+            <TabsContent value="RptCalls" className="gap-4 py-4">
+              {dataReport.table.length == 0 ? (
+                <div className="w-full align-middle items-center justify-center h-[600px] flex">
+                  <LoaderBar
+                    total={loadBarData.total}
+                    unitValue={loadBarData.unitValue}
+                  />
+                </div>
+              ) : (
+                <ColumnsReports
+                  data={dataReport.table}
+                  keys={dataReport.keys}
+                  report={dataReport.src as any}
+                  filter={"user"}
                 />
-              </div>
-            ) : (
-              <ColumnsReports
-                data={ajustData}
-                keys={dataReport.keys}
-                report={dataReport.src as any}
-                filter={"user"}
-              />
-            )}
-          </TabsContent>
-          <TabsContent value="RptMessages" className="gap-4 py-4">
-            {dataReport.table.length == 0 ? (
-              <div className="w-full align-middle items-center justify-center h-[600px] flex">
-                <LoaderBar
-                  total={loadBarData.total}
-                  unitValue={loadBarData.unitValue}
-                />
-              </div>
-            ) : (
-              <ColumnsReports
-                data={dataReport.table}
-                keys={dataReport.keys}
-                report={dataReport.src as any}
-                filter={"user"}
-              />
-            )}
-          </TabsContent>
-          <TabsContent value="RptCalls" className="gap-4 py-4">
-            {dataReport.table.length == 0 ? (
-              <div className="w-full align-middle items-center justify-center h-[600px] flex">
-                <LoaderBar
-                  total={loadBarData.total}
-                  unitValue={loadBarData.unitValue}
-                />
-              </div>
-            ) : (
-              <ColumnsReports
-                data={dataReport.table}
-                keys={dataReport.keys}
-                report={dataReport.src as any}
-                filter={"user"}
-              />
-            )}
-          </TabsContent>
-        </Tabs>
-      </div>
-    </Card>
+              )}
+            </TabsContent>
+          </Tabs>
+        </div>
+      </Card>
+    </div>
   );
 }

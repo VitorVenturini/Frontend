@@ -42,13 +42,14 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { ButtonInterface } from "@/components/buttons/buttonContext/ButtonsContext";
-import { Loader2 } from "lucide-react";
+import { Loader2, CircleAlert } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { host } from "@/App";
 import { useAccount } from "../account/AccountContext";
 import { limitButtonName } from "../utils/utilityFunctions";
 import { UserInterface } from "../users/usersCore/UserContext";
-
+import texts from "@/_data/texts.json";
+import { useLanguage } from "@/components/language/LanguageContext";
 interface OptGenericProps {
   clickedPosition: { i: number; j: number } | null;
   selectedUser: UserInterface | null;
@@ -66,13 +67,15 @@ export default function CardOptGeneric({
   onClose,
   isUpdate = false,
 }: OptGenericProps) {
-  
- const coordinates = selectedOpt === "maps" ? existingButton?.button_prt.split(",") : "";
- // tratamento adicional para pegar o button_prt e separar os valores de 
- // latitude e longitude
+  const coordinates =
+    selectedOpt === "maps" ? existingButton?.button_prt.split(",") : "";
+  // tratamento adicional para pegar o button_prt e separar os valores de
+  // latitude e longitude
 
   const [nameOpt, setNameOpt] = useState(existingButton?.button_name || "");
-  const [valueOpt, setValueOpt] = useState(coordinates ? coordinates?.[0] : existingButton?.button_prt || "" );
+  const [valueOpt, setValueOpt] = useState(
+    coordinates ? coordinates?.[0] : existingButton?.button_prt || ""
+  );
   // value opt é o primeiro input de todos os cards , nesse caso reaproveitamos ele para armazenar a latitude
   // e entao concatenar com longitude
   const [longitudeMaps, setLongitude] = useState(coordinates?.[1] || "");
@@ -82,7 +85,7 @@ export default function CardOptGeneric({
   const [isCreating, setIsCreating] = useState(false);
   const account = useAccount();
   const wss = useWebSocketData();
-
+  const { language } = useLanguage();
 
   const handleNameOpt = (event: React.ChangeEvent<HTMLInputElement>) => {
     const limitedName = limitButtonName(event.target.value);
@@ -146,7 +149,10 @@ export default function CardOptGeneric({
         mt: isUpdate ? "UpdateButton" : "InsertButton",
         ...(isUpdate && { id: existingButton?.id }),
         name: nameOpt,
-        value: selectedOpt === "maps" ? valueOpt + "," +  longitudeMaps  : uploadedFileName || valueOpt,
+        value:
+          selectedOpt === "maps"
+            ? valueOpt + "," + longitudeMaps
+            : uploadedFileName || valueOpt,
         guid: selectedUser?.guid,
         img: null,
         type: selectedOpt,
@@ -228,27 +234,33 @@ export default function CardOptGeneric({
   } = getContent();
 
   return (
-    <>
-      <Card className="border-none bg-transparent">
+
+      <Card className="border-none bg-transparent max-w-5xl min-w-[600px]">
         <CardHeader>
           <CardTitle>
             {isUpdate ? "Atualizar" : "Criar"} {title}
           </CardTitle>
           <CardDescription>{description}</CardDescription>
         </CardHeader>
-        <CardContent className="grid gap-4 py-4">
+        <CardContent className="grid gap-4 py-4 max-w-5xl min-w-[600px]">
           <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-end" htmlFor="buttonName">
               Nome do botão
             </Label>
             <Input
-              className="col-span-3"
+              className="col-span-2"
               id="buttonName"
               placeholder="Nome do botão"
               value={nameOpt}
               onChange={handleNameOpt}
               required
             />
+            {nameOpt.trim() === "" && (
+              <div className="text-sm text-red-400 flex gap-1 align-middle items-center p-2 col-start-4">
+                <CircleAlert size={15} />
+                {texts[language].alarmButtonRequired}
+              </div>
+            )}
           </div>
           {selectedOpt === "chat" ? (
             "Inputchat aqui"
@@ -258,7 +270,7 @@ export default function CardOptGeneric({
                 {labelButton}
               </Label>
               <Input
-                className="col-span-3"
+                className="col-span-2"
                 id="buttonName"
                 placeholder={labelButton}
                 value={selectedOpt === "floor" ? undefined : valueOpt}
@@ -266,6 +278,12 @@ export default function CardOptGeneric({
                 type={IptType}
                 required
               />
+              {nameOpt.trim() === "" && (
+                <div className="text-sm text-red-400 flex gap-1 align-middle items-center p-2 col-start-4">
+                  <CircleAlert size={15} />
+                  {texts[language].alarmButtonRequired}
+                </div>
+              )}
             </div>
           )}
 
@@ -275,7 +293,7 @@ export default function CardOptGeneric({
                 Valor Atual
               </Label>
               <Input
-                className="col-span-3"
+                className="col-span-2"
                 id="buttonName"
                 placeholder={labelButton}
                 value={fileContent ? fileContent.name : valueOpt}
@@ -283,6 +301,12 @@ export default function CardOptGeneric({
                 type="text"
                 required
               />
+              {valueOpt.trim() === "" && (
+                <div className="text-sm text-red-400 flex gap-1 align-middle items-center p-2 col-start-4">
+                  <CircleAlert size={15} />
+                  {texts[language].alarmButtonRequired}
+                </div>
+              )}
             </div>
           ) : (
             ""
@@ -293,7 +317,7 @@ export default function CardOptGeneric({
                 Longitude
               </Label>
               <Input
-                className="col-span-3"
+                className="col-span-2"
                 id="buttonName"
                 placeholder={labelButton2}
                 type="text"
@@ -301,36 +325,41 @@ export default function CardOptGeneric({
                 onChange={handleLongitude}
                 value={longitudeMaps}
               />
+              {longitudeMaps.trim() === "" && (
+                <div className="text-sm text-red-400 flex gap-1 align-middle items-center p-2 col-start-4">
+                  <CircleAlert size={15} />
+                  {texts[language].alarmButtonRequired}
+                </div>
+              )}
             </div>
           )}
         </CardContent>
         <CardFooter className="flex justify-end w-full">
           {isUpdate && (
             <div className="flex w-full justify-between">
-                          <Button variant="secondary">
-              <AlertDialog>
-                <AlertDialogTrigger className="w-full h-full">
-                  Excluir
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Essa ação nao pode ser desfeita. Isso irá deletar
-                      permanentemente o botão.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleDeleteButton}>
-                      Excluir
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </Button>
+              <Button variant="secondary">
+                <AlertDialog>
+                  <AlertDialogTrigger className="w-full h-full">
+                    Excluir
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Essa ação nao pode ser desfeita. Isso irá deletar
+                        permanentemente o botão.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleDeleteButton}>
+                        Excluir
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </Button>
             </div>
-
           )}
           {!isCreating && (
             <Button onClick={handleCreateOpt}>
@@ -345,6 +374,6 @@ export default function CardOptGeneric({
           )}
         </CardFooter>
       </Card>
-    </>
+  
   );
 }

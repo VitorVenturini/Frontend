@@ -12,13 +12,16 @@ import { useRef } from "react";
 import { format } from "date-fns";
 import { toast } from "../ui/use-toast";
 import { useAccount } from "../account/AccountContext";
-import EmojiPicker from "./EmojiPicker";
+import { ScrollArea } from "@radix-ui/react-scroll-area";
+import data, { Emoji, EmojiMartData } from '@emoji-mart/data'
+import Picker from '@emoji-mart/react'
 interface ChatProps {
   userToChat: UserInterface;
 }
 
 export default function ChatLayout({ userToChat }: ChatProps) {
   const wss = useWebSocketData();
+  const [showPicker, setShowPicker] = useState(false);
   const [message, setMessage] = useState("");
   const { chat, addChat, chatRead } = useChat();
   const { users } = useUsers();
@@ -66,9 +69,9 @@ export default function ChatLayout({ userToChat }: ChatProps) {
   const handleInputMessage = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(event.target.value);
   };
-
-  const handleEmojiSelect = (emoji: string) => {
-    setMessage((prevMessage) => prevMessage + emoji);
+  const handleEmojiSelect = (emoji: any) => {
+    setShowPicker(false);
+    setMessage((prevMessage) => prevMessage + emoji.native);
   };
 
   useEffect(() => {
@@ -139,8 +142,11 @@ export default function ChatLayout({ userToChat }: ChatProps) {
   );
 
   return (
-    <div>
-      <div className="h-[400px] overflow-y-auto" ref={messageListRef}>
+    <div className="flex flex-col justify-between h-full">
+      <div
+        className="overflow-y-auto overflow-hidden h-full hide-scrollbar"
+        ref={messageListRef}
+      >
         {filteredMessages.map((message, index) => {
           const isMyMessage = message.from_guid === myAccountInfo.guid; // se a mensagem é minha ou não
           const messageText = message.msg || "";
@@ -212,7 +218,6 @@ export default function ChatLayout({ userToChat }: ChatProps) {
         /> 
       </div> */}
 
-      <div className="mt-5">Chat com {userToChat.name}</div>
       <form onSubmit={handleFormSubmit}>
         <div className="flex items-center gap-3 p-2">
           <Input
@@ -220,8 +225,20 @@ export default function ChatLayout({ userToChat }: ChatProps) {
             value={message}
             onChange={handleInputMessage}
           />
-          {/* <EmojiPicker onSelectEmoji={handleEmojiSelect} /> */}
-          <Button size="icon" type="submit">
+          <div>
+            {/* Botão para abrir o picker de emojis */}
+            <button
+              type="button"
+              onClick={() => setShowPicker(!showPicker)}
+              className="p-2"
+            >
+              😀
+            </button>
+            {showPicker && (
+                <Picker data={data} onEmojiSelect={handleEmojiSelect} />
+            )}
+          </div>
+          <Button size="icon" type="submit" variant="ghost">
             <Send />
           </Button>
         </div>

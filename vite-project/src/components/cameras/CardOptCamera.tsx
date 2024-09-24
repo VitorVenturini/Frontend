@@ -43,9 +43,11 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { ButtonInterface } from "@/components/buttons/buttonContext/ButtonsContext";
-import { Loader2 } from "lucide-react";
+import { Loader2, CircleAlert } from "lucide-react";
 import { limitButtonName } from "../utils/utilityFunctions";
 import { UserInterface } from "../users/usersCore/UserContext";
+import texts from "@/_data/texts.json";
+import { useLanguage } from "@/components/language/LanguageContext";
 
 interface OptCameraProps {
   clickedPosition: { i: number; j: number } | null;
@@ -73,6 +75,7 @@ export default function CardOptCamera({
   const { cameras } = useCameras();
   const { toast } = useToast();
   const wss = useWebSocketData();
+  const { language } = useLanguage();
 
   const handleNameOpt = (event: React.ChangeEvent<HTMLInputElement>) => {
     const name = limitButtonName(event.target.value);
@@ -123,80 +126,89 @@ export default function CardOptCamera({
   return (
     <>
       <Card className="border-none bg-transparent">
-        {
-          isUpdate && (
-            <CardHeader>
-              <CardTitle>Atualizar Botão Câmera</CardTitle>
-              <CardDescription>
-                Escolha um nome para o botão (de preferencia relacionado ao local
-                onde a câmera está localizada) e escolha a câmera que voce deseja
-                ver as imagens
-              </CardDescription>
-            </CardHeader>
-          )
-        }
+        {isUpdate && (
+          <CardHeader>
+            <CardTitle>Atualizar Botão Câmera</CardTitle>
+            <CardDescription>
+              Escolha um nome para o botão (de preferencia relacionado ao local
+              onde a câmera está localizada) e escolha a câmera que voce deseja
+              ver as imagens
+            </CardDescription>
+          </CardHeader>
+        )}
         <CardContent className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-end" htmlFor="buttonName">
               Nome do botão
             </Label>
             <Input
-              className="col-span-3"
+              className="col-span-2"
               id="buttonName"
               placeholder="Nome do botão"
               value={nameOpt}
               onChange={handleNameOpt}
               required
             />
+            {nameOpt.trim() === "" && (
+              <div className="text-sm text-red-400 flex gap-1 align-middle items-center p-2 col-start-4">
+                <CircleAlert size={15} />
+                {texts[language].alarmNumberRequired}
+              </div>
+            )}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-end" htmlFor="buttonName">
               Selecione a Câmera
             </Label>
             <Select value={modelCamera} onValueChange={handleModelCamera}>
-              <SelectTrigger className="col-span-3">
+              <SelectTrigger className="col-span-2">
                 <SelectValue placeholder="Selecione uma Câmera" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
                   <SelectLabel>Câmeras</SelectLabel>
                   {cameras.map((cam) => (
-                    <SelectItem
-                      key={cam.id}
-                      value={cam.mac}
-                    >
+                    <SelectItem key={cam.id} value={cam.mac}>
                       {cam.nickname}
                     </SelectItem>
                   ))}
                 </SelectGroup>
               </SelectContent>
             </Select>
+            {modelCamera.trim() === "" && (
+              <div className="text-sm text-red-400 flex gap-1 align-middle items-center p-2 col-start-4">
+                <CircleAlert size={15} />
+                {texts[language].alarmNumberRequired}
+              </div>
+            )}
           </div>
         </CardContent>
-        <CardFooter className="flex justify-between">
+        <CardFooter className="flex justify-end w-full">
           {isUpdate && (
-            <Button variant="secondary">
-              <AlertDialog>
-                <AlertDialogTrigger className="w-full h-full">
-                  Excluir
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Essa ação nao pode ser desfeita. Isso irá deletar
-                      permanentemente o botão Câmera.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleDeleteButton}>
-                      Excluir
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </Button>
+            <div className="flex w-full justify-between">
+              <Button variant="secondary">
+                <AlertDialog>
+                  <AlertDialogTrigger className="w-full h-full">
+                    Excluir
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Essa ação nao pode ser desfeita. Isso irá deletar
+                        permanentemente o botão Câmera.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleDeleteButton}>
+                        Excluir
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </Button>
+            </div>
           )}
           {!isCreating && (
             <Button onClick={handleCreateOpt}>
