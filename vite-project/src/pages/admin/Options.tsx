@@ -24,7 +24,7 @@ export default function MenuOptions() {
     setActiveButton(buttonMenu);
   };
   useEffect(() => {
-    setActiveButton("License");
+    setActiveButton("DataBase");
     
   }, []); // setar License como default sempre
 

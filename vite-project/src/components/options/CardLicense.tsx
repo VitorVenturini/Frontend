@@ -35,7 +35,6 @@ export default function LicenseCard() {
   const [isLoading2, setIsLoading2] = useState(false);
   const { toast } = useToast();
   const wss = useWebSocketData();
-  const [licenseInput, setLicense] = useState("");
 
   const licenseData = Object.entries(licenseApi.licenseActive).map(
     ([key, value]) => ({
@@ -48,7 +47,6 @@ export default function LicenseCard() {
   const handleLicenseKey = (event: ChangeEvent<HTMLInputElement>) => {
     setKey(event.target.value);
   };
-
   // Envio da mensagem movido para dentro do useEffect
   useEffect(() => {
     wss?.sendMessage({
@@ -56,6 +54,13 @@ export default function LicenseCard() {
       mt: "ConfigLicense",
     });
   }, []); // Dependência vazia garante que isso só ocorre uma vez na montagem
+    // Carrega o valor de licenseFile quando disponível
+    useEffect(() => {
+      if (licenseApi?.licenseFile?.value) {
+        setKey(licenseApi.licenseFile.value);
+      }
+    }, [licenseApi?.licenseFile?.value]);
+
 
   const saveKey = async () => {
     setIsLoading(true);
@@ -86,99 +91,95 @@ export default function LicenseCard() {
   };
 
   return (
-
     <div>
-     {} 
-    <Card className="min-w-[900px]">
-      <CardHeader className="grid grid-cols-3 justify-between items-center">
-        <CardTitle>Licenciamento</CardTitle>
-        {!isLoading2 && (
-          <div className="flex gap-4 justify-center">
-            <AlertDialog>
-            <AlertDialogTrigger>
-            <Button variant={"destructive"}>
-              Reiniciar Serviço
+      {}
+      <Card className="min-w-[900px]">
+        <CardHeader className="grid grid-cols-3 justify-between items-center">
+          <CardTitle>Licenciamento</CardTitle>
+          {!isLoading2 && (
+            <div className="flex gap-4 justify-center">
+              <AlertDialog>
+                <AlertDialogTrigger>
+                  <Button variant={"destructive"}>Reiniciar Serviço</Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Voce tem certeza?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Ao apertar em confirmar toda as seções serão desconectadas
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                    <AlertDialogAction onClick={restartService}>
+                      Confirmar
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          )}
+          {isLoading2 && (
+            <Button disabled>
+              <Loader2 className="mr-2 h-4 w-4 justify-between animate-spin" />
+              Reiniciar
             </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Voce tem certeza?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Ao apertar em confirmar toda as seções serão desconectadas
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                <AlertDialogAction onClick={restartService}>Confirmar</AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
- 
-          </div>
-        )}
-        {isLoading2 && (
-          <Button disabled>
-            <Loader2 className="mr-2 h-4 w-4 justify-between animate-spin" />
-            Reiniciar
-          </Button>
-        )}
-        {!isLoading && (
-          <div className="flex gap-4 justify-end">
-            <Button onClick={saveKey}>Salvar</Button>
-          </div>
-        )}
-        {isLoading && (
-          <Button disabled>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Salvar
-          </Button>
-        )}
-      </CardHeader>
-      <CardContent>
-        <div className="w-full flex flex-col gap-5">
-          <div className="flex items-center justify-between gap-3">
-            <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
-              Token do sistema
-            </h4>
-            <p className="text-sm text-muted-foreground">
-              {licenseApi.licenseKey.value}
-            </p>
-          </div>
-          <div>
+          )}
+          {!isLoading && (
+            <div className="flex gap-4 justify-end">
+              <Button onClick={saveKey}>Salvar</Button>
+            </div>
+          )}
+          {isLoading && (
+            <Button disabled>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Salvar
+            </Button>
+          )}
+        </CardHeader>
+        <CardContent>
+          <div className="w-full flex flex-col gap-5">
             <div className="flex items-center justify-between gap-3">
-              <h4 className="scroll-m-20 text-xl font-semibold basis-1/2">
-                Chave de licença
+              <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
+                Token do sistema
               </h4>
-              <Input
-                type="text"
-                id="key"
-                placeholder="Chave de Licença"
-                onChange={handleLicenseKey}
-                value={licenseApi.licenseFile.value}
+              <p className="text-sm text-muted-foreground">
+                {licenseApi.licenseKey.value}
+              </p>
+            </div>
+            <div>
+              <div className="flex items-center justify-between gap-3">
+                <h4 className="scroll-m-20 text-xl font-semibold basis-1/2">
+                  Chave de licença
+                </h4>
+                <Input
+                  type="text"
+                  id="key"
+                  placeholder="Chave de Licença"
+                  onChange={handleLicenseKey}
+                  value={licenseKey}
+                />
+              </div>
+            </div>
+            <div className="flex items-center justify-between gap-3">
+              <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
+                Data de instalação da licença
+              </h4>
+              <p className="text-sm text-muted-foreground">
+                {licenseApi.licenseInstallDate}
+              </p>
+            </div>
+            <div className="flex-col items-center justify-between gap-3">
+              <ColumnsReports
+                data={licenseData}
+                keys={keys}
+                report={"Licenças disponíveis" as any}
+                filter={""}
               />
             </div>
           </div>
-
-          <div className="flex items-center justify-between gap-3">
-            <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
-              Data de instalação da licença
-            </h4>
-            <p className="text-sm text-muted-foreground">
-              {licenseApi.licenseInstallDate}
-            </p>
-          </div>
-          <div className="flex-col items-center justify-between gap-3">
-            <ColumnsReports
-              data={licenseData}
-              keys={keys}
-              report={"Licenças disponíveis" as any}
-              filter={""}
-            />
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-    
+        </CardContent>
+      </Card>
     </div>
   );
 }

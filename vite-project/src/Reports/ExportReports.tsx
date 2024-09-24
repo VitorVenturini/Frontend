@@ -12,7 +12,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { host } from "@/App";
 import { useData } from "./DataContext";
 import { useAccount } from "@/components/account/AccountContext";
-
+import texts from "@/_data/texts.json";
+import { useLanguage } from "@/components/language/LanguageContext";
 
 export interface PdfProps {
   filTable: any[];
@@ -27,6 +28,7 @@ export function PdfGerate() {
   );
   const print = useRef<HTMLDivElement | null>(null);
   const account = useAccount();
+  const { language } = useLanguage();
   useEffect(() => {
     if (dataReport.keys) {
       setCheckedKeys(
@@ -36,7 +38,11 @@ export function PdfGerate() {
   }, [dataReport.keys]);
 
   // Função para enviar o conteúdo HTML como string para o servidor
-  const sendPDFData = async (htmlString: string, fileName: string, landscape: boolean) => {
+  const sendPDFData = async (
+    htmlString: string,
+    fileName: string,
+    landscape: boolean
+  ) => {
     try {
       const response = await fetch(host + "/api/generatePdf", {
         method: "POST",
@@ -80,10 +86,14 @@ export function PdfGerate() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "x-auth": account.accessToken || "",
         },
         body: JSON.stringify({
           name: "TesteExport",
-          data: dataReport?.table.length === 0 ? dataReport?.chart : dataReport?.table ,
+          data:
+            dataReport?.table.length === 0
+              ? dataReport?.chart
+              : dataReport?.table,
         }),
       });
 
@@ -196,44 +206,77 @@ export function PdfGerate() {
       }, 2000); // Espera 2 segundos para garantir que o conteúdo esteja renderizado
     }
   };
-  const openInNewTabTable = async () => {
+  const downloadTableToPdf = async () => {
     // Encontra o elemento com o atributo data-print="print"
     const printDiv = document.querySelector('[data-print="print"]');
-  
+
     if (printDiv) {
       // Pega o conteúdo HTML da div
-      const htmlContent = printDiv.innerHTML;
-      console.log(htmlContent);
-  
+      let htmlContent = printDiv.innerHTML;
+
+      // Adiciona estilos personalizados para a tabela
+      const tableStyles = `
+        <style>
+          h4 {
+          margin: 20px 0 0 0;
+          width: 100%;
+          text-align: center;
+          }
+          table {
+            width: 100%;
+            border-collapse: collapse; /* Para unir as bordas */
+          }
+          th, td {
+            border: 1px solid black; /* Adiciona bordas entre as células */
+            text-align: center; /* Centraliza o texto nas células */
+            padding: 8px; /* Adiciona espaçamento interno */
+          }
+          th {
+            background-color: #f2f2f2; /* Cor de fundo para o cabeçalho */
+          }
+        </style>
+      `;
+
+      // Insere o estilo no HTML antes do conteúdo da tabela
+      htmlContent = tableStyles + htmlContent;
+
+      console.log(htmlContent); // Verificar o conteúdo estilizado
+
       // Obtenção do sensor_name do primeiro item de dados
       const sensorName =
         dataReport.chart && dataReport.chart[0]?.sensor_name
           ? dataReport.chart[0].sensor_name
           : "sensor";
-  
+
       // Obtenção da data e hora atuais
       const currentDate = new Date();
-      const formattedDate = `${String(currentDate.getDate()).padStart(2, "0")}-${String(
-        currentDate.getMonth() + 1
-      ).padStart(2, "0")}-${String(currentDate.getFullYear()).slice(-2)}`; // DD-MM-AA
-      const formattedTime = `${String(currentDate.getHours()).padStart(2, "0")}${String(
-        currentDate.getMinutes()
-      ).padStart(2, "0")}${String(currentDate.getSeconds()).padStart(2, "0")}`; // HH:MM:SS
-  
+      const formattedDate = `${String(currentDate.getDate()).padStart(
+        2,
+        "0"
+      )}-${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(
+        currentDate.getFullYear()
+      ).slice(-2)}`; // DD-MM-AA
+      const formattedTime = `${String(currentDate.getHours()).padStart(
+        2,
+        "0"
+      )}${String(currentDate.getMinutes()).padStart(2, "0")}${String(
+        currentDate.getSeconds()
+      ).padStart(2, "0")}`; // HH:MM:SS
+
       const fileName = `${sensorName}_${formattedDate}_${formattedTime}`;
-  
+
       // Envia o HTML capturado para a função que lida com o envio do PDF
       sendPDFData(htmlContent, fileName.replace(" ", ""), false);
     } else {
       console.error("Elemento com data-print='print' não encontrado.");
     }
-  
+
     // Fechar a nova janela após enviar o HTML (opcional)
     // setTimeout(() => {
     //   newWindow.close();
     // }, 3000); // Fechar após 2 segundos
   };
-  
+
   const extractedKeys = dataReport.keys?.filter(
     (key) => !["date", "sensor_name", "deveui", "id"].includes(key)
   );
@@ -254,45 +297,60 @@ export function PdfGerate() {
 
         <PopoverContent className="w-56">
           <div className="flex justify-between items-center">
-            <h1>Filtro</h1>
+            {dataReport.chart?.length !== 0 ? (
+              <h1>{texts[language].filter}</h1>
+            ) : (
+              <h1>{texts[language].export}</h1>
+            )}
+
             <div>
-              <Button
-                variant="ghost"
-                title="Grafico"
-                onClick={openInNewTabChart}
-                disabled={dataReport.chart?.length === 0}
-              >
-                <LineChart />
-              </Button>
-              <Button
-                variant="ghost"
-                title="Tabela"
-                onClick={openInNewTabTable}
-                disabled={dataReport.table?.length === 0}
-              >
-                <Sheet />
-              </Button>
+              {dataReport.chart?.length !== 0 && (
+                <Button
+                  variant="ghost"
+                  title="Grafico"
+                  onClick={openInNewTabChart}
+                  disabled={dataReport.chart?.length === 0}
+                >
+                  <LineChart />
+                </Button>
+              )}
+              {dataReport.table?.length !== 0 && (
+                <Button
+                  variant="ghost"
+                  title="Tabela"
+                  onClick={downloadTableToPdf}
+                  disabled={dataReport.table?.length === 0}
+                >
+                  <Sheet />
+                </Button>
+              )}
             </div>
           </div>
-          {extractedKeys?.map((key) => (
-            <div className="flex gap-2 items-center" key={key}>
-              <Checkbox
-                id={key}
-                checked={checkedKeys[key] || false} // Usa o estado "checkedKeys"
-                onCheckedChange={(checked) =>
-                  setCheckedKeys((prev) => ({ ...prev, [key]: checked as any }))
-                }
-              >
-                {" "}
-              </Checkbox>
-              <label>{key}</label>
-            </div>
-          ))}
+          {dataReport.chart?.length !== 0 &&
+            extractedKeys?.map((key) => (
+              <div className="flex gap-2 items-center" key={key}>
+                <Checkbox
+                  id={key}
+                  checked={checkedKeys[key] || false} // Usa o estado "checkedKeys"
+                  onCheckedChange={(checked) =>
+                    setCheckedKeys((prev) => ({
+                      ...prev,
+                      [key]: checked as any,
+                    }))
+                  }
+                >
+                  {" "}
+                </Checkbox>
+                <label>{key}</label>
+              </div>
+            ))}
         </PopoverContent>
       </Popover>
       <Button
         variant="ghost"
-        disabled={ dataReport.chart?.length === 0 && dataReport.table?.length === 0}
+        disabled={
+          dataReport.chart?.length === 0 && dataReport.table?.length === 0
+        }
         onClick={sendExcelData}
       >
         <Sheet />
