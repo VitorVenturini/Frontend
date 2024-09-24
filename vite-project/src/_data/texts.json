@@ -199,6 +199,13 @@
     "selectMeasureTypePlaceholder": "Selecione o Tipo de Medida",
     "measures": "Medidas",
     "requiredField": "Campo obrigatório",
-    "confirmDeleteDescriptionCommand": "Essa ação não pode ser desfeita. Isso irá deletar permanentemente o botão de comando."
+    "confirmDeleteDescriptionCommand": "Essa ação não pode ser desfeita. Isso irá deletar permanentemente o botão de comando.",
+    "RptAvailability": "Disponibilidade",
+    "RptIotDevices": "IoT Devices",
+    "RptActivities": "Atividades",
+    "RptMessages": "Mensagens",
+    "RptCalls": "Chamadas",
+    "report": "Relatório"
+  
   }
 }

@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import LicenseCard from "@/components/options/CardLicense";
-import CardClearDB from "@/components/options/CardClearDB";
+import CardDataBase from "@/components/options/CardDataBase";
 import Gateways from "@/components/options/Gateways";
 import ContaCard from "@/components/options/ContaCard";
 import RadioCard from "@/components/options/RadioCard";
@@ -33,7 +33,7 @@ export default function MenuOptions() {
       case "License":
         return <LicenseCard />;
       case "DataBase":
-        return <CardClearDB />;
+        return <CardDataBase />;
       case "Gateways":
         return <Gateways />;
       case "Radio":

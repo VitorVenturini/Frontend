@@ -11,7 +11,8 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { host } from "@/App";
 import { useData } from "./DataContext";
-import ColumnsReports from "./collumnsReports";
+import { useAccount } from "@/components/account/AccountContext";
+
 
 export interface PdfProps {
   filTable: any[];
@@ -25,7 +26,7 @@ export function PdfGerate() {
     {}
   );
   const print = useRef<HTMLDivElement | null>(null);
-
+  const account = useAccount();
   useEffect(() => {
     if (dataReport.keys) {
       setCheckedKeys(
@@ -41,6 +42,7 @@ export function PdfGerate() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "x-auth": account.accessToken || "",
         },
         body: JSON.stringify({
           name: fileName,
@@ -81,7 +83,7 @@ export function PdfGerate() {
         },
         body: JSON.stringify({
           name: "TesteExport",
-          data: dataReport.table,
+          data: dataReport?.table.length === 0 ? dataReport?.chart : dataReport?.table ,
         }),
       });
 
@@ -290,7 +292,7 @@ export function PdfGerate() {
       </Popover>
       <Button
         variant="ghost"
-        disabled={dataReport.table?.length === 0}
+        disabled={ dataReport.chart?.length === 0 && dataReport.table?.length === 0}
         onClick={sendExcelData}
       >
         <Sheet />

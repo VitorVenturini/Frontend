@@ -46,7 +46,8 @@ import { useAppConfig } from "@/components/options/ConfigContext";
 import { LoaderBar } from "@/components/LoaderBar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Margin, usePDF } from "react-to-pdf";
-
+import texts from "@/_data/texts.json";
+import { useLanguage } from "@/components/language/LanguageContext";
 import { PdfGerate } from "@/Reports/ExportReports";
 
 export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
@@ -73,7 +74,7 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
     filename: "usepdf-example.pdf",
     page: { margin: Margin.NONE, orientation: "landscape" },
   });
-
+  const { language } = useLanguage();
   const handleClear = () => {
     clearDataReport();
     clearLoadBarData();
@@ -244,14 +245,14 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
                     {date?.from ? (
                       date.to ? (
                         <>
-                          {format(date.from, "LLL dd, y")} -{" "}
-                          {format(date.to, "LLL dd, y")}
+                          {format(date.from, "dd LLL, yy")} -{" "}
+                          {format(date.to, "dd LLL, yy")}
                         </>
                       ) : (
-                        format(date.from, "LLL dd, y")
+                        format(date.from, "dd LLL, yy")
                       )
                     ) : (
-                      <span>Pick a date</span>
+                      <span>{texts[language].chooseDate}</span>
                     )}
                   </Button>
                 </PopoverTrigger>

@@ -4,6 +4,9 @@ import { DataTable } from "./data-tableReports"; // Ajuste o caminho conforme ne
 import { Play, Download } from "lucide-react";
 import { host } from "@/App";
 import { AudioPlayer } from "react-audio-player-component"; // Substitua pela biblioteca de áudio que você está usando
+import texts from "@/_data/texts.json";
+import { useLanguage } from "@/components/language/LanguageContext";
+import { getText } from "@/components/utils/utilityFunctions";
 
 interface ColumnsReportsProps {
   report: string;
@@ -18,6 +21,7 @@ const ColumnsReports: React.FC<ColumnsReportsProps> = ({
   keys,
   filter,
 }) => {
+  const { language } = useLanguage();
   const columns: ColumnDef<any, any>[] = useMemo(() => {
     // Filtra as colunas que não devem ser exibidas
     const baseColumns: ColumnDef<any, any>[] = keys
@@ -107,7 +111,7 @@ const ColumnsReports: React.FC<ColumnsReportsProps> = ({
   return (
     <div className="space-y-2">
       <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
-        {report}
+        {report ? getText(report, texts[language]) :  texts[language].report}
       </h4>
       <DataTable columns={columns} data={data} filter={filter} />
     </div>
