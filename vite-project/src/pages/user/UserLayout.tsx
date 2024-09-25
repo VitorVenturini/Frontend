@@ -207,13 +207,13 @@ function UserLayout() {
         const userStartAlarm = allUsers.filter((user) => {
           return user.guid === message.src;
         })[0];
-        addHistory({
-          date: message.date
-            ? format(new Date(message.date), "dd/MM HH:mm")
-            : format(new Date(), "dd/MM HH:mm"),
-          message: `${userStartAlarm?.name} disparou o alarme ${message.alarm}`,
-          type: "alarm",
-        });
+        // addHistory({
+        //   date: message.date
+        //     ? format(new Date(message.date), "dd/MM HH:mm")
+        //     : format(new Date(), "dd/MM HH:mm"),
+        //   message: `${userStartAlarm?.name} disparou o alarme ${message.alarm}`,
+        //   type: "alarm",
+        // });
         setPlayNotificationSound(true); // Toca o som de notificação
         setTimeout(() => setPlayNotificationSound(false), 500);
         break;
@@ -222,13 +222,13 @@ function UserLayout() {
         const userStopAlarm = allUsers.filter((user) => {
           return user.guid === message.src;
         })[0];
-        addHistory({
-          date: message.date
-            ? format(new Date(message.date), "dd/MM HH:mm")
-            : format(new Date(), "dd/MM HH:mm"),
-          message: `${userStopAlarm?.name} parou o alarme ${message.alarm}`,
-          type: "alarm",
-        });
+        // addHistory({
+        //   date: message.date
+        //     ? format(new Date(message.date), "dd/MM HH:mm")
+        //     : format(new Date(), "dd/MM HH:mm"),
+        //   message: `${userStopAlarm?.name} parou o alarme ${message.alarm}`,
+        //   type: "alarm",
+        // });
         break;
       case "DeleteButtonsSuccess":
         deleteButton(message.id_deleted);
@@ -478,13 +478,13 @@ function UserLayout() {
         const userMsg = allUsers.filter((user) => {
           return user.guid === message.result[0].from_guid;
         })[0];
-        addHistory({
-          date: message.result[0].date
-            ? format(new Date(message.result[0].date), "dd/MM HH:mm")
-            : format(new Date(), "dd/MM HH:mm"),
-          message: `Mensagem recebida de ${userMsg?.name}`,
-          type: "msg",
-        });
+        // addHistory({
+        //   date: message.result[0].date
+        //     ? format(new Date(message.result[0].date), "dd/MM HH:mm")
+        //     : format(new Date(), "dd/MM HH:mm"),
+        //   message: `Mensagem recebida de ${userMsg?.name}`,
+        //   type: "msg",
+        // });
         setPlayNotificationSound(true); // Toca o som de notificação
         setTimeout(() => setPlayNotificationSound(false), 500);
         break;
@@ -565,13 +565,13 @@ function UserLayout() {
         break;
       case "SmartButtonReceived":
         setButtonTriggered(message.btn_id, true);
-        addHistory({
-          date: message.date
-            ? format(new Date(message.date), "dd/MM HH:mm")
-            : format(new Date(), "dd/MM HH:mm"),
-          type: "sensor",
-          message: "Botão Vermelho Disparou",
-        });
+        // addHistory({
+        //   date: message.date
+        //     ? format(new Date(message.date), "dd/MM HH:mm")
+        //     : format(new Date(), "dd/MM HH:mm"),
+        //   type: "sensor",
+        //   message: "Botão Vermelho Disparou",
+        // });
         toast({
           description: "Botão Vermelho Disparou",
         });
@@ -579,6 +579,13 @@ function UserLayout() {
       case "TriggerStopAlarmResult":
         setButtonTriggered(message.btn_id, false);
         break;
+      case "getHistoryResult":
+        const historyArray = message.result;
+        historyArray.forEach((hist: any) => {
+          addHistory(hist);
+        });
+        break;
+          
       default:
         console.log("Unknown message type:", message);
         break;

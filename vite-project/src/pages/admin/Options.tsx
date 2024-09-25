@@ -66,7 +66,7 @@ export default function MenuOptions() {
           variant={"ghost"}
           onClick={() => handleClick("DataBase")}
         >
-          Data Base
+          Backup
         </Button>
         <Button
           className="focus:bg-accent"

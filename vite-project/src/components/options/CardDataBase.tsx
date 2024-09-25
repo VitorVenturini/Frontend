@@ -79,7 +79,7 @@ export default function CardDataBase() {
         // Cria um link temporário para o download do PDF
         const a = document.createElement("a");
         a.href = url;
-        a.download = "BACKUP" + ".dump"; // Define o nome do arquivo de download
+        a.download = response.headers.get("Content-Disposition") || "backup.dump"; // Define o nome do arquivo de download
         document.body.appendChild(a);
         a.click(); // Simula um clique no link para iniciar o download
 
@@ -118,7 +118,7 @@ export default function CardDataBase() {
         // Cria um link temporário para o download do PDF
         const a = document.createElement("a");
         a.href = url;
-        a.download = "BACKUP" + ".dump"; // Define o nome do arquivo de download
+        a.download = response.headers.get("Content-Disposition") || "backup.zip"; // Define o nome do arquivo de download
         
         document.body.appendChild(a);
         a.click(); // Simula um clique no link para iniciar o download
@@ -147,12 +147,12 @@ export default function CardDataBase() {
         <CardContent className="grid gap-4 py-9">
           <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-end" htmlFor="buttonName">
-              destino
+              Destino
             </Label>
             <Input
               className="col-span-2"
               id="buttonName"
-              placeholder={texts[language].alarmButtonNamePlaceholder}
+              placeholder="Escreva seu destino"
               value={null}
               onChange={null}
               required
@@ -166,12 +166,12 @@ export default function CardDataBase() {
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-end" htmlFor="buttonName">
-              destino
+              Usuário
             </Label>
             <Input
               className="col-span-2"
               id="buttonName"
-              placeholder={texts[language].alarmButtonNamePlaceholder}
+              placeholder="Escreva seu usuário"
               value={null}
               onChange={null}
               required
@@ -185,12 +185,12 @@ export default function CardDataBase() {
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-end" htmlFor="buttonName">
-              destino
+              Senha
             </Label>
             <Input
               className="col-span-2"
               id="buttonName"
-              placeholder={texts[language].alarmButtonNamePlaceholder}
+              placeholder="Digite sua senha"
               value={null}
               onChange={null}
               required
@@ -213,9 +213,6 @@ export default function CardDataBase() {
               <SelectContent>
                 <SelectGroup>
                   <SelectItem value="RptCalls">Semanal</SelectItem>
-                  <SelectItem value="RptActivities">Díario</SelectItem>
-                  <SelectItem value="RptAvailability">Mensal</SelectItem>
-                  <SelectItem value="RptMessages">Bimestral</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
