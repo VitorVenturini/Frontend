@@ -208,14 +208,20 @@ function UserLayout() {
           return user.guid === message.src;
         })[0];
         // addHistory({
+        //   id: "",
+        //   guid: "",
+        //   from: "",
+        //   name: "TESTE",
         //   date: message.date
         //     ? format(new Date(message.date), "dd/MM HH:mm")
         //     : format(new Date(), "dd/MM HH:mm"),
-        //   message: `${userStartAlarm?.name} disparou o alarme ${message.alarm}`,
-        //   type: "alarm",
+
+        //   status: "",
+        //   prt: "",
+        //   details: "",
         // });
-        setPlayNotificationSound(true); // Toca o som de notificação
-        setTimeout(() => setPlayNotificationSound(false), 500);
+        // setPlayNotificationSound(true); // Toca o som de notificação
+        // setTimeout(() => setPlayNotificationSound(false), 500);
         break;
       case "AlarmStopReceived":
         setStopButtonTriggered(message.alarm, false);
@@ -585,7 +591,7 @@ function UserLayout() {
           addHistory(hist);
         });
         break;
-          
+
       default:
         console.log("Unknown message type:", message);
         break;
