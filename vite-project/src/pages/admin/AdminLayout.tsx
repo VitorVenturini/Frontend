@@ -75,13 +75,14 @@ function AdminLayout() {
   var pbxUser: UserPbxInterface[];
   const { setLoadBarData, clearLoadBarData, setApiKeyInfo, setPbxStatus } =
     useAppConfig();
-
+  var allBtn: ButtonInterface[];
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
     switch (message.mt) {
       case "SelectButtonsSuccess":
         const firstButtons: ButtonInterface[] = JSON.parse(message.result);
         setButtons(firstButtons);
+        allBtn = firstButtons;
         break;
       case "InsertButtonSuccess":
         const newButton: ButtonInterface = message.result;
@@ -189,12 +190,10 @@ function AdminLayout() {
         break;
       case "PbxStatusResult":
         if (message.result) {
-          const status = String(message.result); 
+          const status = String(message.result);
           setPbxStatus((prevPbxStatus) => {
             return prevPbxStatus.map((pbx) =>
-              pbx.entry === "urlPbxTableUsers"
-                ? { ...pbx, status } 
-                : pbx
+              pbx.entry === "urlPbxTableUsers" ? { ...pbx, status } : pbx
             );
           });
         }
@@ -355,6 +354,13 @@ function AdminLayout() {
                   }
                   if (item.read) {
                     item.read = formatDate(item.read);
+                  }
+                  // para os details de atividades. filtrar o ID do botão e exibir o nome
+                  if (item.details && item.details !== "APP") {
+                    const filteredButton = allBtn?.filter((btn) => {
+                      return btn.id === item.details;
+                    })[0];
+                    item.details = filteredButton?.button_name;
                   }
                   // Formatar colunas que começam com 'call' e possuem valor
                   Object.keys(item).forEach((key) => {

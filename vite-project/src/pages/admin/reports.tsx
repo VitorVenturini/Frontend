@@ -105,6 +105,11 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
     );
     if (user) {
       item[columnName] = user.name;
+    } else {
+      const filteredSensor = sensors.filter((sensor) => {
+        return sensor.deveui === item[columnName];
+      })[0];
+      item[columnName] = filteredSensor?.sensor_name;
     }
     return item;
   };

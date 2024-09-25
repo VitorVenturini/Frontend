@@ -196,6 +196,12 @@ function UserLayout() {
         updateSensorButton(sensorDataReceived);
         updateGraphSensor(sensorDataReceived);
         break;
+      case "addThresholdNotification":
+        //tratar a notificação sonora aqui
+        break;
+      case "delThresholdNotification":
+        //tratar a notificação sonora aqui
+        break;
       case "AlarmReceived":
         setButtonTriggered(message.btn_id, true);
         const userStartAlarm = allUsers.filter((user) => {
@@ -209,7 +215,7 @@ function UserLayout() {
           type: "alarm",
         });
         setPlayNotificationSound(true); // Toca o som de notificação
-        setTimeout(() => setPlayNotificationSound(false), 500); 
+        setTimeout(() => setPlayNotificationSound(false), 500);
         break;
       case "AlarmStopReceived":
         setStopButtonTriggered(message.alarm, false);
@@ -480,7 +486,7 @@ function UserLayout() {
           type: "msg",
         });
         setPlayNotificationSound(true); // Toca o som de notificação
-        setTimeout(() => setPlayNotificationSound(false), 500); 
+        setTimeout(() => setPlayNotificationSound(false), 500);
         break;
       case "MessageResult": // minha mensagem
         const newMsgTo: ChatInterface = message.result[0];
@@ -563,14 +569,12 @@ function UserLayout() {
           date: message.date
             ? format(new Date(message.date), "dd/MM HH:mm")
             : format(new Date(), "dd/MM HH:mm"),
-            type: "sensor",
-            message: "Botão Vermelho Disparou"
+          type: "sensor",
+          message: "Botão Vermelho Disparou",
         });
         toast({
           description: "Botão Vermelho Disparou",
         });
-        setPlayNotificationSound(true); // Toca o som de notificação
-        setTimeout(() => setPlayNotificationSound(false), 500); 
         break;
       case "TriggerStopAlarmResult":
         setButtonTriggered(message.btn_id, false);
@@ -601,33 +605,6 @@ function UserLayout() {
   const handleClickedUserBottom = (newUser: string | null) => {
     setClickedUserBottom(newUser);
   };
-
-  // tratar os thresholds aqui 
-  const buttonState = buttons.filter((b) => b.button_type === "sensor");
-  useEffect(() => {
-    buttonState.forEach((btn) => {
-      const isWarning = checkButtonWarning(btn, btn.newValue);
-      const filteredSensor = buttonSensors.find(
-        (sensor) => sensor.deveui === btn.button_prt
-      );
-      if (isWarning && !btn.warning) {
-        addHistory({
-          message: `${filteredSensor?.sensor_name} Disparou`,
-          date: format(new Date(filteredSensor?.date as string), "dd/MM HH:mm"),
-          type: "sensor",
-        });
-        if (!btn.muted) {
-          setPlayNotificationSound(true); 
-          setTimeout(() => setPlayNotificationSound(false), 500); 
-        }
-        // atualizar o botão no contexto com warning True indicando que está alarmado
-        updateButton({ ...btn, warning: true });
-      }else if(!isWarning && btn.warning){
-        //se o sensor parou de apitar , reseta o estado warning 
-        updateButton({ ...btn, warning: false });
-      }
-    });
-  }, [buttonSensors]);
 
   return (
     <>
