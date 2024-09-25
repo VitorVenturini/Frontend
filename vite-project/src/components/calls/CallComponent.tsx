@@ -45,18 +45,13 @@ export default function CallComponent({
     /*se nao tiver chamadas retorna um skeleton */
   }
   const { usersPbx } = useUsersPbx();
-  const { setHeldCall } = useButtons();
+  const { setHeldCall, setClickedStatusClass } = useButtons();
   const wss = useWebSocketData();
   const { getCallDuration, getIncomingCallDuration } = useCalls();
-  const [heldCall, setHeldStateCall] = useState(
-    buttonOnCall?.held || incomingCall?.held
-  );
   const [callStateClass, setCallStateClass] = useState<string>("");
   // const [heldIncomingCall,setHeldStateIncomingCall] = useState( || false)
-  const [callDuration, setCallDuration] = useState(0);
   const [openKeyboardDTMF, setOpenKeyboardDTMF] = useState(false);
   const [openKeyboard, setOpenKeyboard] = useState(false);
-  const { setHeldIncomingCall } = useCalls();
   //const [retrieveCall, setRetrieveCall] = useState<boolean>(false);
   const filteredUser = usersPbx?.filter((user) => {
     return user.guid === buttonOnCall?.button_prt;
@@ -138,20 +133,24 @@ export default function CallComponent({
   useEffect(() => {
     if (buttonOnCall?.held) {
       // eu coloquei em espera
-      setHeldStateCall(true);
-      setCallStateClass(
-        "outline outline-2 border-xs border-blue-800 outline-blue-800"
+      setCallStateClass("border-blue-800 outline-blue-800");
+      setClickedStatusClass(
+        buttonOnCall.id,
+        "border-blue-800 outline-blue-800"
       );
     } else if (buttonOnCall?.heldByUser) {
       // usuário me colocou em espera
-      setCallStateClass(
-        "outline outline-2 border-xs border-purple-900 outline-purple-900"
+      setCallStateClass("border-purple-900 outline-purple-900");
+      setClickedStatusClass(
+        buttonOnCall.id,
+        "border-purple-900 outline-purple-900"
       );
     } else {
       // eu tirei da espera ou o usuario tirou da espera
-      setHeldStateCall(false);
-      setCallStateClass(
-        "outline outline-2 border-xs border-red-800 outline-red-800"
+      setCallStateClass("border-red-800 outline-red-800");
+      setClickedStatusClass(
+        buttonOnCall?.id as number,
+        "border-red-800 outline-red-800"
       );
     }
   }, [buttonOnCall]);
@@ -159,25 +158,19 @@ export default function CallComponent({
   useEffect(() => {
     if (incomingCall?.held) {
       // eu coloquei em espera a incomingCall
-      setHeldStateCall(true);
-      setCallStateClass(
-        "outline outline-2 border-xs border-blue-800 outline-blue-800"
-      );
+      setCallStateClass("border-blue-800 outline-blue-800");
     } else if (incomingCall?.heldByUser) {
-        // usuário me colocou em espera ( a incomingCall )
-        setCallStateClass(
-          "outline outline-2 border-xs border-purple-900 outline-purple-900"
-        );
+      // usuário me colocou em espera ( a incomingCall )
+      setCallStateClass("border-purple-900 outline-purple-900");
     } else {
-       // eu tirei da espera ou o usuario tirou da espera a incomingCall
-       setHeldStateCall(false);
-       setCallStateClass(
-         "outline outline-2 border-xs border-red-800 outline-red-800"
-       );
+      // eu tirei da espera ou o usuario tirou da espera a incomingCall
+      setCallStateClass("border-red-800 outline-red-800");
     }
   }, [incomingCall]);
   return (
-    <Card className={`flex justify-between px-4 py-6 m-3 ${callStateClass} `}>
+    <Card
+      className={`flex justify-between px-4 py-6 m-3  outline outline-2 border-xs  ${callStateClass} `}
+    >
       <div className="flex items-center gap-3">
         {avatarBase64 !== null ? (
           <Avatar>
@@ -228,11 +221,15 @@ export default function CallComponent({
           </Popover>
         </div>
         <Button
-          onClick={heldCall ? handleRetrieveCall : handleHeldCall}
+          onClick={
+            buttonOnCall?.held || incomingCall?.held
+              ? handleRetrieveCall
+              : handleHeldCall
+          }
           size="icon"
           variant="secondary"
         >
-          {heldCall ? <Play /> : <Pause />}
+          {buttonOnCall?.held || incomingCall?.held ? <Play /> : <Pause />}
         </Button>
         <div>
           <Popover open={openKeyboard} onOpenChange={setOpenKeyboard}>

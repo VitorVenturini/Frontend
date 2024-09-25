@@ -24,6 +24,7 @@ interface CallContextProps {
     duration?: number
   ) => void;
   removeIncomingCall: (callId: string) => void;
+  updateIncomingCall : (Incomingcall: IncomingCallInterface) => void;
   setHeldIncomingCall: (callID: string, isHeld: boolean) => void;
   setHeldIncomingCallByUser: (callID: string, isHeld: boolean) => void;
   getIncomingCallDuration: (callId: string) => number;
@@ -125,6 +126,16 @@ export const CallProvider: React.FC<{ children: React.ReactNode }> = ({
     );
   };
 
+  const updateIncomingCall = (Incomingcall: IncomingCallInterface) => {
+    setIncomingCalls((prevCalls) =>
+      prevCalls.map((call) =>
+        call.id === Incomingcall.id
+          ? { ...call, ...Incomingcall }
+          : call
+      )
+    );
+  };
+
   const addCall = (button: ButtonInterface, duration: number) => {
     setCalls((prev) => [...prev, button]);
     setStartTimes((prev) => ({
@@ -213,6 +224,7 @@ export const CallProvider: React.FC<{ children: React.ReactNode }> = ({
         calls,
         incomingCalls,
         addIncomingCall,
+        updateIncomingCall,
         setHeldIncomingCall,
         setHeldIncomingCallByUser,
         removeIncomingCall,

@@ -106,7 +106,7 @@ export default function ModalClock({
           api: "admin",
           mt: isUpdate ? "UpdateButton" : "InsertButton",
           ...(isUpdate && { id: existingButton?.id }),
-          name: timeZoneSelected?.countryName,
+          name: timeZoneSelected?.zoneName + " - " + timeZoneSelected?.countryCode,
           value: timeZoneSelected?.gmtOffset,
           guid: selectedUser?.guid,
           type: "clock",

@@ -196,33 +196,39 @@ function UserLayout() {
         updateSensorButton(sensorDataReceived);
         updateGraphSensor(sensorDataReceived);
         break;
+      case "addThresholdNotification":
+        //tratar a notificação sonora aqui
+        break;
+      case "delThresholdNotification":
+        //tratar a notificação sonora aqui
+        break;
       case "AlarmReceived":
         setButtonTriggered(message.btn_id, true);
         const userStartAlarm = allUsers.filter((user) => {
           return user.guid === message.src;
         })[0];
-        addHistory({
-          date: message.date
-            ? format(new Date(message.date), "dd/MM HH:mm")
-            : format(new Date(), "dd/MM HH:mm"),
-          message: `${userStartAlarm?.name} disparou o alarme ${message.alarm}`,
-          type: "alarm",
-        });
+        // addHistory({
+        //   date: message.date
+        //     ? format(new Date(message.date), "dd/MM HH:mm")
+        //     : format(new Date(), "dd/MM HH:mm"),
+        //   message: `${userStartAlarm?.name} disparou o alarme ${message.alarm}`,
+        //   type: "alarm",
+        // });
         setPlayNotificationSound(true); // Toca o som de notificação
-        setTimeout(() => setPlayNotificationSound(false), 500); 
+        setTimeout(() => setPlayNotificationSound(false), 500);
         break;
       case "AlarmStopReceived":
         setStopButtonTriggered(message.alarm, false);
         const userStopAlarm = allUsers.filter((user) => {
           return user.guid === message.src;
         })[0];
-        addHistory({
-          date: message.date
-            ? format(new Date(message.date), "dd/MM HH:mm")
-            : format(new Date(), "dd/MM HH:mm"),
-          message: `${userStopAlarm?.name} parou o alarme ${message.alarm}`,
-          type: "alarm",
-        });
+        // addHistory({
+        //   date: message.date
+        //     ? format(new Date(message.date), "dd/MM HH:mm")
+        //     : format(new Date(), "dd/MM HH:mm"),
+        //   message: `${userStopAlarm?.name} parou o alarme ${message.alarm}`,
+        //   type: "alarm",
+        // });
         break;
       case "DeleteButtonsSuccess":
         deleteButton(message.id_deleted);
@@ -472,15 +478,15 @@ function UserLayout() {
         const userMsg = allUsers.filter((user) => {
           return user.guid === message.result[0].from_guid;
         })[0];
-        addHistory({
-          date: message.result[0].date
-            ? format(new Date(message.result[0].date), "dd/MM HH:mm")
-            : format(new Date(), "dd/MM HH:mm"),
-          message: `Mensagem recebida de ${userMsg?.name}`,
-          type: "msg",
-        });
+        // addHistory({
+        //   date: message.result[0].date
+        //     ? format(new Date(message.result[0].date), "dd/MM HH:mm")
+        //     : format(new Date(), "dd/MM HH:mm"),
+        //   message: `Mensagem recebida de ${userMsg?.name}`,
+        //   type: "msg",
+        // });
         setPlayNotificationSound(true); // Toca o som de notificação
-        setTimeout(() => setPlayNotificationSound(false), 500); 
+        setTimeout(() => setPlayNotificationSound(false), 500);
         break;
       case "MessageResult": // minha mensagem
         const newMsgTo: ChatInterface = message.result[0];
@@ -559,22 +565,27 @@ function UserLayout() {
         break;
       case "SmartButtonReceived":
         setButtonTriggered(message.btn_id, true);
-        addHistory({
-          date: message.date
-            ? format(new Date(message.date), "dd/MM HH:mm")
-            : format(new Date(), "dd/MM HH:mm"),
-            type: "sensor",
-            message: "Botão Vermelho Disparou"
-        });
+        // addHistory({
+        //   date: message.date
+        //     ? format(new Date(message.date), "dd/MM HH:mm")
+        //     : format(new Date(), "dd/MM HH:mm"),
+        //   type: "sensor",
+        //   message: "Botão Vermelho Disparou",
+        // });
         toast({
           description: "Botão Vermelho Disparou",
         });
-        setPlayNotificationSound(true); // Toca o som de notificação
-        setTimeout(() => setPlayNotificationSound(false), 500); 
         break;
       case "TriggerStopAlarmResult":
         setButtonTriggered(message.btn_id, false);
         break;
+      case "getHistoryResult":
+        const historyArray = message.result;
+        historyArray.forEach((hist: any) => {
+          addHistory(hist);
+        });
+        break;
+          
       default:
         console.log("Unknown message type:", message);
         break;
@@ -601,33 +612,6 @@ function UserLayout() {
   const handleClickedUserBottom = (newUser: string | null) => {
     setClickedUserBottom(newUser);
   };
-
-  // tratar os thresholds aqui 
-  const buttonState = buttons.filter((b) => b.button_type === "sensor");
-  useEffect(() => {
-    buttonState.forEach((btn) => {
-      const isWarning = checkButtonWarning(btn, btn.newValue);
-      const filteredSensor = buttonSensors.find(
-        (sensor) => sensor.deveui === btn.button_prt
-      );
-      if (isWarning && !btn.warning) {
-        addHistory({
-          message: `${filteredSensor?.sensor_name} Disparou`,
-          date: format(new Date(filteredSensor?.date as string), "dd/MM HH:mm"),
-          type: "sensor",
-        });
-        if (!btn.muted) {
-          setPlayNotificationSound(true); 
-          setTimeout(() => setPlayNotificationSound(false), 500); 
-        }
-        // atualizar o botão no contexto com warning True indicando que está alarmado
-        updateButton({ ...btn, warning: true });
-      }else if(!isWarning && btn.warning){
-        //se o sensor parou de apitar , reseta o estado warning 
-        updateButton({ ...btn, warning: false });
-      }
-    });
-  }, [buttonSensors]);
 
   return (
     <>

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ArrowRightLeftIcon, CircleX } from "lucide-react";
+import { ArrowRightLeftIcon, CircleX, Delete } from "lucide-react";
 import { Button } from "../ui/button";
 import { useWebSocketData } from "../websocket/WebSocketProvider";
 import { ButtonInterface } from "../buttons/buttonContext/ButtonsContext";
@@ -76,7 +76,7 @@ const Keyboard: React.FC<KeyboardProps> = ({
       <div className="w-full flex justify-between m-1 p-1  ">
         <div className="w-full">{keySequence.join(" ")}</div>
         <div className="cursor-pointer" onClick={handleClearKey}>
-          <CircleX />
+          <Delete />
         </div>
       </div>
       <div className="grid grid-cols-3 gap-2 ">

@@ -119,14 +119,16 @@ const useWebSocket = (
       ws.current?.send(JSON.stringify({ api: apiType, mt: "TableUsers" }));
       ws.current?.send(JSON.stringify({ api: apiType, mt: "SelectGateways" }));
       ws.current?.send(JSON.stringify({ api: apiType, mt: "SelectCameras" }));
+
     } else {
       // else para usuario
       ws.current?.send(JSON.stringify({ api: apiType, mt: "SelectButtons" }));
       // ws.current?.send(JSON.stringify({ api: apiType, mt: "SelectSensors" }));
       ws.current?.send(JSON.stringify({ api: apiType, mt: "TableUsers" }));
       ws.current?.send(
-        JSON.stringify({ api: apiType, mt: "SelectAllSensorInfoSrc" })
+        JSON.stringify({ api: apiType, mt: "SelectAllSensorInfoSrc"})
       );
+      ws.current?.send(JSON.stringify({ api: apiType, mt: "getHistory",startId:null }));
     }
 
     // Reset the flag to avoid sending messages again unless UserSessionResult is received again

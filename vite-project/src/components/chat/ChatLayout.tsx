@@ -13,8 +13,8 @@ import { format } from "date-fns";
 import { toast } from "../ui/use-toast";
 import { useAccount } from "../account/AccountContext";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
-import data, { Emoji, EmojiMartData } from '@emoji-mart/data'
-import Picker from '@emoji-mart/react'
+import data, { Emoji, EmojiMartData } from "@emoji-mart/data";
+import Picker from "@emoji-mart/react";
 interface ChatProps {
   userToChat: UserInterface;
 }
@@ -227,15 +227,18 @@ export default function ChatLayout({ userToChat }: ChatProps) {
           />
           <div>
             {/* Botão para abrir o picker de emojis */}
-            <button
+
+            <Button
+              size="icon"
               type="button"
+              variant="secondary"
+              className="rounded-full"
               onClick={() => setShowPicker(!showPicker)}
-              className="p-2"
             >
               😀
-            </button>
+            </Button>
             {showPicker && (
-                <Picker data={data} onEmojiSelect={handleEmojiSelect} />
+              <Picker data={data} onEmojiSelect={handleEmojiSelect} />
             )}
           </div>
           <Button size="icon" type="submit" variant="ghost">
