@@ -14,6 +14,7 @@ import { useData } from "./DataContext";
 import { useAccount } from "@/components/account/AccountContext";
 import texts from "@/_data/texts.json";
 import { useLanguage } from "@/components/language/LanguageContext";
+import LogoCore from "../assets/Vector.svg";
 
 export interface PdfProps {
   filTable: any[];
@@ -29,6 +30,9 @@ export function PdfGerate() {
   const print = useRef<HTMLDivElement | null>(null);
   const account = useAccount();
   const { language } = useLanguage();
+  const [isLoadingPdf, setIsLoadingPDf] = useState(false);
+  const [isLoadingTable, setIsLoadingTable] = useState(false);
+
   useEffect(() => {
     if (dataReport.keys) {
       setCheckedKeys(
@@ -44,6 +48,7 @@ export function PdfGerate() {
     landscape: boolean
   ) => {
     try {
+      setIsLoadingPDf(true);
       const response = await fetch(host + "/api/generatePdf", {
         method: "POST",
         headers: {
@@ -73,15 +78,19 @@ export function PdfGerate() {
         window.URL.revokeObjectURL(url); // Limpa o URL temporário
 
         console.log("PDF enviado e download iniciado com sucesso!");
+        setIsLoadingPDf(false);
       } else {
         console.error("Erro ao enviar o PDF.");
+        setIsLoadingPDf(false);
       }
     } catch (error) {
       console.error("Erro ao enviar o PDF:", error);
+      setIsLoadingPDf(false);
     }
   };
   const sendExcelData = async () => {
     try {
+      setIsLoadingTable(true);
       const response = await fetch(host + "/api/generateExcel", {
         method: "POST",
         headers: {
@@ -113,11 +122,14 @@ export function PdfGerate() {
         window.URL.revokeObjectURL(url); // Limpa o URL temporário
 
         console.log("PDF enviado e download iniciado com sucesso!");
+        setIsLoadingTable(false);
       } else {
         console.error("Erro ao enviar o PDF.");
+        setIsLoadingTable(false);
       }
     } catch (error) {
       console.error("Erro ao enviar o PDF:", error);
+      setIsLoadingTable(false);
     }
   };
   // Função que será chamada para gerar e enviar o PDF
@@ -246,7 +258,7 @@ export function PdfGerate() {
       const sensorName =
         dataReport.chart && dataReport.chart[0]?.sensor_name
           ? dataReport.chart[0].sensor_name
-          : "sensor";
+          : "Relatório";
 
       // Obtenção da data e hora atuais
       const currentDate = new Date();
@@ -282,79 +294,97 @@ export function PdfGerate() {
   );
 
   return (
-    <>
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button
-            variant="ghost"
-            disabled={
-              dataReport.chart?.length === 0 && dataReport.table?.length === 0
-            }
-          >
-            <FileText />
-          </Button>
-        </PopoverTrigger>
-
-        <PopoverContent className="w-56">
-          <div className="flex justify-between items-center">
-            {dataReport.chart?.length !== 0 ? (
-              <h1>{texts[language].filter}</h1>
-            ) : (
-              <h1>{texts[language].export}</h1>
-            )}
-
+    <div className="flex align-middle mr-2 ml-2">
+      {dataReport.table?.length !== 0 ? (
+        <Button
+          variant="ghost"
+          title="Tabela"
+          onClick={downloadTableToPdf}
+          size="icon"
+          disabled={dataReport.table?.length === 0 && isLoadingPdf}
+        >
+          {isLoadingPdf == true ? (
             <div>
-              {dataReport.chart?.length !== 0 && (
-                <Button
-                  variant="ghost"
-                  title="Grafico"
-                  onClick={openInNewTabChart}
-                  disabled={dataReport.chart?.length === 0}
-                >
-                  <LineChart />
-                </Button>
-              )}
-              {dataReport.table?.length !== 0 && (
-                <Button
-                  variant="ghost"
-                  title="Tabela"
-                  onClick={downloadTableToPdf}
-                  disabled={dataReport.table?.length === 0}
-                >
-                  <Sheet />
-                </Button>
-              )}
+              <img src={LogoCore} className="h-6 animate-spin" />
             </div>
-          </div>
-          {dataReport.chart?.length !== 0 &&
-            extractedKeys?.map((key) => (
-              <div className="flex gap-2 items-center" key={key}>
-                <Checkbox
-                  id={key}
-                  checked={checkedKeys[key] || false} // Usa o estado "checkedKeys"
-                  onCheckedChange={(checked) =>
-                    setCheckedKeys((prev) => ({
-                      ...prev,
-                      [key]: checked as any,
-                    }))
-                  }
-                >
-                  {" "}
-                </Checkbox>
-                <label>{key}</label>
+          ) : (
+            <FileText />
+          )}
+        </Button>
+      ) : (
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              disabled={
+                dataReport.chart?.length === 0 && dataReport.table?.length === 0
+              }
+            >
+              <FileText />
+            </Button>
+          </PopoverTrigger>
+
+          <PopoverContent className="w-56">
+            <div className="flex justify-between items-center">
+              {dataReport.chart?.length !== 0 ? (
+                <h1>{texts[language].filter}</h1>
+              ) : (
+                <h1>{texts[language].export}</h1>
+              )}
+
+              <div>
+                {dataReport.chart?.length !== 0 && (
+                  <Button
+                    variant="ghost"
+                    title="Grafico"
+                    size="icon"
+                    onClick={openInNewTabChart}
+                    disabled={dataReport.chart?.length === 0}
+                  >
+                    <LineChart />
+                  </Button>
+                )}
               </div>
-            ))}
-        </PopoverContent>
-      </Popover>
+            </div>
+            {dataReport.chart?.length !== 0 &&
+              extractedKeys?.map((key) => (
+                <div className="flex gap-2 items-center" key={key}>
+                  <Checkbox
+                    id={key}
+                    checked={checkedKeys[key] || false} // Usa o estado "checkedKeys"
+                    onCheckedChange={(checked) =>
+                      setCheckedKeys((prev) => ({
+                        ...prev,
+                        [key]: checked as any,
+                      }))
+                    }
+                  >
+                    {" "}
+                  </Checkbox>
+                  <label>{key}</label>
+                </div>
+              ))}
+          </PopoverContent>
+        </Popover>
+      )}
+
       <Button
         variant="ghost"
+        size="icon"
         disabled={
-          dataReport.chart?.length === 0 && dataReport.table?.length === 0
+          dataReport.chart?.length === 0 && dataReport.table?.length === 0 && !isLoadingTable 
         }
         onClick={sendExcelData}
       >
-        <Sheet />
+        {isLoadingTable == true ? (
+          <div>
+            <img src={LogoCore} className="h-6 animate-spin" />
+          </div>
+        ) : (
+          <Sheet />
+        )}
       </Button>
-    </>
+    </div>
   );
 }

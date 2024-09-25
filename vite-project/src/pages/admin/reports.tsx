@@ -90,12 +90,30 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
 
   const formatDateTime = (
     date: Date,
-    time: string,
+    time: string | undefined,
     defaultTime: string
   ): string => {
-    const formattedDate = format(date, "yyyy-MM-dd"); // Formata a data no padrão 'YYYY-MM-DD'
+    const localDate = new Date(date); // Converte a data para o fuso horário local
     const finalTime = time || defaultTime; // Usa o valor padrão se 'time' estiver em branco
-    return `${formattedDate} ${finalTime}:00`; // Retorna a data e hora no formato 'YYYY-MM-DD HH:mm:ss'
+  
+    // Concatena a data com o tempo fornecido ou padrão
+    const formattedLocalDateTime = `${format(localDate, "yyyy-MM-dd")} ${finalTime}`;
+  
+    // Converte o datetime concatenado para UTC
+    const utcDateTime = new Date(formattedLocalDateTime);
+  
+    if (isNaN(utcDateTime.getTime())) {
+      // Verifica se a data é inválida
+      return 'Invalid Date';
+    }
+  
+    // Converte o timestamp UTC para o formato 'YYYY-MM-DD HH:mm:ss'
+    const utcDate = new Date(utcDateTime.getTime()).toLocaleString('sv-SE', {
+      timeZone: 'UTC',
+      hour12: false
+    });
+  
+    return utcDate.replace('T', ' '); // Retorna no formato 'YYYY-MM-DD HH:mm:ss'
   };
 
   const replaceData = (users: any[], item: any, columnName: string): any => {
@@ -180,6 +198,7 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
         endHour,
         "23:59:59"
       );
+      console.log({ from: fromDateTimeUTC, to: toDateTimeUTC });
       wss?.sendMessage({
         api: "admin",
         mt: "SelectFromReports",
@@ -285,7 +304,7 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
                   </PopoverContent>
                 </Popover>
                 <TabsList>
-                  <TabsTrigger value="RptAvailability">
+                  <TabsTrigger value="RptAvailability" onClick={handleClear}>
                     Disponibilidade
                   </TabsTrigger>
                   <TabsTrigger value="RptCalls" onClick={handleClear}>
@@ -356,7 +375,7 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
                 </TabsContent>
               </div>
               <div className="flex items-end justify-end">
-                <TabsContent value="RptSensors" className="flex gap-2">
+                <TabsContent value="RptSensors" className="flex gap-2 items-center align-middle">
                   <p className="flex items-center text-[12px]">Export:</p>
                   <PdfGerate />
                   <Button onClick={() => handleExecDevice()}>Consultar</Button>
