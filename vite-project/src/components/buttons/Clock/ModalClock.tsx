@@ -80,7 +80,7 @@ export default function ModalClock({
     const fetchTimeZones = async () => {
       try {
         const response = await fetch(
-          `http://api.timezonedb.com/v2.1/list-time-zone?key=G76YA12PUTYG&format=json`
+          `https://api.timezonedb.com/v2.1/list-time-zone?key=G76YA12PUTYG&format=json`
         );
         const data = await response.json();
         setTimeZones(data.zones as TimeZone[]);
