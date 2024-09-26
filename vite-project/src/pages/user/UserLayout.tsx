@@ -197,6 +197,8 @@ function UserLayout() {
         updateGraphSensor(sensorDataReceived);
         break;
       case "addThresholdNotification":
+        setPlayNotificationSound(true); // Toca o som de notificação
+        setTimeout(() => setPlayNotificationSound(false), 500);
         //tratar a notificação sonora aqui
         break;
       case "delThresholdNotification":

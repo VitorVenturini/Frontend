@@ -17,7 +17,7 @@ const HistoryCell: React.FC<HistoryCellProps> = ({ historyInfo }) => {
       <div className="flex items-center gap-1 ">
         <p className="text-sm">{`${historyInfo.name} `}</p>
         <p className="text-sm">{`${historyInfo.prt}`}</p>
-        
+        <p className="text-sm">{`${historyInfo.id}`}</p>
       </div>
       <p className="text-sm text-muted-foreground text-wrap mr-2 ">{`${historyInfo.date} `}</p>
     </div>
