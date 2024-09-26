@@ -5,8 +5,8 @@ import { SensorInterface } from "../sensor/SensorContext";
 
 export const isTouchDevice = () => {
   return (
-    'ontouchstart' in window || // Verifica se o evento de toque é suportado
-    navigator.maxTouchPoints > 0 
+    "ontouchstart" in window || // Verifica se o evento de toque é suportado
+    navigator.maxTouchPoints > 0
   );
 };
 
@@ -145,7 +145,7 @@ export function getInitials(name: string): string | null {
     const initials = nameParts
       .map((part) => part.charAt(0).toUpperCase())
       .join("");
-      return initials.substring(0, 2); // Retorna apenas as primeiras duas letras
+    return initials.substring(0, 2); // Retorna apenas as primeiras duas letras
   } else {
     return null;
   }
@@ -158,9 +158,9 @@ export const useMediaQuery = (query: string): boolean => {
     const handleChange = () => setMatches(mediaQuery.matches);
 
     handleChange();
-    mediaQuery.addEventListener('change', handleChange);
+    mediaQuery.addEventListener("change", handleChange);
 
-    return () => mediaQuery.removeEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
   }, [query]);
 
   return matches;
@@ -170,7 +170,6 @@ export const replaceDataForName = (
   guidOrEuid: string,
   sensors: SensorInterface[]
 ): string | undefined => {
-
   const user = users?.filter((user) => {
     return user.guid === guidOrEuid;
   })[0];
@@ -178,14 +177,23 @@ export const replaceDataForName = (
   if (user) {
     return user.name;
   }
-   const sensor = sensors?.filter((sensor) => {
+  const sensor = sensors?.filter((sensor) => {
     return sensor.deveui === guidOrEuid;
   })[0];
-  return sensor?.sensor_name;
+  if(sensor){
+    return sensor.sensor_name;
+  }
+ 
 };
-export const filterButtonByID = (btnID: number, buttons: ButtonInterface[]): string | undefined => {
-  const button = buttons.filter((btn) =>{
-    return btn.id  === btnID
-  });
-  return button[0].button_name;
+export const filterButtonByID = (
+  btnID: string,
+  buttons: ButtonInterface[]
+): string | undefined => {
+  const button = buttons.filter((btn : ButtonInterface) => {
+    return String(btn.id) === btnID
+  })[0];
+
+  if(button){
+    return button.button_name
+  }
 };

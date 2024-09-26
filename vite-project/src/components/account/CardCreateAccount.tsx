@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
-import { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent, useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import {
   Card,
@@ -63,7 +63,7 @@ export default function CardCreateAccount({
   const { usersPbx } = useUsersPbx();
   const { users } = useUsers();
   const [searchTerm, setSearchTerm] = useState("");
-  const [e164, setE164] = useState(user?.sip || "");
+
   const { language } = useLanguage();
   const { toast } = useToast();
   const { addUsers } = useUsers();
@@ -75,6 +75,9 @@ export default function CardCreateAccount({
   const availableSIPS = allSIPS?.filter((sip) => {
     return !users.some((user) => user.sip === sip);
   });
+
+  const sipInUse = usersPbx?.find((userPbx) => userPbx.e164 === user?.sip);
+  const [e164, setE164] = useState(isUpdate ? sipInUse?.guid : "");
 
   const validateFields = () => {
     let isValid = true;
@@ -282,12 +285,12 @@ export default function CardCreateAccount({
             </div>
             <div className="grid grid-cols-5 items-center gap-4">
               <Label className="text-end" htmlFor="email">
-              {texts[language].labelEmail}
+                {texts[language].labelEmail}
               </Label>
               <Input
                 className="col-span-3"
                 id="email"
-                placeholder=  {texts[language].labelEmail}
+                placeholder={texts[language].labelEmail}
                 type="email"
                 value={email}
                 onChange={handleEmailChange}
@@ -296,28 +299,34 @@ export default function CardCreateAccount({
 
             <div className="grid grid-cols-5 items-center gap-4">
               <Label className="text-end" htmlFor="password">
-              {texts[language].labelPassword}
+                {texts[language].labelPassword}
               </Label>
               <Input
                 className="col-span-3"
                 id="password"
                 type="password"
-                placeholder=  {texts[language].labelPassword}
+                placeholder={texts[language].labelPassword}
                 value={password}
                 onChange={handlePasswordChange}
               />
             </div>
             <div className="grid grid-cols-5 items-center gap-4">
               <Label className="text-end" htmlFor="type">
-              {texts[language].labelTypeOfAccount}
+                {texts[language].labelTypeOfAccount}
               </Label>
               <Select value={type} onValueChange={handleTypeChange}>
                 <SelectTrigger className="col-span-3" id="type">
-                  <SelectValue placeholder=  {texts[language].labelSelectTypeOfAccount} />
+                  <SelectValue
+                    placeholder={texts[language].labelSelectTypeOfAccount}
+                  />
                 </SelectTrigger>
                 <SelectContent position="popper">
-                  <SelectItem value="admin">{texts[language].labelAdmin}</SelectItem>
-                  <SelectItem value="user">{texts[language].labelUser}</SelectItem>
+                  <SelectItem value="admin">
+                    {texts[language].labelAdmin}
+                  </SelectItem>
+                  <SelectItem value="user">
+                    {texts[language].labelUser}
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -327,18 +336,21 @@ export default function CardCreateAccount({
               {texts[language].labelSip}
             </Label>
             <Select value={e164} onValueChange={handleSetE164}>
-              <SelectTrigger className="col-span-3" id="type">
-                <SelectValue placeholder=  {texts[language].labelSelectSip}/>
+              <SelectTrigger className="col-span-4" id="type">
+                <SelectValue placeholder={texts[language].labelSelectSip} />
               </SelectTrigger>
               <SelectContent>
-                {availableSIPS?.map((sip) => {
-                  const row = usersPbx.find((user) => user.e164 === sip);
-                  return (
-                    <SelectItem key={row?.guid} value={row?.guid as string}>
-                      {row?.e164}
-                    </SelectItem>
-                  );
-                })}
+                {(isUpdate
+                  ? availableSIPS.unshift(user?.sip as string)
+                  : availableSIPS) &&
+                  availableSIPS?.map((sip) => {
+                    const row = usersPbx.find((user) => user.e164 === sip);
+                    return (
+                      <SelectItem key={row?.guid} value={row?.guid as string}>
+                        {row?.e164}
+                      </SelectItem>
+                    );
+                  })}
               </SelectContent>
             </Select>
           </div>
@@ -347,13 +359,23 @@ export default function CardCreateAccount({
       <CardFooter className="flex justify-end">
         {!isCreating && (
           <Button type="submit" onSubmit={handleFormSubmit}>
-            {isUpdate ? <> {texts[language].labelUpdate}</> : <> {texts[language].labelCreate}</>} {texts[language].labelAccount}
+            {isUpdate ? (
+              <> {texts[language].labelUpdate}</>
+            ) : (
+              <> {texts[language].labelCreate}</>
+            )}{" "}
+            {texts[language].labelAccount}
           </Button>
         )}
         {isCreating && (
           <Button disabled>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            {isUpdate ? <> {texts[language].labelUpdate}</> : <> {texts[language].labelCreate}</>} {texts[language].labelAccount}
+            {isUpdate ? (
+              <> {texts[language].labelUpdate}</>
+            ) : (
+              <> {texts[language].labelCreate}</>
+            )}{" "}
+            {texts[language].labelAccount}
           </Button>
         )}
       </CardFooter>

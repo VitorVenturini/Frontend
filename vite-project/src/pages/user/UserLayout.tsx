@@ -189,6 +189,7 @@ function UserLayout() {
         break;
       case "SelectAllSensorInfoResultSrc":
         const allSensors = JSON.parse(message.result);
+        setSensors(allSensors) // setar todos os sensores para manipularmos no app todo
         // allSensors.forEach((sensor: SensorInterface) => updateSensorButton(sensor));
         addSensorsButton(allSensors); // info dos sensores para ser exibido nos botões
         setIsLoading(false);

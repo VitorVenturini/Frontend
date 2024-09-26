@@ -11,9 +11,9 @@ import { Badge } from "@/components/ui/badge";
 import { cva } from "class-variance-authority";
 import { replaceDataForName } from "../utils/utilityFunctions";
 import { useUsers } from "../users/usersCore/UserContext";
-import { useSensors } from "../sensor/SensorContext";
 import { useButtons } from "../buttons/buttonContext/ButtonsContext";
 import { filterButtonByID } from "../utils/utilityFunctions";
+import { useSensors } from "../sensor/SensorContext";
 
 
 interface HistoryCellProps {
@@ -45,7 +45,7 @@ const badgeVariants = cva(
 
 const HistoryCell: React.FC<HistoryCellProps> = ({ historyInfo }) => {
   const { users } = useUsers();
-  const { sensors } = useSensors();
+  const {sensors} = useSensors()
   const { buttons } = useButtons();
   const isValidVariant = (
     variant: string
@@ -67,7 +67,7 @@ const HistoryCell: React.FC<HistoryCellProps> = ({ historyInfo }) => {
     console.error("Error parsing date:", error);
   }
   const truncatedPrt =
-    historyInfo.prt.length > 20
+    historyInfo?.prt?.length > 20
       ? `${historyInfo.prt.slice(0, 20)}...`
       : historyInfo.prt;
 
@@ -84,8 +84,7 @@ const HistoryCell: React.FC<HistoryCellProps> = ({ historyInfo }) => {
           </p>
         </div>
         <div className="flex items-center gap-1">
-          <p className="text-sm ">{filterButtonByID(parseInt(historyInfo.details),buttons)}</p>
-          <p className="text-xs text-muted-foreground">{historyInfo.id}</p>
+          <p className="text-sm ">{filterButtonByID(historyInfo.details,buttons)}</p>
         </div>
       </div>
       <div className=" flex justify-between rounded-md my-2 items-center px-2 py-1">
