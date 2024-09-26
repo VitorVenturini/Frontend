@@ -5,6 +5,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button'; 
 import { parse } from "date-fns";
 import { useWebSocketData } from "../websocket/WebSocketProvider";
+import { Loader2 } from "lucide-react";
 
 
 interface HistoryCellProps {
@@ -12,9 +13,25 @@ interface HistoryCellProps {
 }
 
 const HistoryCell: React.FC<HistoryCellProps> = ({ historyInfo }) => {
+  const getColorForName = (name: string) => {
+    switch (name) {
+      case 'threshold':
+        return 'bg-red-900'; // Exemplo de cor para 'threshold'
+      case 'status':
+        return 'bg-green-500'; // Exemplo de cor para 'status'
+      case 'alarm':
+        return 'bg-yellow-900'; // Exemplo de cor para 'alert'
+      case 'message':
+        return 'bg-blue-900'; // Exemplo de cor para 'message'
+      default:
+        return ''; // Cor padrão
+    }
+  };
+
+  const colorClass = getColorForName(historyInfo.name);
+  
   return (
-    <div className="py-2 px-2 flex justify-between bg-muted rounded-md my-2 items-center w-full mr-2 ">
-      <div className="flex items-center gap-1 ">
+    <div className={`py-2 px-2 flex justify-between rounded-md my-2 items-center w-full mr-2 ${colorClass}`}>      <div className="flex items-center gap-1 ">
         <p className="text-sm">{`${historyInfo.name} `}</p>
         <p className="text-sm">{`${historyInfo.prt}`}</p>
         <p className="text-sm">{`${historyInfo.id}`}</p>
@@ -34,7 +51,7 @@ const HistoryGrid: React.FC<{ history: HistoryInterface[] }> = ({ history }) => 
 
   return (
     <>
-      {sortedHistory.reverse().map((hist, index) => (
+      {sortedHistory.map((hist, index) => (
         <div key={index} className="w-full">
           <HistoryCell historyInfo={hist} />
         </div>
@@ -48,6 +65,7 @@ const OptHistory: React.FC = () => {
   const [items, setItems] = useState<HistoryInterface[]>(history);
   const [hasMore, setHasMore] = useState(true);
   const wss = useWebSocketData();
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     setItems(history);
@@ -62,11 +80,13 @@ const OptHistory: React.FC = () => {
 
   // Função para adicionar mais itens manualmente
   const addMoreItems = () => {
+    setIsLoading(true);
     wss?.sendMessage({
       api: "user",
       mt: "getHistory",
       startId: items[0].id,
     });
+    setIsLoading(false);
   };
 
   return (
@@ -84,7 +104,16 @@ const OptHistory: React.FC = () => {
       >
         <HistoryGrid history={items} />
       </InfiniteScroll>
-      <Button onClick={addMoreItems}>Carregar mais</Button>
+      <Button onClick={addMoreItems} disabled={isLoading}>
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Carregar mais
+                </>
+              ) : (
+                "Carregar mais"
+              )}
+            </Button>
     </ScrollArea>
   );
 };
