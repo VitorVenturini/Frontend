@@ -52,7 +52,7 @@ export default function CardExecActions({
   const filteredDevices = usersPbx?.filter((u) => {
     return u.guid === selectedUser;
   })[0];
-
+  console.log('ACTION PRT', actionExecPrt)
   const { language } = useLanguage();
   const { toast } = useToast();
   const { sensors } = useSensors();
@@ -69,7 +69,7 @@ export default function CardExecActions({
   };
   const handleActionValue = (event: ChangeEvent<HTMLInputElement>) => {
     setActionExecPrt(event.target.value);
-    onUpdateExecActionDetails("actionExecValue", event.target.value);
+    onUpdateExecActionDetails("actionExecPrt", event.target.value);
   };
 
   const handleExecPrt = (value: string) => {
