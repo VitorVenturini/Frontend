@@ -14,23 +14,27 @@ interface HistoryCellProps {
 const HistoryCell: React.FC<HistoryCellProps> = ({ historyInfo }) => {
   const getColorForName = (name: string) => {
     switch (name) {
-      case 'threshold':
-        return 'bg-red-900'; // Exemplo de cor para 'threshold'
-      case 'status':
-        return 'bg-green-500'; // Exemplo de cor para 'status'
-      case 'alarm':
-        return 'bg-yellow-900'; // Exemplo de cor para 'alert'
-      case 'message':
-        return 'bg-blue-900'; // Exemplo de cor para 'message'
+      case "threshold":
+        return "bg-red-900"; // Exemplo de cor para 'threshold'
+      case "status":
+        return "bg-green-500"; // Exemplo de cor para 'status'
+      case "alarm":
+        return "bg-yellow-900"; // Exemplo de cor para 'alert'
+      case "message":
+        return "bg-blue-900"; // Exemplo de cor para 'message'
       default:
-        return ''; // Cor padrão
+        return ""; // Cor padrão
     }
   };
 
   const colorClass = getColorForName(historyInfo.name);
-  
+
   return (
-    <div className={`py-2 px-2 flex justify-between rounded-md my-2 items-center w-full mr-2 ${colorClass}`}>      <div className="flex items-center gap-1 ">
+    <div
+      className={`py-2 px-2 flex justify-between rounded-md my-2 items-center w-full mr-2 ${colorClass}`}
+    >
+      {" "}
+      <div className="flex items-center gap-1 ">
         <p className="text-sm">{`${historyInfo.name} `}</p>
         <p className="text-sm">{`${historyInfo.prt}`}</p>
         <p className="text-sm">{`${historyInfo.id}`}</p>
@@ -62,9 +66,9 @@ const HistoryGrid: React.FC<{ history: HistoryInterface[] }> = ({
 };
 
 const OptHistory: React.FC = () => {
-  const { history } = useHistory();
+  const { history, historyComplete } = useHistory();
   const [items, setItems] = useState<HistoryInterface[]>(history);
-  const [hasMore, setHasMore] = useState(true);
+  const hasMore = !historyComplete;
   const wss = useWebSocketData();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -77,7 +81,7 @@ const OptHistory: React.FC = () => {
 
   const fetchMoreData = () => {
     if (items.length >= history.length) {
-      setHasMore(false);
+      // setHasMore(false);
       return;
     }
   };
@@ -92,7 +96,6 @@ const OptHistory: React.FC = () => {
     });
     setIsLoading(false);
   };
-
   return (
     <ScrollArea className="w-full lg:h-[310px] xl:h-[340px] xl2:h-[380px] xl3:h-[480px] xl4:h-[500px] relative">
       <InfiniteScroll
@@ -101,23 +104,27 @@ const OptHistory: React.FC = () => {
         hasMore={hasMore}
         loader={<h4>Loading...</h4>}
         endMessage={
-          <p style={{ textAlign: "center" }}>
-            <b>You have seen it all!</b>
-          </p>
+          <>
+            {historyComplete && (
+              <p style={{ textAlign: "center" }}>
+                <b>You have seen it all!</b>
+              </p>
+            )}
+          </>
         }
       >
         <HistoryGrid history={items} />
       </InfiniteScroll>
       <Button onClick={addMoreItems} disabled={isLoading}>
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Carregar mais
-                </>
-              ) : (
-                "Carregar mais"
-              )}
-            </Button>
+        {isLoading ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Carregar mais
+          </>
+        ) : (
+          "Carregar mais"
+        )}
+      </Button>
     </ScrollArea>
   );
 };

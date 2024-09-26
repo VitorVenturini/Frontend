@@ -95,7 +95,7 @@ function UserLayout() {
   } = useSensors();
   const { setUsersPbx } = useUsersPbx();
   const { updateUserStauts } = useUsers();
-  const { history, addHistory } = useHistory();
+  const { history, addHistory,setHistoryComplete } = useHistory();
   const {
     setChat,
     allMessages,
@@ -551,10 +551,15 @@ function UserLayout() {
         setButtonTriggered(message.btn_id, false);
         break;
       case "getHistoryResult":
-        const historyArray = message.result;
-        historyArray.forEach((hist: any) => {
-          addHistory(hist);
-        });
+        if (message.result.length > 0) {
+          const historyArray = message.result;
+          historyArray.forEach((hist: any) => {
+            addHistory(hist);
+          });
+        } else {
+          setHistoryComplete(true)
+        }
+
         break;
 
       default:

@@ -1,4 +1,5 @@
 import { createContext, useState, useContext, ReactNode } from "react";
+import { SetStateAction } from "react";
 
 export interface HistoryInterface {
   id: string;
@@ -9,6 +10,7 @@ export interface HistoryInterface {
   status: string;
   prt: string;
   details: string;
+
 }
 
 interface HistoryContextType {
@@ -16,12 +18,15 @@ interface HistoryContextType {
   addHistory: (newHistory: HistoryInterface) => void;
  // updateHistory: (updatedHistory: HistoryInterface) => void;
   clearHistory: () => void;
+  setHistoryComplete: React.Dispatch<SetStateAction<boolean>>
+  historyComplete: boolean;
 }
 
 const HistoryContext = createContext<HistoryContextType | undefined>(undefined);
 
 export const HistoryProvider = ({ children }: { children: ReactNode }) => {
-  const [history, setHistoryState] = useState<HistoryInterface[]>([]);
+    const [history, setHistoryState] = useState<HistoryInterface[]>([]);
+    const [historyComplete, setHistoryComplete] = useState<boolean>(false);
 
   const addHistory = (newHistory: HistoryInterface) => {
     // Verifica se já existe uma entrada com o mesmo id
@@ -43,6 +48,8 @@ export const HistoryProvider = ({ children }: { children: ReactNode }) => {
       value={{
         history,
         addHistory,
+        setHistoryComplete,
+        historyComplete,
        // updateHistory,
         clearHistory,
       }}
