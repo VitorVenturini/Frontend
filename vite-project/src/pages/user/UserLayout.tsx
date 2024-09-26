@@ -38,6 +38,7 @@ import {
   UserPbxInterface,
   useUsersPbx,
 } from "@/components/users/usersPbx/UsersPbxContext";
+import { useRef } from "react";
 import { useCalls } from "@/components/calls/CallContext";
 import Loader from "@/components/Loader";
 import HeaderUser from "@/components/header/HeaderUser";
@@ -115,6 +116,7 @@ function UserLayout() {
   } = useCalls();
   const [selectedOptTop, setSelectedOptTop] = useState<string>("floor"); // default for top
   const [clickedUserTop, setClickedUserTop] = useState<string | null>(null);
+  const clickedUserTopRef = useRef<string | null>(null);
   const [selectedOptBottom, setSelectedOptBottom] = useState<string>("floor"); // default for bottom
   const [clickedUserBottom, setClickedUserBottom] = useState<string | null>(
     null
@@ -196,47 +198,15 @@ function UserLayout() {
         updateSensorButton(sensorDataReceived);
         updateGraphSensor(sensorDataReceived);
         break;
-      case "addThresholdNotification":
-        setPlayNotificationSound(true); // Toca o som de notificação
-        setTimeout(() => setPlayNotificationSound(false), 500);
-        //tratar a notificação sonora aqui
-        break;
-      case "delThresholdNotification":
-        //tratar a notificação sonora aqui
-        break;
+
       case "AlarmReceived":
         setButtonTriggered(message.btn_id, true);
-        const userStartAlarm = allUsers.filter((user) => {
-          return user.guid === message.src;
-        })[0];
-        // addHistory({
-        //   id: "",
-        //   guid: "",
-        //   from: "",
-        //   name: "TESTE",
-        //   date: message.date
-        //     ? format(new Date(message.date), "dd/MM HH:mm")
-        //     : format(new Date(), "dd/MM HH:mm"),
-
-        //   status: "",
-        //   prt: "",
-        //   details: "",
-        // });
-        // setPlayNotificationSound(true); // Toca o som de notificação
-        // setTimeout(() => setPlayNotificationSound(false), 500);
+        setPlayNotificationSound(true); // Toca o som de notificação
+        setTimeout(() => setPlayNotificationSound(false), 500);
         break;
       case "AlarmStopReceived":
-        setStopButtonTriggered(message.alarm, false);
-        const userStopAlarm = allUsers.filter((user) => {
-          return user.guid === message.src;
-        })[0];
-        // addHistory({
-        //   date: message.date
-        //     ? format(new Date(message.date), "dd/MM HH:mm")
-        //     : format(new Date(), "dd/MM HH:mm"),
-        //   message: `${userStopAlarm?.name} parou o alarme ${message.alarm}`,
-        //   type: "alarm",
-        // });
+        setStopButtonTriggered(message.alarm, false); // caso o usuário tenha mais de 1 botão com o mesmo código de alarme
+        setButtonTriggered(message.btn_id, false);
         break;
       case "DeleteButtonsSuccess":
         deleteButton(message.id_deleted);
@@ -483,18 +453,11 @@ function UserLayout() {
       case "Message": // mensagem do cara
         const newMsgFrom: ChatInterface = message.result[0];
         addChatMessage(newMsgFrom);
-        const userMsg = allUsers.filter((user) => {
-          return user.guid === message.result[0].from_guid;
-        })[0];
-        // addHistory({
-        //   date: message.result[0].date
-        //     ? format(new Date(message.result[0].date), "dd/MM HH:mm")
-        //     : format(new Date(), "dd/MM HH:mm"),
-        //   message: `Mensagem recebida de ${userMsg?.name}`,
-        //   type: "msg",
-        // });
-        setPlayNotificationSound(true); // Toca o som de notificação
-        setTimeout(() => setPlayNotificationSound(false), 500);
+        if (clickedUserTopRef.current !== newMsgFrom.from_guid) {
+          setPlayNotificationSound(true); // Toca o som de notificação
+          setTimeout(() => setPlayNotificationSound(false), 500);
+        }
+
         break;
       case "MessageResult": // minha mensagem
         const newMsgTo: ChatInterface = message.result[0];
@@ -611,6 +574,7 @@ function UserLayout() {
 
   const handleClickedUserTop = (newUser: string | null) => {
     setClickedUserTop(newUser);
+    clickedUserTopRef.current = newUser;
   };
 
   const handleOptChangeBottom = (newOpt: string) => {
@@ -620,7 +584,6 @@ function UserLayout() {
   const handleClickedUserBottom = (newUser: string | null) => {
     setClickedUserBottom(newUser);
   };
-
   return (
     <>
       <WebSocketProvider

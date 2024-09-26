@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import { useHistory,HistoryInterface } from '../history/HistoryContext';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Button } from '@/components/ui/button'; 
+import React, { useState, useEffect } from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { useHistory, HistoryInterface } from "../history/HistoryContext";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
 import { parse } from "date-fns";
 import { useWebSocketData } from "../websocket/WebSocketProvider";
-
 
 interface HistoryCellProps {
   historyInfo: HistoryInterface;
@@ -24,12 +23,14 @@ const HistoryCell: React.FC<HistoryCellProps> = ({ historyInfo }) => {
   );
 };
 
-const HistoryGrid: React.FC<{ history: HistoryInterface[] }> = ({ history }) => {
-  // ordenar por data 
+const HistoryGrid: React.FC<{ history: HistoryInterface[] }> = ({
+  history,
+}) => {
+  // ordenar por data
   const sortedHistory = [...history].sort((a, b) => {
-    const dateA = parse(a.date, "yyyy-MM-dd HH:mm:ss.SSS X", new Date()); 
+    const dateA = parse(a.date, "yyyy-MM-dd HH:mm:ss.SSS X", new Date());
     const dateB = parse(b.date, "yyyy-MM-dd HH:mm:ss.SSS X", new Date());
-    return dateB.getTime() - dateA.getTime(); 
+    return dateB.getTime() - dateA.getTime();
   });
 
   return (
@@ -50,7 +51,10 @@ const OptHistory: React.FC = () => {
   const wss = useWebSocketData();
 
   useEffect(() => {
-    setItems(history);
+    const sortedItems = [...history].sort(
+      (a, b) => parseInt(a.id) - parseInt(b.id)
+    );
+    setItems(sortedItems);
   }, [history]);
 
   const fetchMoreData = () => {
@@ -77,7 +81,7 @@ const OptHistory: React.FC = () => {
         hasMore={hasMore}
         loader={<h4>Loading...</h4>}
         endMessage={
-          <p style={{ textAlign: 'center' }}>
+          <p style={{ textAlign: "center" }}>
             <b>You have seen it all!</b>
           </p>
         }
