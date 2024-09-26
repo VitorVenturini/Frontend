@@ -52,7 +52,7 @@ const HistoryGrid: React.FC<{ history: HistoryInterface[] }> = ({
 
   return (
     <>
-      {sortedHistory.map((hist, index) => (
+      {sortedHistory.reverse().map((hist, index) => (
         <div key={index} className="w-full">
           <HistoryCell historyInfo={hist} />
         </div>
