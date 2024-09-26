@@ -1,5 +1,7 @@
 import { ButtonInterface } from "../buttons/buttonContext/ButtonsContext";
 import { useState, useEffect } from "react";
+import { UserInterface } from "../users/usersCore/UserContext";
+import { SensorInterface } from "../sensor/SensorContext";
 
 export const isTouchDevice = () => {
   return (
@@ -162,4 +164,28 @@ export const useMediaQuery = (query: string): boolean => {
   }, [query]);
 
   return matches;
+};
+export const replaceDataForName = (
+  users: UserInterface[],
+  guidOrEuid: string,
+  sensors: SensorInterface[]
+): string | undefined => {
+
+  const user = users?.filter((user) => {
+    return user.guid === guidOrEuid;
+  })[0];
+
+  if (user) {
+    return user.name;
+  }
+   const sensor = sensors?.filter((sensor) => {
+    return sensor.deveui === guidOrEuid;
+  })[0];
+  return sensor?.sensor_name;
+};
+export const filterButtonByID = (btnID: number, buttons: ButtonInterface[]): string | undefined => {
+  const button = buttons.filter((btn) =>{
+    return btn.id  === btnID
+  });
+  return button[0].button_name;
 };

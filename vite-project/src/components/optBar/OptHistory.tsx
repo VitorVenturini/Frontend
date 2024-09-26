@@ -6,40 +6,98 @@ import { Button } from "@/components/ui/button";
 import { parse } from "date-fns";
 import { useWebSocketData } from "../websocket/WebSocketProvider";
 import { Loader2 } from "lucide-react";
+import { format, parseISO } from "date-fns";
+import { Badge } from "@/components/ui/badge";
+import { cva } from "class-variance-authority";
+import { replaceDataForName } from "../utils/utilityFunctions";
+import { useUsers } from "../users/usersCore/UserContext";
+import { useSensors } from "../sensor/SensorContext";
+import { useButtons } from "../buttons/buttonContext/ButtonsContext";
+import { filterButtonByID } from "../utils/utilityFunctions";
+
 
 interface HistoryCellProps {
   historyInfo: HistoryInterface;
 }
 
+const badgeVariants = cva(
+  "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+  {
+    variants: {
+      variant: {
+        threshold:
+          "border-transparent bg-red-900 text-red-100 hover:bg-red-800",
+        status:
+          "border-transparent bg-green-900 text-green-100 hover:bg-green-800",
+        alarm:
+          "border-transparent bg-yellow-900 text-yellow-100 hover:bg-yellow-800",
+        message:
+          "border-transparent bg-blue-900 text-blue-100 hover:bg-blue-800",
+        default:
+          "border-transparent bg-gray-900 text-gray-100 hover:bg-gray-800",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
+  }
+);
+
 const HistoryCell: React.FC<HistoryCellProps> = ({ historyInfo }) => {
-  const getColorForName = (name: string) => {
-    switch (name) {
-      case "threshold":
-        return "bg-red-900"; // Exemplo de cor para 'threshold'
-      case "status":
-        return "bg-green-500"; // Exemplo de cor para 'status'
-      case "alarm":
-        return "bg-yellow-900"; // Exemplo de cor para 'alert'
-      case "message":
-        return "bg-blue-900"; // Exemplo de cor para 'message'
-      default:
-        return ""; // Cor padrão
-    }
+  const { users } = useUsers();
+  const { sensors } = useSensors();
+  const { buttons } = useButtons();
+  const isValidVariant = (
+    variant: string
+  ): variant is "threshold" | "status" | "alarm" | "message" | "default" => {
+    return ["threshold", "status", "alarm", "message", "default"].includes(
+      variant
+    );
   };
 
-  const colorClass = getColorForName(historyInfo.name);
+  const badgeVariant = badgeVariants({
+    variant: isValidVariant(historyInfo.name) ? historyInfo.name : "default",
+  });
+
+  let formattedDate = "Invalid date";
+  try {
+    const parsedDate = parseISO(historyInfo.date);
+    formattedDate = format(new Date(historyInfo.date as any), "dd/mm HH:mm");
+  } catch (error) {
+    console.error("Error parsing date:", error);
+  }
+  const truncatedPrt =
+    historyInfo.prt.length > 20
+      ? `${historyInfo.prt.slice(0, 20)}...`
+      : historyInfo.prt;
 
   return (
-    <div
-      className={`py-2 px-2 flex justify-between rounded-md my-2 items-center w-full mr-2 ${colorClass}`}
-    >
-      {" "}
-      <div className="flex items-center gap-1 ">
-        <p className="text-sm">{`${historyInfo.name} `}</p>
-        <p className="text-sm">{`${historyInfo.prt}`}</p>
-        <p className="text-sm">{`${historyInfo.id}`}</p>
+    <div className="flex flex-col bg-muted w-[500px] xl2:w-[700px] xl4:w-[1000px] mt-2 ">
+      <div className="flex gap-1 bg-card/50 px-2 py-1 justify-between items-center">
+        <div className="flex gap-1 ">
+          <p className="text-sm text-muted-foreground">
+            {replaceDataForName(users, historyInfo.from, sensors)}
+          </p>
+          <p className="text-sm text-muted">para</p>
+          <p className="text-sm text-muted-foreground">
+            {replaceDataForName(users, historyInfo.guid, sensors)}
+          </p>
+        </div>
+        <div className="flex items-center gap-1">
+          <p className="text-sm ">{filterButtonByID(parseInt(historyInfo.details),buttons)}</p>
+          <p className="text-xs text-muted-foreground">{historyInfo.id}</p>
+        </div>
       </div>
-      <p className="text-sm text-muted-foreground text-wrap mr-2 ">{`${historyInfo.date} `}</p>
+      <div className=" flex justify-between rounded-md my-2 items-center px-2 py-1">
+        <div className="flex items-center gap-1">
+          <span className={badgeVariant}>{historyInfo.name}</span>
+          <p className="text-sm font-black">{truncatedPrt}</p>
+          <p className="text-sm ">{historyInfo.status}</p>
+        </div>
+        <p className="text-sm text-muted-foreground text-wrap mr-2">
+          {formattedDate}
+        </p>
+      </div>
     </div>
   );
 };
@@ -57,7 +115,7 @@ const HistoryGrid: React.FC<{ history: HistoryInterface[] }> = ({
   return (
     <>
       {sortedHistory.reverse().map((hist, index) => (
-        <div key={index} className="w-full">
+        <div key={index} className="w-full gap-1 space-x-1">
           <HistoryCell historyInfo={hist} />
         </div>
       ))}
@@ -96,18 +154,35 @@ const OptHistory: React.FC = () => {
     });
     setIsLoading(false);
   };
+
   return (
-    <ScrollArea className="w-full lg:h-[310px] xl:h-[340px] xl2:h-[380px] xl3:h-[480px] xl4:h-[500px] relative">
+    <ScrollArea className="w-full lg:h-[310px] xl:h-[340px] xl2:h-[380px] xl3:h-[480px] xl4:h-[500px]  relative justify-center align-middle items-center">
       <InfiniteScroll
         dataLength={items.length}
+        className="justify-center align-middle items-center flex flex-col"
         next={fetchMoreData}
         hasMore={hasMore}
-        loader={<h4>Loading...</h4>}
+        loader={
+          <Button
+            onClick={addMoreItems}
+            disabled={isLoading}
+            variant="secondary"
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Carregar mais
+              </>
+            ) : (
+              "Carregar mais"
+            )}
+          </Button>
+        }
         endMessage={
           <>
             {historyComplete && (
               <p style={{ textAlign: "center" }}>
-                <b>You have seen it all!</b>
+                <b>Fim do histórico</b>
               </p>
             )}
           </>
@@ -115,16 +190,6 @@ const OptHistory: React.FC = () => {
       >
         <HistoryGrid history={items} />
       </InfiniteScroll>
-      <Button onClick={addMoreItems} disabled={isLoading}>
-        {isLoading ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Carregar mais
-          </>
-        ) : (
-          "Carregar mais"
-        )}
-      </Button>
     </ScrollArea>
   );
 };
