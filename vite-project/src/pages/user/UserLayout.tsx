@@ -51,6 +51,7 @@ import bleep from "@/assets/sounds/bleep.wav";
 import mobile from "@/assets/sounds/mobile.wav";
 import { checkButtonWarning } from "@/components/utils/utilityFunctions";
 import useWebSocket from "@/components/websocket/useWebSocket";
+import Loader2 from "@/components/Loader2";
 interface User {
   id: string;
   name: string;
@@ -599,7 +600,7 @@ function UserLayout() {
         onMessage={handleWebSocketMessage}
       >
         {isReconnecting ? (
-          <Loader />
+          <Loader2 />
         ) : (
           <>
             {isLoading ? (

@@ -48,6 +48,7 @@ import {
 import { useAppConfig } from "@/components/options/ConfigContext";
 import Loader from "@/components/Loader";
 import useWebSocket from "@/components/websocket/useWebSocket";
+import Loader2 from "@/components/Loader2";
 
 function AdminLayout() {
   const account = useAccount();
@@ -461,7 +462,7 @@ function AdminLayout() {
       onMessage={handleWebSocketMessage}
     >
       {isReconnecting ? (
-        <Loader />
+        <Loader2 />
       ) : (
         <>
           {isLoading ? (
