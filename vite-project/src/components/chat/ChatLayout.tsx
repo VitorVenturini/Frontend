@@ -1,4 +1,4 @@
-import { Send } from "lucide-react";
+import { Paperclip, Send } from "lucide-react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { UserInterface, useUsers } from "../users/usersCore/UserContext";
@@ -6,7 +6,12 @@ import { useWebSocketData } from "../websocket/WebSocketProvider";
 import { useEffect, useState } from "react";
 import { ChatInterface, useChat } from "./ChatContext";
 import React from "react";
-import { MessageList, MessageType, MessageBox } from "react-chat-elements";
+import {
+  MessageList,
+  MessageType,
+  MessageBox,
+  PhotoMessage,
+} from "react-chat-elements";
 import "react-chat-elements/dist/main.css"; // CSS da biblioteca de chat
 import { useRef } from "react";
 import { format } from "date-fns";
@@ -15,6 +20,8 @@ import { useAccount } from "../account/AccountContext";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import data, { Emoji, EmojiMartData } from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
+import { Label } from "../ui/label";
+import { isBase64File } from "../utils/utilityFunctions";
 interface ChatProps {
   userToChat: UserInterface;
 }
@@ -32,6 +39,7 @@ export default function ChatLayout({ userToChat }: ChatProps) {
   const messageListRef = useRef<any>(null);
   const endOfMessagesRef = useRef<HTMLDivElement>(null);
   const [isHistoryLoaded, setIsHistoryLoaded] = useState(false);
+
   // estudar sobre  o useRef ~ pietro
 
   useEffect(() => {
@@ -72,6 +80,23 @@ export default function ChatLayout({ userToChat }: ChatProps) {
   const handleEmojiSelect = (emoji: any) => {
     setShowPicker(false);
     setMessage((prevMessage) => prevMessage + emoji.native);
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        wss?.sendMessage({
+          api: "user",
+          mt: "Message",
+          to: userToChat.guid,
+          msg: base64String,
+        });
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   useEffect(() => {
@@ -161,31 +186,64 @@ export default function ChatLayout({ userToChat }: ChatProps) {
             // se nao for , entao nao coloca nada , sem o risquinho , igual no whatsapp
             status = undefined;
           }
-
-          return (
-            <MessageBox
-              key={index}
-              id={message.id}
-              position={isMyMessage ? "right" : "left"}
-              type="text"
-              title={isMyMessage ? myAccountInfo.name : userToChat.name}
-              text={messageText}
-              className="text-black"
-              status={status as any}
-              focus={false}
-              date={new Date(message.date as Date) || new Date()}
-              dateString={
-                format(new Date(message.date as any), "HH:mm") ||
-                format(new Date(), "HH:mm")
-              }
-              titleColor={isMyMessage ? "blue" : "green"}
-              forwarded={false}
-              replyButton={false}
-              removeButton={false}
-              notch={false}
-              retracted={false}
-            />
-          );
+          if (isBase64File(messageText)) {
+            return (
+              <MessageBox
+                key={index}
+                id={message.id}
+                position={isMyMessage ? "right" : "left"}
+                title={isMyMessage ? myAccountInfo.name : userToChat.name}
+                className="text-black"
+                focus={false}
+                date={new Date(message.date as Date) || new Date()}
+                dateString={
+                  format(new Date(message.date as any), "HH:mm") ||
+                  format(new Date(), "HH:mm")
+                }
+                titleColor={isMyMessage ? "blue" : "green"}
+                data={{
+                  uri: messageText, 
+                  status: status as any,
+                  width: 200, 
+                  height: 200, 
+                  alt: "image", 
+                }}
+                text="" 
+                forwarded={false} 
+                replyButton={false} 
+                removeButton={false} 
+                notch={false} 
+                retracted={false} 
+                status={status as any} 
+                type="photo" 
+              />
+            );
+          } else {
+            return (
+              <MessageBox
+                key={index}
+                id={message.id}
+                position={isMyMessage ? "right" : "left"}
+                type="text"
+                title={isMyMessage ? myAccountInfo.name : userToChat.name}
+                text={messageText}
+                className="text-black"
+                status={status as any}
+                focus={false}
+                date={new Date(message.date as Date) || new Date()}
+                dateString={
+                  format(new Date(message.date as any), "HH:mm") ||
+                  format(new Date(), "HH:mm")
+                }
+                titleColor={isMyMessage ? "blue" : "green"}
+                forwarded={false}
+                replyButton={false}
+                removeButton={false}
+                notch={false}
+                retracted={false}
+              />
+            );
+          }
         })}
         <div ref={endOfMessagesRef} />
       </div>
@@ -240,6 +298,26 @@ export default function ChatLayout({ userToChat }: ChatProps) {
             {showPicker && (
               <Picker data={data} onEmojiSelect={handleEmojiSelect} />
             )}
+          </div>
+          <div>
+            {/* Botão de upload de arquivo */}
+            <Button
+              size="icon"
+              type="button"
+              variant="secondary"
+              className="rounded-full"
+            >
+              <Label htmlFor="file-upload" className="cursor-pointer">
+                <Paperclip />
+              </Label>
+              <Input
+                id="file-upload"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleFileChange}
+              />
+            </Button>
           </div>
           <Button size="icon" type="submit" variant="ghost">
             <Send />

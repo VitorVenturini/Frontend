@@ -14,8 +14,8 @@ import { useState, useEffect } from "react";
 import { ChatList } from "react-chat-elements";
 import "react-chat-elements/dist/main.css";
 
-import { User } from "lucide-react";
-import { getInitials, generateAvatar } from "../utils/utilityFunctions";
+import { Image, User } from "lucide-react";
+import { getInitials, generateAvatar, isBase64File } from "../utils/utilityFunctions";
 import OptChat from "../optBar/OptChat";
 import { useAccount } from "../account/AccountContext";
 
@@ -72,7 +72,6 @@ export default function MessageList({ user, onClick, clickedUser }: OptProps) {
 
   const initials = getInitials(user.name || "Usuário");
   const avatarBase64 = generateAvatar(initials as string);
-
   return (
     <div>
       <div onClick={onClick}>
@@ -87,8 +86,14 @@ export default function MessageList({ user, onClick, clickedUser }: OptProps) {
               alt: "",
               title: user.name || "Usuário sem nome",
               subtitle: lastestMessage
-                ? lastestMessage[lastestMessage.length - 1]?.msg
-                : "",
+                ? isBase64File(lastestMessage[lastestMessage.length - 1]?.msg as string) ? 
+                (
+                  <span style={{ display: 'flex', alignItems: 'center' }}>
+                    <Image size={16} style={{ marginRight: '5px' }} />
+                    Imagem
+                  </span>
+                ) as any  : lastestMessage[lastestMessage.length - 1]?.msg : ""
+               ,
               avatarSize: "large",
               date: lastestMessage
                 ? (lastestMessage[lastestMessage.length - 1]?.date as Date)

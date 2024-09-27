@@ -49,8 +49,12 @@
 .rce-citem-body--top-time{
   color: white !important;
 }
-
-
+.rce-mbox-time{
+  color:  black !important;
+}
+.rce-mbox-photo--img__block-item {
+  display: none !important;
+}
 @layer base {
   :root {
     --background: 0 0% 100%;

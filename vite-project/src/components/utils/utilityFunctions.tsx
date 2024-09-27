@@ -197,3 +197,10 @@ export const filterButtonByID = (
     return button.button_name
   }
 };
+
+export function isBase64File(base64String: string): boolean {
+  //regex dus guri p verificar se é base64 
+  const base64Pattern = /^data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+);base64,/;
+
+  return base64Pattern.test(base64String);
+}
