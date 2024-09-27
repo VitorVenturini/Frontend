@@ -599,10 +599,10 @@ function UserLayout() {
         token={account.accessToken}
         onMessage={handleWebSocketMessage}
       >
-        {isReconnecting ? (
-          <Loader2 />
-        ) : (
-          <>
+      
+          
+        
+          
             {isLoading ? (
               <Loader />
             ) : (
@@ -644,8 +644,7 @@ function UserLayout() {
                 </div>
               </>
             )}
-          </>
-        )}
+      
       </WebSocketProvider>
       {/* soundPlayer para Notificações Gerais */}
       <SoundPlayer soundSrc={mobile} play={playNotificationSound} />

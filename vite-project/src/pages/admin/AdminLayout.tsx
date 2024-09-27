@@ -461,9 +461,6 @@ function AdminLayout() {
       token={account.accessToken}
       onMessage={handleWebSocketMessage}
     >
-      {isReconnecting ? (
-        <Loader2 />
-      ) : (
         <>
           {isLoading ? (
             <Loader />
@@ -482,7 +479,7 @@ function AdminLayout() {
             </>
           )}
         </>
-      )}
+  
     </WebSocketProvider>
   );
 }

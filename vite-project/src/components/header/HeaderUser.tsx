@@ -35,6 +35,7 @@ export default function HeaderUser() {
       <div className="flex gap-5 align-middle justify-between items-center ">
         <div className="flex align-middle items-center justify-between gap-24 basis-1/4">
           <div className="flex align-middle items-center gap-2">
+            
             {isReconnecting && <Loader2/>}
             <Button
               variant="ghost"
