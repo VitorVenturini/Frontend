@@ -47,6 +47,7 @@ import {
 } from "@/components/users/usersPbx/UsersPbxContext";
 import { useAppConfig } from "@/components/options/ConfigContext";
 import Loader from "@/components/Loader";
+import useWebSocket from "@/components/websocket/useWebSocket";
 
 function AdminLayout() {
   const account = useAccount();
@@ -76,6 +77,7 @@ function AdminLayout() {
   const { setLoadBarData, clearLoadBarData, setApiKeyInfo, setPbxStatus } =
     useAppConfig();
   var allBtn: ButtonInterface[];
+  const { isReconnecting } = useWebSocket(account.accessToken);
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
     switch (message.mt) {
@@ -83,6 +85,7 @@ function AdminLayout() {
         const firstButtons: ButtonInterface[] = JSON.parse(message.result);
         setButtons(firstButtons);
         allBtn = firstButtons;
+        setIsLoading(false);
         break;
       case "InsertButtonSuccess":
         const newButton: ButtonInterface = message.result;
@@ -131,7 +134,6 @@ function AdminLayout() {
         setSensors([]);
         clearSensors();
         addSensorName(sensorData);
-        setIsLoading(false);
         break;
       case "SelectActionsMessageSuccess":
         console.log("allActions ", JSON.stringify(message.result));
@@ -458,20 +460,26 @@ function AdminLayout() {
       token={account.accessToken}
       onMessage={handleWebSocketMessage}
     >
-      {isLoading ? (
+      {isReconnecting ? (
         <Loader />
       ) : (
         <>
-          <HeaderApp />
-          {/* Your admin layout here */}
-          <Routes>
-            <Route path="account" element={<Account />} />
-            <Route path="buttons" element={<ButtonsPage />} />
-            <Route path="actions" element={<ActionsPage />} />
-            <Route path="options" element={<Options />} />
-            <Route path="reports" element={<Reports />} />
-            {/* Add more admin routes as needed */}
-          </Routes>
+          {isLoading ? (
+            <Loader />
+          ) : (
+            <>
+              <HeaderApp />
+              {/* Your admin layout here */}
+              <Routes>
+                <Route path="account" element={<Account />} />
+                <Route path="buttons" element={<ButtonsPage />} />
+                <Route path="actions" element={<ActionsPage />} />
+                <Route path="options" element={<Options />} />
+                <Route path="reports" element={<Reports />} />
+                {/* Add more admin routes as needed */}
+              </Routes>
+            </>
+          )}
         </>
       )}
     </WebSocketProvider>

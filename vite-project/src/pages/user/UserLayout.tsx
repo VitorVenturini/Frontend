@@ -50,6 +50,7 @@ import SoundPlayer from "@/components/soundPlayer/SoundPlayer";
 import bleep from "@/assets/sounds/bleep.wav";
 import mobile from "@/assets/sounds/mobile.wav";
 import { checkButtonWarning } from "@/components/utils/utilityFunctions";
+import useWebSocket from "@/components/websocket/useWebSocket";
 interface User {
   id: string;
   name: string;
@@ -95,7 +96,7 @@ function UserLayout() {
   } = useSensors();
   const { setUsersPbx } = useUsersPbx();
   const { updateUserStauts } = useUsers();
-  const { history, addHistory,setHistoryComplete } = useHistory();
+  const { history, addHistory, setHistoryComplete } = useHistory();
   const {
     setChat,
     allMessages,
@@ -130,6 +131,7 @@ function UserLayout() {
   const { users } = useUsers();
   const [playNotificationSound, setPlayNotificationSound] = useState(false); // som para notificação
   const [playCallSound, setPlayCallSound] = useState(false); //som para chamada
+  const { isReconnecting } = useWebSocket(account.accessToken);
 
   const isAllowedButtonType = (type: string) => {
     const allowedTypes = [
@@ -189,7 +191,7 @@ function UserLayout() {
         break;
       case "SelectAllSensorInfoResultSrc":
         const allSensors = JSON.parse(message.result);
-        setSensors(allSensors) // setar todos os sensores para manipularmos no app todo
+        setSensors(allSensors); // setar todos os sensores para manipularmos no app todo
         // allSensors.forEach((sensor: SensorInterface) => updateSensorButton(sensor));
         addSensorsButton(allSensors); // info dos sensores para ser exibido nos botões
         setIsLoading(false);
@@ -558,7 +560,7 @@ function UserLayout() {
             addHistory(hist);
           });
         } else {
-          setHistoryComplete(true)
+          setHistoryComplete(true);
         }
 
         break;
@@ -596,45 +598,51 @@ function UserLayout() {
         token={account.accessToken}
         onMessage={handleWebSocketMessage}
       >
-        {isLoading ? (
+        {isReconnecting ? (
           <Loader />
         ) : (
           <>
-            <div className="flex justify-center items-center min-h-screen">
-              <div className="">
-                <div className="flex gap-1">
-                  <div className="gap-1 space-y-1">
-                    <InteractiveGridCopy
-                      interactive="top"
-                      onKeyChange={handleOptChangeTop}
-                      buttons={buttons}
-                      selectedUser={account as any}
-                      selectedOpt={selectedOptTop}
-                      clickedUser={clickedUserTop}
-                      setClickedUser={handleClickedUserTop}
-                    />
-                    <InteractiveGridCopy
-                      interactive="bottom"
-                      onKeyChange={handleOptChangeBottom}
-                      buttons={buttons}
-                      selectedUser={account as any}
-                      selectedOpt={selectedOptBottom}
-                      clickedUser={clickedUserBottom}
-                      setClickedUser={handleClickedUserBottom}
-                    />
-                  </div>
+            {isLoading ? (
+              <Loader />
+            ) : (
+              <>
+                <div className="flex justify-center items-center min-h-screen">
+                  <div className="">
+                    <div className="flex gap-1">
+                      <div className="gap-1 space-y-1">
+                        <InteractiveGridCopy
+                          interactive="top"
+                          onKeyChange={handleOptChangeTop}
+                          buttons={buttons}
+                          selectedUser={account as any}
+                          selectedOpt={selectedOptTop}
+                          clickedUser={clickedUserTop}
+                          setClickedUser={handleClickedUserTop}
+                        />
+                        <InteractiveGridCopy
+                          interactive="bottom"
+                          onKeyChange={handleOptChangeBottom}
+                          buttons={buttons}
+                          selectedUser={account as any}
+                          selectedOpt={selectedOptBottom}
+                          clickedUser={clickedUserBottom}
+                          setClickedUser={handleClickedUserBottom}
+                        />
+                      </div>
 
-                  <ButtonsGridPage
-                    buttonsGrid={buttons}
-                    selectedUser={account as any}
-                    // selectedOpt={selectedOpt}
-                    // onOptChange={handleOptChange}
-                    // clickedUser={clickedUser}
-                  />
+                      <ButtonsGridPage
+                        buttonsGrid={buttons}
+                        selectedUser={account as any}
+                        // selectedOpt={selectedOpt}
+                        // onOptChange={handleOptChange}
+                        // clickedUser={clickedUser}
+                      />
+                    </div>
+                    <HeaderUser />
+                  </div>
                 </div>
-                <HeaderUser />
-              </div>
-            </div>
+              </>
+            )}
           </>
         )}
       </WebSocketProvider>
