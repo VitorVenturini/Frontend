@@ -9,6 +9,8 @@ dotenv.config();
 
 const isLocalhost = process.env.VITE_HOSTNAME === "localhost";
 const hostPort = Number(process.env.HOST_PORT) || 3000;  
+const keyPath = process.env.KEY_PATH
+const pemPath = process.env.PEM_PATH
 
 export default defineConfig({
   plugins: [react()],
@@ -23,10 +25,10 @@ export default defineConfig({
         server: {
           https: {
             key: fs.readFileSync(
-              path.resolve(__dirname, "/home/wecom/wecom.com.br.key")
+              path.resolve(__dirname, keyPath as string)
             ),
             cert: fs.readFileSync(
-              path.resolve(__dirname, "/home/wecom/wecom.com.br.pem")
+              path.resolve(__dirname, pemPath as string)
             ),
           },
           host: "0.0.0.0", // para permitir acesso externo
