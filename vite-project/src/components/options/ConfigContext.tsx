@@ -255,12 +255,12 @@ export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
       licenseInstallDate,
     });
   };
-  const addBackupConfig = (newBackupConfig: Partial<BackupConfig>) => {
+  const addBackupConfig = (newBackupConfig: BackupConfig) => {
     setBackupConfig((prevBackupConfig) => ({
       ...prevBackupConfig,
       ...newBackupConfig,
     }));
-  };
+};
 
   const clearBackupConfig = () => {
     setBackupConfig({

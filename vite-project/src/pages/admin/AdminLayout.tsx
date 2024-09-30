@@ -45,7 +45,7 @@ import {
   UserPbxInterface,
   useUsersPbx,
 } from "@/components/users/usersPbx/UsersPbxContext";
-import { useAppConfig } from "@/components/options/ConfigContext";
+import { BackupConfig, useAppConfig } from "@/components/options/ConfigContext";
 import Loader from "@/components/Loader";
 import useWebSocket from "@/components/websocket/useWebSocket";
 import Loader2 from "@/components/Loader2";
@@ -76,8 +76,13 @@ function AdminLayout() {
   const myAccountInfo = JSON.parse(localStorage.getItem("Account") || "{}");
   const [isLoading, setIsLoading] = useState(true);
   var pbxUser: UserPbxInterface[];
-  const { setLoadBarData, clearLoadBarData, setApiKeyInfo, setPbxStatus, addBackupConfig } =
-    useAppConfig();
+  const {
+    setLoadBarData,
+    clearLoadBarData,
+    setApiKeyInfo,
+    setPbxStatus,
+    addBackupConfig,
+  } = useAppConfig();
   var allBtn: ButtonInterface[];
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
@@ -168,8 +173,6 @@ function AdminLayout() {
         });
         break;
       case "ConfigResult":
-
-
         // Filtra as entradas para a Google API Key
         const apiKeyEntries = message.result.filter(
           (item: any) => item.entry === "googleApiKey"
@@ -192,50 +195,182 @@ function AdminLayout() {
         // Envia a informação combinada ao contexto
         setPbxStatus(pbxData);
 
-         
+        // smtp
+        const smtpConfig = message.result.filter(
+          (item: any) => item.entry === "smtpConfig"
+        );
+        //backup
+        const backupEntries = message.result.filter(
+          (item: any) =>
+            item.entry === "backupUsername" ||
+            item.entry === "backupPassword" ||
+            item.entry === "backupHost" ||
+            item.entry === "backupMethod" ||
+            item.entry === "backupPath" ||
+            item.entry === "backupFrequency" ||
+            item.entry === "backupTime" ||
+            item.entry === "backupDay"
+        );
 
+        const allBackupInfo: BackupConfig = {
+          backupUsername: backupEntries.find(
+            (item: any) => item.entry === "backupUsername"
+          ) || {
+            entry: "backupUsername",
+            value: "",
+            createdAt: null,
+            updatedAt: null,
+          },
+          backupPassword: backupEntries.find(
+            (item: any) => item.entry === "backupPassword"
+          ) || {
+            entry: "backupPassword",
+            value: "",
+            createdAt: null,
+            updatedAt: null,
+          },
+          backupPath: backupEntries.find(
+            (item: any) => item.entry === "backupPath"
+          ) || {
+            entry: "backupPath",
+            value: "",
+            createdAt: null,
+            updatedAt: null,
+          },
+          backupHost: backupEntries.find(
+            (item: any) => item.entry === "backupHost"
+          ) || {
+            entry: "backupHost",
+            value: "",
+            createdAt: null,
+            updatedAt: null,
+          },
+          backupFrequency: backupEntries.find(
+            (item: any) => item.entry === "backupFrequency"
+          ) || {
+            entry: "backupFrequency",
+            value: "",
+            createdAt: null,
+            updatedAt: null,
+          },
+          backupHour: backupEntries.find(
+            (item: any) => item.entry === "backupTime"
+          ) || {
+            entry: "backupHour",
+            value: "",
+            createdAt: null,
+            updatedAt: null,
+          },
+          backupDay: backupEntries.find(
+            (item: any) => item.entry === "backupDay"
+          ) || {
+            entry: "backupDay",
+            value: "",
+            createdAt: null,
+            updatedAt: null,
+          },
+          backupMethod: backupEntries.find(
+            (item: any) => item.entry === "backupMethod"
+          ) || {
+            entry: "backupMethod",
+            value: "",
+            createdAt: null,
+            updatedAt: null,
+          },
+        };
+        console.log(JSON.stringify(allBackupInfo));
+        addBackupConfig(allBackupInfo);
         break;
       case "UpdateConfigBackupScheduleSuccess":
         if (message.result) {
           toast({
             description: "Agendamento de Backup atualizado com sucesso",
           });
-          const backupConfig = message.result.filter(
-            (item: any) => item.entry === "backupConfig"
+          //backup
+          const backupEntries = message.result.filter(
+            (item: any) =>
+              item.entry === "backupUsername" ||
+              item.entry === "backupPassword" ||
+              item.entry === "backupHost" ||
+              item.entry === "backupMethod" ||
+              item.entry === "backupPath" ||
+              item.entry === "backupFrequency" ||
+              item.entry === "backupTime" ||
+              item.entry === "backupDay"
           );
-          const smtpConfig = message.result.filter(
-            (item: any) => item.entry === "smtpConfig"
-          );
-          const backupUsername = message.result.filter(
-            (item: any) => item.entry === "backupUsername"
-          );
-          const backupPassword = message.result.filter(
-            (item: any) => item.entry === "backupPassword"
-          );
-          const backupHost = message.result.filter(
-            (item: any) => item.entry === "backupHost"
-          );
-          const backupMethod = message.result.filter(
-            (item: any) => item.entry === "backupMethod"
-          );
-          const backupPath = message.result.filter(
-            (item: any) => item.entry === "backupPath"
-          );
-          const backupFrequency = message.result.filter(
-            (item: any) => item.entry === "backupFrequency"
-          );
-          const backupTime = message.result.filter(
-            (item: any) => item.entry === "backupTime"
-          );
-          const backupDay = message.result.filter(
-            (item: any) => item.entry === "backupDay"
-          );
-          addBackupConfig(backupConfig);
+
+          const allBackupInfo: BackupConfig = {
+            backupUsername: backupEntries.find(
+              (item: any) => item.entry === "backupUsername"
+            ) || {
+              entry: "backupUsername",
+              value: "",
+              createdAt: null,
+              updatedAt: null,
+            },
+            backupPassword: backupEntries.find(
+              (item: any) => item.entry === "backupPassword"
+            ) || {
+              entry: "backupPassword",
+              value: "",
+              createdAt: null,
+              updatedAt: null,
+            },
+            backupPath: backupEntries.find(
+              (item: any) => item.entry === "backupPath"
+            ) || {
+              entry: "backupPath",
+              value: "",
+              createdAt: null,
+              updatedAt: null,
+            },
+            backupHost: backupEntries.find(
+              (item: any) => item.entry === "backupHost"
+            ) || {
+              entry: "backupHost",
+              value: "",
+              createdAt: null,
+              updatedAt: null,
+            },
+            backupFrequency: backupEntries.find(
+              (item: any) => item.entry === "backupFrequency"
+            ) || {
+              entry: "backupFrequency",
+              value: "",
+              createdAt: null,
+              updatedAt: null,
+            },
+            backupHour: backupEntries.find(
+              (item: any) => item.entry === "backupTime"
+            ) || {
+              entry: "backupHour",
+              value: "",
+              createdAt: null,
+              updatedAt: null,
+            },
+            backupDay: backupEntries.find(
+              (item: any) => item.entry === "backupDay"
+            ) || {
+              entry: "backupDay",
+              value: "",
+              createdAt: null,
+              updatedAt: null,
+            },
+            backupMethod: backupEntries.find(
+              (item: any) => item.entry === "backupMethod"
+            ) || {
+              entry: "backupMethod",
+              value: "",
+              createdAt: null,
+              updatedAt: null,
+            },
+          };
+          console.log(JSON.stringify(allBackupInfo));
+          addBackupConfig(allBackupInfo);
         }
         break;
-        
-      case "PbxStatusResult":
 
+      case "PbxStatusResult":
         if (message.result) {
           const status = String(message.result);
           setPbxStatus((prevPbxStatus) => {
@@ -505,25 +640,24 @@ function AdminLayout() {
       token={account.accessToken}
       onMessage={handleWebSocketMessage}
     >
-        <>
-          {isLoading ? (
-            <Loader />
-          ) : (
-            <>
-              <HeaderApp />
-              {/* Your admin layout here */}
-              <Routes>
-                <Route path="account" element={<Account />} />
-                <Route path="buttons" element={<ButtonsPage />} />
-                <Route path="actions" element={<ActionsPage />} />
-                <Route path="options" element={<Options />} />
-                <Route path="reports" element={<Reports />} />
-                {/* Add more admin routes as needed */}
-              </Routes>
-            </>
-          )}
-        </>
-  
+      <>
+        {isLoading ? (
+          <Loader />
+        ) : (
+          <>
+            <HeaderApp />
+            {/* Your admin layout here */}
+            <Routes>
+              <Route path="account" element={<Account />} />
+              <Route path="buttons" element={<ButtonsPage />} />
+              <Route path="actions" element={<ActionsPage />} />
+              <Route path="options" element={<Options />} />
+              <Route path="reports" element={<Reports />} />
+              {/* Add more admin routes as needed */}
+            </Routes>
+          </>
+        )}
+      </>
     </WebSocketProvider>
   );
 }
