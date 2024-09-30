@@ -7,7 +7,7 @@ import {
   useAccount,
 } from "@/components/account/AccountContext";
 import { Button } from "@/components/ui/button";
-import { ReactElement, useContext, useState } from "react";
+import React, { ReactElement, useContext, useState } from "react";
 
 import Logout from "@/components/logout/Logout";
 import { WebSocketProvider } from "@/components/websocket/WebSocketProvider";
@@ -21,7 +21,6 @@ import { FullScreenButton } from "@/components/FullScreanButton";
 
 import { SensorInterface, useSensors } from "@/components/sensor/SensorContext";
 import { useHistory } from "@/components/history/HistoryContext";
-import { useEffect } from "react";
 import { format } from "date-fns";
 import { useToast } from "@/components/ui/use-toast";
 import {
@@ -131,8 +130,6 @@ function UserLayout() {
   const [comboStart, setComboStart] = useState(false);
   const { users } = useUsers();
   const [playNotificationSound, setPlayNotificationSound] = useState(false); // som para notificação
-  const [playCallSound, setPlayCallSound] = useState(false); //som para chamada
-  const { isReconnecting } = useWebSocket(account.accessToken);
 
   const isAllowedButtonType = (type: string) => {
     const allowedTypes = [
@@ -204,9 +201,16 @@ function UserLayout() {
         break;
 
       case "AlarmReceived":
+        const filteredBtn = allBtn.filter((btn) => {
+          return btn.id === message.btn_id;
+        })[0];
         setButtonTriggered(message.btn_id, true);
-        setPlayNotificationSound(true); // Toca o som de notificação
-        setTimeout(() => setPlayNotificationSound(false), 500);
+        
+        if (!filteredBtn.muted) {
+          setPlayNotificationSound(true); // Toca o som de notificação
+          setTimeout(() => setPlayNotificationSound(false), 500);
+        }
+
         break;
       case "AlarmStopReceived":
         setStopButtonTriggered(message.alarm, false); // caso o usuário tenha mais de 1 botão com o mesmo código de alarme
@@ -599,52 +603,47 @@ function UserLayout() {
         token={account.accessToken}
         onMessage={handleWebSocketMessage}
       >
-      
-          
-        
-          
-            {isLoading ? (
+        {/* {isLoading ? (
               <Loader />
-            ) : (
-              <>
-                <div className="flex justify-center items-center min-h-screen">
-                  <div className="">
-                    <div className="flex gap-1">
-                      <div className="gap-1 space-y-1">
-                        <InteractiveGridCopy
-                          interactive="top"
-                          onKeyChange={handleOptChangeTop}
-                          buttons={buttons}
-                          selectedUser={account as any}
-                          selectedOpt={selectedOptTop}
-                          clickedUser={clickedUserTop}
-                          setClickedUser={handleClickedUserTop}
-                        />
-                        <InteractiveGridCopy
-                          interactive="bottom"
-                          onKeyChange={handleOptChangeBottom}
-                          buttons={buttons}
-                          selectedUser={account as any}
-                          selectedOpt={selectedOptBottom}
-                          clickedUser={clickedUserBottom}
-                          setClickedUser={handleClickedUserBottom}
-                        />
-                      </div>
-
-                      <ButtonsGridPage
-                        buttonsGrid={buttons}
-                        selectedUser={account as any}
-                        // selectedOpt={selectedOpt}
-                        // onOptChange={handleOptChange}
-                        // clickedUser={clickedUser}
-                      />
-                    </div>
-                    <HeaderUser />
-                  </div>
+            ) : ( */}
+        <>
+          <div className="flex justify-center items-center min-h-screen">
+            <div className="">
+              <div className="flex gap-1">
+                <div className="gap-1 space-y-1">
+                  <InteractiveGridCopy
+                    interactive="top"
+                    onKeyChange={handleOptChangeTop}
+                    buttons={buttons}
+                    selectedUser={account as any}
+                    selectedOpt={selectedOptTop}
+                    clickedUser={clickedUserTop}
+                    setClickedUser={handleClickedUserTop}
+                  />
+                  <InteractiveGridCopy
+                    interactive="bottom"
+                    onKeyChange={handleOptChangeBottom}
+                    buttons={buttons}
+                    selectedUser={account as any}
+                    selectedOpt={selectedOptBottom}
+                    clickedUser={clickedUserBottom}
+                    setClickedUser={handleClickedUserBottom}
+                  />
                 </div>
-              </>
-            )}
-      
+
+                <ButtonsGridPage
+                  buttonsGrid={buttons}
+                  selectedUser={account as any}
+                  // selectedOpt={selectedOpt}
+                  // onOptChange={handleOptChange}
+                  // clickedUser={clickedUser}
+                />
+              </div>
+              <HeaderUser />
+            </div>
+          </div>
+        </>
+        {/* )} */}
       </WebSocketProvider>
       {/* soundPlayer para Notificações Gerais */}
       <SoundPlayer soundSrc={mobile} play={playNotificationSound} />

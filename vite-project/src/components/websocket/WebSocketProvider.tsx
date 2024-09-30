@@ -1,11 +1,4 @@
-// WebSocketContext.tsx
-
-import React, {
-  createContext,
-  useContext,
-  ReactNode,
-  useCallback,
-} from "react";
+import React, { createContext, useContext, ReactNode } from "react";
 import useWebSocket, { WebSocketHook } from "./useWebSocket";
 
 type WebSocketContextType = WebSocketHook | null;
@@ -29,6 +22,7 @@ export const WebSocketProvider = ({
   children,
   onMessage,
 }: WebSocketProviderProps) => {
+  // Chamar o hook diretamente no componente, sem useMemo
   const webSocketHook = useWebSocket(token, onMessage);
 
   return (
