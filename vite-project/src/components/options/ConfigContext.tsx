@@ -51,7 +51,6 @@ export interface LicenseActive {
     used: number;
   };
 }
-
 export interface License {
   status: string;
   licenseKey: LicenseDetail;
@@ -67,12 +66,74 @@ export interface NotificationsInterface {
   createdAt?: string | null;
   updatedAt?: string | null;
 }
+export interface BackupConfig {
+  backupUsername:{
+    entry: string;
+    value: string;
+    createdAt: string | null;
+    updatedAt: string | null;
+  }
+  backupPassword:{
+    entry: string;
+    value: string;
+    createdAt: string | null;
+    updatedAt: string | null;
+  }
+
+  backupPath:{
+    entry: string;
+    value: string;
+    createdAt: string | null;
+    updatedAt: string | null;
+  }
+  backupHost:{
+    entry: string;
+    value: string;
+    createdAt: string | null;
+    updatedAt: string | null;
+  }
+  backupFrequency:{
+    entry: string;
+    value: string;
+    createdAt: string | null;
+    updatedAt: string | null;
+
+  }
+  backupHour:{
+    entry: string;
+    value: string;
+    createdAt: string | null;
+    updatedAt: string | null;
+  }
+  backupDay:{
+    entry: string;
+    value: string;
+    createdAt: string | null;
+    updatedAt: string | null;
+  }
+  backupMethod:{
+    entry: string;
+    value: string;
+    createdAt: string | null;
+    updatedAt: string | null;
+  }
+
+}
+
+export interface SmtpConfig {
+  entry: string;
+  value: string;
+  createdAt: string | null;
+  updatedAt: string | null;
+}
 
 interface AppConfigContextType {
   pbxStatus: PbxInterface[];
   apiKeyInfo: GoogleApiKeyInterface[];
   licenseApi: License;
   loadBarData: LoaderBarProps;
+  backupConfig: BackupConfig;
+  smtpConfig: SmtpConfig[];
   notification: NotificationsInterface[];
   addNotifications: (notification: NotificationsInterface) => void;
   setPbxStatus: React.Dispatch<React.SetStateAction<PbxInterface[]>>;
@@ -91,6 +152,8 @@ interface AppConfigContextType {
   clearApiKeyInfo: () => void;
   clearLicense: () => void;
   clearLoadBarData: () => void;
+  addBackupConfig: (backupConfig: BackupConfig) => void;
+  clearBackupConfig: () => void;
 }
 
 const AppConfigContext = createContext<AppConfigContextType | undefined>(
@@ -101,6 +164,17 @@ export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
   const [pbxStatus, setPbxStatus] = useState<PbxInterface[]>([]);
   const [apiKeyInfo, setApiKeyInfo] = useState<GoogleApiKeyInterface[]>([]);
   const [notification, setNotifications] = useState<NotificationsInterface[]>([]);
+  const [backupConfig, setBackupConfig] = useState<BackupConfig>({
+    backupUsername: { entry: "", value: "", createdAt: null, updatedAt: null },
+    backupPassword: { entry: "", value: "", createdAt: null, updatedAt: null },
+    backupPath: { entry: "", value: "", createdAt: null, updatedAt: null },
+    backupHost: { entry: "", value: "", createdAt: null, updatedAt: null },
+    backupFrequency: { entry: "", value: "", createdAt: null, updatedAt: null },
+    backupHour: { entry: "", value: "", createdAt: null, updatedAt: null },
+    backupDay: { entry: "", value: "", createdAt: null, updatedAt: null },
+    backupMethod: { entry: "", value: "", createdAt: null, updatedAt: null },
+  });
+  const [smtpConfig, setSmtpConfig] = useState<SmtpConfig[]>([]);
   const [licenseApi, setLicense] = useState<License>({
     status: "active",
     licenseKey: { value: "", createdAt: null, updatedAt: null },
@@ -181,6 +255,25 @@ export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
       licenseInstallDate,
     });
   };
+  const addBackupConfig = (newBackupConfig: Partial<BackupConfig>) => {
+    setBackupConfig((prevBackupConfig) => ({
+      ...prevBackupConfig,
+      ...newBackupConfig,
+    }));
+  };
+
+  const clearBackupConfig = () => {
+    setBackupConfig({
+      backupUsername: { entry: "backupUsername", value: "", createdAt: null, updatedAt: null },
+      backupPassword: { entry: "backupPassword", value: "", createdAt: null, updatedAt: null },
+      backupPath: { entry: "backupPath", value: "", createdAt: null, updatedAt: null },
+      backupHost: { entry: "backupHost", value: "", createdAt: null, updatedAt: null },
+      backupFrequency: { entry: "backupFrequency", value: "", createdAt: null, updatedAt: null },
+      backupHour: { entry: "backupHour", value: "", createdAt: null, updatedAt: null },
+      backupDay: { entry: "backupDay", value: "", createdAt: null, updatedAt: null },
+      backupMethod: { entry: "backupMethod", value: "", createdAt: null, updatedAt: null },
+    });
+  };
 
   return (
     <AppConfigContext.Provider
@@ -190,6 +283,8 @@ export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
         licenseApi,
         loadBarData,
         notification,
+        backupConfig,
+        smtpConfig,
         setPbxStatus,
         addNotifications,
         setApiKeyInfo,
@@ -202,6 +297,8 @@ export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
         clearApiKeyInfo,
         clearLicense,
         clearLoadBarData,
+        addBackupConfig,
+        clearBackupConfig,
       }}
     >
       {children}

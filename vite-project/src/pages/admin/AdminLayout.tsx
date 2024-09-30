@@ -49,6 +49,7 @@ import { useAppConfig } from "@/components/options/ConfigContext";
 import Loader from "@/components/Loader";
 import useWebSocket from "@/components/websocket/useWebSocket";
 import Loader2 from "@/components/Loader2";
+import { set } from "date-fns";
 
 function AdminLayout() {
   const account = useAccount();
@@ -75,7 +76,7 @@ function AdminLayout() {
   const myAccountInfo = JSON.parse(localStorage.getItem("Account") || "{}");
   const [isLoading, setIsLoading] = useState(true);
   var pbxUser: UserPbxInterface[];
-  const { setLoadBarData, clearLoadBarData, setApiKeyInfo, setPbxStatus } =
+  const { setLoadBarData, clearLoadBarData, setApiKeyInfo, setPbxStatus, addBackupConfig } =
     useAppConfig();
   var allBtn: ButtonInterface[];
   const { isReconnecting } = useWebSocket(account.accessToken);
@@ -168,6 +169,8 @@ function AdminLayout() {
         });
         break;
       case "ConfigResult":
+
+
         // Filtra as entradas para a Google API Key
         const apiKeyEntries = message.result.filter(
           (item: any) => item.entry === "googleApiKey"
@@ -190,8 +193,50 @@ function AdminLayout() {
         // Envia a informação combinada ao contexto
         setPbxStatus(pbxData);
 
+         
+
         break;
+      case "UpdateConfigBackupScheduleSuccess":
+        if (message.result) {
+          toast({
+            description: "Agendamento de Backup atualizado com sucesso",
+          });
+          const backupConfig = message.result.filter(
+            (item: any) => item.entry === "backupConfig"
+          );
+          const smtpConfig = message.result.filter(
+            (item: any) => item.entry === "smtpConfig"
+          );
+          const backupUsername = message.result.filter(
+            (item: any) => item.entry === "backupUsername"
+          );
+          const backupPassword = message.result.filter(
+            (item: any) => item.entry === "backupPassword"
+          );
+          const backupHost = message.result.filter(
+            (item: any) => item.entry === "backupHost"
+          );
+          const backupMethod = message.result.filter(
+            (item: any) => item.entry === "backupMethod"
+          );
+          const backupPath = message.result.filter(
+            (item: any) => item.entry === "backupPath"
+          );
+          const backupFrequency = message.result.filter(
+            (item: any) => item.entry === "backupFrequency"
+          );
+          const backupTime = message.result.filter(
+            (item: any) => item.entry === "backupTime"
+          );
+          const backupDay = message.result.filter(
+            (item: any) => item.entry === "backupDay"
+          );
+          addBackupConfig(backupConfig);
+        }
+        break;
+        
       case "PbxStatusResult":
+
         if (message.result) {
           const status = String(message.result);
           setPbxStatus((prevPbxStatus) => {

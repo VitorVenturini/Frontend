@@ -11,7 +11,6 @@ import texts from "@/_data/texts.json";
 import { useLanguage } from "@/components/language/LanguageContext";
 import React, { useState } from "react";
 
-
 import { addDays, format, set } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 
@@ -25,7 +24,7 @@ import {
 } from "@/components/ui/popover";
 
 import { Separator } from "@/components/ui/separator";
-import { Loader2 } from "lucide-react";
+import { Loader2, CircleAlert } from "lucide-react";
 
 import {
   Select,
@@ -43,58 +42,71 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAccount } from "@/components/account/AccountContext";
 import { useWebSocketData } from "../websocket/WebSocketProvider";
+import { useAppConfig } from "./ConfigContext";
 
 export default function CardDataBase() {
   const [date, setDate] = React.useState<Date>();
-
-
-
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading1, setIsLoading1] = useState(false);
+  const [isLoading2, setIsLoading2] = useState(false);
+  const [isLoading3, setIsLoading3] = useState(false);
+  const {backupConfig}  = useAppConfig();
   const wss = useWebSocketData();
-
+  console.log("filto de backup" + backupConfig);
   const { language } = useLanguage();
-  const [backupUsername, setBackupUsername] = useState("");
-  const [backupPassword, setBackupPassword] = useState("");
-  const [backupFrequency, setBackupFrequency] = useState("");
-  const [backupDay, setBackupDay] = useState("");
-  const [backupHour, setBackupHour] = useState("");
-  const [backupHost, setBackupHost] = useState("");
-  const [backupPath, setBackupPath] = useState("");
-  const [backupMethod, setBackupMethod] = useState("");
+  const [backupUsername, setBackupUsername] = useState<string>(backupConfig?.backupUsername?.value || '');
+  const [backupPassword, setBackupPassword] = useState<string>(backupConfig?.backupPassword?.value || '');
+  const [backupFrequency, setBackupFrequency] = useState<string>(backupConfig?.backupFrequency?.value || '');
+  const [backupDay, setBackupDay] = useState<string>(backupConfig?.backupDay?.value || '');
+  const [backupHour, setBackupHour] = useState<string>(backupConfig?.backupHour.value || '');
+  const [backupHost, setBackupHost] = useState<string>(backupConfig?.backupHost?.value || '');
+  const [backupPath, setBackupPath] = useState(backupConfig?.backupPath || { entry: '', value: '', createdAt: null, updatedAt: null });
+  const [backupMethod, setBackupMethod] = useState<string>(backupConfig?.backupMethod.value || '');
   const account = useAccount();
-  const message = {
-    api: "admin",
-    mt: "UpdateConfigBackupSchedule",
-    backupUsername,
-    backupPassword,
-    backupFrequency,
-    backupDay,
-    backupHour,
-    backupHost,
-    backupPath,
-    backupMethod,
-  };
 
   const handleUpdateConfigBackupSchedule = () => {
-    const message = {
-      api: 'admin',
-      action: 'UpdateConfigBackupSchedule',
-      backupUsername,
-      backupPassword,
-      backupFrequency,
-      backupDay,
-      backupHour,
-      backupHost,
-      backupPath,
-      backupMethod,
-    };
-
-    // Enviar a mensagem para a API
-    console.log('Mensagem para a API:', message);
-    // Aqui você pode usar fetch ou axios para enviar a mensagem para a API
+    setIsLoading1(true);
+    console.log("Mensagem para a API:");
+    wss?.sendMessage({
+      api: "admin",
+      mt: "UpdateConfigBackupSchedule",
+      backupUsername: backupUsername,
+      backupPassword: backupPassword,
+      backupFrequency: backupFrequency,
+      backupDay: backupDay,
+      backupHour: backupHour,
+      backupHost: backupHost,
+      backupPath: backupPath,
+      backupMethod: backupMethod,
+    });
+    setIsLoading1(false);
   };
+  const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setBackupUsername(event.target.value);
+  };
+  const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setBackupPassword(event.target.value);
+  };
+  const handleFrequencyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setBackupFrequency(event.target.value as string);
+  };
+  const handleDayChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setBackupDay(event.target.value);
+  };
+  const handleHourChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setBackupHour(event.target.value);
+  };
+  const handleHostChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setBackupHost(event.target.value);
+  };
+  const handlePathChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setBackupPath({ ...backupPath, value: event.target.value });
+  };
+  const handleMethodChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setBackupMethod(event.target.value as string);
+  }
+
   const backUp = async () => {
-    setIsLoading(true);
+    setIsLoading2(true);
     try {
       const response = await fetch(host + "/api/backupDataBase", {
         headers: {
@@ -111,7 +123,8 @@ export default function CardDataBase() {
         // Cria um link temporário para o download do PDF
         const a = document.createElement("a");
         a.href = url;
-        a.download = response.headers.get("Content-Disposition") || "backup.dump"; // Define o nome do arquivo de download
+        a.download =
+          response.headers.get("Content-Disposition") || "backup.dump"; // Define o nome do arquivo de download
         document.body.appendChild(a);
         a.click(); // Simula um clique no link para iniciar o download
 
@@ -126,12 +139,11 @@ export default function CardDataBase() {
     } catch (error) {
       console.error("Erro ao executar o backup:", error);
     }
-    setIsLoading(false);
+    setIsLoading2(false);
   };
   const backUpFiles = async () => {
-
-    setIsLoading(true);
-    console.log(date)
+    setIsLoading3(true);
+    console.log(date);
     try {
       const response = await fetch(host + "/api/backupFiles", {
         method: "POST",
@@ -169,12 +181,8 @@ export default function CardDataBase() {
     } catch (error) {
       console.error("Erro ao executar o backup:", error);
     }
-    setIsLoading(false);
+    setIsLoading3(false);
   };
-
-  function handleMessage() {
-    console.log("message", message), wss?.sendMessage(message);
-  }
 
   return (
     <div className="flex gap-2">
@@ -187,83 +195,78 @@ export default function CardDataBase() {
         </CardHeader>
         <CardContent className="grid gap-4 py-9">
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-end" htmlFor="buttonName">
-              Destino
+            <Label className="text-end" htmlFor="path">
+              Pasta de Destino
             </Label>
             <Input
-              className="col-span-2"
-              id="buttonName"
-              placeholder="Escreva seu destino"
-              value={backupHost}
-              onChange={(e) => setBackupHost(e.target.value)}
+              className="col-span-3"
+              id="patch"
+              placeholder={backupPath.value}
+              value={backupPath.value}
+              onChange={handlePathChange}
               required
             />
-            {/* {nameButton.trim() === "" && (
-            <div className="text-sm text-red-400 flex gap-1 align-middle items-center p-2 col-start-4">
-              <CircleAlert size={15} />
-              {texts[language].alarmButtonRequired}
-            </div>
-          )} */}
+            
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-end" htmlFor="buttonName">
+            <Label className="text-end" htmlFor="host">
+              Host
+            </Label>
+            <Input
+              className="col-span-3"
+              id="patch"
+              placeholder="Escreva seu destino"
+              value={backupHost}
+              onChange={handleHostChange}
+              required
+            />
+
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label className="text-end" htmlFor="backupUsername">
               Usuário
             </Label>
             <Input
-              className="col-span-2"
-              id="buttonName"
+            type="text"
+              className="col-span-3"
+              id="backupUsername"
               placeholder="Escreva seu usuário"
               value={backupUsername}
-              onChange={(e) => setBackupUsername(e.target.value)}
+              onChange={handleUsernameChange}
               required
             />
-            {/* {nameButton.trim() === "" && (
-            <div className="text-sm text-red-400 flex gap-1 align-middle items-center p-2 col-start-4">
-              <CircleAlert size={15} />
-              {texts[language].alarmButtonRequired}
-            </div>
-          )} */}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-end" htmlFor="buttonName">
+            <Label className="text-end" htmlFor="backupPassword">
               Senha
             </Label>
             <Input
-              className="col-span-2"
-              id="buttonName"
+              className="col-span-3"
+              id="backupPassword"
               placeholder="Digite sua senha"
               value={backupPassword}
-              onChange={(e) => setBackupPassword(e.target.value)}
+              onChange={handlePasswordChange}
               required
             />
-            {/* {nameButton.trim() === "" && (
-            <div className="text-sm text-red-400 flex gap-1 align-middle items-center p-2 col-start-4">
-              <CircleAlert size={15} />
-              {texts[language].alarmButtonRequired}
-            </div>
-          )} */}
+
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-end" htmlFor="buttonName">
+            <Label className="text-end" htmlFor="backupHost">
               Protocolo
             </Label>
             <Select onValueChange={(value) => setBackupMethod(value)}>
-
-              <SelectTrigger className="col-span-2">
+              <SelectTrigger className="col-span-3">
                 <SelectValue placeholder="selecione um Protocolo" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectItem value="RptCalls">Semanal</SelectItem>
+                  <SelectItem value="ftp">FTP</SelectItem>
+                  <SelectItem value="scp">SCP</SelectItem>
+                  <SelectItem value="webdav">Webdav</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
-            {/* {nameButton.trim() === "" && (
-            <div className="text-sm text-red-400 flex gap-1 align-middle items-center p-2 col-start-4">
-              <CircleAlert size={15} />
-              {texts[language].alarmButtonRequired}
-            </div>
-          )} */}
+  
           </div>
 
           <Separator className="mt-6" />
@@ -275,7 +278,7 @@ export default function CardDataBase() {
           </CardHeader>
 
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-end" htmlFor="buttonName">
+            <Label className="text-end" htmlFor="backupFrequency">
               Frequencia
             </Label>
             <Select onValueChange={(value) => setBackupFrequency(value)}>
@@ -284,15 +287,15 @@ export default function CardDataBase() {
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectItem value="RptCalls">Semanal</SelectItem>
-                  <SelectItem value="RptActivities">Díario</SelectItem>
-                  <SelectItem value="RptAvailability">Mensal</SelectItem>
-                  <SelectItem value="RptMessages">Bimestral</SelectItem>
+    
+                  <SelectItem value="1">Mensal</SelectItem>
+                  <SelectItem value="3">Trimestral</SelectItem>
+                  <SelectItem value="6">Semestral</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-end" htmlFor="buttonName">
               Dia
             </Label>
@@ -302,13 +305,37 @@ export default function CardDataBase() {
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectItem value="Segunda">Segunda</SelectItem>
-                <SelectItem value="Terça">Terça</SelectItem>
-                <SelectItem value="Quarta">Quarta</SelectItem>
-                <SelectItem value="Quinta">Quinta</SelectItem>
-                <SelectItem value="Sexta">Sexta</SelectItem>
-                <SelectItem value="Sábado">Sábado</SelectItem>
-                <SelectItem value="Domingo">Domingo</SelectItem>
+                <SelectItem value="01">01</SelectItem>
+                <SelectItem value="02">02</SelectItem>
+                <SelectItem value="03">03</SelectItem>
+                <SelectItem value="04">04</SelectItem>
+                <SelectItem value="05">05</SelectItem>
+                <SelectItem value="06">06</SelectItem>
+                <SelectItem value="07">07</SelectItem>
+                <SelectItem value="08">08</SelectItem>
+                <SelectItem value="09">09</SelectItem>
+                <SelectItem value="10">10</SelectItem>
+                <SelectItem value="11">11</SelectItem>
+                <SelectItem value="12">12</SelectItem>
+                <SelectItem value="13">13</SelectItem>
+                <SelectItem value="14">14</SelectItem>
+                <SelectItem value="15">15</SelectItem>
+                <SelectItem value="16">16</SelectItem>
+                <SelectItem value="17">17</SelectItem>
+                <SelectItem value="18">18</SelectItem>
+                <SelectItem value="19">19</SelectItem>
+                <SelectItem value="20">20</SelectItem>
+                <SelectItem value="21">21</SelectItem>
+                <SelectItem value="22">22</SelectItem>
+                <SelectItem value="23">23</SelectItem>
+                <SelectItem value="24">24</SelectItem>
+                <SelectItem value="25">25</SelectItem>
+                <SelectItem value="26">26</SelectItem>
+                <SelectItem value="27">27</SelectItem>
+                <SelectItem value="28">28</SelectItem>
+                <SelectItem value="29">29</SelectItem>
+                <SelectItem value="30">30</SelectItem>
+
               </SelectGroup>
             </SelectContent>
           </Select>
@@ -351,92 +378,93 @@ export default function CardDataBase() {
           </div>
         </CardContent>
         <CardFooter className="flex justify-end">
-        <Button onClick={handleUpdateConfigBackupSchedule} disabled={isLoading}>
-          {isLoading ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Atualizando...
-            </>
-          ) : (
-            "Atualizar"
-          )}
-        </Button>
+          <Button
+            onClick={handleUpdateConfigBackupSchedule}
+            disabled={isLoading1}
+          >
+            {isLoading1 ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Atualizando
+              </>
+            ) : (
+              "Atualizar"
+            )}
+          </Button>
         </CardFooter>
       </Card>
       <div className="flec col gap-2 space-y-2">
-      <Card>
-        <CardHeader>
-          <CardTitle>Banco de dados</CardTitle>
-          <CardDescription>Backup de todo o banco de dados</CardDescription>
-        </CardHeader>
-        <CardFooter className="flex justify-end">
-        <Button onClick={backUp} disabled={isLoading}>
-              {isLoading ? (
+        <Card>
+          <CardHeader>
+            <CardTitle>Banco de dados</CardTitle>
+            <CardDescription>Backup de todo o banco de dados</CardDescription>
+          </CardHeader>
+          <CardFooter className="flex justify-end">
+            <Button onClick={backUp} disabled={isLoading2}>
+              {isLoading2 ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Download 
+                  Download
                 </>
               ) : (
-                "Login"
+                "Download"
               )}
             </Button>
-        </CardFooter>
-      </Card>
-      <Card >
-        <CardHeader>
-          <CardTitle>Backup de arquivos</CardTitle>
-          <CardDescription>Selecione uma data para fazer o backup de arquivos</CardDescription>
-        </CardHeader>
-        <CardContent>
-        <div className="grid grid-cols-2 items-center gap-4">
-          <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
-            Com início em
-          </h4>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant={"outline"}
-                className={cn(
-                  "w-[280px] justify-start text-left font-normal",
-                  !date && "text-muted-foreground"
-                )}
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {date ? (
-                         (
-                          format(date, "LLL dd, y")
-                        )
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
-              </Button>
-              
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0">
-              <Calendar
-                mode="single"
-                selected={date}
-                onSelect={setDate}
-                initialFocus
-              />
-            </PopoverContent>
-          </Popover>
-        </div>
-        </CardContent>
-        <CardFooter className="flex justify-end">
-        <Button onClick={backUpFiles} disabled={isLoading}>
-              {isLoading ? (
+          </CardFooter>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Backup de arquivos</CardTitle>
+            <CardDescription>
+              Selecione uma data para fazer o backup de arquivos
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 items-center gap-4">
+              <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
+                Com início em
+              </h4>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "w-[280px] justify-start text-left font-normal",
+                      !date && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {date ? (
+                      format(date, "LLL dd, y")
+                    ) : (
+                      <span>Escolha uma data</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                  <Calendar
+                    mode="single"
+                    selected={date}
+                    onSelect={setDate}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+          </CardContent>
+          <CardFooter className="flex justify-end">
+            <Button onClick={backUpFiles} disabled={isLoading3}>
+              {isLoading3 ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Download 
+                  Download
                 </>
               ) : (
-                "Login"
+                "Download "
               )}
             </Button>
-          
-        </CardFooter>
-      </Card>
+          </CardFooter>
+        </Card>
       </div>
     </div>
   );
