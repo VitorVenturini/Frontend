@@ -9,11 +9,11 @@ import {
 
 import texts from "@/_data/texts.json";
 import { useLanguage } from "@/components/language/LanguageContext";
+import React, { useState } from "react";
 
-import * as React from "react";
 import { addDays, format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
-
+import { useWebSocketData } from "../websocket/WebSocketProvider";
 import { cn } from "@/lib/utils";
 
 import { Calendar } from "@/components/ui/calendar";
@@ -53,13 +53,33 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAccount } from "@/components/account/AccountContext";
 
-
 export default function CardDataBase() {
   const [date, setDate] = React.useState<Date>();
-  console.log(date)
+  console.log(date);
+  const wss = useWebSocketData();
 
   const { language } = useLanguage();
+  const [backupUsername, setBackupUsername] = useState("");
+  const [backupPassword, setBackupPassword] = useState("");
+  const [backupFrequency, setBackupFrequency] = useState("");
+  const [backupDay, setBackupDay] = useState("");
+  const [backupHour, setBackupHour] = useState("");
+  const [backupHost, setBackupHost] = useState("");
+  const [backupPath, setBackupPath] = useState("");
+  const [backupMethod, setBackupMethod] = useState("");
   const account = useAccount();
+  const message = {
+    api: "admin",
+    mt: "UpdateConfigBackupSchedule",
+    backupUsername,
+    backupPassword,
+    backupFrequency,
+    backupDay,
+    backupHour,
+    backupHost,
+    backupPath,
+    backupMethod,
+  };
 
   const backUp = async () => {
     try {
@@ -69,7 +89,6 @@ export default function CardDataBase() {
           "x-auth": account.accessToken || "",
         },
         method: "GET",
-        
       });
       if (response.ok) {
         console.log(response);
@@ -96,19 +115,19 @@ export default function CardDataBase() {
     }
   };
   const backUpFiles = async () => {
-    console.log(date)
+    console.log(date);
     try {
       const response = await fetch(host + "/api/backupFiles", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "x-auth": account.accessToken || "",
-          
         },
         body: JSON.stringify({
-          from: date ? format(date, "yyyy/MM/dd") : format(new Date(), "yyyy/MM/dd"),
+          from: date
+            ? format(date, "yyyy/MM/dd")
+            : format(new Date(), "yyyy/MM/dd"),
         }),
-        
       });
       if (response.ok) {
         console.log(response);
@@ -119,7 +138,7 @@ export default function CardDataBase() {
         const a = document.createElement("a");
         a.href = url;
         a.download = "BACKUP" + ".dump"; // Define o nome do arquivo de download
-        
+
         document.body.appendChild(a);
         a.click(); // Simula um clique no link para iniciar o download
 
@@ -135,8 +154,13 @@ export default function CardDataBase() {
       console.error("Erro ao executar o backup:", error);
     }
   };
+
+  function handleMessage() {
+    console.log("message", message), wss?.sendMessage(message);
+  }
+
   return (
-<div className="flex gap-2">
+    <div className="flex gap-2">
       <Card>
         <CardHeader>
           <CardTitle>Agendamento de Backup</CardTitle>
@@ -226,8 +250,8 @@ export default function CardDataBase() {
             </div>
           )} */}
           </div>
-          
-          <Separator className="mt-6"/>
+
+          <Separator className="mt-6" />
           <CardHeader>
             <CardTitle>Recorrência</CardTitle>
             <CardDescription>
@@ -236,7 +260,7 @@ export default function CardDataBase() {
           </CardHeader>
 
           <div className="grid grid-cols-4 items-center gap-4">
-          <Label className="text-end" htmlFor="buttonName">
+            <Label className="text-end" htmlFor="buttonName">
               Frequencia
             </Label>
             <Select>
@@ -245,7 +269,6 @@ export default function CardDataBase() {
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                
                   <SelectItem value="RptCalls">Semanal</SelectItem>
                   <SelectItem value="RptActivities">Díario</SelectItem>
                   <SelectItem value="RptAvailability">Mensal</SelectItem>
@@ -255,7 +278,7 @@ export default function CardDataBase() {
             </Select>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-          <Label className="text-end" htmlFor="buttonName">
+            <Label className="text-end" htmlFor="buttonName">
               Dia
             </Label>
             <Select>
@@ -272,7 +295,7 @@ export default function CardDataBase() {
               </SelectContent>
             </Select>
             <Label className="text-end" htmlFor="buttonName">
-             Hora
+              Hora
             </Label>
             <Select>
               <SelectTrigger className="col-span-1">
@@ -280,7 +303,6 @@ export default function CardDataBase() {
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                
                   <SelectItem value="RptCalls">Semanal</SelectItem>
                   <SelectItem value="RptActivities">Díario</SelectItem>
                   <SelectItem value="RptAvailability">Mensal</SelectItem>
@@ -291,66 +313,64 @@ export default function CardDataBase() {
           </div>
         </CardContent>
         <CardFooter className="flex justify-end">
-          <Button onClick={null}> Salvar </Button>
+          <Button onClick={handleMessage}> Salvar </Button>
         </CardFooter>
       </Card>
       <div className="flec col gap-2 space-y-2">
-      <Card>
-        <CardHeader>
-          <CardTitle>Banco de dados</CardTitle>
-          <CardDescription>Backup de todo o banco de dados</CardDescription>
-        </CardHeader>
-        <CardFooter className="flex justify-end">
-          <Button onClick={backUp}> Download </Button>
-        </CardFooter>
-      </Card>
-      <Card >
-        <CardHeader>
-          <CardTitle>Backup de arquivos</CardTitle>
-          <CardDescription>Selecione uma data para fazer o backup de arquivos</CardDescription>
-        </CardHeader>
-        <CardContent>
-        <div className="grid grid-cols-2 items-center gap-4">
-          <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
-            Com início em
-          </h4>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant={"outline"}
-                className={cn(
-                  "w-[280px] justify-start text-left font-normal",
-                  !date && "text-muted-foreground"
-                )}
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {date ? (
-                         (
-                          format(date, "LLL dd, y")
-                        )
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
-              </Button>
-              
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0">
-              <Calendar
-                mode="single"
-                selected={date}
-                onSelect={setDate}
-                initialFocus
-              />
-            </PopoverContent>
-          </Popover>
-        </div>
-        </CardContent>
-        <CardFooter className="flex justify-end">
-          <Button onClick={backUpFiles}> Download </Button>
-        </CardFooter>
-      </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Banco de dados</CardTitle>
+            <CardDescription>Backup de todo o banco de dados</CardDescription>
+          </CardHeader>
+          <CardFooter className="flex justify-end">
+            <Button onClick={backUp}> Download </Button>
+          </CardFooter>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Backup de arquivos</CardTitle>
+            <CardDescription>
+              Selecione uma data para fazer o backup de arquivos
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 items-center gap-4">
+              <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
+                Com início em
+              </h4>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "w-[280px] justify-start text-left font-normal",
+                      !date && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {date ? (
+                      format(date, "LLL dd, y")
+                    ) : (
+                      <span>Pick a date</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                  <Calendar
+                    mode="single"
+                    selected={date}
+                    onSelect={setDate}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+          </CardContent>
+          <CardFooter className="flex justify-end">
+            <Button onClick={backUpFiles}> Download </Button>
+          </CardFooter>
+        </Card>
       </div>
-
     </div>
   );
 }
