@@ -9,11 +9,11 @@ import {
 
 import texts from "@/_data/texts.json";
 import { useLanguage } from "@/components/language/LanguageContext";
+import React, { useState } from "react";
 
-import * as React from "react";
+
 import { addDays, format, set } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
-import { useState } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -42,21 +42,38 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAccount } from "@/components/account/AccountContext";
-
+import { useWebSocketData } from "../websocket/WebSocketProvider";
 
 export default function CardDataBase() {
   const [date, setDate] = React.useState<Date>();
+
+
+
   const [isLoading, setIsLoading] = useState(false);
-  const [backupUsername, setBackupUsername] = useState('');
-  const [backupPassword, setBackupPassword] = useState('');
-  const [backupFrequency, setBackupFrequency] = useState('');
-  const [backupDay, setBackupDay] = useState('');
-  const [backupHour, setBackupHour] = useState('');
-  const [backupHost, setBackupHost] = useState('');
-  const [backupPath, setBackupPath] = useState('');
-  const [backupMethod, setBackupMethod] = useState('');
+  const wss = useWebSocketData();
+
   const { language } = useLanguage();
+  const [backupUsername, setBackupUsername] = useState("");
+  const [backupPassword, setBackupPassword] = useState("");
+  const [backupFrequency, setBackupFrequency] = useState("");
+  const [backupDay, setBackupDay] = useState("");
+  const [backupHour, setBackupHour] = useState("");
+  const [backupHost, setBackupHost] = useState("");
+  const [backupPath, setBackupPath] = useState("");
+  const [backupMethod, setBackupMethod] = useState("");
   const account = useAccount();
+  const message = {
+    api: "admin",
+    mt: "UpdateConfigBackupSchedule",
+    backupUsername,
+    backupPassword,
+    backupFrequency,
+    backupDay,
+    backupHour,
+    backupHost,
+    backupPath,
+    backupMethod,
+  };
 
   const handleUpdateConfigBackupSchedule = () => {
     const message = {
@@ -85,7 +102,6 @@ export default function CardDataBase() {
           "x-auth": account.accessToken || "",
         },
         method: "GET",
-        
       });
       if (response.ok) {
         console.log(response);
@@ -113,6 +129,7 @@ export default function CardDataBase() {
     setIsLoading(false);
   };
   const backUpFiles = async () => {
+
     setIsLoading(true);
     console.log(date)
     try {
@@ -121,12 +138,12 @@ export default function CardDataBase() {
         headers: {
           "Content-Type": "application/json",
           "x-auth": account.accessToken || "",
-          
         },
         body: JSON.stringify({
-          from: date ? format(date, "yyyy/MM/dd") : format(new Date(), "yyyy/MM/dd"),
+          from: date
+            ? format(date, "yyyy/MM/dd")
+            : format(new Date(), "yyyy/MM/dd"),
         }),
-        
       });
       if (response.ok) {
         console.log(response);
@@ -136,8 +153,8 @@ export default function CardDataBase() {
         // Cria um link temporário para o download do PDF
         const a = document.createElement("a");
         a.href = url;
-        a.download = response.headers.get("Content-Disposition") || "backup.zip"; // Define o nome do arquivo de download
-        
+        a.download = "BACKUP" + ".dump"; // Define o nome do arquivo de download
+
         document.body.appendChild(a);
         a.click(); // Simula um clique no link para iniciar o download
 
@@ -154,8 +171,13 @@ export default function CardDataBase() {
     }
     setIsLoading(false);
   };
+
+  function handleMessage() {
+    console.log("message", message), wss?.sendMessage(message);
+  }
+
   return (
-<div className="flex gap-2">
+    <div className="flex gap-2">
       <Card>
         <CardHeader>
           <CardTitle>Agendamento de Backup</CardTitle>
@@ -243,8 +265,8 @@ export default function CardDataBase() {
             </div>
           )} */}
           </div>
-          
-          <Separator className="mt-6"/>
+
+          <Separator className="mt-6" />
           <CardHeader>
             <CardTitle>Recorrência</CardTitle>
             <CardDescription>
@@ -253,7 +275,7 @@ export default function CardDataBase() {
           </CardHeader>
 
           <div className="grid grid-cols-4 items-center gap-4">
-          <Label className="text-end" htmlFor="buttonName">
+            <Label className="text-end" htmlFor="buttonName">
               Frequencia
             </Label>
             <Select onValueChange={(value) => setBackupFrequency(value)}>
@@ -262,7 +284,6 @@ export default function CardDataBase() {
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                
                   <SelectItem value="RptCalls">Semanal</SelectItem>
                   <SelectItem value="RptActivities">Díario</SelectItem>
                   <SelectItem value="RptAvailability">Mensal</SelectItem>
@@ -272,7 +293,7 @@ export default function CardDataBase() {
             </Select>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-          <Label className="text-end" htmlFor="buttonName">
+            <Label className="text-end" htmlFor="buttonName">
               Dia
             </Label>
             <Select onValueChange={(value) => setBackupDay(value)}>
@@ -417,7 +438,6 @@ export default function CardDataBase() {
         </CardFooter>
       </Card>
       </div>
-
     </div>
   );
 }

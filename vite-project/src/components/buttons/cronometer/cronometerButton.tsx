@@ -99,7 +99,7 @@ export default function CronometerButton({ button, handleClick }: ButtonProps) {
       <div className="flex w-full justify-end">
         {isRunning ? (
           <button
-            className="bg-red-500 text-white p-1 px-2 rounded flex justify-end"
+            className="bg-red-500 text-white p-1 px-2 rounded lg:text-[10px] xl3:text-lg flex justify-end"
             onClick={handleStopClick}
           >
             Parar
@@ -108,7 +108,7 @@ export default function CronometerButton({ button, handleClick }: ButtonProps) {
           <>
             {time === 0 ? (
               <button
-                className="bg-green-500 text-white p-1 px-2 rounded"
+                className="bg-green-500 text-white lg:text-[10px] xl3:text-lg p-1 px-2 rounded"
                 onClick={handleStartClick}
               >
                 Iniciar
@@ -116,13 +116,13 @@ export default function CronometerButton({ button, handleClick }: ButtonProps) {
             ) : (
               <div className="flex justify-between w-full">
                 <button
-                  className="bg-gray-500 text-white p-1 px-2 rounded"
+                  className="bg-gray-500 text-white p-1 lg:text-[10px] xl3:text-md px-2 rounded"
                   onClick={handleRestoreClick}
                 >
                   Restaurar
                 </button>
                 <button
-                  className="bg-blue-500 text-white p-1 px-2 rounded"
+                  className="bg-blue-500 text-white p-1 lg:text-[10px] xl3:text-md px-2 rounded"
                   onClick={handleResumeClick}
                 >
                   Retomar
