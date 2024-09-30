@@ -40,11 +40,13 @@ const useWebSocket = (
         console.log("WebSocket connection opened");
         setIsReconnecting(false);
         timer.current = setInterval(() => {
+          if (ws.current && ws.current.readyState === WebSocket.OPEN) {
           ws.current?.send(
             JSON.stringify({
               mt: "Ping",
             })
           );
+        }
         }, 60000);
       };
 

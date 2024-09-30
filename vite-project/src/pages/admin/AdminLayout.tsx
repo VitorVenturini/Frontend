@@ -78,7 +78,6 @@ function AdminLayout() {
   const { setLoadBarData, clearLoadBarData, setApiKeyInfo, setPbxStatus } =
     useAppConfig();
   var allBtn: ButtonInterface[];
-  const { isReconnecting } = useWebSocket(account.accessToken);
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
     switch (message.mt) {

@@ -15,15 +15,13 @@ import { LanguageToggle } from "@/components/language/LanguageToggle";
 import texts from "../../_data/texts.json";
 import { useLanguage } from "../language/LanguageContext";
 import { useButtons } from "../buttons/buttonContext/ButtonsContext";
-import LogoCore from "../../assets/LogoCore.svg"
+import LogoCore from "../../assets/LogoCore.svg";
 import Loader2 from "../Loader2";
 import useWebSocket from "@/components/websocket/useWebSocket";
 
 export default function HeaderApp() {
   const account = useAccount();
-  const {clearButtons} = useButtons()
-  const { isReconnecting } = useWebSocket(account.accessToken);
-
+  const { clearButtons } = useButtons();
   const { updateAccount } = useAccount();
   const navigate = useNavigate();
   const wss = useWebSocketData();
@@ -41,7 +39,7 @@ export default function HeaderApp() {
   const handleActionsClick = () => {
     wss?.sendMessage({ api: "admin", mt: "SelectActions" });
     //setTimeout(() => {
-      //navigate("/admin/actions");
+    //navigate("/admin/actions");
     //}, 900);
   };
 
@@ -52,19 +50,18 @@ export default function HeaderApp() {
     navigate("/admin/reports");
   };
   const handleUserViewClick = () => {
-    clearButtons()
+    clearButtons();
     updateAccount({ isAdmin: false });
     navigate("/user/buttons");
   };
 
   return (
     <header className="flex justify-between items-center p-2">
-      {isReconnecting && <Loader2/>}
+      {wss?.isReconnecting && <Loader2 />}
       <div className="flex items-center gap-5">
         <Button className="h-16" variant="ghost" onClick={handleUserViewClick}>
-        <img src={LogoCore} alt="Logo" className="w- h-16" />
+          <img src={LogoCore} alt="Logo" className="w- h-16" />
         </Button>
-        
 
         <div>
           <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight capitalize">
@@ -76,7 +73,6 @@ export default function HeaderApp() {
 
       <div className="flex items-end ">
         <div className="flex items-center gap-1">
-
           <Button variant="ghost" onClick={handleUserViewClick}>
             {texts[language].headerConsole}
           </Button>
@@ -93,7 +89,7 @@ export default function HeaderApp() {
             {texts[language].headerOptions}
           </Button>
           <Button variant="ghost" onClick={handleReportsClick}>
-          {texts[language].headerReports}
+            {texts[language].headerReports}
           </Button>
           <Logout />
           <ModeToggle />
