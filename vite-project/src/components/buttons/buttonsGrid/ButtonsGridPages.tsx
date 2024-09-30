@@ -13,7 +13,6 @@ import React, { useContext, useEffect, useState } from "react";
 
 import { useLanguage } from "@/components/language/LanguageContext";
 import texts from "@/_data/texts.json";
-import { checkButtonWarning } from "@/components/utils/utilityFunctions";
 import { useSensors } from "@/components/sensor/SensorContext";
 import {
   AccountContext,
@@ -53,7 +52,7 @@ export default function ButtonsGridPages({
         const filteredSensor = buttonSensors.find(
           (sensor) => sensor.deveui === btns.button_prt
         ); // Encontra o sensor correspondente
-       // console.log("FILTEREDSENSORS" + JSON.stringify(filteredSensor));
+        // console.log("FILTEREDSENSORS" + JSON.stringify(filteredSensor));
         if (filteredSensor && btns.sensor_type) {
           const currentValue = parseInt(
             (filteredSensor as any)[btns.sensor_type],
@@ -75,11 +74,7 @@ export default function ButtonsGridPages({
   // Verifica se algum botão está em estado de alerta em uma página específica
   const isPageWarning = (pageNumber: string) => {
     return buttons.some((button) => {
-      return (
-        (button.page.toString() === pageNumber &&
-          checkButtonWarning(button, button.newValue)) ||
-        (button.page.toString() === pageNumber && button.triggered)
-      );
+      return button.page.toString() === pageNumber && button.triggered;
     });
   };
 

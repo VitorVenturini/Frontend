@@ -9,7 +9,6 @@ import { useEffect } from "react";
 import ResponsivePng from "./ResponsivePng";
 import { useAccount } from "../account/AccountContext";
 import { commonClasses } from "../buttons/ButtonsComponent";
-import { checkButtonWarning } from "../utils/utilityFunctions";
 import { useWebSocketData } from "../websocket/WebSocketProvider";
 
 interface ButtonProps {
@@ -59,20 +58,6 @@ export default function SensorButton({ handleClick, button }: ButtonProps) {
   const oldValue = buttonState?.oldValue;
   const newValue = buttonState?.newValue;
 
-  // const filteredSensor = (account.isAdmin ? sensors : buttonSensors).find(
-  //   (sensor) => sensor.deveui === button?.button_prt
-  // );
-
-  // useEffect(() => {
-  //   if (button?.sensor_type && filteredSensor) {
-  //     const value = parseInt((filteredSensor as any)[button.sensor_type], 10);
-  //     if (newValue !== value) {
-  //       setOldValue(button.sensor_type, button.button_prt, newValue); // armazena o valor antigo antes de atualizar
-  //       setNewValue(button.sensor_type, button.button_prt, value); // atualiza o valor novo
-  //     }
-  //   }
-  // }, [filteredSensor, button?.sensor_type, newValue]);
-
   const sensorModel = (account.isAdmin ? sensors : buttonSensors).filter(
     (sensor) => {
       return sensor.deveui === button.button_prt;
@@ -80,19 +65,15 @@ export default function SensorButton({ handleClick, button }: ButtonProps) {
   )[0];
 
   const getButtonClassName = () => {
-    const isWarning = checkButtonWarning(button, newValue);
-    if (isWarning && !button?.muted) {
+    if (button.triggered && !button?.muted) {
       return `${commonClasses} flex flex-col cursor-pointer active:bg-red-900 bg-red-800 blinking-background`;
-    } else if (isWarning && button?.muted) {
+    } else if (button.triggered && button?.muted) {
       return `${commonClasses} flex flex-col cursor-pointer active:bg-red-900 outline outline-2 border-xs border-red-900 outline-red-900 bg-buttonSensor `;
-    } else if (!isWarning && button.muted) {
+    } else if (!button.triggered && button.muted) {
       return `${commonClasses} flex flex-col cursor-pointer active:bg-red-900 bg-muted `;
-    } else if (!isWarning && !button.muted) {
+    } else if (!button.triggered && !button.muted) {
       return `${commonClasses} flex flex-col cursor-pointer active:bg-red-900 bg-buttonSensor`;
     }
-    // return checkButtonWarning(button, newValue)
-    //   ? `${commonClasses} flex flex-col cursor-pointer active:bg-red-900 bg-red-800 blinking-background`
-    //   : `${commonClasses} flex flex-col cursor-pointer active:bg-red-900 bg-buttonSensor`;
   };
 
   return (

@@ -110,7 +110,7 @@ const ColumnsReports: React.FC<ColumnsReportsProps> = ({
 
   return (
     <div className="space-y-2">
-      <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
+      <h4 className="scroll-m-20 text-xl flex font-semibold tracking-tight justify-center">
         {report ? getText(report, texts[language]) :  texts[language].report}
       </h4>
       <DataTable columns={columns} data={data} filter={filter} />

@@ -16,10 +16,13 @@ import texts from "../../_data/texts.json";
 import { useLanguage } from "../language/LanguageContext";
 import { useButtons } from "../buttons/buttonContext/ButtonsContext";
 import LogoCore from "../../assets/LogoCore.svg"
+import Loader2 from "../Loader2";
+import useWebSocket from "@/components/websocket/useWebSocket";
 
 export default function HeaderApp() {
   const account = useAccount();
   const {clearButtons} = useButtons()
+  const { isReconnecting } = useWebSocket(account.accessToken);
 
   const { updateAccount } = useAccount();
   const navigate = useNavigate();
@@ -56,6 +59,7 @@ export default function HeaderApp() {
 
   return (
     <header className="flex justify-between items-center p-2">
+      {isReconnecting && <Loader2/>}
       <div className="flex items-center gap-5">
         <Button className="h-16" variant="ghost" onClick={handleUserViewClick}>
         <img src={LogoCore} alt="Logo" className="w- h-16" />

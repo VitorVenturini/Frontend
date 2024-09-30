@@ -38,6 +38,7 @@ import {
   UserPbxInterface,
   useUsersPbx,
 } from "@/components/users/usersPbx/UsersPbxContext";
+import { useRef } from "react";
 import { useCalls } from "@/components/calls/CallContext";
 import Loader from "@/components/Loader";
 import HeaderUser from "@/components/header/HeaderUser";
@@ -49,6 +50,8 @@ import SoundPlayer from "@/components/soundPlayer/SoundPlayer";
 import bleep from "@/assets/sounds/bleep.wav";
 import mobile from "@/assets/sounds/mobile.wav";
 import { checkButtonWarning } from "@/components/utils/utilityFunctions";
+import useWebSocket from "@/components/websocket/useWebSocket";
+import Loader2 from "@/components/Loader2";
 interface User {
   id: string;
   name: string;
@@ -94,7 +97,7 @@ function UserLayout() {
   } = useSensors();
   const { setUsersPbx } = useUsersPbx();
   const { updateUserStauts } = useUsers();
-  const { history, addHistory } = useHistory();
+  const { history, addHistory, setHistoryComplete } = useHistory();
   const {
     setChat,
     allMessages,
@@ -115,6 +118,7 @@ function UserLayout() {
   } = useCalls();
   const [selectedOptTop, setSelectedOptTop] = useState<string>("floor"); // default for top
   const [clickedUserTop, setClickedUserTop] = useState<string | null>(null);
+  const clickedUserTopRef = useRef<string | null>(null);
   const [selectedOptBottom, setSelectedOptBottom] = useState<string>("floor"); // default for bottom
   const [clickedUserBottom, setClickedUserBottom] = useState<string | null>(
     null
@@ -128,6 +132,7 @@ function UserLayout() {
   const { users } = useUsers();
   const [playNotificationSound, setPlayNotificationSound] = useState(false); // som para notificação
   const [playCallSound, setPlayCallSound] = useState(false); //som para chamada
+  const { isReconnecting } = useWebSocket(account.accessToken);
 
   const isAllowedButtonType = (type: string) => {
     const allowedTypes = [
@@ -187,6 +192,7 @@ function UserLayout() {
         break;
       case "SelectAllSensorInfoResultSrc":
         const allSensors = JSON.parse(message.result);
+        setSensors(allSensors); // setar todos os sensores para manipularmos no app todo
         // allSensors.forEach((sensor: SensorInterface) => updateSensorButton(sensor));
         addSensorsButton(allSensors); // info dos sensores para ser exibido nos botões
         setIsLoading(false);
@@ -196,33 +202,15 @@ function UserLayout() {
         updateSensorButton(sensorDataReceived);
         updateGraphSensor(sensorDataReceived);
         break;
+
       case "AlarmReceived":
         setButtonTriggered(message.btn_id, true);
-        const userStartAlarm = allUsers.filter((user) => {
-          return user.guid === message.src;
-        })[0];
-        addHistory({
-          date: message.date
-            ? format(new Date(message.date), "dd/MM HH:mm")
-            : format(new Date(), "dd/MM HH:mm"),
-          message: `${userStartAlarm?.name} disparou o alarme ${message.alarm}`,
-          type: "alarm",
-        });
         setPlayNotificationSound(true); // Toca o som de notificação
-        setTimeout(() => setPlayNotificationSound(false), 500); 
+        setTimeout(() => setPlayNotificationSound(false), 500);
         break;
       case "AlarmStopReceived":
-        setStopButtonTriggered(message.alarm, false);
-        const userStopAlarm = allUsers.filter((user) => {
-          return user.guid === message.src;
-        })[0];
-        addHistory({
-          date: message.date
-            ? format(new Date(message.date), "dd/MM HH:mm")
-            : format(new Date(), "dd/MM HH:mm"),
-          message: `${userStopAlarm?.name} parou o alarme ${message.alarm}`,
-          type: "alarm",
-        });
+        setStopButtonTriggered(message.alarm, false); // caso o usuário tenha mais de 1 botão com o mesmo código de alarme
+        setButtonTriggered(message.btn_id, false);
         break;
       case "DeleteButtonsSuccess":
         deleteButton(message.id_deleted);
@@ -469,18 +457,11 @@ function UserLayout() {
       case "Message": // mensagem do cara
         const newMsgFrom: ChatInterface = message.result[0];
         addChatMessage(newMsgFrom);
-        const userMsg = allUsers.filter((user) => {
-          return user.guid === message.result[0].from_guid;
-        })[0];
-        addHistory({
-          date: message.result[0].date
-            ? format(new Date(message.result[0].date), "dd/MM HH:mm")
-            : format(new Date(), "dd/MM HH:mm"),
-          message: `Mensagem recebida de ${userMsg?.name}`,
-          type: "msg",
-        });
-        setPlayNotificationSound(true); // Toca o som de notificação
-        setTimeout(() => setPlayNotificationSound(false), 500); 
+        if (clickedUserTopRef.current !== newMsgFrom.from_guid) {
+          setPlayNotificationSound(true); // Toca o som de notificação
+          setTimeout(() => setPlayNotificationSound(false), 500);
+        }
+
         break;
       case "MessageResult": // minha mensagem
         const newMsgTo: ChatInterface = message.result[0];
@@ -559,22 +540,32 @@ function UserLayout() {
         break;
       case "SmartButtonReceived":
         setButtonTriggered(message.btn_id, true);
-        addHistory({
-          date: message.date
-            ? format(new Date(message.date), "dd/MM HH:mm")
-            : format(new Date(), "dd/MM HH:mm"),
-            type: "sensor",
-            message: "Botão Vermelho Disparou"
-        });
+        // addHistory({
+        //   date: message.date
+        //     ? format(new Date(message.date), "dd/MM HH:mm")
+        //     : format(new Date(), "dd/MM HH:mm"),
+        //   type: "sensor",
+        //   message: "Botão Vermelho Disparou",
+        // });
         toast({
           description: "Botão Vermelho Disparou",
         });
-        setPlayNotificationSound(true); // Toca o som de notificação
-        setTimeout(() => setPlayNotificationSound(false), 500); 
         break;
       case "TriggerStopAlarmResult":
         setButtonTriggered(message.btn_id, false);
         break;
+      case "getHistoryResult":
+        if (message.result.length > 0) {
+          const historyArray = message.result;
+          historyArray.forEach((hist: any) => {
+            addHistory(hist);
+          });
+        } else {
+          setHistoryComplete(true);
+        }
+
+        break;
+
       default:
         console.log("Unknown message type:", message);
         break;
@@ -592,6 +583,7 @@ function UserLayout() {
 
   const handleClickedUserTop = (newUser: string | null) => {
     setClickedUserTop(newUser);
+    clickedUserTopRef.current = newUser;
   };
 
   const handleOptChangeBottom = (newOpt: string) => {
@@ -601,81 +593,58 @@ function UserLayout() {
   const handleClickedUserBottom = (newUser: string | null) => {
     setClickedUserBottom(newUser);
   };
-
-  // tratar os thresholds aqui 
-  const buttonState = buttons.filter((b) => b.button_type === "sensor");
-  useEffect(() => {
-    buttonState.forEach((btn) => {
-      const isWarning = checkButtonWarning(btn, btn.newValue);
-      const filteredSensor = buttonSensors.find(
-        (sensor) => sensor.deveui === btn.button_prt
-      );
-      if (isWarning && !btn.warning) {
-        addHistory({
-          message: `${filteredSensor?.sensor_name} Disparou`,
-          date: format(new Date(filteredSensor?.date as string), "dd/MM HH:mm"),
-          type: "sensor",
-        });
-        if (!btn.muted) {
-          setPlayNotificationSound(true); 
-          setTimeout(() => setPlayNotificationSound(false), 500); 
-        }
-        // atualizar o botão no contexto com warning True indicando que está alarmado
-        updateButton({ ...btn, warning: true });
-      }else if(!isWarning && btn.warning){
-        //se o sensor parou de apitar , reseta o estado warning 
-        updateButton({ ...btn, warning: false });
-      }
-    });
-  }, [buttonSensors]);
-
   return (
     <>
       <WebSocketProvider
         token={account.accessToken}
         onMessage={handleWebSocketMessage}
       >
-        {isLoading ? (
-          <Loader />
-        ) : (
-          <>
-            <div className="flex justify-center items-center min-h-screen">
-              <div className="">
-                <div className="flex gap-1">
-                  <div className="gap-1 space-y-1">
-                    <InteractiveGridCopy
-                      interactive="top"
-                      onKeyChange={handleOptChangeTop}
-                      buttons={buttons}
-                      selectedUser={account as any}
-                      selectedOpt={selectedOptTop}
-                      clickedUser={clickedUserTop}
-                      setClickedUser={handleClickedUserTop}
-                    />
-                    <InteractiveGridCopy
-                      interactive="bottom"
-                      onKeyChange={handleOptChangeBottom}
-                      buttons={buttons}
-                      selectedUser={account as any}
-                      selectedOpt={selectedOptBottom}
-                      clickedUser={clickedUserBottom}
-                      setClickedUser={handleClickedUserBottom}
-                    />
-                  </div>
+      
+          
+        
+          
+            {isLoading ? (
+              <Loader />
+            ) : (
+              <>
+                <div className="flex justify-center items-center min-h-screen">
+                  <div className="">
+                    <div className="flex gap-1">
+                      <div className="gap-1 space-y-1">
+                        <InteractiveGridCopy
+                          interactive="top"
+                          onKeyChange={handleOptChangeTop}
+                          buttons={buttons}
+                          selectedUser={account as any}
+                          selectedOpt={selectedOptTop}
+                          clickedUser={clickedUserTop}
+                          setClickedUser={handleClickedUserTop}
+                        />
+                        <InteractiveGridCopy
+                          interactive="bottom"
+                          onKeyChange={handleOptChangeBottom}
+                          buttons={buttons}
+                          selectedUser={account as any}
+                          selectedOpt={selectedOptBottom}
+                          clickedUser={clickedUserBottom}
+                          setClickedUser={handleClickedUserBottom}
+                        />
+                      </div>
 
-                  <ButtonsGridPage
-                    buttonsGrid={buttons}
-                    selectedUser={account as any}
-                    // selectedOpt={selectedOpt}
-                    // onOptChange={handleOptChange}
-                    // clickedUser={clickedUser}
-                  />
+                      <ButtonsGridPage
+                        buttonsGrid={buttons}
+                        selectedUser={account as any}
+                        // selectedOpt={selectedOpt}
+                        // onOptChange={handleOptChange}
+                        // clickedUser={clickedUser}
+                      />
+                    </div>
+                    <HeaderUser />
+                  </div>
                 </div>
-                <HeaderUser />
-              </div>
-            </div>
-          </>
-        )}
+              </>
+            )}
+      
       </WebSocketProvider>
       {/* soundPlayer para Notificações Gerais */}
       <SoundPlayer soundSrc={mobile} play={playNotificationSound} />

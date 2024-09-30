@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ChangeEvent } from "react";
+import React, { useState, useEffect, ChangeEvent, useRef } from "react";
 import ReactAudioPlayer from "react-audio-player";
 import { Button } from "@/components/ui/button";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
@@ -16,7 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ColumnsReports from "@/Reports/collumnsReports";
 import { useUsers } from "@/components/users/usersCore/UserContext";
 import { useData } from "@/Reports/DataContext";
-import { Card } from "@/components/ui/card";
+
 import { useToast } from "@/components/ui/use-toast";
 import {
   Select,
@@ -33,11 +33,19 @@ import {
   DialogContent,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 type DateRange = {
   from: Date;
   to: Date;
 };
+import { Card, CardContent } from "@/components/ui/card";
 import { useSensors } from "@/components/sensor/SensorContext";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -49,6 +57,13 @@ import { Margin, usePDF } from "react-to-pdf";
 import texts from "@/_data/texts.json";
 import { useLanguage } from "@/components/language/LanguageContext";
 import { PdfGerate } from "@/Reports/ExportReports";
+import { Checkbox } from "@/components/ui/checkbox";
+import JSZip from "jszip";
+import { saveAs } from "file-saver";
+import { Package } from "lucide-react";
+import { PackageOpen } from "lucide-react";
+import { Square } from "lucide-react";
+import { SquareCheck } from "lucide-react";
 
 export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
   const { users } = useUsers();
@@ -57,7 +72,11 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
     from: addDays(new Date(), -1),
     to: new Date(),
   });
-
+  const [selectedImages, setSelectedImages] = useState<{
+    [key: string]: string;
+  }>({});
+  const [isDownload, setIsDownload] = useState(false);
+  const [checkAll, setCheckAll] = useState(false);
   const { dataReport, clearDataReport } = useData();
   const { toast } = useToast();
   const reportSrc = dataReport.src as any;
@@ -74,12 +93,28 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
     filename: "usepdf-example.pdf",
     page: { margin: Margin.NONE, orientation: "landscape" },
   });
+
   const { language } = useLanguage();
   const handleClear = () => {
     clearDataReport();
     clearLoadBarData();
   };
+  const handleDownload = () => {
+    setIsDownload(true);
+  };
+  const handleCheckAll = () => {
+    const newSelectedImages = {} as any;
 
+    if (!checkAll) {
+      // Marca todas as imagens
+      dataReport.img.forEach((item) => {
+        newSelectedImages[item.id] = item.date.replace(/\//g, "-"); // Substitui '/' por '-' no nome da imagem
+      });
+    }
+
+    setSelectedImages(newSelectedImages); // Atualiza o estado de selectedImages
+    setCheckAll(!checkAll); // Inverte o estado de checkAll
+  };
   const handleStartHour = (event: ChangeEvent<HTMLInputElement>) => {
     setStartHour(event.target.value);
   };
@@ -90,14 +125,43 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
 
   const formatDateTime = (
     date: Date,
-    time: string,
+    time: string | undefined,
     defaultTime: string
   ): string => {
-    const formattedDate = format(date, "yyyy-MM-dd"); // Formata a data no padrão 'YYYY-MM-DD'
+    const localDate = new Date(date); // Converte a data para o fuso horário local
     const finalTime = time || defaultTime; // Usa o valor padrão se 'time' estiver em branco
-    return `${formattedDate} ${finalTime}:00`; // Retorna a data e hora no formato 'YYYY-MM-DD HH:mm:ss'
-  };
 
+    // Concatena a data com o tempo fornecido ou padrão
+    const formattedLocalDateTime = `${format(
+      localDate,
+      "yyyy-MM-dd"
+    )} ${finalTime}`;
+
+    // Converte o datetime concatenado para UTC
+    const utcDateTime = new Date(formattedLocalDateTime);
+
+    if (isNaN(utcDateTime.getTime())) {
+      // Verifica se a data é inválida
+      return "Invalid Date";
+    }
+
+    // Converte o timestamp UTC para o formato 'YYYY-MM-DD HH:mm:ss'
+    const utcDate = new Date(utcDateTime.getTime()).toLocaleString("sv-SE", {
+      timeZone: "UTC",
+      hour12: false,
+    });
+
+    return utcDate.replace("T", " "); // Retorna no formato 'YYYY-MM-DD HH:mm:ss'
+  };
+  const handleCheckboxChange = (id: number, date: string) => {
+    const newSelectedImages = { ...selectedImages };
+    if (selectedImages[id]) {
+      delete newSelectedImages[id]; // Desmarca a imagem
+    } else {
+      newSelectedImages[id] = date.replace(/\//g, "-"); // Marca a imagem
+    }
+    setSelectedImages(newSelectedImages);
+  };
   const replaceData = (users: any[], item: any, columnName: string): any => {
     const user = users.find(
       (user: any) =>
@@ -105,8 +169,38 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
     );
     if (user) {
       item[columnName] = user.name;
+    } else {
+      const filteredSensor = sensors.filter((sensor) => {
+        return sensor.deveui === item[columnName];
+      })[0];
+      item[columnName] = filteredSensor?.sensor_name;
     }
     return item;
+  };
+  // Função para gerar e baixar o arquivo .zip
+  const downloadSelectedImages = async () => {
+    const zip = new JSZip();
+
+    // Filtrar as imagens selecionadas
+    const selected = dataReport.img.filter((item) => selectedImages[item.id]);
+
+    if (selected.length === 0) {
+      setIsDownload(false);
+      return;
+    }
+
+    // Adicionar cada imagem ao arquivo .zip
+    selected.forEach((item) => {
+      const imgData = item.image.replace(/^data:image\/(png|jpeg);base64,/, "");
+      const fileName = `${item.date.replace(/\//g, "-")}(${item.id}).jpg`; // Adiciona o item.id após a data
+      zip.file(fileName, imgData, { base64: true });
+    });
+
+    // Gerar o arquivo .zip e fazer o download
+    const content = await zip.generateAsync({ type: "blob" });
+    saveAs(content, "images.zip");
+    setIsDownload(false);
+    //setSelectedImages({});
   };
 
   let ajustData = [];
@@ -180,6 +274,7 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
         endHour,
         "23:59:59"
       );
+      console.log({ from: fromDateTimeUTC, to: toDateTimeUTC });
       wss?.sendMessage({
         api: "admin",
         mt: "SelectFromReports",
@@ -285,7 +380,7 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
                   </PopoverContent>
                 </Popover>
                 <TabsList>
-                  <TabsTrigger value="RptAvailability">
+                  <TabsTrigger value="RptAvailability" onClick={handleClear}>
                     Disponibilidade
                   </TabsTrigger>
                   <TabsTrigger value="RptCalls" onClick={handleClear}>
@@ -356,12 +451,60 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
                 </TabsContent>
               </div>
               <div className="flex items-end justify-end">
-                <TabsContent value="RptSensors" className="flex gap-2">
+                <TabsContent
+                  value="RptSensors"
+                  className="flex gap-2 items-center align-middle"
+                >
                   <p className="flex items-center text-[12px]">Export:</p>
                   <PdfGerate />
                   <Button onClick={() => handleExecDevice()}>Consultar</Button>
                 </TabsContent>
-                <TabsContent value="RptIotDevices" className="flex">
+                <TabsContent value="RptIotDevices" className="flex gap-2">
+                  <p className="flex items-center text-[12px] ">Download:</p>
+                  {isDownload ? (
+                    <Button
+                      className="flex justify-center"
+                      variant={"ghost"}
+                      size={"icon"}
+                      onClick={() => downloadSelectedImages()}
+                      title="Baixar"
+                    >
+                      <PackageOpen />
+                    </Button>
+                  ) : (
+                    <Button
+                      className="flex justify-center"
+                      variant={"ghost"}
+                      size={"icon"}
+                      onClick={() => handleDownload()}
+                      title="Selecionar"
+                      disabled={dataReport.img?.length === 0 && !selectedImages.key}
+                    >
+                      <Package />
+                    </Button>
+                  )}
+                  {!checkAll ? (
+                    <Button
+                      className="flex justify-center"
+                      variant={"ghost"}
+                      size={"icon"}
+                      onClick={handleCheckAll}
+                      title="Marcar todas"
+                      disabled={dataReport.img?.length === 0 || isDownload === false}
+                    >
+                      <SquareCheck />
+                    </Button>
+                  ) : (
+                    <Button
+                      className="flex justify-center"
+                      variant={"ghost"}
+                      size={"icon"}
+                      onClick={handleCheckAll}
+                      title="Desmarcar todas"
+                    >
+                      <Square />
+                    </Button>
+                  )}
                   <Button
                     className="flex justify-end"
                     onClick={() => handleIotDevice()}
@@ -369,7 +512,7 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
                     Consultar
                   </Button>
                 </TabsContent>
-                <TabsContent value="RptAvailability" className="flex">
+                <TabsContent value="RptAvailability" className="flex gap-2">
                   <p className="flex items-center text-[12px]">Export:</p>
                   <PdfGerate />
                   <Button
@@ -379,7 +522,7 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
                     Consultar
                   </Button>
                 </TabsContent>
-                <TabsContent value="RptCalls" className="flex">
+                <TabsContent value="RptCalls" className="flex gap-2">
                   <p className="flex items-center text-[12px]">Export:</p>
                   <PdfGerate />
                   <Button
@@ -389,7 +532,7 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
                     Consultar
                   </Button>
                 </TabsContent>
-                <TabsContent value="RptActivities" className="flex">
+                <TabsContent value="RptActivities" className="flex gap-2">
                   <p className="flex items-center text-[12px]">Export:</p>
                   <PdfGerate />
                   <Button
@@ -399,7 +542,7 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
                     Consultar
                   </Button>
                 </TabsContent>
-                <TabsContent value="RptMessages" className="flex">
+                <TabsContent value="RptMessages" className="flex gap-2">
                   <p className="flex items-center text-[12px]">Export:</p>
                   <PdfGerate />
                   <Button
@@ -434,28 +577,48 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
                   />
                 </div>
               ) : (
-                <ScrollArea className="w-full align-middle items-center justify-center h-full">
-                  <div className="flex flex-wrap gap-4">
+                <ScrollArea className="w-full h-full">
+                  <div className="flex flex-wrap gap-4 align-middle items-center justify-center">
                     {dataReport.img.map((item, index) => (
-                      <Dialog key={item.id}>
-                        <DialogTrigger>
-                          <div className="flex flex-col items-center">
-                            <img
-                              src={item.image}
-                              alt={`Image ${index}`}
-                              className="object-cover w-32 h-32"
-                            />
-                            <p className="text-xs">{item.date}</p>
+                      <div
+                        key={item.id}
+                        className="flex flex-col align-middle items-center"
+                      >
+                        <Dialog>
+                          <div className="flex">
+                            <DialogTrigger
+
+                            >
+                              <div className="flex flex-col items-center align-middle">
+                                <img
+                                  src={item.image}
+                                  alt={`Image ${index}`}
+                                  className="object-cover w-45 h-40"
+                                />
+                              </div>
+                            </DialogTrigger>
+                            {/* Checkbox para selecionar a imagem */}
+                            {isDownload && (
+                              <Checkbox
+                                checked={!!selectedImages[item.id]}
+                                onCheckedChange={() =>
+                                  handleCheckboxChange(item.id, item.date)
+                                }
+                              />
+                            )}
                           </div>
-                        </DialogTrigger>
-                        <DialogContent className="h-full max-w-5xl">
-                          <img
-                            src={item.image}
-                            alt={`Image ${index}`}
-                            className="w-full h-full"
-                          />
-                        </DialogContent>
-                      </Dialog>
+                          <DialogContent className="h-full max-w-5xl">
+
+                              <img
+                                  src={item.image}
+                                  alt={`Image ${index}`}
+                                  className="object-cover w-full h-full"
+                                />
+
+                          </DialogContent>
+                          <p className="text-xs gap-2">{item.date}</p>
+                        </Dialog>
+                      </div>
                     ))}
                   </div>
                 </ScrollArea>

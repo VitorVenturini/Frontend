@@ -1,9 +1,16 @@
 import { createContext, useState, useContext, ReactNode } from "react";
+import { SetStateAction } from "react";
 
 export interface HistoryInterface {
-  message: string; // campo para mensagem personalizada
+  id: string;
+  guid: string;
+  from: string;
+  name: string;
   date: string;
-  type: string;
+  status: string;
+  prt: string;
+  details: string;
+
 }
 
 interface HistoryContextType {
@@ -11,20 +18,19 @@ interface HistoryContextType {
   addHistory: (newHistory: HistoryInterface) => void;
  // updateHistory: (updatedHistory: HistoryInterface) => void;
   clearHistory: () => void;
+  setHistoryComplete: React.Dispatch<SetStateAction<boolean>>
+  historyComplete: boolean;
 }
 
 const HistoryContext = createContext<HistoryContextType | undefined>(undefined);
 
 export const HistoryProvider = ({ children }: { children: ReactNode }) => {
-  const [history, setHistoryState] = useState<HistoryInterface[]>([]);
+    const [history, setHistoryState] = useState<HistoryInterface[]>([]);
+    const [historyComplete, setHistoryComplete] = useState<boolean>(false);
 
   const addHistory = (newHistory: HistoryInterface) => {
-    // Verifica se já existe uma entrada com a mesma mensagem e data
-    const isDuplicate = history.some(
-      (hist) =>
-        hist.message === newHistory.message &&
-        hist.date === newHistory.date
-    );
+    // Verifica se já existe uma entrada com o mesmo id
+    const isDuplicate = history.some((hist) => hist.id === newHistory.id);
 
     // Só adiciona se não for duplicado
     if (!isDuplicate) {
@@ -32,15 +38,6 @@ export const HistoryProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // const updateHistory = (updatedHistory: HistoryInterface) => {
-  //   setHistoryState((prevHistory) =>
-  //     prevHistory.map((hist) =>
-  //       hist.button_name === updatedHistory.button_name
-  //         ? { ...hist, ...updatedHistory }
-  //         : hist
-  //     )
-  //   );
-  // };
 
   const clearHistory = () => {
     setHistoryState([]);
@@ -51,6 +48,8 @@ export const HistoryProvider = ({ children }: { children: ReactNode }) => {
       value={{
         history,
         addHistory,
+        setHistoryComplete,
+        historyComplete,
        // updateHistory,
         clearHistory,
       }}

@@ -6,6 +6,7 @@ export interface WebSocketHook {
   data: string;
   closeConnection: () => void;
   sendMessage: (message: WebSocketMessage) => void;
+  isReconnecting: boolean;
 }
 
 const useWebSocket = (
@@ -13,6 +14,7 @@ const useWebSocket = (
   onMessage?: (message: WebSocketMessage) => void
 ): WebSocketHook => {
   const [data, setData] = useState("");
+  const [isReconnecting, setIsReconnecting] = useState(false); // Adiciona o estado de reconexão
   const ws = useRef<WebSocket | null>(null);
   const timer = useRef<NodeJS.Timeout | null>(null);
   const account = useAccount();
@@ -36,6 +38,7 @@ const useWebSocket = (
       ws.current.onopen = () => {
         if (timer.current) clearTimeout(timer.current);
         console.log("WebSocket connection opened");
+        setIsReconnecting(false);
         timer.current = setInterval(() => {
           ws.current?.send(
             JSON.stringify({
@@ -49,21 +52,13 @@ const useWebSocket = (
         console.log("WebSocket connection closed:", event.code, event.reason);
         if (event.code === 1006) {
           //code 1006 significa que a conexão foi fechada pelo servidor
+          setIsReconnecting(true); // Ativa o loader
           timer.current = setTimeout(() => {
             console.log("Reconnecting WebSocket...");
             connect();
           }, 5000);
         }
       };
-      // ws.current.onerror = (event) => {
-      //   console.error("WebSocket error:", event);
-      //   if (!account.isLogged) {
-      //     timer.current = setTimeout(() => {
-      //       console.log("Reconnecting WebSocket...");
-      //       connect();
-      //     }, 5000);
-      //   }
-      // };
 
       ws.current.onmessage = (message) => {
         console.log("WebSocket message received:", message.data);
@@ -72,10 +67,6 @@ const useWebSocket = (
           setShouldSendMessages(true);
         } else if (parsedMessage.mt === "Message") {
           // enviar confirmação de recebimento de mensagem
-          console.log(
-            "WebSocketSendMessage" +
-              `{ api: user, mt: ChatDelivered, msg_id: ${parsedMessage.result[0].id}}`
-          );
           ws.current?.send(
             JSON.stringify({
               api: "user",
@@ -122,10 +113,13 @@ const useWebSocket = (
     } else {
       // else para usuario
       ws.current?.send(JSON.stringify({ api: apiType, mt: "SelectButtons" }));
-      // ws.current?.send(JSON.stringify({ api: apiType, mt: "SelectSensors" }));
       ws.current?.send(JSON.stringify({ api: apiType, mt: "TableUsers" }));
       ws.current?.send(
         JSON.stringify({ api: apiType, mt: "SelectAllSensorInfoSrc" })
+      );
+      
+      ws.current?.send(
+        JSON.stringify({ api: apiType, mt: "getHistory", startId: null })
       );
     }
 
@@ -136,7 +130,6 @@ const useWebSocket = (
   const closeConnection = useCallback(() => {
     if (timer.current) clearTimeout(timer.current);
     if (ws.current) ws.current.close();
-    //if(ws.current) ws.current.onclose
   }, []);
 
   const sendMessage = useCallback((message: WebSocketMessage) => {
@@ -146,7 +139,7 @@ const useWebSocket = (
     }
   }, []);
 
-  return { data, closeConnection, sendMessage };
+  return { data, closeConnection, sendMessage, isReconnecting };
 };
 
 export default useWebSocket;

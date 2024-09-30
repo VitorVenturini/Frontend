@@ -63,7 +63,7 @@ export default function CardCreateAction({
     actionExecPrt: action?.action_exec_prt || "",
     actionExecTypeCommandMode: action?.action_exec_type_command_mode || "",
   });
-
+  console.log('action Exec PRt ', execActionDetails )
   const handleUpdateTriggerActionDetails = (key: string, value: string) => {
     setTriggerActionDetails((prevDetails) => ({ ...prevDetails, [key]: value }));
   };

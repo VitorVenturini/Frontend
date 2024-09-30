@@ -33,6 +33,9 @@ import { useLanguage } from "@/components/language/LanguageContext";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PdfProps } from "./ExportReports";
+import { isBase64File } from "@/components/utils/utilityFunctions";
+import { Image } from "lucide-react";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 interface DataTableProps<TData> {
   columns: ColumnDef<TData, any>[];
   data: TData[];
@@ -54,7 +57,38 @@ export function DataTable<TData>({
   const useFilter = filter;
   const table = useReactTable({
     data,
-    columns,
+    columns: columns.map((column) => {
+      // Verifica se a coluna é "msg" e modifica-a
+      if ((column as any).accessorKey === "msg") {
+        return {
+          ...column,
+          cell: ({ row }: { row: any }) => {
+            const message = row.original.msg;
+            const isBase64 = isBase64File(message); // Função que verifica se é Base64
+
+            // Retorna o ícone de imagem se for Base64, senão retorna o conteúdo da mensagem
+            return isBase64 ? (
+              <Dialog>
+                <DialogTrigger className="flex justify-center">
+                  <div className="flex items-center gap-2">
+                    <Image size={16} style={{ marginRight: "5px" }} />
+                    Imagem
+                  </div>
+                </DialogTrigger>
+                <DialogContent className="">
+                  <div>
+                    <img src={message}/>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            ) : (
+              message
+            );
+          },
+        };
+      }
+      return column;
+    }),
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
@@ -77,7 +111,6 @@ export function DataTable<TData>({
     table.getColumn("guid")?.setFilterValue(value);
     setSelectedUser(value);
   };
-  
 
   return (
     <div className="rounded-md w-full border">
@@ -101,7 +134,11 @@ export function DataTable<TData>({
                 {users.map((user) => (
                   <SelectItem
                     key={user.guid}
-                    value={table.getColumn("from") || table.getColumn("number") ? user.name : user.guid}
+                    value={
+                      table.getColumn("from") || table.getColumn("number")
+                        ? user.name
+                        : user.guid
+                    }
                   >
                     {user.name}
                   </SelectItem>

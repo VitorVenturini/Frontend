@@ -47,6 +47,8 @@ import {
 } from "@/components/users/usersPbx/UsersPbxContext";
 import { useAppConfig } from "@/components/options/ConfigContext";
 import Loader from "@/components/Loader";
+import useWebSocket from "@/components/websocket/useWebSocket";
+import Loader2 from "@/components/Loader2";
 
 function AdminLayout() {
   const account = useAccount();
@@ -75,13 +77,16 @@ function AdminLayout() {
   var pbxUser: UserPbxInterface[];
   const { setLoadBarData, clearLoadBarData, setApiKeyInfo, setPbxStatus } =
     useAppConfig();
-
+  var allBtn: ButtonInterface[];
+  const { isReconnecting } = useWebSocket(account.accessToken);
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
     switch (message.mt) {
       case "SelectButtonsSuccess":
         const firstButtons: ButtonInterface[] = JSON.parse(message.result);
         setButtons(firstButtons);
+        allBtn = firstButtons;
+        setIsLoading(false);
         break;
       case "InsertButtonSuccess":
         const newButton: ButtonInterface = message.result;
@@ -130,7 +135,6 @@ function AdminLayout() {
         setSensors([]);
         clearSensors();
         addSensorName(sensorData);
-        setIsLoading(false);
         break;
       case "SelectActionsMessageSuccess":
         console.log("allActions ", JSON.stringify(message.result));
@@ -189,12 +193,10 @@ function AdminLayout() {
         break;
       case "PbxStatusResult":
         if (message.result) {
-          const status = String(message.result); 
+          const status = String(message.result);
           setPbxStatus((prevPbxStatus) => {
             return prevPbxStatus.map((pbx) =>
-              pbx.entry === "urlPbxTableUsers"
-                ? { ...pbx, status } 
-                : pbx
+              pbx.entry === "urlPbxTableUsers" ? { ...pbx, status } : pbx
             );
           });
         }
@@ -356,6 +358,13 @@ function AdminLayout() {
                   if (item.read) {
                     item.read = formatDate(item.read);
                   }
+                  // para os details de atividades. filtrar o ID do botão e exibir o nome
+                  if (item.details && item.details !== "APP") {
+                    const filteredButton = allBtn?.filter((btn) => {
+                      return btn.id === item.details;
+                    })[0];
+                    item.details = filteredButton?.button_name;
+                  }
                   // Formatar colunas que começam com 'call' e possuem valor
                   Object.keys(item).forEach((key) => {
                     if (
@@ -452,22 +461,25 @@ function AdminLayout() {
       token={account.accessToken}
       onMessage={handleWebSocketMessage}
     >
-      {isLoading ? (
-        <Loader />
-      ) : (
         <>
-          <HeaderApp />
-          {/* Your admin layout here */}
-          <Routes>
-            <Route path="account" element={<Account />} />
-            <Route path="buttons" element={<ButtonsPage />} />
-            <Route path="actions" element={<ActionsPage />} />
-            <Route path="options" element={<Options />} />
-            <Route path="reports" element={<Reports />} />
-            {/* Add more admin routes as needed */}
-          </Routes>
+          {isLoading ? (
+            <Loader />
+          ) : (
+            <>
+              <HeaderApp />
+              {/* Your admin layout here */}
+              <Routes>
+                <Route path="account" element={<Account />} />
+                <Route path="buttons" element={<ButtonsPage />} />
+                <Route path="actions" element={<ActionsPage />} />
+                <Route path="options" element={<Options />} />
+                <Route path="reports" element={<Reports />} />
+                {/* Add more admin routes as needed */}
+              </Routes>
+            </>
+          )}
         </>
-      )}
+  
     </WebSocketProvider>
   );
 }

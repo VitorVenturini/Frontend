@@ -1,10 +1,12 @@
 import { ButtonInterface } from "../buttons/buttonContext/ButtonsContext";
 import { useState, useEffect } from "react";
+import { UserInterface } from "../users/usersCore/UserContext";
+import { SensorInterface } from "../sensor/SensorContext";
 
 export const isTouchDevice = () => {
   return (
-    'ontouchstart' in window || // Verifica se o evento de toque é suportado
-    navigator.maxTouchPoints > 0 
+    "ontouchstart" in window || // Verifica se o evento de toque é suportado
+    navigator.maxTouchPoints > 0
   );
 };
 
@@ -143,7 +145,7 @@ export function getInitials(name: string): string | null {
     const initials = nameParts
       .map((part) => part.charAt(0).toUpperCase())
       .join("");
-      return initials.substring(0, 2); // Retorna apenas as primeiras duas letras
+    return initials.substring(0, 2); // Retorna apenas as primeiras duas letras
   } else {
     return null;
   }
@@ -156,10 +158,49 @@ export const useMediaQuery = (query: string): boolean => {
     const handleChange = () => setMatches(mediaQuery.matches);
 
     handleChange();
-    mediaQuery.addEventListener('change', handleChange);
+    mediaQuery.addEventListener("change", handleChange);
 
-    return () => mediaQuery.removeEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
   }, [query]);
 
   return matches;
 };
+export const replaceDataForName = (
+  users: UserInterface[],
+  guidOrEuid: string,
+  sensors: SensorInterface[]
+): string | undefined => {
+  const user = users?.filter((user) => {
+    return user.guid === guidOrEuid;
+  })[0];
+
+  if (user) {
+    return user.name;
+  }
+  const sensor = sensors?.filter((sensor) => {
+    return sensor.deveui === guidOrEuid;
+  })[0];
+  if(sensor){
+    return sensor.sensor_name;
+  }
+ 
+};
+export const filterButtonByID = (
+  btnID: string,
+  buttons: ButtonInterface[]
+): string | undefined => {
+  const button = buttons.filter((btn : ButtonInterface) => {
+    return String(btn.id) === btnID
+  })[0];
+
+  if(button){
+    return button.button_name
+  }
+};
+
+export function isBase64File(base64String: string): boolean {
+  //regex dus guri p verificar se é base64 
+  const base64Pattern = /^data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+);base64,/;
+
+  return base64Pattern.test(base64String);
+}
