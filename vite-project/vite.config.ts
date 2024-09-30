@@ -2,10 +2,13 @@ import path from "path";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import fs from "fs";
-import os from "os"; 
+import dotenv from "dotenv";
 
-// Verifica se o hostname é diferente de 'localhost'
-const isLocalhost = os.hostname() === "localhost" || os.hostname().startsWith("127.0.0.1");
+// Carrega as variáveis de ambiente do arquivo .env
+dotenv.config();
+
+const isLocalhost = process.env.VITE_HOSTNAME === "localhost";
+const hostPort = Number(process.env.HOST_PORT) || 3000;  
 
 export default defineConfig({
   plugins: [react()],
@@ -27,7 +30,7 @@ export default defineConfig({
             ),
           },
           host: "0.0.0.0", // para permitir acesso externo
-          port: 4343, // define a porta desejada
+          port: hostPort, // define a porta desejada
           hmr: {
             overlay: false, // Desabilita o overlay de erros
           },
