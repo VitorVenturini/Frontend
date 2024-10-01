@@ -272,7 +272,17 @@ export default function CardLogin() {
               </div>
             </div>
           </CardContent>
-          <CardFooter className="flex justify-between my-4">
+          <CardFooter className="flex justify-between flex-row-reverse my-4">
+          <Button type="submit" disabled={isLoading}>
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Login
+                </>
+              ) : (
+                "Login"
+              )}
+            </Button>
           <Button onClick={handleResetPassword} disabled={isLoading2} variant='outline'>
               {isLoading2 ? (
                 <>
@@ -283,16 +293,7 @@ export default function CardLogin() {
                 "Redefinir Senha"
               )}
             </Button>
-            <Button type="submit" disabled={isLoading}>
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Login
-                </>
-              ) : (
-                "Login"
-              )}
-            </Button>
+            
           </CardFooter>
         </form>
       </Card>
