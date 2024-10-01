@@ -58,6 +58,7 @@ export default function CardLogin() {
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoading2, setIsLoading2] = useState(false);
   const { toast } = useToast();
   const { updateAccount } = useAccount();
   const navigate = useNavigate();
@@ -164,6 +165,44 @@ export default function CardLogin() {
 
     setIsLoading(false);
   };
+
+  const handleResetPassword = async () => {
+    if(email.length<=1){
+      toast({ description: 'Informe o e-mail'});
+      return;
+    }
+    setIsLoading2(true);
+    const formData = {
+      email: email
+    };
+
+    try {
+      const response = await fetch(host + "/api/request-password-reset", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        toast({ description: data.message });
+        console.log("Login efetuado com sucesso");
+
+        setIsLoading2(false);
+
+      } else {
+        const data = await response.json();
+        toast({ description: data.message });
+        setIsLoading2(false);
+      }
+    } catch (error) {
+      console.error("Erro:", error);
+    }
+
+    setIsLoading2(false);
+  }
+
   const handleFormSubmit = (event: React.FormEvent) => {
     event.preventDefault(); // Previne o comportamento padrão do formulário
 
@@ -233,7 +272,17 @@ export default function CardLogin() {
               </div>
             </div>
           </CardContent>
-          <CardFooter className="flex justify-end my-4">
+          <CardFooter className="flex justify-between my-4">
+          <Button onClick={handleResetPassword} disabled={isLoading2} variant='outline'>
+              {isLoading2 ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Redefinir Senha
+                </>
+              ) : (
+                "Redefinir Senha"
+              )}
+            </Button>
             <Button type="submit" disabled={isLoading}>
               {isLoading ? (
                 <>
