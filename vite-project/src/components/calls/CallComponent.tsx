@@ -169,7 +169,7 @@ export default function CallComponent({
   }, [incomingCall]);
   return (
     <Card
-      className={`flex justify-between px-4 py-6 m-3  outline outline-2 border-xs  ${callStateClass} `}
+      className={`flex justify-between px-2 py-5 m-1  gap-2 outline outline-2 border-xs  ${callStateClass} `}
     >
       <div className="flex items-center gap-3">
         {avatarBase64 !== null ? (
