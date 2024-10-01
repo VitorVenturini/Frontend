@@ -17,6 +17,7 @@ const useWebSocket = (
   const [isReconnecting, setIsReconnecting] = useState(false); // Adiciona o estado de reconexão
   const ws = useRef<WebSocket | null>(null);
   const timer = useRef<NodeJS.Timeout | null>(null);
+  const pingTimer = useRef<NodeJS.Timeout | null>(null);
   const account = useAccount();
   const [initialized, setInitialized] = useState(false);
   const [shouldSendMessages, setShouldSendMessages] = useState(false);
@@ -37,21 +38,25 @@ const useWebSocket = (
 
       ws.current.onopen = () => {
         if (timer.current) clearTimeout(timer.current);
+        if (pingTimer.current) clearInterval(pingTimer.current);
         console.log("WebSocket connection opened");
         setIsReconnecting(false);
-        timer.current = setInterval(() => {
+        pingTimer.current = setInterval(() => {
           if (ws.current && ws.current.readyState === WebSocket.OPEN) {
-          ws.current?.send(
-            JSON.stringify({
-              mt: "Ping",
-            })
-          );
-        }
+            ws.current?.send(
+              JSON.stringify({
+                mt: "Ping",
+              })
+            );
+
+            console.log("WebSocket Send { mt: Ping }");
+          }
         }, 60000);
       };
 
       ws.current.onclose = (event) => {
         console.log("WebSocket connection closed:", event.code, event.reason);
+        if (pingTimer.current) clearInterval(pingTimer.current);
         if (event.code === 1006) {
           //code 1006 significa que a conexão foi fechada pelo servidor
           setIsReconnecting(true); // Ativa o loader
@@ -91,6 +96,7 @@ const useWebSocket = (
     }
 
     return () => {
+      if (pingTimer.current) clearInterval(pingTimer.current);
       if (timer.current) clearTimeout(timer.current);
       if (ws.current) ws.current.close();
     };
@@ -119,7 +125,7 @@ const useWebSocket = (
       ws.current?.send(
         JSON.stringify({ api: apiType, mt: "SelectAllSensorInfoSrc" })
       );
-      
+
       ws.current?.send(
         JSON.stringify({ api: apiType, mt: "getHistory", startId: null })
       );

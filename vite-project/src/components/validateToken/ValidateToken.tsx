@@ -27,6 +27,9 @@ const ValidadeToken = (Component: React.ComponentType) => {
           if (!response.ok) {
             // navigate('/Login');
             console.error("Erro ao verificar token:", response.statusText);
+            const currentSession = localStorage.getItem("currentSession")
+            localStorage.removeItem(currentSession as string)
+            localStorage.removeItem("currentSession")
             navigate('/login') 
             return;
           }
