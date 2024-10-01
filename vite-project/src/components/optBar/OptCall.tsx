@@ -8,10 +8,7 @@ import ReceivedCall from "../calls/ReceivedCall";
 import DialPad from "../utils/DialPad";
 
 export default function OptCall() {
-  const { calls, incomingCalls } = useCalls();
-  const wss = useWebSocketData();
-  const [isLoading, setIsLoading] = useState(true);
-
+  const { calls, incomingCalls, dialPadCalls } = useCalls();
   const activeIncomingCalls = incomingCalls.filter((inc) => inc.connected);
 
   // Agrupamos as chamadas recebidas pelo número
@@ -25,19 +22,25 @@ export default function OptCall() {
       return acc;
     }, {});
 
+    console.log("dialPadCalls " + dialPadCalls)
   return (
     <div className="flex w-full h-full">
       {/* coluna esquerda: DialPad */}
-      <div className="w-1/3 p-2"> 
+      <div className="w-1/2 p-2">
         <DialPad />
       </div>
 
       {/* coluna direita: Lista de chamadas */}
-      <div className="w-2/2 p-2"> 
-        <ScrollArea className="h-full">
+      <div className="w-2/3 p-2">
+        <ScrollArea className="h-full w-full">
           {/* CHAMADAS EM ANDAMENTO */}
           {calls.map((call) => (
             <CallComponent key={call.id} buttonOnCall={call} />
+          ))}
+      
+          {/* CHAMADAS REALIZADAS PELO DIALPAD (SEM BTN_ID) EM ANDAMENTO */}
+          {dialPadCalls.map((call) => (
+            <CallComponent key={call.id} dialPadCall={call} />
           ))}
 
           {/* CHAMADAS RECEBIDAS EM ANDAMENTO */}

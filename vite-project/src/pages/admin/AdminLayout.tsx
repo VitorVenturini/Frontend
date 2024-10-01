@@ -197,6 +197,7 @@ function AdminLayout() {
         setPbxStatus(pbxData);
 
         // smtp
+        console.log("SMTP", message.result);
         const smtpEntries = message.result.filter(
           (item: any) => item.entry === "smtpUsername" ||
             item.entry === "smtpPassword" ||
