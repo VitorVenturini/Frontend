@@ -147,7 +147,7 @@ export interface SmtpConfig {
   }
   smtpSecure:{
     entry: string;
-    value: boolean;
+    value: string;
     createdAt: string | null;
     updatedAt: string | null;
   }
@@ -207,7 +207,7 @@ export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
     smtpPassword: { entry: "", value: "", createdAt: null, updatedAt: null },
     smtpHost: { entry: "", value: "", createdAt: null, updatedAt: null },
     smtpPort: { entry: "", value: "", createdAt: null, updatedAt: null },
-    smtpSecure: { entry: "", value: false, createdAt: null, updatedAt: null },
+    smtpSecure: { entry: "", value: '', createdAt: null, updatedAt: null },
   });
   const [licenseApi, setLicense] = useState<License>({
     status: "active",
@@ -320,7 +320,7 @@ const clearSmtpConfig = () => {
     smtpPassword: { entry: "smtpPassword", value: "", createdAt: null, updatedAt: null },
     smtpHost: { entry: "smtpHost", value: "", createdAt: null, updatedAt: null },
     smtpPort: { entry: "smtpPort", value: "", createdAt: null, updatedAt: null },
-    smtpSecure: { entry: "smtpSecure", value: false, createdAt: null, updatedAt: null },
+    smtpSecure: { entry: "smtpSecure", value: '', createdAt: null, updatedAt: null },
   });
 };
 

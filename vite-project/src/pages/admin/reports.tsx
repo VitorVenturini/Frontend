@@ -64,6 +64,9 @@ import { Package } from "lucide-react";
 import { PackageOpen } from "lucide-react";
 import { Square } from "lucide-react";
 import { SquareCheck } from "lucide-react";
+import { ArrowRightCircle } from "lucide-react";
+import { ArrowLeftCircle } from "lucide-react";
+import { X } from "lucide-react";
 
 export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
   const { users } = useUsers();
@@ -93,6 +96,29 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
     filename: "usepdf-example.pdf",
     page: { margin: Margin.NONE, orientation: "landscape" },
   });
+  const [currentImageIndex, setCurrentImageIndex] = useState<number | null>(
+    null
+  );
+  // Abrir a imagem em full screen
+  const handleImageClick = (index: number) => {
+    setCurrentImageIndex(index);
+  };
+
+  // Navegar para a próxima imagem
+  const handleNextImage = () => {
+    if (currentImageIndex !== null) {
+      const nextIndex = (currentImageIndex + 1) % dataReport.img.length;
+      setCurrentImageIndex(nextIndex);
+    }
+  };
+  // Navegar para a imagem anterior
+  const handlePrevImage = () => {
+    if (currentImageIndex !== null) {
+      const prevIndex =
+        (currentImageIndex - 1 + dataReport.img.length) % dataReport.img.length;
+      setCurrentImageIndex(prevIndex);
+    }
+  };
 
   const { language } = useLanguage();
   const handleClear = () => {
@@ -153,6 +179,7 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
 
     return utcDate.replace("T", " "); // Retorna no formato 'YYYY-MM-DD HH:mm:ss'
   };
+
   const handleCheckboxChange = (id: number, date: string) => {
     const newSelectedImages = { ...selectedImages };
     if (selectedImages[id]) {
@@ -200,7 +227,7 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
     const content = await zip.generateAsync({ type: "blob" });
     saveAs(content, "images.zip");
     setIsDownload(false);
-    //setSelectedImages({});
+    setSelectedImages({});
   };
 
   let ajustData = [];
@@ -212,7 +239,6 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
             item = replaceData(users, item, "guid");
             item = replaceData(users, item, "from");
             return item;
-
           case "RptCalls":
             item = replaceData(users, item, "guid");
             item = replaceData(users, item, "number");
@@ -237,7 +263,7 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
       return item; // Retorne o item original se for undefined ou null
     });
 
-    console.log("Dados ajustados:", ajustData);
+    console.log("Dados ajustados:", ajustData); 
   }
 
   const handleExecDevice = () => {
@@ -478,21 +504,25 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
                       size={"icon"}
                       onClick={() => handleDownload()}
                       title="Selecionar"
-                      disabled={dataReport.img?.length === 0 && !selectedImages.key}
+                      disabled={
+                        dataReport.img?.length === 0 && !selectedImages.key
+                      }
                     >
                       <Package />
                     </Button>
                   )}
-                  {!checkAll ? (
+                  {Object.keys(selectedImages).length !== 0 ? (
                     <Button
                       className="flex justify-center"
                       variant={"ghost"}
                       size={"icon"}
-                      onClick={handleCheckAll}
-                      title="Marcar todas"
-                      disabled={dataReport.img?.length === 0 || isDownload === false}
+                      onClick={() => setSelectedImages({})}
+                      title="Desmarcar todas"
+                      disabled={
+                        dataReport.img?.length === 0 || isDownload === false
+                      }
                     >
-                      <SquareCheck />
+                      <Square />
                     </Button>
                   ) : (
                     <Button
@@ -500,9 +530,12 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
                       variant={"ghost"}
                       size={"icon"}
                       onClick={handleCheckAll}
-                      title="Desmarcar todas"
+                      title="Marcar todas"
+                      disabled={
+                        dataReport.img?.length === 0 || isDownload === false
+                      }
                     >
-                      <Square />
+                      <SquareCheck />
                     </Button>
                   )}
                   <Button
@@ -579,47 +612,65 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
               ) : (
                 <ScrollArea className="w-full h-full">
                   <div className="flex flex-wrap gap-4 align-middle items-center justify-center">
-                    {dataReport.img.map((item, index) => (
+                    {dataReport.img.map((item: any, index: number) => (
                       <div
                         key={item.id}
-                        className="flex flex-col align-middle items-center"
+                        className="relative w-[200px] h-[200px]"
                       >
-                        <Dialog>
-                          <div className="flex">
-                            <DialogTrigger
-
-                            >
-                              <div className="flex flex-col items-center align-middle">
-                                <img
-                                  src={item.image}
-                                  alt={`Image ${index}`}
-                                  className="object-cover w-45 h-40"
-                                />
-                              </div>
-                            </DialogTrigger>
-                            {/* Checkbox para selecionar a imagem */}
-                            {isDownload && (
-                              <Checkbox
-                                checked={!!selectedImages[item.id]}
-                                onCheckedChange={() =>
-                                  handleCheckboxChange(item.id, item.date)
-                                }
-                              />
-                            )}
-                          </div>
-                          <DialogContent className="h-full max-w-5xl">
-
-                              <img
-                                  src={item.image}
-                                  alt={`Image ${index}`}
-                                  className="object-cover w-full h-full"
-                                />
-
-                          </DialogContent>
-                          <p className="text-xs gap-2">{item.date}</p>
-                        </Dialog>
+                        <div className="flex">
+                          <img
+                            src={item.image}
+                            alt={`Image ${index}`}
+                            className="cursor-pointer"
+                            onClick={() => handleImageClick(index)}
+                          />
+                          {isDownload && (
+                            <Checkbox
+                              className="absolute top-0 right-0"
+                              checked={!!selectedImages[item.id]}
+                              onCheckedChange={() =>
+                                handleCheckboxChange(item.id, item.date)
+                              }
+                            />
+                          )}
+                        </div>
+                        <p className="text-[12px] items-center justify-center">
+                          {item.date}
+                        </p>
                       </div>
                     ))}
+                    {currentImageIndex !== null && (
+                      <div className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center">
+                        <Card className="items-center align-middle flex justify-center">
+                          <CardContent className="w-[90%] h-[90%] relative justify-center items-center align-middle flex p-2">
+                            <button
+                              className="absolute top-1/2 left-[-30px]"
+                              onClick={handlePrevImage}
+                            >
+                              <ArrowLeftCircle size={40} />
+                            </button>
+                            <img
+                              src={dataReport.img[currentImageIndex].image}
+                              alt={`Image ${currentImageIndex}`}
+                              className="w-[90%] h-[90%] object-contain"
+                            />
+                            <button
+                              className="absolute top-1/2 right-[-30px]"
+                              onClick={handleNextImage}
+                            >
+                              <ArrowRightCircle size={40} />
+                            </button>
+                            <button
+                              className="absolute top-1 right-[-30px]"
+                              onClick={() => setCurrentImageIndex(null)}
+                            >
+                              <X />
+                            </button>
+                          </CardContent>
+                        </Card>
+                      </div>
+                    )}
+
                   </div>
                 </ScrollArea>
               )}

@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/card";
 
 import texts from "@/_data/texts.json";
-import { Switch } from "@/components/ui/switch"
+import { Switch } from "@/components/ui/switch";
 
 import { useLanguage } from "@/components/language/LanguageContext";
 import React, { useState } from "react";
@@ -62,13 +62,11 @@ export default function SMTPconfig() {
   const [smtpPort, setSmtpPort] = useState<string>(
     smtpConfig?.smtpPort.value || ""
   );
-  const [smtpSecure, setSmtpSecure] = useState<boolean>(
-    
-    smtpConfig?.smtpSecure.value || false
-    
+  const [smtpSecure, setSmtpSecure] = useState<string>(
+    smtpConfig?.smtpSecure.value || ""
   );
 
-  console.log(smtpSecure + " SMTPSECURE")
+  console.log(smtpSecure + " SMTPSECURE");
 
   const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSmtpUsername(e.target.value);
@@ -84,8 +82,12 @@ export default function SMTPconfig() {
 
     setSmtpPort(e.target.value);
   };
-  const handleSecureChange = (e:boolean) => {
-    setSmtpSecure(e);
+  const handleSecureChange = (e: boolean) => {
+    if (e === true) {
+      setSmtpSecure("true");
+    } else {
+      setSmtpSecure("false");
+    }
   };
   const handleSmtpConfigUpdate = () => {
     setIsLoading(true);
@@ -159,27 +161,23 @@ export default function SMTPconfig() {
           <Label className="text-end" htmlFor="path">
             SSL
           </Label>
-          <Switch 
-           onCheckedChange={handleSecureChange}
-           checked ={smtpSecure === true}/>
-
-
+          <Switch
+            onCheckedChange={handleSecureChange}
+            checked={smtpSecure === "false" ? false : true}
+          />
         </div>
       </CardContent>
       <CardFooter className="justify-end">
-      <Button
-            onClick={handleSmtpConfigUpdate}
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Atualizando
-              </>
-            ) : (
-              "Atualizar"
-            )}
-          </Button>
+        <Button onClick={handleSmtpConfigUpdate} disabled={isLoading}>
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Atualizando
+            </>
+          ) : (
+            "Atualizar"
+          )}
+        </Button>
       </CardFooter>
     </Card>
   );
