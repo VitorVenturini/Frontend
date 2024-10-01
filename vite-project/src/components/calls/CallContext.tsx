@@ -13,9 +13,26 @@ export interface IncomingCallInterface {
   heldByUser?: boolean;
 }
 
+export interface DialPadCallsInterface {
+  id: string;
+  device: string;
+  deviceText?: string;
+  num?: string;
+  callId: string;
+  connected?: boolean;
+  held?: boolean;
+  heldByUser?: boolean;
+}
+
 interface CallContextProps {
   calls: ButtonInterface[];
+  dialPadCalls: DialPadCallsInterface[];
   incomingCalls: IncomingCallInterface[];
+  addDialPadCalls: (
+    dialPadCalls: DialPadCallsInterface,
+    duration?: number
+  ) => void;
+  removeDialPadCalls: (callID: string) => void;
   addCall: (button: ButtonInterface, duration: number) => void;
   removeCall: (buttonId: string) => void;
   getCallDuration: (buttonId: number) => number;
@@ -24,10 +41,13 @@ interface CallContextProps {
     duration?: number
   ) => void;
   removeIncomingCall: (callId: string) => void;
-  updateIncomingCall : (Incomingcall: IncomingCallInterface) => void;
+  updateIncomingCall: (Incomingcall: IncomingCallInterface) => void;
   setHeldIncomingCall: (callID: string, isHeld: boolean) => void;
   setHeldIncomingCallByUser: (callID: string, isHeld: boolean) => void;
+  setHeldDialPadCall: (callID: string, isHeld: boolean) => void;
+  setHeldDialPadCallByUser: (callID: string, isHeld: boolean) => void;
   getIncomingCallDuration: (callId: string) => number;
+  getDialPadCallsDuration: (callId: string) => number;
 }
 
 const CallContext = createContext<CallContextProps | undefined>(undefined);
@@ -51,6 +71,11 @@ export const CallProvider: React.FC<{ children: React.ReactNode }> = ({
     []
   );
   const [incomingStartTimes, setIncomingStartTimes] = useState<{
+    [key: string]: number;
+  }>({});
+
+  const [dialPadCalls, setDialPadCalls] = useState<DialPadCallsInterface[]>([]);
+  const [dialPadStartTimes, setDialPadStartTimes] = useState<{
     [key: string]: number;
   }>({});
 
@@ -87,7 +112,10 @@ export const CallProvider: React.FC<{ children: React.ReactNode }> = ({
     // Inicializa os tempos de início para chamadas conectadas
     connectedIncomingCalls.forEach((call) => {
       if (!incomingStartTimes[call.id]) {
-        setIncomingStartTimes((prev) => ({ ...prev, [call.callId]: Date.now() }));
+        setIncomingStartTimes((prev) => ({
+          ...prev,
+          [call.callId]: Date.now(),
+        }));
       }
     });
 
@@ -101,6 +129,34 @@ export const CallProvider: React.FC<{ children: React.ReactNode }> = ({
       }
     });
   }, [incomingCalls]);
+
+  //monitoramento das dialPadCalls conectadas
+  // Monitoramento das incomingCalls conectadas
+  useEffect(() => {
+    const connectedDialPadCalls = dialPadCalls.filter((call) => call.connected);
+    console.log(
+      "connectedDialPadCalls" + JSON.stringify(connectedDialPadCalls)
+    );
+    // Inicializa os tempos de início para chamadas conectadas
+    connectedDialPadCalls.forEach((call) => {
+      if (!dialPadStartTimes[call.id]) {
+        setDialPadStartTimes((prev) => ({
+          ...prev,
+          [call.callId]: Date.now(),
+        }));
+      }
+    });
+
+    // Remove entradas para chamadas desconectadas
+    Object.keys(dialPadStartTimes).forEach((callID) => {
+      if (!connectedDialPadCalls.find((call) => call.callId === callID)) {
+        setDialPadStartTimes((prev) => {
+          const { [callID]: _, ...rest } = prev;
+          return rest;
+        });
+      }
+    });
+  }, [dialPadCalls]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -126,12 +182,26 @@ export const CallProvider: React.FC<{ children: React.ReactNode }> = ({
     );
   };
 
+  const setHeldDialPadCall = (callID: string, isHeld: boolean) => {
+    setDialPadCalls((prevCalls) =>
+      prevCalls.map((call) =>
+        call.callId === callID ? { ...call, held: isHeld } : call
+      )
+    );
+  };
+
+  const setHeldDialPadCallByUser = (callID: string, isHeld: boolean) => {
+    setDialPadCalls((prevCalls) =>
+      prevCalls.map((call) =>
+        call.callId === callID ? { ...call, heldByUser: isHeld } : call
+      )
+    );
+  };
+
   const updateIncomingCall = (Incomingcall: IncomingCallInterface) => {
     setIncomingCalls((prevCalls) =>
       prevCalls.map((call) =>
-        call.id === Incomingcall.id
-          ? { ...call, ...Incomingcall }
-          : call
+        call.id === Incomingcall.id ? { ...call, ...Incomingcall } : call
       )
     );
   };
@@ -198,12 +268,50 @@ export const CallProvider: React.FC<{ children: React.ReactNode }> = ({
     });
   };
 
-  const hideIncomingCall = (callID: string) => {
-    setIncomingCalls((prevCalls) =>
-      prevCalls.map((call) =>
-        call.callId === callID ? { ...call, connected: false } : call
-      )
-    );
+  const addDialPadCalls = (
+    dialPadCalls: DialPadCallsInterface,
+    duration?: number
+  ) => {
+    setDialPadCalls((prev) => {
+      const existingCallIndex = prev.findIndex(
+        (call) => call.callId === dialPadCalls.callId
+      );
+
+      if (existingCallIndex !== -1) {
+        // Atualiza a chamada existente
+        const updatedCalls = [...prev];
+        updatedCalls[existingCallIndex] = {
+          ...updatedCalls[existingCallIndex],
+          ...dialPadCalls,
+        };
+        return updatedCalls;
+      } else {
+        // Adiciona uma nova chamada se não existir
+        return [...prev, dialPadCalls];
+      }
+    });
+
+    if (dialPadCalls.connected) {
+      if (duration !== undefined) {
+        setDialPadStartTimes((prev) => ({
+          ...prev,
+          [dialPadCalls.id]: Date.now() - duration * 1000,
+        }));
+      } else {
+        setDialPadStartTimes((prev) => ({
+          ...prev,
+          [dialPadCalls.id]: Date.now(),
+        }));
+      }
+    }
+  };
+
+  const removeDialPadCalls = (callId: string) => {
+    setDialPadCalls((prev) => prev.filter((call) => call.callId !== callId));
+    setDialPadStartTimes((prev) => {
+      const { [callId]: _, ...rest } = prev;
+      return rest;
+    });
   };
 
   const getCallDuration = (buttonId: number) => {
@@ -218,10 +326,21 @@ export const CallProvider: React.FC<{ children: React.ReactNode }> = ({
     return Math.floor((Date.now() - startTime) / 1000);
   };
 
+  const getDialPadCallsDuration = (callId: string) => {
+    const startTime = dialPadStartTimes[callId];
+    if (!startTime) return 0;
+    return Math.floor((Date.now() - startTime) / 1000);
+  };
   return (
     <CallContext.Provider
       value={{
         calls,
+        dialPadCalls,
+        addDialPadCalls,
+        removeDialPadCalls,
+        getDialPadCallsDuration,
+        setHeldDialPadCall,
+        setHeldDialPadCallByUser,
         incomingCalls,
         addIncomingCall,
         updateIncomingCall,

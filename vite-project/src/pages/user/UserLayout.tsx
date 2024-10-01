@@ -113,7 +113,11 @@ function UserLayout() {
     removeIncomingCall,
     removeCall,
     setHeldIncomingCall,
+    setHeldDialPadCall,
+    setHeldDialPadCallByUser,
     setHeldIncomingCallByUser,
+    addDialPadCalls,
+    removeDialPadCalls,
   } = useCalls();
   const [selectedOptTop, setSelectedOptTop] = useState<string>("floor"); // default for top
   const [clickedUserTop, setClickedUserTop] = useState<string | null>(null);
@@ -205,7 +209,7 @@ function UserLayout() {
           return btn.id === message.btn_id;
         })[0];
         setButtonTriggered(message.btn_id, true);
-        
+
         if (!filteredBtn.muted) {
           setPlayNotificationSound(true); // Toca o som de notificação
           setTimeout(() => setPlayNotificationSound(false), 500);
@@ -284,6 +288,18 @@ function UserLayout() {
                   connected: true,
                 };
                 addIncomingCall(incomingCallsInCurseConnected, elapsedTime);
+              } else if (!btn_id && direction === "out") {
+                //CHAMADAS REALIZADAS PELO DIALPAD SEM BTN_ID
+                const dialPadCallConnected = {
+                  id: call_innovaphone,
+                  device: device,
+                  // deviceText: message.deviceText,
+                  num: number,
+                  callId: String(call_innovaphone),
+                  connected: true,
+                };
+
+                addDialPadCalls(dialPadCallConnected, elapsedTime);
               }
             } else if (!call_connected && !btn_id && direction === "inc") {
               const incomingCallsInCurseRinging = {
@@ -337,6 +353,7 @@ function UserLayout() {
         break;
       case "IncomingCallDisconnected":
         removeIncomingCall(String(message.call));
+        removeDialPadCalls(String(message.call));
         // setPlayCallSound(false);
         break;
       case "CallRinging":
@@ -344,12 +361,28 @@ function UserLayout() {
         break;
       case "CallConnected":
         setSelectedOptBottom("call");
-        setButtonClickedStatus(
-          message.btn_id,
-          "callConnected",
-          "bg-red-900",
-          true
-        );
+        if (message.btn_id) {
+          setButtonClickedStatus(
+            message.btn_id,
+            "callConnected",
+            "bg-red-900",
+            true
+          );
+        } else {
+          //CHAMADAS REALIZADAS PELO DIALPAD SEM BTN_ID
+          const dialPadCallConnected = {
+            id: message.call,
+            device: message.device,
+            // deviceText: message.deviceText,
+            num: message.num,
+            callId: String(message.call),
+            connected: true,
+          };
+
+          console.log("DIALPADCALL " + JSON.stringify(dialPadCallConnected));
+          addDialPadCalls(dialPadCallConnected);
+        }
+
         break;
       case "CallHeld":
         // usuario me colocou em espera
@@ -365,6 +398,7 @@ function UserLayout() {
         } else {
           console.log("Chamada que eu recebi");
           setHeldIncomingCallByUser(String(message.call), true);
+          setHeldDialPadCallByUser(String(message.call), true);
         }
         break;
       case "CallRetrieved":
@@ -379,6 +413,7 @@ function UserLayout() {
         } else {
           console.log("Chamada que eu recebi");
           setHeldIncomingCallByUser(String(message.call), false);
+          setHeldDialPadCallByUser(String(message.call), false);
         }
         // usuario retomou a chamada
         break;
@@ -394,6 +429,7 @@ function UserLayout() {
           setHeldCall(message.btn_id, false);
         } else {
           setHeldIncomingCall(String(message.call), false);
+          setHeldDialPadCall(String(message.call), false);
         }
         // eu retomei a chamada
         break;
@@ -409,6 +445,7 @@ function UserLayout() {
           setHeldCall(message.btn_id, true);
         } else {
           setHeldIncomingCall(String(message.call), true);
+          setHeldDialPadCall(String(message.call), true);
         }
         //eu coloquei em espera
         break;

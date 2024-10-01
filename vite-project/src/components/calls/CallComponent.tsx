@@ -22,7 +22,11 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import Keyboard from "../utils/Keyboard";
-import { IncomingCallInterface, useCalls } from "../calls/CallContext";
+import {
+  DialPadCallsInterface,
+  IncomingCallInterface,
+  useCalls,
+} from "../calls/CallContext";
 import { Button } from "../ui/button";
 import {
   Card,
@@ -36,10 +40,12 @@ import {
 interface CallComponentProps {
   buttonOnCall?: ButtonInterface;
   incomingCall?: IncomingCallInterface;
+  dialPadCall?: DialPadCallsInterface;
 }
 export default function CallComponent({
   buttonOnCall,
   incomingCall,
+  dialPadCall,
 }: CallComponentProps) {
   {
     /*se nao tiver chamadas retorna um skeleton */
@@ -47,18 +53,19 @@ export default function CallComponent({
   const { usersPbx } = useUsersPbx();
   const { setHeldCall, setClickedStatusClass } = useButtons();
   const wss = useWebSocketData();
-  const { getCallDuration, getIncomingCallDuration } = useCalls();
+  const { getCallDuration, getIncomingCallDuration, getDialPadCallsDuration } =
+    useCalls();
   const [callStateClass, setCallStateClass] = useState<string>("");
   // const [heldIncomingCall,setHeldStateIncomingCall] = useState( || false)
   const [openKeyboardDTMF, setOpenKeyboardDTMF] = useState(false);
   const [openKeyboard, setOpenKeyboard] = useState(false);
-  //const [retrieveCall, setRetrieveCall] = useState<boolean>(false);
+
   const filteredUser = usersPbx?.filter((user) => {
     return user.guid === buttonOnCall?.button_prt;
   })[0];
 
   const filteredIncomingCallUser = usersPbx?.filter((user) => {
-    return user.e164 === incomingCall?.num;
+    return user.e164 === (incomingCall?.num || dialPadCall?.num);
   })[0];
 
   const initials = getInitials(
@@ -74,7 +81,7 @@ export default function CallComponent({
       .toString()
       .padStart(2, "0")}`;
   };
-
+  console.log(" filteredIncomingCallUser " + JSON.stringify(filteredIncomingCallUser))
   const handleHeldCall = () => {
     if (incomingCall) {
       wss?.sendMessage({
@@ -83,6 +90,13 @@ export default function CallComponent({
         device: incomingCall?.device,
         num: incomingCall?.num,
         call: incomingCall?.callId,
+      });
+    } else if (dialPadCall) {
+      wss?.sendMessage({
+        api: "user",
+        mt: "HeldCall",
+        device: dialPadCall.device,
+        call: dialPadCall.callId,
       });
     } else {
       wss?.sendMessage({
@@ -101,6 +115,13 @@ export default function CallComponent({
         num: incomingCall?.num,
         call: incomingCall?.callId,
       });
+    } else if (dialPadCall) {
+      wss?.sendMessage({
+        api: "user",
+        mt: "RetrieveCall",
+        device: dialPadCall.device,
+        call: dialPadCall.callId,
+      });
     } else {
       wss?.sendMessage({
         api: "user",
@@ -117,6 +138,13 @@ export default function CallComponent({
         mt: "EndIncomingCall",
         device: incomingCall?.device,
         num: incomingCall?.num,
+      });
+    } else if (dialPadCall) {
+      wss?.sendMessage({
+        api: "user",
+        mt: "EndCall",
+        device: dialPadCall.device,
+        call: dialPadCall.callId,
       });
     } else {
       wss?.sendMessage({
@@ -167,11 +195,25 @@ export default function CallComponent({
       setCallStateClass("border-red-800 outline-red-800");
     }
   }, [incomingCall]);
+
+  useEffect(() => {
+    if (dialPadCall?.held) {
+      // eu coloquei em espera a dialPadCall
+      setCallStateClass("border-blue-800 outline-blue-800");
+    } else if (incomingCall?.heldByUser) {
+      // usuário me colocou em espera ( a dialPadCall )
+      setCallStateClass("border-purple-900 outline-purple-900");
+    } else {
+      // eu tirei da espera ou o usuario tirou da espera a dialPadCall
+      setCallStateClass("border-red-800 outline-red-800");
+    }
+  }, [dialPadCall]);
+
   return (
     <Card
-      className={`flex justify-between px-2 py-5 m-1  gap-2 outline outline-2 border-xs  ${callStateClass} `}
+      className={` px-2 py-5 m-1  gap-2 outline outline-2 border-xs  ${callStateClass} `}
     >
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 w-full ">
         {avatarBase64 !== null ? (
           <Avatar>
             <AvatarImage src={avatarBase64 as string} />
@@ -186,6 +228,12 @@ export default function CallComponent({
               ? filteredIncomingCallUser?.cn
               : incomingCall.num}
           </div>
+        ) : dialPadCall ? (
+          <div>
+            {filteredIncomingCallUser
+              ? filteredIncomingCallUser?.cn
+              : dialPadCall.num}
+          </div>
         ) : (
           <div>{filteredUser ? filteredUser.cn : buttonOnCall?.button_prt}</div>
         )}
@@ -194,6 +242,10 @@ export default function CallComponent({
             <div>
               {formatDuration(getIncomingCallDuration(incomingCall.callId))}
             </div>
+          ) : dialPadCall ? (
+            <div>
+              {formatDuration(getDialPadCallsDuration(dialPadCall.callId))}
+            </div>
           ) : (
             <div>
               {formatDuration(getCallDuration(buttonOnCall?.id as number))}
@@ -201,7 +253,7 @@ export default function CallComponent({
           )}
         </div>
       </div>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 mt-2">
         <div>
           <Popover open={openKeyboardDTMF} onOpenChange={setOpenKeyboardDTMF}>
             <PopoverTrigger>
@@ -222,14 +274,18 @@ export default function CallComponent({
         </div>
         <Button
           onClick={
-            buttonOnCall?.held || incomingCall?.held
+            buttonOnCall?.held || incomingCall?.held || dialPadCall?.held
               ? handleRetrieveCall
               : handleHeldCall
           }
           size="icon"
           variant="secondary"
         >
-          {buttonOnCall?.held || incomingCall?.held ? <Play /> : <Pause />}
+          {buttonOnCall?.held || incomingCall?.held || dialPadCall?.held ? (
+            <Play />
+          ) : (
+            <Pause />
+          )}
         </Button>
         <div>
           <Popover open={openKeyboard} onOpenChange={setOpenKeyboard}>
