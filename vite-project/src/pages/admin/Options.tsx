@@ -4,6 +4,7 @@ import LicenseCard from "@/components/options/CardLicense";
 import CardDataBase from "@/components/options/CardDataBase";
 import Gateways from "@/components/options/Gateways";
 import ContaCard from "@/components/options/ContaCard";
+import SMTPconfig from "@/components/options/SMTPconfig";
 import RadioCard from "@/components/options/RadioCard";
 import PbxConfigCard from "@/components/options/Pbx/PbxConfigCard";
 import APIGoogleCard from "@/components/options/ApiGoogle/APIGoogleCard";
@@ -46,7 +47,10 @@ export default function MenuOptions() {
         return <IotCameraCard />;
       case "Notifications":
         return <Notify />;
+        case "Email":
+          return <SMTPconfig />;
       default:
+        
         return null;
     }
   };
@@ -109,6 +113,13 @@ export default function MenuOptions() {
           onClick={() => handleClick("Notifications")}
         >
           Notificações
+        </Button>
+        <Button
+          className="focus:bg-accent"
+          variant={"ghost"}
+          onClick={() => handleClick("Email")}
+        >
+          Serviço de Email
         </Button>
       </div>
       <div className="flex justify-center items-start w-full">

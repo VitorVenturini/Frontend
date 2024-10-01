@@ -45,7 +45,7 @@ import {
   UserPbxInterface,
   useUsersPbx,
 } from "@/components/users/usersPbx/UsersPbxContext";
-import { BackupConfig, useAppConfig } from "@/components/options/ConfigContext";
+import { BackupConfig, SmtpConfig, useAppConfig } from "@/components/options/ConfigContext";
 import Loader from "@/components/Loader";
 import useWebSocket from "@/components/websocket/useWebSocket";
 import Loader2 from "@/components/Loader2";
@@ -82,6 +82,7 @@ function AdminLayout() {
     setApiKeyInfo,
     setPbxStatus,
     addBackupConfig,
+    addSmtpConfig
   } = useAppConfig();
   var allBtn: ButtonInterface[];
   // vamos trtar todas as mensagens recebidas pelo wss aqui
@@ -196,9 +197,59 @@ function AdminLayout() {
         setPbxStatus(pbxData);
 
         // smtp
-        const smtpConfig = message.result.filter(
-          (item: any) => item.entry === "smtpConfig"
+        const smtpEntries = message.result.filter(
+          (item: any) => item.entry === "smtpUsername" ||
+            item.entry === "smtpPassword" ||
+            item.entry === "smtpHost" ||
+            item.entry === "smtpPort" ||
+            item.entry === "smtpSecure" 
         );
+        const allSmtpInfo: SmtpConfig = {
+          smtpUsername: smtpEntries.find(
+            (item: any) => item.entry === "smtpUsername"
+          ) || {
+            entry: "smtpUsername",
+            value: "",
+            createdAt: null,
+            updatedAt: null,
+          },
+          smtpPassword: smtpEntries.find(
+            (item: any) => item.entry === "smtpPassword"
+          ) || {
+            entry: "smtpPassword",
+            value: "",
+            createdAt: null,
+            updatedAt: null,
+          },
+          smtpHost: smtpEntries.find(
+            (item: any) => item.entry === "smtpHost"
+          ) || {
+            entry: "smtpHost",
+            value: "",
+            createdAt: null,
+            updatedAt: null,
+          },
+          smtpPort: smtpEntries.find(
+            (item: any) => item.entry === "smtpPort"
+          ) || {
+            entry: "smtpPort",
+            value: "",
+            createdAt: null,
+            updatedAt: null,
+          },
+          smtpSecure: smtpEntries.find(
+            (item: any) => item.entry === "smtpSecure"
+          ) || {
+            entry: "smtpSecure",
+            value: false,
+            createdAt: null,
+            updatedAt: null,
+          },
+        };
+        console.log(JSON.stringify(allSmtpInfo));
+        addSmtpConfig(allSmtpInfo);
+    
+
         //backup
         const backupEntries = message.result.filter(
           (item: any) =>
@@ -208,7 +259,7 @@ function AdminLayout() {
             item.entry === "backupMethod" ||
             item.entry === "backupPath" ||
             item.entry === "backupFrequency" ||
-            item.entry === "backupTime" ||
+            item.entry === "backupHour" ||
             item.entry === "backupDay"
         );
 
@@ -254,7 +305,7 @@ function AdminLayout() {
             updatedAt: null,
           },
           backupHour: backupEntries.find(
-            (item: any) => item.entry === "backupTime"
+            (item: any) => item.entry === "backupHour"
           ) || {
             entry: "backupHour",
             value: "",
@@ -281,7 +332,7 @@ function AdminLayout() {
         console.log(JSON.stringify(allBackupInfo));
         addBackupConfig(allBackupInfo);
         break;
-      case "UpdateConfigBackupScheduleSuccess":
+      
         if (message.result) {
           toast({
             description: "Agendamento de Backup atualizado com sucesso",
@@ -295,7 +346,7 @@ function AdminLayout() {
               item.entry === "backupMethod" ||
               item.entry === "backupPath" ||
               item.entry === "backupFrequency" ||
-              item.entry === "backupTime" ||
+              item.entry === "backupHour" ||
               item.entry === "backupDay"
           );
 
@@ -341,7 +392,7 @@ function AdminLayout() {
               updatedAt: null,
             },
             backupHour: backupEntries.find(
-              (item: any) => item.entry === "backupTime"
+              (item: any) => item.entry === "backupHour"
             ) || {
               entry: "backupHour",
               value: "",

@@ -121,10 +121,36 @@ export interface BackupConfig {
 }
 
 export interface SmtpConfig {
-  entry: string;
-  value: string;
-  createdAt: string | null;
-  updatedAt: string | null;
+  smtpUsername:{
+    entry: string;
+    value: string;
+    createdAt: string | null;
+    updatedAt: string | null;
+  }
+  smtpPassword:{
+    entry: string;
+    value: string;
+    createdAt: string | null;
+    updatedAt: string | null;
+  }
+  smtpHost:{
+    entry: string;
+    value: string;
+    createdAt: string | null;
+    updatedAt: string | null;
+  }
+  smtpPort:{
+    entry: string;
+    value: string;
+    createdAt: string | null;
+    updatedAt: string | null;
+  }
+  smtpSecure:{
+    entry: string;
+    value: boolean;
+    createdAt: string | null;
+    updatedAt: string | null;
+  }
 }
 
 interface AppConfigContextType {
@@ -133,7 +159,7 @@ interface AppConfigContextType {
   licenseApi: License;
   loadBarData: LoaderBarProps;
   backupConfig: BackupConfig;
-  smtpConfig: SmtpConfig[];
+  smtpConfig: SmtpConfig;
   notification: NotificationsInterface[];
   addNotifications: (notification: NotificationsInterface) => void;
   setPbxStatus: React.Dispatch<React.SetStateAction<PbxInterface[]>>;
@@ -154,6 +180,8 @@ interface AppConfigContextType {
   clearLoadBarData: () => void;
   addBackupConfig: (backupConfig: BackupConfig) => void;
   clearBackupConfig: () => void;
+  addSmtpConfig: (smtpConfig: SmtpConfig) => void;
+  clearSmtpConfig: () => void;
 }
 
 const AppConfigContext = createContext<AppConfigContextType | undefined>(
@@ -174,7 +202,13 @@ export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
     backupDay: { entry: "", value: "", createdAt: null, updatedAt: null },
     backupMethod: { entry: "", value: "", createdAt: null, updatedAt: null },
   });
-  const [smtpConfig, setSmtpConfig] = useState<SmtpConfig[]>([]);
+  const [smtpConfig, setSmtpConfig] = useState<SmtpConfig>({
+    smtpUsername: { entry: "", value: "", createdAt: null, updatedAt: null },
+    smtpPassword: { entry: "", value: "", createdAt: null, updatedAt: null },
+    smtpHost: { entry: "", value: "", createdAt: null, updatedAt: null },
+    smtpPort: { entry: "", value: "", createdAt: null, updatedAt: null },
+    smtpSecure: { entry: "", value: false, createdAt: null, updatedAt: null },
+  });
   const [licenseApi, setLicense] = useState<License>({
     status: "active",
     licenseKey: { value: "", createdAt: null, updatedAt: null },
@@ -274,6 +308,21 @@ export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
       backupMethod: { entry: "backupMethod", value: "", createdAt: null, updatedAt: null },
     });
   };
+  const addSmtpConfig = (newSmtpConfig: SmtpConfig) => {
+    setSmtpConfig((prevSmtpConfig) => ({
+      ...prevSmtpConfig,
+      ...newSmtpConfig,
+    }));
+}
+const clearSmtpConfig = () => {
+  setSmtpConfig({
+    smtpUsername: { entry: "smtpUsername", value: "", createdAt: null, updatedAt: null },
+    smtpPassword: { entry: "smtpPassword", value: "", createdAt: null, updatedAt: null },
+    smtpHost: { entry: "smtpHost", value: "", createdAt: null, updatedAt: null },
+    smtpPort: { entry: "smtpPort", value: "", createdAt: null, updatedAt: null },
+    smtpSecure: { entry: "smtpSecure", value: false, createdAt: null, updatedAt: null },
+  });
+};
 
   return (
     <AppConfigContext.Provider
@@ -299,6 +348,8 @@ export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
         clearLoadBarData,
         addBackupConfig,
         clearBackupConfig,
+        addSmtpConfig,
+        clearSmtpConfig,
       }}
     >
       {children}

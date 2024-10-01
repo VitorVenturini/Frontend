@@ -51,7 +51,6 @@ export default function CardDataBase() {
   const [isLoading3, setIsLoading3] = useState(false);
   const { backupConfig } = useAppConfig();
   const wss = useWebSocketData();
-  console.log("filto de backup" + JSON.stringify(backupConfig));
   const { language } = useLanguage();
   const [backupUsername, setBackupUsername] = useState<string>(
     backupConfig?.backupUsername?.value || ""
