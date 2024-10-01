@@ -13,7 +13,10 @@ import { Label } from "@/components/ui/label";
 import React, { useState, ChangeEvent, useContext, useEffect } from "react";
 import { Switch } from "@/components/ui/switch";
 import { useNavigate } from "react-router-dom";
-import { useAccount } from "@/components/account/AccountContext";
+import {
+  useAccount,
+  AccountContext,
+} from "@/components/account/AccountContext";
 
 import { Navigate } from "react-router-dom";
 
@@ -61,6 +64,8 @@ export default function CardLogin() {
   const [isLoading2, setIsLoading2] = useState(false);
   const { toast } = useToast();
   const { updateAccount } = useAccount();
+  const accountContext = useContext(AccountContext);
+
   const navigate = useNavigate();
   const account = useAccount();
   const { language } = useLanguage();
@@ -111,11 +116,10 @@ export default function CardLogin() {
         updateAccount({ isLogged: true });
         console.log({ ...account, updateAccount: undefined });
         console.log("Login efetuado com sucesso");
-
         setIsLoading(false);
+        // navega para tela de admin se o usuario é do tipo admin
+        accountData.type === "admin" ? navigate("/admin/buttons") : navigate("/user");
 
-        // Sempre navega para a tela de usuário após o login bem-sucedido
-        navigate("/user");
       } else {
         const data = await response.json();
         switch (data.error) {
@@ -167,13 +171,13 @@ export default function CardLogin() {
   };
 
   const handleResetPassword = async () => {
-    if(email.length<=1){
-      toast({ description: 'Informe o e-mail'});
+    if (email.length <= 1) {
+      toast({ description: "Informe o e-mail" });
       return;
     }
     setIsLoading2(true);
     const formData = {
-      email: email
+      email: email,
     };
 
     try {
@@ -190,7 +194,6 @@ export default function CardLogin() {
         console.log("Login efetuado com sucesso");
 
         setIsLoading2(false);
-
       } else {
         const data = await response.json();
         toast({ description: data.message });
@@ -201,7 +204,7 @@ export default function CardLogin() {
     }
 
     setIsLoading2(false);
-  }
+  };
 
   const handleFormSubmit = (event: React.FormEvent) => {
     event.preventDefault(); // Previne o comportamento padrão do formulário
@@ -238,7 +241,7 @@ export default function CardLogin() {
               {texts[language].enterEmail} e {texts[language].enterPassword}
             </CardDescription>
           </CardHeader>
-          <CardContent >
+          <CardContent>
             <div className="grid w-full items-center gap-6">
               <div className="grid grid-cols-3 items-center gap-4">
                 <Label htmlFor="email" className="text-end">
@@ -273,7 +276,7 @@ export default function CardLogin() {
             </div>
           </CardContent>
           <CardFooter className="flex justify-between flex-row-reverse my-4">
-          <Button type="submit" disabled={isLoading}>
+            <Button type="submit" disabled={isLoading}>
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -283,7 +286,11 @@ export default function CardLogin() {
                 "Login"
               )}
             </Button>
-          <Button onClick={handleResetPassword} disabled={isLoading2} variant='outline'>
+            <Button
+              onClick={handleResetPassword}
+              disabled={isLoading2}
+              variant="outline"
+            >
               {isLoading2 ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -293,7 +300,6 @@ export default function CardLogin() {
                 "Redefinir Senha"
               )}
             </Button>
-            
           </CardFooter>
         </form>
       </Card>

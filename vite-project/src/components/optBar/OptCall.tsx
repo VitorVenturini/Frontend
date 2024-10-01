@@ -22,7 +22,6 @@ export default function OptCall() {
       return acc;
     }, {});
 
-    console.log("dialPadCalls " + dialPadCalls)
   return (
     <div className="flex w-full h-full">
       {/* coluna esquerda: DialPad */}

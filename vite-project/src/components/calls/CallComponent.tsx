@@ -81,7 +81,6 @@ export default function CallComponent({
       .toString()
       .padStart(2, "0")}`;
   };
-  console.log(" filteredIncomingCallUser " + JSON.stringify(filteredIncomingCallUser))
   const handleHeldCall = () => {
     if (incomingCall) {
       wss?.sendMessage({
@@ -211,7 +210,7 @@ export default function CallComponent({
 
   return (
     <Card
-      className={` px-2 py-5 m-1  gap-2 outline outline-2 border-xs  ${callStateClass} `}
+      className={` px-2 py-5 m-1  gap-2 outline outline-2 border-xs ${callStateClass} `}
     >
       <div className="flex items-center gap-3 w-full ">
         {avatarBase64 !== null ? (
