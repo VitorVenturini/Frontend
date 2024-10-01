@@ -199,7 +199,7 @@ export default function CallComponent({
     if (dialPadCall?.held) {
       // eu coloquei em espera a dialPadCall
       setCallStateClass("border-blue-800 outline-blue-800");
-    } else if (incomingCall?.heldByUser) {
+    } else if (dialPadCall?.heldByUser) {
       // usuário me colocou em espera ( a dialPadCall )
       setCallStateClass("border-purple-900 outline-purple-900");
     } else {
@@ -299,6 +299,7 @@ export default function CallComponent({
                 forwarded={true}
                 buttonOnCall={buttonOnCall}
                 incoming={incomingCall}
+                dialPadCall ={dialPadCall}
               />
             </PopoverContent>
           </Popover>

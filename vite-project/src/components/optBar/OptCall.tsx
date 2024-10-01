@@ -5,7 +5,7 @@ import { Button } from "../ui/button";
 import { useWebSocketData } from "../websocket/WebSocketProvider";
 import { useEffect, useState } from "react";
 import ReceivedCall from "../calls/ReceivedCall";
-import DialPad from "../utils/DialPad";
+import DialPad from "../calls/DialPad";
 
 export default function OptCall() {
   const { calls, incomingCalls, dialPadCalls } = useCalls();
