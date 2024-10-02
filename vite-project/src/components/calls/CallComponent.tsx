@@ -81,7 +81,6 @@ export default function CallComponent({
       .toString()
       .padStart(2, "0")}`;
   };
-  console.log(" filteredIncomingCallUser " + JSON.stringify(filteredIncomingCallUser))
   const handleHeldCall = () => {
     if (incomingCall) {
       wss?.sendMessage({
@@ -200,7 +199,7 @@ export default function CallComponent({
     if (dialPadCall?.held) {
       // eu coloquei em espera a dialPadCall
       setCallStateClass("border-blue-800 outline-blue-800");
-    } else if (incomingCall?.heldByUser) {
+    } else if (dialPadCall?.heldByUser) {
       // usuário me colocou em espera ( a dialPadCall )
       setCallStateClass("border-purple-900 outline-purple-900");
     } else {
@@ -211,7 +210,7 @@ export default function CallComponent({
 
   return (
     <Card
-      className={` px-2 py-5 m-1  gap-2 outline outline-2 border-xs  ${callStateClass} `}
+      className={` px-2 py-5 m-1  gap-2 outline outline-2 border-xs ${callStateClass} `}
     >
       <div className="flex items-center gap-3 w-full ">
         {avatarBase64 !== null ? (
@@ -300,6 +299,7 @@ export default function CallComponent({
                 forwarded={true}
                 buttonOnCall={buttonOnCall}
                 incoming={incomingCall}
+                dialPadCall ={dialPadCall}
               />
             </PopoverContent>
           </Popover>

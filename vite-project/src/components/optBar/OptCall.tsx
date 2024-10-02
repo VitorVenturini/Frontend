@@ -5,7 +5,7 @@ import { Button } from "../ui/button";
 import { useWebSocketData } from "../websocket/WebSocketProvider";
 import { useEffect, useState } from "react";
 import ReceivedCall from "../calls/ReceivedCall";
-import DialPad from "../utils/DialPad";
+import DialPad from "../calls/DialPad";
 
 export default function OptCall() {
   const { calls, incomingCalls, dialPadCalls } = useCalls();
@@ -22,7 +22,6 @@ export default function OptCall() {
       return acc;
     }, {});
 
-    console.log("dialPadCalls " + dialPadCalls)
   return (
     <div className="flex w-full h-full">
       {/* coluna esquerda: DialPad */}

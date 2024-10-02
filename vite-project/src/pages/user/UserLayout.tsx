@@ -356,6 +356,9 @@ function UserLayout() {
         removeDialPadCalls(String(message.call));
         // setPlayCallSound(false);
         break;
+      case "CallConnecting":
+        //tratar chamadas conectando aqui
+        break;
       case "CallRinging":
         setButtonClickedStatus(message.btn_id, "callRinging", "bg-orange-700");
         break;
@@ -383,6 +386,10 @@ function UserLayout() {
           addDialPadCalls(dialPadCallConnected);
         }
 
+        break;
+      case "CallDisconnected":
+        setButtonClickedStatus(message.btn_id, "callDisconnected", "", false);
+        removeCall(message.btn_id);
         break;
       case "CallHeld":
         // usuario me colocou em espera
@@ -449,10 +456,7 @@ function UserLayout() {
         }
         //eu coloquei em espera
         break;
-      case "CallDisconnected":
-        setButtonClickedStatus(message.btn_id, "callDisconnected", "", false);
-        removeCall(message.btn_id);
-        break;
+
       case "NumberOnline":
         setButtonNumberCallStatus(
           message.number,

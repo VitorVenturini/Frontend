@@ -3,17 +3,22 @@ import { ArrowRightLeftIcon, CircleX, Delete } from "lucide-react";
 import { Button } from "../ui/button";
 import { useWebSocketData } from "../websocket/WebSocketProvider";
 import { ButtonInterface } from "../buttons/buttonContext/ButtonsContext";
-import { IncomingCallInterface } from "../calls/CallContext";
+import {
+  DialPadCallsInterface,
+  IncomingCallInterface,
+} from "../calls/CallContext";
 interface KeyboardProps {
   onKeyPress: (key: string) => void;
   forwarded: boolean;
   buttonOnCall?: ButtonInterface;
   incoming?: IncomingCallInterface;
+  dialPadCall?: DialPadCallsInterface;
 }
 
 const Keyboard: React.FC<KeyboardProps> = ({
   onKeyPress,
   forwarded,
+  dialPadCall,
   buttonOnCall,
   incoming,
 }) => {
@@ -35,9 +40,17 @@ const Keyboard: React.FC<KeyboardProps> = ({
         mt: "SendDtmfDigitsIncomingCall",
         digit: key,
         device: incoming.device,
-        call: incoming.callId
+        call: incoming.callId,
       });
-    }else if(!forwarded && !incoming){
+    } else if (!forwarded && !incoming && !buttonOnCall) {
+      wss?.sendMessage({
+        api: "user",
+        mt: "SendDtmfDigits",
+        digit: key,
+        device: dialPadCall?.device,
+        call: dialPadCall?.callId,
+      });
+    } else if (!forwarded && !incoming && !dialPadCall) {
       wss?.sendMessage({
         api: "user",
         mt: "SendDtmfDigits",
@@ -60,7 +73,15 @@ const Keyboard: React.FC<KeyboardProps> = ({
         call: incoming.callId,
         destination: keySequence.join(""),
       });
-    } else {
+    } else if(dialPadCall){
+      wss?.sendMessage({
+        api: "user",
+        mt: "RedirectCall",
+        device: dialPadCall.device,
+        call: dialPadCall.callId,
+        destination: keySequence.join(""),
+      });
+    } else{
       wss?.sendMessage({
         api: "user",
         mt: "RedirectCall",
