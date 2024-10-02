@@ -6,10 +6,11 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import ModalDevices from "./ModalDevices";
+import { useToast } from "@/components/ui/use-toast";
 
 const DialPad = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
-
+  const { toast } = useToast();
   // Função para lidar com clique nos dígitos
   const handleDigitClick = useCallback(
     (value: string) => () => {
@@ -24,6 +25,18 @@ const DialPad = () => {
   };
 
   const [openModalDevices, setOpenModalDevices] = useState(false);
+
+  const handleOpenChange = (isOpen: boolean) => {
+    if (phoneNumber === "") {
+      toast({
+        title: "Erro",
+        description: "Por favor, insira um número antes de ligar.",
+        variant: "destructive",
+      });
+      return;
+    }
+    setOpenModalDevices(isOpen);
+  };
 
   return (
     <div className="flex flex-col items-center justify-center h-full bg-gray-900 rounded-lg w-full">
@@ -53,7 +66,7 @@ const DialPad = () => {
       {/* Controles de ação */}
       <div className="flex justify-center gap-4">
         <div>
-          <Popover open={openModalDevices} onOpenChange={setOpenModalDevices}>
+          <Popover open={openModalDevices} onOpenChange={handleOpenChange}>
             <PopoverTrigger>
               <button className="bg-green-500 hover:bg-green-600 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center">
                 <Phone className="text-white" />
