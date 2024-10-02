@@ -269,6 +269,8 @@ function UserLayout() {
                   btn_id,
                   "callInCurse",
                   "bg-red-900",
+                  false,
+                  true,
                   true
                 );
                 const button = allBtn.find((btn) => btn.id === btn_id);
@@ -360,7 +362,18 @@ function UserLayout() {
         //tratar chamadas conectando aqui
         break;
       case "CallRinging":
-        setButtonClickedStatus(message.btn_id, "callRinging", "bg-orange-700");
+        if (message.btn_id) {
+          setButtonClickedStatus(
+            message.btn_id,
+            "callRinging",
+            "bg-orange-700",
+            true,
+            false,
+            true
+          );
+          setSelectedOptBottom("call");
+        }
+        // {"api":"user","mt":"CallRinging","call":325,"device":"SwPh_pietro_65f2e98c"}
         break;
       case "CallConnected":
         setSelectedOptBottom("call");
@@ -369,6 +382,8 @@ function UserLayout() {
             message.btn_id,
             "callConnected",
             "bg-red-900",
+            false,
+            true,
             true
           );
         } else {
@@ -388,7 +403,14 @@ function UserLayout() {
 
         break;
       case "CallDisconnected":
-        setButtonClickedStatus(message.btn_id, "callDisconnected", "", false);
+        setButtonClickedStatus(
+          message.btn_id,
+          "callDisconnected",
+          "",
+          false,
+          false,
+          false
+        );
         removeCall(message.btn_id);
         break;
       case "CallHeld":
@@ -399,6 +421,8 @@ function UserLayout() {
             message.btn_id,
             "callHeld",
             "bg-purple-900",
+            false,
+            true,
             true
           );
           setHeldCallByUser(message.btn_id, true);
@@ -414,6 +438,8 @@ function UserLayout() {
             message.btn_id,
             "callRetrieved",
             "bg-red-900",
+            false,
+            true,
             true
           );
           setHeldCallByUser(message.btn_id, false);
@@ -431,6 +457,8 @@ function UserLayout() {
             message.btn_id,
             "userCallRetrieved",
             "bg-red-900",
+            false,
+            true,
             true
           );
           setHeldCall(message.btn_id, false);
@@ -447,6 +475,8 @@ function UserLayout() {
             message.btn_id,
             "userCallHeld",
             "!bg-blue-800",
+            false,
+            true,
             true
           );
           setHeldCall(message.btn_id, true);

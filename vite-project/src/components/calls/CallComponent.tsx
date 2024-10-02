@@ -172,7 +172,14 @@ export default function CallComponent({
         buttonOnCall.id,
         "border-purple-900 outline-purple-900"
       );
-    } else {
+    } else if(buttonOnCall?.ringing){
+      setCallStateClass("border-orange-600 outline-orange-600");
+      setClickedStatusClass(
+        buttonOnCall?.id as number,
+        "border-orange-800 outline-orange-800"
+      );
+    }
+    else {
       // eu tirei da espera ou o usuario tirou da espera
       setCallStateClass("border-red-800 outline-red-800");
       setClickedStatusClass(
@@ -236,78 +243,94 @@ export default function CallComponent({
         ) : (
           <div>{filteredUser ? filteredUser.cn : buttonOnCall?.button_prt}</div>
         )}
-        <div className="text-xs mt-1">
-          {incomingCall ? (
-            <div>
-              {formatDuration(getIncomingCallDuration(incomingCall.callId))}
+        {/*TRATAMENTO PARA RINGING E CONNECTED */}
+        {buttonOnCall?.ringing ? (
+          <div className="flex items-center gap-3">
+            <div>Chamando...</div>
+            <Button onClick={handleEndCall} size="icon" variant="destructive">
+              <PhoneOff />
+            </Button>{" "}
+          </div>
+        ) : (
+          <>
+            <div className="text-xs mt-1">
+              {incomingCall ? (
+                <div>
+                  {formatDuration(getIncomingCallDuration(incomingCall.callId))}
+                </div>
+              ) : dialPadCall ? (
+                <div>
+                  {formatDuration(getDialPadCallsDuration(dialPadCall.callId))}
+                </div>
+              ) : (
+                <div>
+                  {formatDuration(getCallDuration(buttonOnCall?.id as number))}
+                </div>
+              )}
             </div>
-          ) : dialPadCall ? (
-            <div>
-              {formatDuration(getDialPadCallsDuration(dialPadCall.callId))}
-            </div>
-          ) : (
-            <div>
-              {formatDuration(getCallDuration(buttonOnCall?.id as number))}
-            </div>
-          )}
-        </div>
-      </div>
-      <div className="flex items-center gap-4 mt-2">
-        <div>
-          <Popover open={openKeyboardDTMF} onOpenChange={setOpenKeyboardDTMF}>
-            <PopoverTrigger>
-              <Button size="icon" variant="secondary">
-                {" "}
-                <KeyboardIcon />{" "}
+            <div className="flex items-center gap-4 mt-2">
+              <div>
+                <Popover
+                  open={openKeyboardDTMF}
+                  onOpenChange={setOpenKeyboardDTMF}
+                >
+                  <PopoverTrigger>
+                    <Button size="icon" variant="secondary">
+                      {" "}
+                      <KeyboardIcon />{" "}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <Keyboard
+                      onKeyPress={handleKeyPress}
+                      forwarded={false}
+                      buttonOnCall={buttonOnCall}
+                      incoming={incomingCall}
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+              <Button
+                onClick={
+                  buttonOnCall?.held || incomingCall?.held || dialPadCall?.held
+                    ? handleRetrieveCall
+                    : handleHeldCall
+                }
+                size="icon"
+                variant="secondary"
+              >
+                {buttonOnCall?.held ||
+                incomingCall?.held ||
+                dialPadCall?.held ? (
+                  <Play />
+                ) : (
+                  <Pause />
+                )}
               </Button>
-            </PopoverTrigger>
-            <PopoverContent>
-              <Keyboard
-                onKeyPress={handleKeyPress}
-                forwarded={false}
-                buttonOnCall={buttonOnCall}
-                incoming={incomingCall}
-              />
-            </PopoverContent>
-          </Popover>
-        </div>
-        <Button
-          onClick={
-            buttonOnCall?.held || incomingCall?.held || dialPadCall?.held
-              ? handleRetrieveCall
-              : handleHeldCall
-          }
-          size="icon"
-          variant="secondary"
-        >
-          {buttonOnCall?.held || incomingCall?.held || dialPadCall?.held ? (
-            <Play />
-          ) : (
-            <Pause />
-          )}
-        </Button>
-        <div>
-          <Popover open={openKeyboard} onOpenChange={setOpenKeyboard}>
-            <PopoverTrigger>
-              <Button size="icon" variant="secondary">
-                <PhoneForwarded />{" "}
+              <div>
+                <Popover open={openKeyboard} onOpenChange={setOpenKeyboard}>
+                  <PopoverTrigger>
+                    <Button size="icon" variant="secondary">
+                      <PhoneForwarded />{" "}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <Keyboard
+                      onKeyPress={handleKeyPress}
+                      forwarded={true}
+                      buttonOnCall={buttonOnCall}
+                      incoming={incomingCall}
+                      dialPadCall={dialPadCall}
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+              <Button onClick={handleEndCall} size="icon" variant="destructive">
+                <PhoneOff />
               </Button>
-            </PopoverTrigger>
-            <PopoverContent>
-              <Keyboard
-                onKeyPress={handleKeyPress}
-                forwarded={true}
-                buttonOnCall={buttonOnCall}
-                incoming={incomingCall}
-                dialPadCall ={dialPadCall}
-              />
-            </PopoverContent>
-          </Popover>
-        </div>
-        <Button onClick={handleEndCall} size="icon" variant="destructive">
-          <PhoneOff />
-        </Button>
-        {/* POPOVER DO TECLADO AQUI VOU UTILIZA-LO NOVAMNETE MAS POR ENQUANTO DEIXA ASSIM*/}
+            </div>
+          </>
+        )}
       </div>
     </Card>
   );

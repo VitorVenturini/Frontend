@@ -74,17 +74,19 @@ export const CallProvider: React.FC<{ children: React.ReactNode }> = ({
     [key: string]: number;
   }>({});
 
-  const [dialPadCalls, setDialPadCalls] = useState<DialPadCallsInterface[]>([]);
+  const [dialPadCalls, setDialPadCalls] = useState<DialPadCallsInterface[]>([]);  
   const [dialPadStartTimes, setDialPadStartTimes] = useState<{
     [key: string]: number;
   }>({});
 
   useEffect(() => {
-    const onCallButtons = buttons.filter((btn) => btn.onCall);
+    const onCallButtons = buttons.filter((btn) => btn.onCall || btn.ringing);
     setCalls(onCallButtons);
 
-    // Inicializa os tempos de início para novas chamadas
-    onCallButtons.forEach((button) => {
+    const connectedCallBtn = buttons.filter((btn) => btn.onCall && btn.connected);
+
+    // Inicializa os tempos de início para novas chamadas QUE ESTÃO CONECTADAS!!!
+    connectedCallBtn.forEach((button) => {
       if (!startTimes[button.id]) {
         setStartTimes((prev) => ({ ...prev, [button.id]: Date.now() }));
       }

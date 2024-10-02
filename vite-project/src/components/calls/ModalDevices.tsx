@@ -54,12 +54,12 @@ export default function ModalDevices({ numberToCall,onCallSuccess  }: ModalDevic
       </CardHeader>
 
       <CardContent>
-        <ScrollArea className="h-full w-full">
+        <ScrollArea className="h-full ">
           {filteredDevices.devices.map((device) => (
             <Button
               key={device.hw}
               onClick={() => handleSelectDevice(device.hw)}
-              className="gap-2 bg-green-600 hover:bg-green-600/60 mx-1 mb-2"
+              className="gap-2 bg-green-600 hover:bg-green-600/60 mx-1 mb-2 w-full"
             >
               <Phone />
               {device.text}

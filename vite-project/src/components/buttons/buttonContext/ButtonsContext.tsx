@@ -37,7 +37,8 @@ export interface ButtonInterface {
   held?: boolean;
   heldByUser?: boolean;
   muted?: boolean;
-
+  ringing?: boolean;
+  connected?: boolean;
   incomingCall?: boolean;
   colorClass?: string;
   isRunning?: boolean;
@@ -70,6 +71,8 @@ interface ButtonContextType {
     id: number,
     clickedStatus: string,
     colorClass: string,
+    ringing?: boolean,
+    connected?: boolean,
     onCall?: boolean,
     incomingCall?: boolean,
     note?: string
@@ -207,14 +210,25 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
     id: number,
     clickedStatus: string,
     colorClass: string,
+    ringing?: boolean,
     onCall?: boolean,
+    connected?: boolean,
     incomingCall?: boolean,
     note?: string
   ) => {
     setButtons((prevButtons) =>
       prevButtons.map((button) =>
         button.id === id
-          ? { ...button, clickedStatus, colorClass, onCall, incomingCall, note }
+          ? {
+              ...button,
+              clickedStatus,
+              colorClass,
+              ringing,
+              connected,
+              onCall,
+              incomingCall,
+              note,
+            }
           : button
       )
     );
