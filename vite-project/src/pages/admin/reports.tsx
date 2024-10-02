@@ -610,7 +610,7 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
                   />
                 </div>
               ) : (
-                <ScrollArea className="w-full h-full">
+                <ScrollArea className="w-full h-[700px]">
                   <div className="flex flex-wrap gap-4 align-middle items-center justify-center">
                     {dataReport.img.map((item: any, index: number) => (
                       <div
@@ -652,7 +652,7 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
                             <img
                               src={dataReport.img[currentImageIndex].image}
                               alt={`Image ${currentImageIndex}`}
-                              className="w-[90%] h-[90%] object-contain"
+                              className="w-[90%] h-[90%] object-contain "
                             />
                             <button
                               className="absolute top-1/2 right-[-30px]"

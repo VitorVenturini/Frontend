@@ -209,7 +209,7 @@ export function PdfGerate() {
       setTimeout(() => {
         // Extrair o HTML gerado e enviar via POST
         const htmlContent = newWindow.document.documentElement.outerHTML;
-        sendPDFData(htmlContent, fileName.replace(" ", ""), true);
+        sendPDFData(htmlContent, fileName.replace(" ", ""), false);
 
         // Fechar a nova janela após enviar o HTML
         setTimeout(() => {
@@ -301,7 +301,7 @@ export function PdfGerate() {
           title="Tabela"
           onClick={downloadTableToPdf}
           size="icon"
-          disabled={dataReport.table?.length === 0 && isLoadingPdf}
+          disabled={dataReport.table?.length === 0 || isLoadingPdf}
         >
           {isLoadingPdf == true ? (
             <div>
@@ -373,7 +373,7 @@ export function PdfGerate() {
         variant="ghost"
         size="icon"
         disabled={
-          dataReport.chart?.length === 0 && dataReport.table?.length === 0 && !isLoadingTable 
+          dataReport.chart?.length === 0 && dataReport.table?.length === 0 || isLoadingTable 
         }
         onClick={sendExcelData}
       >
