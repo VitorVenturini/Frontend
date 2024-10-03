@@ -372,6 +372,17 @@ function UserLayout() {
             true
           );
           setSelectedOptBottom("call");
+        }else{
+          const dialPadCallConnected = {
+            id: message.call,
+            device: message.device,
+            // deviceText: message.deviceText,
+            num: message.num,
+            callId: String(message.call),
+            ringing: true,
+            connected: false,
+          };
+          addDialPadCalls(dialPadCallConnected);
         }
         // {"api":"user","mt":"CallRinging","call":325,"device":"SwPh_pietro_65f2e98c"}
         break;
@@ -394,10 +405,9 @@ function UserLayout() {
             // deviceText: message.deviceText,
             num: message.num,
             callId: String(message.call),
+            ringing: false,
             connected: true,
           };
-
-          console.log("DIALPADCALL " + JSON.stringify(dialPadCallConnected));
           addDialPadCalls(dialPadCallConnected);
         }
 

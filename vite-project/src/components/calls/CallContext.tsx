@@ -19,6 +19,7 @@ export interface DialPadCallsInterface {
   deviceText?: string;
   num?: string;
   callId: string;
+  ringing?: boolean;
   connected?: boolean;
   held?: boolean;
   heldByUser?: boolean;
@@ -133,12 +134,10 @@ export const CallProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [incomingCalls]);
 
   //monitoramento das dialPadCalls conectadas
-  // Monitoramento das incomingCalls conectadas
   useEffect(() => {
+    // const allDialPadCalls = dialPadCalls.filter((call) => call.ringing);
     const connectedDialPadCalls = dialPadCalls.filter((call) => call.connected);
-    console.log(
-      "connectedDialPadCalls" + JSON.stringify(connectedDialPadCalls)
-    );
+
     // Inicializa os tempos de início para chamadas conectadas
     connectedDialPadCalls.forEach((call) => {
       if (!dialPadStartTimes[call.id]) {

@@ -172,14 +172,13 @@ export default function CallComponent({
         buttonOnCall.id,
         "border-purple-900 outline-purple-900"
       );
-    } else if(buttonOnCall?.ringing){
+    } else if (buttonOnCall?.ringing) {
       setCallStateClass("border-orange-600 outline-orange-600");
       setClickedStatusClass(
         buttonOnCall?.id as number,
         "border-orange-800 outline-orange-800"
       );
-    }
-    else {
+    } else {
       // eu tirei da espera ou o usuario tirou da espera
       setCallStateClass("border-red-800 outline-red-800");
       setClickedStatusClass(
@@ -209,6 +208,8 @@ export default function CallComponent({
     } else if (dialPadCall?.heldByUser) {
       // usuário me colocou em espera ( a dialPadCall )
       setCallStateClass("border-purple-900 outline-purple-900");
+    } else if (dialPadCall?.ringing) {
+      setCallStateClass("border-orange-600 outline-orange-600");
     } else {
       // eu tirei da espera ou o usuario tirou da espera a dialPadCall
       setCallStateClass("border-red-800 outline-red-800");
@@ -244,7 +245,7 @@ export default function CallComponent({
           <div>{filteredUser ? filteredUser.cn : buttonOnCall?.button_prt}</div>
         )}
         {/*TRATAMENTO PARA RINGING E CONNECTED */}
-        {buttonOnCall?.ringing ? (
+        {buttonOnCall?.ringing || dialPadCall?.ringing ? (
           <div className="flex items-center gap-3">
             <div>Chamando...</div>
             <Button onClick={handleEndCall} size="icon" variant="destructive">
