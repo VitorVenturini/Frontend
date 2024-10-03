@@ -263,7 +263,7 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
       return item; // Retorne o item original se for undefined ou null
     });
 
-    console.log("Dados ajustados:", ajustData); 
+    console.log("Dados ajustados:", ajustData);
   }
 
   const handleExecDevice = () => {
@@ -348,10 +348,10 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
 
   return (
     <div className="flex justify-center">
-      <Card className="w-full h-full p-2 m-2 max-w-[1800px]">
+      <Card className="w-full max-h-[1080px] min-h-[400px] p-2 m-2 max-w-[1800px]">
         <div className="flex gap-3">
-          <Tabs defaultValue="account" className="w-full h-full flex-col">
-            <div className="flex gap-4 justify-between">
+          <Tabs className="w-full h-full flex-col">
+            <div className="flex gap-4 justify-between pb-2">
               <div className="flex justify-start gap-4">
                 <Popover>
                   <PopoverTrigger asChild>
@@ -359,7 +359,7 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
                       id="date"
                       variant={"outline"}
                       className={cn(
-                        "w-[300px] justify-start text-left font-normal",
+                        "w-[250px] justify-start text-left font-normal",
                         !date && "text-muted-foreground"
                       )}
                     >
@@ -407,7 +407,7 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
                 </Popover>
                 <TabsList>
                   <TabsTrigger value="RptAvailability" onClick={handleClear}>
-                    Disponibilidade
+                    Acessos
                   </TabsTrigger>
                   <TabsTrigger value="RptCalls" onClick={handleClear}>
                     Chamadas
@@ -422,14 +422,11 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
                     Sensores
                   </TabsTrigger>
                   <TabsTrigger value="RptIotDevices" onClick={handleClear}>
-                    Iot Câmeras
+                    Câmeras
                   </TabsTrigger>
                 </TabsList>
                 <TabsContent value="RptSensors" className="gap-4">
                   <div className="grid items-center justify-start grid-cols-4 gap-4 h-[10px] ">
-                    <div className="grid justify-start col-span-1 gap-1 ">
-                      <Label htmlFor="name">Sensor</Label>
-                    </div>
                     <Select onValueChange={setSelectRpt}>
                       <SelectTrigger className="col-span-2">
                         <SelectValue placeholder="Selecione um Sensor" />
@@ -451,13 +448,10 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
                   </div>
                 </TabsContent>
                 <TabsContent value="RptIotDevices" className="gap-4 ">
-                  <div className="grid items-center justify-start grid-cols-4 gap-4 h-[10px] ">
-                    <div className="grid justify-start col-span-1 gap-1 ">
-                      <Label htmlFor="name">Iot Câmeras</Label>
-                    </div>
-                    <Select onValueChange={setSelectRpt}>
-                      <SelectTrigger className="col-span-2">
-                        <SelectValue placeholder="Selecione um Device" />
+                  <div className="grid items-center justify-start grid-cols-4 gap-4 h-[10px]">
+                    <Select onValueChange={setSelectRpt} >
+                      <SelectTrigger className="col-span-2 min-w-10">
+                        <SelectValue placeholder="Selecione um Device " />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
@@ -587,30 +581,30 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
                 </TabsContent>
               </div>
             </div>
-            <TabsContent value="RptSensors" className="gap-4 py-4">
-              {dataReport.chart.length == 0 && loadBarData.unitValue > 0 ? (
-                <div className="w-full align-middle items-center justify-center h-[600px] flex">
-                  <LoaderBar
-                    total={loadBarData.total}
-                    unitValue={loadBarData.unitValue}
-                  />
-                </div>
-              ) : (
-                <div ref={targetRef}>
-                  <Grafico chartData={dataReport.chart} />
-                </div>
-              )}
-            </TabsContent>
-            <TabsContent value="RptIotDevices" className="gap-4 py-4">
-              {dataReport.img.length == 0 && loadBarData.unitValue > 0 ? (
-                <div className="w-full align-middle items-center justify-center h-[600px] flex">
-                  <LoaderBar
-                    total={loadBarData.total}
-                    unitValue={loadBarData.unitValue}
-                  />
-                </div>
-              ) : (
-                <ScrollArea className="w-full h-[700px]">
+            <ScrollArea className="w-full lg:h-[300px] xl:h-[400px] xl2:h-[500px] xl3:h-[600px]">
+              <TabsContent value="RptSensors" className="gap-4 py-4">
+                {dataReport.chart.length == 0 && loadBarData.unitValue > 0 ? (
+                  <div className="w-full align-middle items-center justify-center lg:h-[100px] xl:h-[100px] xl2:h-[100px] xl3:h-[100px] flex">
+                    <LoaderBar
+                      total={loadBarData.total}
+                      unitValue={loadBarData.unitValue}
+                    />
+                  </div>
+                ) : (
+                  <div ref={targetRef}>
+                    <Grafico chartData={dataReport.chart} />
+                  </div>
+                )}
+              </TabsContent>
+              <TabsContent value="RptIotDevices" className="gap-4 py-4">
+                {dataReport.img.length == 0 && loadBarData.unitValue > 0 ? (
+                  <div className="w-full align-middle items-center justify-center lg:h-[200px] xl:h-[300px] xl2:h-[400px] xl3:h-[500px] flex">
+                    <LoaderBar
+                      total={loadBarData.total}
+                      unitValue={loadBarData.unitValue}
+                    />
+                  </div>
+                ) : (
                   <div className="flex flex-wrap gap-4 align-middle items-center justify-center">
                     {dataReport.img.map((item: any, index: number) => (
                       <div
@@ -642,24 +636,26 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
                     {currentImageIndex !== null && (
                       <div className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center">
                         <Card className="items-center align-middle flex justify-center">
-                          <CardContent className="w-[90%] h-[90%] relative justify-center items-center align-middle flex p-2">
-                            <button
-                              className="absolute top-1/2 left-[-30px]"
+                          <CardContent className="w-[800px] h-[500px] relative justify-center items-center align-middle flex p-2">
+                            <Button
+                              size="icon"
+                              variant="ghost"
                               onClick={handlePrevImage}
                             >
-                              <ArrowLeftCircle size={40} />
-                            </button>
+                              <ArrowLeftCircle />
+                            </Button>
                             <img
                               src={dataReport.img[currentImageIndex].image}
                               alt={`Image ${currentImageIndex}`}
                               className="w-[90%] h-[90%] object-contain "
                             />
-                            <button
-                              className="absolute top-1/2 right-[-30px]"
+                            <Button
+                              size="icon"
+                              variant="ghost"
                               onClick={handleNextImage}
                             >
-                              <ArrowRightCircle size={40} />
-                            </button>
+                              <ArrowRightCircle />
+                            </Button>
                             <button
                               className="absolute top-1 right-[-30px]"
                               onClick={() => setCurrentImageIndex(null)}
@@ -670,87 +666,86 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
                         </Card>
                       </div>
                     )}
-
                   </div>
-                </ScrollArea>
-              )}
-            </TabsContent>
-            <TabsContent value="RptAvailability" className="gap-4 py-4">
-              {dataReport.table.length == 0 ? (
-                <div className="w-full align-middle items-center justify-center h-[600px] flex">
-                  <LoaderBar
-                    total={loadBarData.total}
-                    unitValue={loadBarData.unitValue}
-                  />
-                </div>
-              ) : (
-                <div className="w-full" data-print="print">
-                  <ColumnsReports
-                    data={dataReport.table}
-                    keys={dataReport.keys}
-                    report={dataReport.src as any}
-                    filter={"Filtro"}
-                  />
-                </div>
-              )}
-            </TabsContent>
-            <TabsContent value="RptActivities" className="gap-4 py-4">
-              {dataReport.table.length == 0 ? (
-                <div className="w-full align-middle items-center justify-center h-[600px] flex">
-                  <LoaderBar
-                    total={loadBarData.total}
-                    unitValue={loadBarData.unitValue}
-                  />
-                </div>
-              ) : (
-                <div className="w-full" data-print="print">
-                  <ColumnsReports
-                    data={dataReport.table}
-                    keys={dataReport.keys}
-                    report={dataReport.src as any}
-                    filter={"Filtro"}
-                  />
-                </div>
-              )}
-            </TabsContent>
-            <TabsContent value="RptMessages" className="gap-4 py-4">
-              {dataReport.table.length == 0 ? (
-                <div className="w-full align-middle items-center justify-center h-[600px] flex">
-                  <LoaderBar
-                    total={loadBarData.total}
-                    unitValue={loadBarData.unitValue}
-                  />
-                </div>
-              ) : (
-                <div className="w-full" data-print="print">
-                  <ColumnsReports
-                    data={dataReport.table}
-                    keys={dataReport.keys}
-                    report={dataReport.src as any}
-                    filter={"Filtro"}
-                  />
-                </div>
-              )}
-            </TabsContent>
-            <TabsContent value="RptCalls" className="gap-4 py-4">
-              {dataReport.table.length == 0 ? (
-                <div className="w-full align-middle items-center justify-center h-[600px] flex">
-                  <LoaderBar
-                    total={loadBarData.total}
-                    unitValue={loadBarData.unitValue}
-                  />
-                </div>
-              ) : (
-                <div className="w-full" data-print="print">
-                  <ColumnsReports
-                    data={dataReport.table}
-                    keys={dataReport.keys}
-                    report={dataReport.src as any}
-                    filter={"Filtro"}
-                  />
-                </div>
-              )}
-            </TabsContent>
+                )}
+              </TabsContent>
+              <TabsContent value="RptAvailability" className="gap-4 py-4">
+                {dataReport.table.length == 0 ? (
+                  <div className="w-full align-middle items-center justify-center lg:h-[200px] xl:h-[300px] xl2:h-[400px] xl3:h-[500px] flex">
+                    <LoaderBar
+                      total={loadBarData.total}
+                      unitValue={loadBarData.unitValue}
+                    />
+                  </div>
+                ) : (
+                  <div className="w-full" data-print="print">
+                    <ColumnsReports
+                      data={dataReport.table}
+                      keys={dataReport.keys}
+                      report={dataReport.src as any}
+                      filter={"Filtro"}
+                    />
+                  </div>
+                )}
+              </TabsContent>
+              <TabsContent value="RptActivities" className="gap-4 py-4">
+                {dataReport.table.length == 0 ? (
+                  <div className="w-full align-middle items-center justify-center lg:h-[200px] xl:h-[300px] xl2:h-[400px] xl3:h-[500px] flex">
+                    <LoaderBar
+                      total={loadBarData.total}
+                      unitValue={loadBarData.unitValue}
+                    />
+                  </div>
+                ) : (
+                  <div className="w-full" data-print="print">
+                    <ColumnsReports
+                      data={dataReport.table}
+                      keys={dataReport.keys}
+                      report={dataReport.src as any}
+                      filter={"Filtro"}
+                    />
+                  </div>
+                )}
+              </TabsContent>
+              <TabsContent value="RptMessages" className="gap-4 py-4">
+                {dataReport.table.length == 0 ? (
+                  <div className="w-full align-middle items-center justify-center lg:h-[200px] xl:h-[300px] xl2:h-[400px] xl3:h-[500px] flex">
+                    <LoaderBar
+                      total={loadBarData.total}
+                      unitValue={loadBarData.unitValue}
+                    />
+                  </div>
+                ) : (
+                  <div className="w-full" data-print="print">
+                    <ColumnsReports
+                      data={dataReport.table}
+                      keys={dataReport.keys}
+                      report={dataReport.src as any}
+                      filter={"Filtro"}
+                    />
+                  </div>
+                )}
+              </TabsContent>
+              <TabsContent value="RptCalls" className="gap-4 py-4">
+                {dataReport.table.length == 0 ? (
+                  <div className="w-full align-middle items-center justify-center lg:h-[200px] xl:h-[300px] xl2:h-[400px] xl3:h-[500px] flex">
+                    <LoaderBar
+                      total={loadBarData.total}
+                      unitValue={loadBarData.unitValue}
+                    />
+                  </div>
+                ) : (
+                  <div className="w-full" data-print="print">
+                    <ColumnsReports
+                      data={dataReport.table}
+                      keys={dataReport.keys}
+                      report={dataReport.src as any}
+                      filter={"Filtro"}
+                    />
+                  </div>
+                )}
+              </TabsContent>
+            </ScrollArea>
           </Tabs>
         </div>
       </Card>
