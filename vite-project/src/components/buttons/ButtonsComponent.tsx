@@ -43,6 +43,10 @@ import ClockButton from "./Clock/ClockButton";
 import { useSearchParams } from "react-router-dom";
 import { useSensors } from "../sensor/SensorContext";
 import { UserInterface } from "../users/usersCore/UserContext";
+import ModalConference from "./conference/ModalConference";
+import ConferenceButton from "./conference/ConferenceButton";
+import { useWebSocketData } from "../websocket/WebSocketProvider";
+import { useDrop } from "react-dnd";
 
 interface ButtonProps {
   button: ButtonInterface;
@@ -51,6 +55,11 @@ interface ButtonProps {
   selectedUser: UserInterface | null;
   selectedPage: string;
 }
+
+interface DraggedItem {
+  id: number;
+}
+
 export const commonClasses =
   "w-[128px] h-[70px] xl:w-[128px] xl:h-[77px] xl2:w-[150px] xl2:h-[90px] xl3:w-[190px] xl3:h-[112px] xl4:w-[230px] xl4:h-[139px] rounded-lg border bg-border text-card-foreground shadow-sm p-1 justify-between";
 
@@ -65,6 +74,30 @@ export default function ButtonsComponent({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
   const [selectedType, setSelectedType] = useState<string>("");
+  const wss = useWebSocketData();
+
+  //drop
+  const [{ isOver }, drop] = useDrop(() => ({
+    accept: "CALL",
+    drop: (item: any) => {
+      const draggedItem = item as DraggedItem;
+
+      // Enviar mensagem ao WebSocket
+      wss?.sendMessage({
+        api: "user",
+        mt: "TriggerConference",
+        btn_id: button?.id,
+        calls: [Number(draggedItem.id)], // O ID da chamada que foi arrastada
+      });
+
+      // Aqui você pode remover a chamada do contexto, caso necessário
+      // removeCall(item.id);
+    },
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+    }),
+  }));
+
 
   const handleClick = () => {
     if (isAdmin) {
@@ -143,6 +176,15 @@ export default function ButtonsComponent({
             onClose={() => setIsDialogOpen(false)}
           />
         );
+      case "conference":
+        return (
+          <ModalConference
+            selectedPage={selectedPage}
+            selectedUser={selectedUser}
+            clickedPosition={clickedPosition}
+            onClose={() => setIsDialogOpen(false)}
+          />
+        );
       // Add other cases here as needed
       default:
         return (
@@ -200,6 +242,7 @@ export default function ButtonsComponent({
                       <SelectItem value="command">Comando</SelectItem>
                       <SelectItem value="clock">Relógio</SelectItem>
                       <SelectItem value="cronometer">Cronometro</SelectItem>
+                      <SelectItem value="conference">Conferência</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -412,6 +455,37 @@ export default function ButtonsComponent({
                 <div>
                   <DialogContent className="space-y-6 min-h-[250px] flex flex-col content-between p-0 min-w-[600px]">
                     <ModalCronometer
+                      selectedPage={selectedPage}
+                      selectedUser={selectedUser}
+                      clickedPosition={clickedPosition}
+                      existingButton={button}
+                      isUpdate={true}
+                      onClose={() => setIsDialogOpen(false)}
+                    />
+                  </DialogContent>
+                </div>
+              )}
+            </Dialog>
+          </div>
+        );
+      case "conference":
+        return (
+          <div>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <div
+                  ref={drop} // Agora o drop é gerenciado pelo react-dnd
+                  style={{
+                    backgroundColor: isOver ? "lightgreen" : "white", // Feedback visual
+                  }}
+                >
+                  <ConferenceButton button={button} handleClick={handleClick} />
+                </div>
+              </DialogTrigger>
+              {isAdmin && (
+                <div>
+                  <DialogContent className="space-y-6 min-h-[250px] flex flex-col content-between p-0 min-w-[600px]">
+                    <ModalConference
                       selectedPage={selectedPage}
                       selectedUser={selectedUser}
                       clickedPosition={clickedPosition}

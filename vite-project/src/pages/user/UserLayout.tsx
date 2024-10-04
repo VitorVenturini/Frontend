@@ -51,6 +51,11 @@ import mobile from "@/assets/sounds/mobile.wav";
 import { checkButtonWarning } from "@/components/utils/utilityFunctions";
 import useWebSocket from "@/components/websocket/useWebSocket";
 import Loader2 from "@/components/Loader2";
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { TouchBackend } from 'react-dnd-touch-backend';
+import { isMobile } from 'react-device-detect'; // Detectar se é um dispositivo móvel
+
 interface User {
   id: string;
   name: string;
@@ -688,6 +693,7 @@ function UserLayout() {
               <Loader />
             ) : ( */}
         <>
+        <DndProvider backend={isMobile ? TouchBackend : HTML5Backend}>
           <div className="flex justify-center items-center min-h-screen">
             <div className="">
               <div className="flex gap-1">
@@ -723,6 +729,7 @@ function UserLayout() {
               <HeaderUser />
             </div>
           </div>
+          </DndProvider>
         </>
         {/* )} */}
       </WebSocketProvider>

@@ -56,6 +56,7 @@ import { TouchBackend } from "react-dnd-touch-backend";
 import { isTouchDevice } from "@/components/utils/utilityFunctions";
 import texts from "@/_data/texts.json";
 import { useLanguage } from "@/components/language/LanguageContext";
+import { isMobile } from "react-device-detect";
 
 interface ButtonProps {
   clickedPosition: { i: number; j: number } | null;
@@ -185,7 +186,7 @@ export default function ModalCombo({
   ];
 
   return (
-    <DndProvider backend={isTouchDevice() ? TouchBackend : HTML5Backend}>
+    <DndProvider backend={isMobile ? TouchBackend : HTML5Backend}>
       <CardHeader>
         <CardTitle>
           {isUpdate
