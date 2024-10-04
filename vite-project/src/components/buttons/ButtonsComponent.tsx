@@ -77,27 +77,35 @@ export default function ButtonsComponent({
   const wss = useWebSocketData();
 
   //drop
-  const [{ isOver }, drop] = useDrop(() => ({
-    accept: "CALL",
-    drop: (item: any) => {
-      const draggedItem = item as DraggedItem;
+  const useDropWithButtonId = (btn_id: number | null, isEnabled: boolean) => {
+    return useDrop(
+      () => ({
+        accept: "CALL",
+        drop: (item: any) => {
+          if (isEnabled && btn_id) {
+            const draggedItem = item as DraggedItem;
 
-      // Enviar mensagem ao WebSocket
-      wss?.sendMessage({
-        api: "user",
-        mt: "TriggerConference",
-        btn_id: button?.id,
-        calls: [Number(draggedItem.id)], // O ID da chamada que foi arrastada
-      });
+            // Enviar mensagem ao WebSocket com o btn_id correto
+            wss?.sendMessage({
+              api: "user",
+              mt: "TriggerConference",
+              btn_id: btn_id, // Usar o valor do botão passado como parâmetro
+              calls: [Number(draggedItem.id)], // O ID da chamada que foi arrastada
+            });
+          }
+        },
+        collect: (monitor) => ({
+          isOver: monitor.isOver(),
+        }),
+      }),
+      [btn_id, isEnabled]
+    );
+  };
 
-      // Aqui você pode remover a chamada do contexto, caso necessário
-      // removeCall(item.id);
-    },
-    collect: (monitor) => ({
-      isOver: monitor.isOver(),
-    }),
-  }));
-
+  const [{ isOver }, drop] = useDropWithButtonId(
+    button?.id,
+    button?.button_type === "conference" && !isAdmin
+  );
 
   const handleClick = () => {
     if (isAdmin) {
@@ -474,7 +482,7 @@ export default function ButtonsComponent({
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <div
-                  ref={drop} // Agora o drop é gerenciado pelo react-dnd
+                  ref={isAdmin ? null : drop} // Aplicar ref apenas se for admin
                   style={{
                     backgroundColor: isOver ? "lightgreen" : "white", // Feedback visual
                   }}

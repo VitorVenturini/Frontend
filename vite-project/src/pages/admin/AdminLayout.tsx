@@ -50,6 +50,11 @@ import Loader from "@/components/Loader";
 import useWebSocket from "@/components/websocket/useWebSocket";
 import Loader2 from "@/components/Loader2";
 import { set } from "date-fns";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import { TouchBackend } from "react-dnd-touch-backend";
+import { isTouchDevice } from "@/components/utils/utilityFunctions";
+import { isMobile } from "react-device-detect";
 
 function AdminLayout() {
   const account = useAccount();
@@ -697,6 +702,7 @@ function AdminLayout() {
           <Loader />
         ) : (
           <>
+            <DndProvider backend={isMobile ? TouchBackend : HTML5Backend}>
             <HeaderApp />
             {/* Your admin layout here */}
             <Routes>
@@ -707,6 +713,7 @@ function AdminLayout() {
               <Route path="reports" element={<Reports />} />
               {/* Add more admin routes as needed */}
             </Routes>
+            </DndProvider>
           </>
         )}
       </>
