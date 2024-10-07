@@ -24,6 +24,7 @@ import { DataProvider } from "./Reports/DataContext";
 import { UserPbxProvider } from "./components/users/usersPbx/UsersPbxContext";
 import { AppConfigProvider } from "./components/options/ConfigContext";
 import { CallProvider } from "./components/calls/CallContext";
+import ReportLayout from "./pages/report/ReportLayout";
 
 import Loader from "./components/Loader";
 import TokenRenewer from "./components/validateToken/TokenRenewer";
@@ -79,6 +80,10 @@ function App() {
                                         element={<LoginPage />}
                                       />
                                       <Route
+                                        path="/report/*"
+                                        element={<ReportRoute />}
+                                      />
+                                      <Route
                                         path="/admin/*"
                                         element={<AdminRoute />}
                                       />
@@ -124,7 +129,7 @@ function AdminRoute() {
     }
   }, [account.isAdmin, updateAccount]);
 
-  return <AdminLayout />;
+  return <AdminLayout/>;
 }
 
 function UserRoute() {
@@ -136,7 +141,18 @@ function UserRoute() {
     }
   }, [account.isAdmin, updateAccount]);
 
-  return <UserLayout />;
+  return <UserLayout/>;
 }
 
+function ReportRoute() {
+  const account = useContext(AccountContext);
+  const { updateAccount } = useAccount();
+  useEffect(() => {
+    if (!account.isAdmin) {
+      updateAccount({ isAdmin: true });
+    }
+  }, [account.isAdmin, updateAccount]);
+
+  return <ReportLayout/>;
+}
 export default App;
