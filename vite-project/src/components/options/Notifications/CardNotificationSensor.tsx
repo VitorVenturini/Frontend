@@ -17,12 +17,13 @@ const CardNotificationSensor = () => {
     };
 
   const handleClick = () => {
-    console.log('Audio selecionado:', selectedAudio);
+    const audioUrl = "./src/assets/sounds/" + selectedAudio
+    console.log('Audio selecionado: ', audioUrl);
     wss?.sendMessage({
         api: "admin",
         mt: "UpdateConfig",
         entry: "sensorNotification",
-        vl: selectedAudio,
+        vl: audioUrl,
       });
   };
 

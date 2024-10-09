@@ -17,12 +17,13 @@ const CardNotificationAlarm = () => {
   };
 
   const handleClick = () => {
-    console.log('Audio selecionado:', selectedAudio);
+    const audioUrl = "./src/assets/sounds/" + selectedAudio
+    console.log('Audio selecionado:', audioUrl);
     wss?.sendMessage({
         api: "admin",
         mt: "UpdateConfig",
         entry: "alarmNotification",
-        vl: selectedAudio,
+        vl: audioUrl,
       });
   };
 

@@ -1,30 +1,36 @@
-import React, { useState } from 'react';
-import beep from  "@/assets/sounds/bleep.wav";
-import minor from  "@/assets/sounds/minor.wav";
+import React, { useState } from "react";
+import beep from "@/assets/sounds/bleep.wav";
+import minor from "@/assets/sounds/minor.wav";
 import mobile from "@/assets/sounds/mobile.wav";
-import suspiciou from  "@/assets/sounds/suspiciou.wav";
+import suspiciou from "@/assets/sounds/suspiciou.wav";
 import { AudioPlayer } from "react-audio-player-component";
 import { Checkbox } from "../../ui/checkbox";
-import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Button } from "../../ui/button";
-import { useWebSocketData } from '@/components/websocket/WebSocketProvider';
+import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 
 const CardNotificationChat = () => {
-    const [selectedAudio, setSelectedAudio] = useState("");
-    const wss = useWebSocketData();
+  const [selectedAudio, setSelectedAudio] = useState("");
+  const wss = useWebSocketData();
 
-    const handleCheckboxChange = (audioId: string) => {
-      setSelectedAudio(audioId);
-    };
+  const handleCheckboxChange = (audioId: string) => {
+    setSelectedAudio(audioId);
+  };
 
   const handleClick = () => {
-    console.log('Audio selecionado:', selectedAudio);
+    const audioUrl = "./src/assets/sounds/" + selectedAudio;
+    console.log("Audio selecionado:", audioUrl);
     wss?.sendMessage({
-        api: "admin",
-        mt: "UpdateConfig",
-        entry: "chatNotification",
-        vl: selectedAudio,
-      });
+      api: "admin",
+      mt: "UpdateConfig",
+      entry: "chatNotification",
+      vl: audioUrl,
+    });
   };
 
   return (
@@ -40,8 +46,8 @@ const CardNotificationChat = () => {
         <div className="items-center flex space-x-2 p-2">
           <Checkbox
             id="beep"
-            checked={selectedAudio === 'beep'}
-            onCheckedChange={() => handleCheckboxChange('beep')}
+            checked={selectedAudio === "beep"}
+            onCheckedChange={() => handleCheckboxChange("beep")}
           />
           <AudioPlayer
             src={beep}
@@ -63,8 +69,8 @@ const CardNotificationChat = () => {
         <div className="items-center flex space-x-2 p-2">
           <Checkbox
             id="minor"
-            checked={selectedAudio === 'minor'}
-            onCheckedChange={() => handleCheckboxChange('minor')}
+            checked={selectedAudio === "minor"}
+            onCheckedChange={() => handleCheckboxChange("minor")}
           />
           <AudioPlayer
             src={minor}
@@ -86,8 +92,8 @@ const CardNotificationChat = () => {
         <div className="items-center flex space-x-2 p-2">
           <Checkbox
             id="mobile"
-            checked={selectedAudio === 'mobile'}
-            onCheckedChange={() => handleCheckboxChange('mobile')}
+            checked={selectedAudio === "mobile"}
+            onCheckedChange={() => handleCheckboxChange("mobile")}
           />
           <AudioPlayer
             src={mobile}
@@ -109,8 +115,8 @@ const CardNotificationChat = () => {
         <div className="items-center flex space-x-2 p-2">
           <Checkbox
             id="suspiciou"
-            checked={selectedAudio === 'suspiciou'}
-            onCheckedChange={() => handleCheckboxChange('suspiciou')}
+            checked={selectedAudio === "suspiciou"}
+            onCheckedChange={() => handleCheckboxChange("suspiciou")}
           />
           <AudioPlayer
             src={suspiciou}
