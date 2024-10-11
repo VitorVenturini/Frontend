@@ -8,6 +8,7 @@ import { Checkbox } from "../../ui/checkbox";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "../../ui/button";
 import { useWebSocketData } from '@/components/websocket/WebSocketProvider';
+import { useToast } from '@/components/ui/use-toast';
 
 const CardNotificationAlarm = () => {
   const [selectedAudio, setSelectedAudio] = useState("");
@@ -15,16 +16,23 @@ const CardNotificationAlarm = () => {
   const handleCheckboxChange = (audioId: string) => {
     setSelectedAudio(audioId);
   };
+  const {toast} = useToast()
 
   const handleClick = () => {
-    const audioUrl = "./src/assets/sounds/" + selectedAudio
-    console.log('Audio selecionado:', audioUrl);
-    wss?.sendMessage({
+    if(selectedAudio){
+      wss?.sendMessage({
         api: "admin",
         mt: "UpdateConfig",
         entry: "alarmNotification",
-        vl: audioUrl,
+        vl: selectedAudio,
       });
+    }else{
+      toast({
+        variant: "destructive",
+        description: "Você precisa selecionar algum som de notificação para Alarmes"
+      })
+    }
+  
   };
 
   return (

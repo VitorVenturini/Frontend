@@ -45,7 +45,7 @@ import {
   UserPbxInterface,
   useUsersPbx,
 } from "@/components/users/usersPbx/UsersPbxContext";
-import { BackupConfig, SmtpConfig, useAppConfig } from "@/components/options/ConfigContext";
+import { BackupConfig, NotificationsInterface, SmtpConfig, useAppConfig } from "@/components/options/ConfigContext";
 import Loader from "@/components/Loader";
 import useWebSocket from "@/components/websocket/useWebSocket";
 import Loader2 from "@/components/Loader2";
@@ -60,7 +60,6 @@ function AdminLayout() {
   const account = useAccount();
   const { setUsers, updateUserStauts } = useUsers();
   const { updateUserPbxStauts } = useUsersPbx();
-  const { updateLicense } = useAppConfig();
   const wss = useWebSocketData();
   const { buttons, setButtons, addButton, updateButton, deleteButton } =
     useButtons();
@@ -87,7 +86,9 @@ function AdminLayout() {
     setApiKeyInfo,
     setPbxStatus,
     addBackupConfig,
-    addSmtpConfig
+    addSmtpConfig,
+    updateLicense,
+    addNotifications
   } = useAppConfig();
   var allBtn: ButtonInterface[];
   // vamos trtar todas as mensagens recebidas pelo wss aqui
@@ -255,7 +256,6 @@ function AdminLayout() {
         console.log(JSON.stringify(allSmtpInfo));
         addSmtpConfig(allSmtpInfo);
     
-
         //backup
         const backupEntries = message.result.filter(
           (item: any) =>
@@ -337,96 +337,28 @@ function AdminLayout() {
         };
         console.log(JSON.stringify(allBackupInfo));
         addBackupConfig(allBackupInfo);
+
+        const sensorNotification = message.result.find(
+          (item: NotificationsInterface) => item.entry === "sensorNotification"
+        );
+
+        const alarmNotification = message.result.find(
+          (item: NotificationsInterface) => item.entry === "alarmNotification"
+        );
+
+        const chatNotification = message.result.find(
+          (item: NotificationsInterface) => item.entry === "chatNotification"
+        );
+
+        const soundsInfo = [
+          ...(sensorNotification ? [sensorNotification] : []),
+          ...(alarmNotification ? [alarmNotification] : []),
+          ...(chatNotification ? [chatNotification] : []),
+        ];
+
+        soundsInfo.forEach((sound) => addNotifications(sound));
         break;
       
-        if (message.result) {
-          toast({
-            description: "Agendamento de Backup atualizado com sucesso",
-          });
-          //backup
-          const backupEntries = message.result.filter(
-            (item: any) =>
-              item.entry === "backupUsername" ||
-              item.entry === "backupPassword" ||
-              item.entry === "backupHost" ||
-              item.entry === "backupMethod" ||
-              item.entry === "backupPath" ||
-              item.entry === "backupFrequency" ||
-              item.entry === "backupHour" ||
-              item.entry === "backupDay"
-          );
-
-          const allBackupInfo: BackupConfig = {
-            backupUsername: backupEntries.find(
-              (item: any) => item.entry === "backupUsername"
-            ) || {
-              entry: "backupUsername",
-              value: "",
-              createdAt: null,
-              updatedAt: null,
-            },
-            backupPassword: backupEntries.find(
-              (item: any) => item.entry === "backupPassword"
-            ) || {
-              entry: "backupPassword",
-              value: "",
-              createdAt: null,
-              updatedAt: null,
-            },
-            backupPath: backupEntries.find(
-              (item: any) => item.entry === "backupPath"
-            ) || {
-              entry: "backupPath",
-              value: "",
-              createdAt: null,
-              updatedAt: null,
-            },
-            backupHost: backupEntries.find(
-              (item: any) => item.entry === "backupHost"
-            ) || {
-              entry: "backupHost",
-              value: "",
-              createdAt: null,
-              updatedAt: null,
-            },
-            backupFrequency: backupEntries.find(
-              (item: any) => item.entry === "backupFrequency"
-            ) || {
-              entry: "backupFrequency",
-              value: "",
-              createdAt: null,
-              updatedAt: null,
-            },
-            backupHour: backupEntries.find(
-              (item: any) => item.entry === "backupHour"
-            ) || {
-              entry: "backupHour",
-              value: "",
-              createdAt: null,
-              updatedAt: null,
-            },
-            backupDay: backupEntries.find(
-              (item: any) => item.entry === "backupDay"
-            ) || {
-              entry: "backupDay",
-              value: "",
-              createdAt: null,
-              updatedAt: null,
-            },
-            backupMethod: backupEntries.find(
-              (item: any) => item.entry === "backupMethod"
-            ) || {
-              entry: "backupMethod",
-              value: "",
-              createdAt: null,
-              updatedAt: null,
-            },
-          };
-          console.log(JSON.stringify(allBackupInfo));
-          addBackupConfig(allBackupInfo);
-        }
-        break;
-
       case "PbxStatusResult":
         if (message.result) {
           const status = String(message.result);

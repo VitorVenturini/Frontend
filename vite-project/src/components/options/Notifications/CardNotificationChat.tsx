@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "../../ui/button";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
+import { useToast } from "@/components/ui/use-toast";
 
 const CardNotificationChat = () => {
   const [selectedAudio, setSelectedAudio] = useState("");
@@ -21,16 +22,24 @@ const CardNotificationChat = () => {
   const handleCheckboxChange = (audioId: string) => {
     setSelectedAudio(audioId);
   };
+  const {toast} = useToast()
 
   const handleClick = () => {
-    const audioUrl = "./src/assets/sounds/" + selectedAudio;
-    console.log("Audio selecionado:", audioUrl);
-    wss?.sendMessage({
-      api: "admin",
-      mt: "UpdateConfig",
-      entry: "chatNotification",
-      vl: audioUrl,
-    });
+    if(selectedAudio){
+      wss?.sendMessage({
+        api: "admin",
+        mt: "UpdateConfig",
+        entry: "chatNotification",
+        vl: selectedAudio,
+      });
+    }else{
+      toast({
+        variant: "destructive",
+        description: "Você precisa selecionar algum som de notificação para Chat"
+      })
+    }
+
+  
   };
 
   return (
