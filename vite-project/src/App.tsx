@@ -77,7 +77,7 @@ function App() {
                                       <Route path="/" element={<RootRoute />} />
                                       <Route
                                         path="/login"
-                                        element={<LoginPage />}
+                                        element={<RootRoute />}
                                       />
                                       <Route
                                         path="/reports/*"
@@ -126,7 +126,10 @@ function RootRoute() {
       return <Navigate to="/user" />;
     }
   } else {
-    <Navigate to="/Login" />;
+    const currentSession = localStorage.getItem("currentSession");
+    localStorage.removeItem(currentSession as string)
+    localStorage.removeItem("currentSession")
+    return <LoginPage/>;
   }
   
 }
@@ -198,4 +201,19 @@ function ReportRoute() {
   return <ReportLayout />;
 }
 
+// function LoginRoute(){
+//   const account = useContext(AccountContext);
+//   // const isLogged = localStorage.getItem("isLogged");
+//   if (account.isLogged) {
+//     if (account.type === "admin") {
+//       return <Navigate to="/admin/buttons" />;
+//     } else if (account.type === "reports") {
+//       return <Navigate to="/reports" />;
+//     } else {
+//       return <Navigate to="/user" />;
+//     }
+//   } else {
+//     <Navigate to="/Login" />;
+//   }
+// }
 export default App;

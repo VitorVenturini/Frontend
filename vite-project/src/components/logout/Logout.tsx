@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { useAccount } from "@/components/account/AccountContext";
 import { initialState } from "@/components/account/AccountContext";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -26,15 +26,11 @@ export default function Logout() {
   const { language } = useLanguage();
 
   const handleLogout = () => {
-
-   const currentSession = localStorage.getItem("currentSession");
-   localStorage.removeItem(currentSession as string)
-   localStorage.removeItem("currentSession")
-   
+   account.isLogged ? updateAccount({ isLogged: false }) : ""
     if (ws) {
       ws.closeConnection(); // Fecha a conexão WebSocket
     }
-    navigate("/login");
+    return <Navigate to="/login" />;
   };
 
   return (
