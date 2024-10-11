@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import beep from "@/assets/sounds/bleep.wav";
 import minor from "@/assets/sounds/minor.wav";
 import mobile from "@/assets/sounds/mobile.wav";
@@ -14,8 +14,22 @@ import {
 import { Button } from "../../ui/button";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { useToast } from "@/components/ui/use-toast";
+import { useAppConfig } from "../ConfigContext";
 
 const CardNotificationChat = () => {
+
+  const {notification,updateNotification} = useAppConfig()
+
+  useEffect(() => {
+    const sensorNotification = notification.find(
+      (item) => item.entry === "chatNotification"
+    );
+    
+    if (sensorNotification) {
+      setSelectedAudio(sensorNotification.value); 
+    }
+  }, [notification]);
+
   const [selectedAudio, setSelectedAudio] = useState("");
   const wss = useWebSocketData();
 
@@ -32,6 +46,12 @@ const CardNotificationChat = () => {
         entry: "chatNotification",
         vl: selectedAudio,
       });
+      toast({
+        variant: "default",
+        description:
+          "Notificação Salva com Sucesso",
+      });
+      updateNotification("chatNotification", selectedAudio);
     }else{
       toast({
         variant: "destructive",
