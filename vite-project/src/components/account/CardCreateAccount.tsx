@@ -327,6 +327,9 @@ export default function CardCreateAccount({
                   <SelectItem value="user">
                     {texts[language].labelUser}
                   </SelectItem>
+                  <SelectItem value="reports">
+                    Auditor
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>

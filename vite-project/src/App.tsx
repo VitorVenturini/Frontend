@@ -80,7 +80,7 @@ function App() {
                                         element={<LoginPage />}
                                       />
                                       <Route
-                                        path="/report/*"
+                                        path="/reports/*"
                                         element={<ReportRoute />}
                                       />
                                       <Route
@@ -117,42 +117,85 @@ function App() {
 function RootRoute() {
   const account = useContext(AccountContext);
   // const isLogged = localStorage.getItem("isLogged");
-  return account.isLogged ? <Navigate to="/user" /> : <LoginPage />;
+  if (account.isLogged) {
+    if (account.type === "admin") {
+      return <Navigate to="/admin/buttons" />;
+    } else if (account.type === "reports") {
+      return <Navigate to="/reports" />;
+    } else {
+      return <Navigate to="/user" />;
+    }
+  } else {
+    <Navigate to="/Login" />;
+  }
+  
 }
 
 function AdminRoute() {
   const account = useContext(AccountContext);
   const { updateAccount } = useAccount();
+
   useEffect(() => {
-    if (!account.isAdmin) {
+    if (!account.isAdmin && account.type === "admin") {
       updateAccount({ isAdmin: true });
     }
   }, [account.isAdmin, updateAccount]);
 
-  return <AdminLayout/>;
+  if (!account.isLogged) {
+    return <Navigate to="/Login" />;
+  } else {
+    if (account.type !== "admin") {
+      if (account.type === "user") {
+        return <Navigate to="/user" />;
+      } else if (account.type === "reports") {
+        return <Navigate to="/reports" />;
+      }
+    }
+  }
+
+  return <AdminLayout />;
 }
 
 function UserRoute() {
   const account = useContext(AccountContext);
   const { updateAccount } = useAccount();
+
   useEffect(() => {
     if (account.isAdmin) {
       updateAccount({ isAdmin: false });
     }
   }, [account.isAdmin, updateAccount]);
 
-  return <UserLayout/>;
+  if (!account.isLogged) {
+    return <Navigate to="/Login" />;
+  } else {
+    if (account.type !== "user" && account.type !== "admin") {
+      return <Navigate to="/reports" />;
+    }
+  }
+
+  return <UserLayout />;
 }
 
 function ReportRoute() {
   const account = useContext(AccountContext);
   const { updateAccount } = useAccount();
+
   useEffect(() => {
     if (!account.isAdmin) {
       updateAccount({ isAdmin: true });
     }
   }, [account.isAdmin, updateAccount]);
 
-  return <ReportLayout/>;
+  if (!account.isLogged) {
+    return <Navigate to="/Login" />;
+  } else {
+    if (account.type !== "reports" && account.type !== "admin") {
+      return <Navigate to="/user" />;
+    }
+  }
+
+  return <ReportLayout />;
 }
+
 export default App;

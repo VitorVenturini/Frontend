@@ -50,9 +50,7 @@ export default function HeaderApp() {
   const handleReportsClick = () => {
     navigate("/admin/reports");
   };
-  const handleReportsLayoutClick = () => {
-    navigate("/report");
-  };
+
   const handleUserViewClick = () => {
     clearButtons();
     updateAccount({ isAdmin: false });
@@ -95,10 +93,6 @@ export default function HeaderApp() {
           <Button variant="ghost" onClick={handleReportsClick}>
             {texts[language].headerReports}
           </Button>
-          <Button onClick={handleReportsLayoutClick }>
-            ReportLayout
-          </Button>
-
           <Logout />
           <ModeToggle />
           <LanguageToggle />

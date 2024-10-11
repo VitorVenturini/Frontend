@@ -1,7 +1,5 @@
 import { Routes, Route } from "react-router-dom";
 import ValidadeToken from "@/components/validateToken/ValidateToken";
-import Account from "./Account";
-import ButtonsPage from "./ButtonsPage";
 import HeaderApp from "@/components/header/HeaderAdmin";
 import { useAccount } from "@/components/account/AccountContext";
 import { useNavigate } from "react-router-dom";

@@ -118,8 +118,11 @@ export default function CardLogin() {
         console.log("Login efetuado com sucesso");
         setIsLoading(false);
         // navega para tela de admin se o usuario é do tipo admin
-        accountData.type === "admin" ? navigate("/admin/buttons") : navigate("/user");
-
+        accountData.type === "admin"
+          ? navigate("/admin/buttons")
+          : accountData.type === "reports"
+          ? navigate("/reports")
+          : navigate("/user");
       } else {
         const data = await response.json();
         switch (data.error) {
