@@ -106,7 +106,7 @@ export default function CardCreateAccount({
       isValid = false;
     }
 
-    if (!e164) {
+    if (!e164 && type === "user") {
       toast({
         variant: "destructive",
         description: texts[language].SipRequired,

@@ -1,11 +1,4 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { ButtonInterface, useButtons } from "../buttonContext/ButtonsContext";
 import ButtonsGrid from "./ButtonsGrid";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -14,11 +7,16 @@ import React, { useContext, useEffect, useState } from "react";
 import { useLanguage } from "@/components/language/LanguageContext";
 import texts from "@/_data/texts.json";
 import { useSensors } from "@/components/sensor/SensorContext";
-import {
-  AccountContext,
-  useAccount,
-} from "@/components/account/AccountContext";
+import { AccountContext } from "@/components/account/AccountContext";
 import { UserInterface } from "@/components/users/usersCore/UserContext";
+import { Check, Pencil } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 interface ButtonsGridPagesProps {
   buttonsGrid: ButtonInterface[];
@@ -29,6 +27,9 @@ export default function ButtonsGridPages({
   buttonsGrid,
   selectedUser,
 }: ButtonsGridPagesProps) {
+  const [openEditPageIndex, setOpenEditPageIndex] = useState<number | null>(
+    null
+  ); // Controlar o estado do popover para cada página
   const [selectedPage, setSelectedPage] = useState("1"); // Inicialmente, a página 1 é selecionada.
   const { language } = useLanguage();
   const { buttons, setOldValue, setNewValue } = useButtons(); // todos botões do app
@@ -42,6 +43,14 @@ export default function ButtonsGridPages({
     setSelectedPage(newPage); // Atualizar a página selecionada quando o usuário seleciona uma nova página.
   };
 
+  const handleOpenPopover = (index: number) => {
+    setOpenEditPageIndex(index); // Definir qual popover será aberto
+  };
+
+  const handleClosePopover = () => {
+    setOpenEditPageIndex(null); // Fechar o popover
+  };
+
   // use effect para piscar nas outras páginas sem ser a atual
   useEffect(() => {
     if (!buttons || buttons.length === 0 || isAdmin) return; // Verifica se buttons está definido e não vazio
@@ -52,7 +61,6 @@ export default function ButtonsGridPages({
         const filteredSensor = buttonSensors.find(
           (sensor) => sensor.deveui === btns.button_prt
         ); // Encontra o sensor correspondente
-        // console.log("FILTEREDSENSORS" + JSON.stringify(filteredSensor));
         if (filteredSensor && btns.sensor_type) {
           const currentValue = parseInt(
             (filteredSensor as any)[btns.sensor_type],
@@ -64,8 +72,6 @@ export default function ButtonsGridPages({
             setOldValue(btns.sensor_type, btns.button_prt, btns.newValue); // Define o valor antigo antes de atualizar
             setNewValue(btns.sensor_type, btns.button_prt, currentValue); // Define o novo valor
           }
-        } else {
-          return;
         }
       }
     });
@@ -93,27 +99,58 @@ export default function ButtonsGridPages({
         className="w-full "
       >
         <TabsList className="w-full flex justify-center ">
-          {["1", "2", "3", "4", "5"].map((pageNumber) => (
-            <TabsTrigger key={pageNumber} value={pageNumber} className="w-full">
+          {["1", "2", "3", "4", "5"].map((pageNumber, index) => (
+            <TabsTrigger
+              key={pageNumber}
+              value={pageNumber}
+              className="w-full gap-2"
+            >
               {texts[language].page} {pageNumber}
               {isPageWarning(pageNumber) && !isAdmin ? (
                 <span className="relative flex h-3 w-3 m-1 ">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
                 </span>
+              ) : isAdmin ? (
+                <div className="flex items-center justify-center">
+                  <Popover
+                    open={openEditPageIndex === index} // Abrir popover apenas para o índice correspondente
+                    onOpenChange={(open) =>
+                      open ? handleOpenPopover(index) : handleClosePopover()
+                    } // Definir qual popover abrir/fechar
+                  >
+                    <PopoverTrigger>
+                      <Pencil size="15px" />
+                    </PopoverTrigger>
+                    <PopoverContent >
+                      <div className="relative flex flex-col items-left">
+                        <button
+                          className="absolute top-0 right-0 -mt-5 -mr-5 h-6 w-6 rounded-full bg-card-foreground text-gray-600 hover:bg-gray-300 hover:text-black flex items-center justify-center"
+                          onClick={handleClosePopover}
+                        >
+                          X
+                        </button>
+                        <div className="mb-2">Editar nome da Página</div>
+                        <div className="flex flex-row items-center gap-3">
+                          <div>
+                            <Input
+                              value={texts[language].page + " " + pageNumber}
+                            />
+                          </div>
+                          <div>
+                            <Check />
+                          </div>
+                        </div>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                </div>
               ) : (
                 ""
               )}
             </TabsTrigger>
           ))}
         </TabsList>
-        {["1", "2", "3", "4", "5"].map((pageNumber) => (
-          <TabsContent
-            className="w-full "
-            key={pageNumber}
-            value={pageNumber}
-          ></TabsContent>
-        ))}
       </Tabs>
     </Card>
   );

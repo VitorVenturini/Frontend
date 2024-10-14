@@ -29,7 +29,7 @@ export default function HeaderApp() {
   const { language } = useLanguage();
 
   const handleButtonsClick = () => {
-    //wss?.sendMessage({ api: account.isAdmin ? "admin" : "user", mt: "SelectMessage" });
+    wss?.sendMessage({ api: "admin", mt: "TableUsers" });
     navigate("/admin/buttons");
   };
 
