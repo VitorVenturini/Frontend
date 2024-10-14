@@ -34,9 +34,9 @@ console.log("window.location.hostname", window.location.hostname);
 
 if (window.location.hostname === "localhost") {
   host = "https://core.wecom.com.br";
-} else if (
-  window.location.hostname === "frontend-delta-lake.vercel.app"
-) {
+} else if (window.location.hostname === "frontend-delta-lake.vercel.app") {
+  host = "https://core.wecom.com.br";
+} else {
   host = `https://${window.location.hostname}`;
 }
 
