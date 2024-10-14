@@ -39,7 +39,6 @@ const useWebSocket = (
 
     function connect() {
       ws.current = new WebSocket(wsUrl);
-
       ws.current.onopen = () => {
         if (timer.current) clearTimeout(timer.current);
         if (pingTimer.current) clearInterval(pingTimer.current);
