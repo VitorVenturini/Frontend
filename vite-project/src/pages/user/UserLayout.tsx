@@ -58,6 +58,7 @@ interface User {
   // Adicione aqui outros campos se necessário
 }
 
+
 function UserLayout() {
   const account = useAccount();
   const [isLoading, setIsLoading] = useState(true);
