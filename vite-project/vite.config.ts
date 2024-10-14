@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import fs from "fs";
 import dotenv from "dotenv";
+import vercel from 'vite-plugin-vercel';
 
 // Carrega as variáveis de ambiente do arquivo .env
 dotenv.config();
@@ -11,9 +12,10 @@ const isLocalhost = process.env.VITE_HOSTNAME === "localhost";
 const hostPort = Number(process.env.HOST_PORT) || 3000;  
 const keyPath = process.env.KEY_PATH
 const pemPath = process.env.PEM_PATH
+// https://vite.dev/config/
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(),vercel()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
