@@ -29,12 +29,14 @@ const useWebSocket = (
     let wsUrl = "";
     if (window.location.protocol === "http:") {
       wsUrl = "wss://core.wecom.com.br:443/ws?token=" + token;
-    } else if (window.location.protocol === "https:") {
-      wsUrl = "wss://frontend-delta-lake.vercel.app:443/ws?token=" + token;
     } else {
-      wsUrl = "wss://" + currentUrl + ":443/ws?token=" + token;
+      if (window.location.hostname === "frontend-delta-lake.vercel.app") {
+        wsUrl = "wss://core.wecom.com.br:443/ws?token=" + token;
+      } else {
+        wsUrl = "wss://" + currentUrl + ":443/ws?token=" + token;
+      }
     }
-    
+
     function connect() {
       ws.current = new WebSocket(wsUrl);
 
