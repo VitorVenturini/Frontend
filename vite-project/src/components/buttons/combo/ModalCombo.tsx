@@ -50,12 +50,10 @@ import { limitButtonName } from "@/components/utils/utilityFunctions";
 import DraggableComboButtons from "@/components/buttons/combo/DraggableComboButtons";
 import { UserInterface } from "@/components/users/usersCore/UserContext";
 import DroppableComboArea from "./DroppableComboArea";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
-import { TouchBackend } from "react-dnd-touch-backend";
-import { isTouchDevice } from "@/components/utils/utilityFunctions";
+
 import texts from "@/_data/texts.json";
 import { useLanguage } from "@/components/language/LanguageContext";
+import { isMobile } from "react-device-detect";
 
 interface ButtonProps {
   clickedPosition: { i: number; j: number } | null;
@@ -110,8 +108,9 @@ export default function ModalCombo({
 
   const handleCreateButton = () => {
     try {
-      const filledCombos = [combo1, combo2, combo3, combo4].filter(Boolean)
-        .length;
+      const filledCombos = [combo1, combo2, combo3, combo4].filter(
+        Boolean
+      ).length;
 
       if (nameButton && filledCombos >= 2) {
         setIsCreating(true);
@@ -185,7 +184,7 @@ export default function ModalCombo({
   ];
 
   return (
-    <DndProvider backend={isTouchDevice() ? TouchBackend : HTML5Backend}>
+    <div>
       <CardHeader>
         <CardTitle>
           {isUpdate
@@ -242,7 +241,9 @@ export default function ModalCombo({
           <div className="flex w-full justify-between">
             <Button variant="secondary">
               <AlertDialog>
-                <AlertDialogTrigger>{texts[language].delete}</AlertDialogTrigger>
+                <AlertDialogTrigger>
+                  {texts[language].delete}
+                </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
                     <AlertDialogTitle>
@@ -253,7 +254,9 @@ export default function ModalCombo({
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>{texts[language].cancel}</AlertDialogCancel>
+                    <AlertDialogCancel>
+                      {texts[language].cancel}
+                    </AlertDialogCancel>
                     <AlertDialogAction onClick={handleDeleteButton}>
                       {texts[language].delete}
                     </AlertDialogAction>
@@ -279,6 +282,6 @@ export default function ModalCombo({
           </Button>
         )}
       </CardFooter>
-    </DndProvider>
+    </div>
   );
 }

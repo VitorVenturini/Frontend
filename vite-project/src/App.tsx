@@ -24,6 +24,7 @@ import { DataProvider } from "./Reports/DataContext";
 import { UserPbxProvider } from "./components/users/usersPbx/UsersPbxContext";
 import { AppConfigProvider } from "./components/options/ConfigContext";
 import { CallProvider } from "./components/calls/CallContext";
+import ReportLayout from "./pages/report/ReportLayout";
 
 import Loader from "./components/Loader";
 import TokenRenewer from "./components/validateToken/TokenRenewer";
@@ -76,7 +77,11 @@ function App() {
                                       <Route path="/" element={<RootRoute />} />
                                       <Route
                                         path="/login"
-                                        element={<LoginPage />}
+                                        element={<RootRoute />}
+                                      />
+                                      <Route
+                                        path="/reports/*"
+                                        element={<ReportRoute />}
                                       />
                                       <Route
                                         path="/admin/*"
@@ -112,17 +117,44 @@ function App() {
 function RootRoute() {
   const account = useContext(AccountContext);
   // const isLogged = localStorage.getItem("isLogged");
-  return account.isLogged ? <Navigate to="/user" /> : <LoginPage />;
+  if (account.isLogged) {
+    if (account.type === "admin") {
+      return <Navigate to="/admin/buttons" />;
+    } else if (account.type === "reports") {
+      return <Navigate to="/reports" />;
+    } else {
+      return <Navigate to="/user" />;
+    }
+  } else {
+    const currentSession = localStorage.getItem("currentSession");
+    localStorage.removeItem(currentSession as string)
+    localStorage.removeItem("currentSession")
+    return <LoginPage/>;
+  }
+  
 }
 
 function AdminRoute() {
   const account = useContext(AccountContext);
   const { updateAccount } = useAccount();
+
   useEffect(() => {
-    if (!account.isAdmin) {
+    if (!account.isAdmin && account.type === "admin") {
       updateAccount({ isAdmin: true });
     }
   }, [account.isAdmin, updateAccount]);
+
+  if (!account.isLogged) {
+    return <Navigate to="/Login" />;
+  } else {
+    if (account.type !== "admin") {
+      if (account.type === "user") {
+        return <Navigate to="/user" />;
+      } else if (account.type === "reports") {
+        return <Navigate to="/reports" />;
+      }
+    }
+  }
 
   return <AdminLayout />;
 }
@@ -130,13 +162,58 @@ function AdminRoute() {
 function UserRoute() {
   const account = useContext(AccountContext);
   const { updateAccount } = useAccount();
+
   useEffect(() => {
     if (account.isAdmin) {
       updateAccount({ isAdmin: false });
     }
   }, [account.isAdmin, updateAccount]);
 
+  if (!account.isLogged) {
+    return <Navigate to="/Login" />;
+  } else {
+    if (account.type !== "user" && account.type !== "admin") {
+      return <Navigate to="/reports" />;
+    }
+  }
+
   return <UserLayout />;
 }
 
+function ReportRoute() {
+  const account = useContext(AccountContext);
+  const { updateAccount } = useAccount();
+
+  useEffect(() => {
+    if (!account.isAdmin) {
+      updateAccount({ isAdmin: true });
+    }
+  }, [account.isAdmin, updateAccount]);
+
+  if (!account.isLogged) {
+    return <Navigate to="/Login" />;
+  } else {
+    if (account.type !== "reports" && account.type !== "admin") {
+      return <Navigate to="/user" />;
+    }
+  }
+
+  return <ReportLayout />;
+}
+
+// function LoginRoute(){
+//   const account = useContext(AccountContext);
+//   // const isLogged = localStorage.getItem("isLogged");
+//   if (account.isLogged) {
+//     if (account.type === "admin") {
+//       return <Navigate to="/admin/buttons" />;
+//     } else if (account.type === "reports") {
+//       return <Navigate to="/reports" />;
+//     } else {
+//       return <Navigate to="/user" />;
+//     }
+//   } else {
+//     <Navigate to="/Login" />;
+//   }
+// }
 export default App;

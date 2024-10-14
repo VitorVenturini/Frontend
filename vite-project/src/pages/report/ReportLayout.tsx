@@ -1,7 +1,5 @@
 import { Routes, Route } from "react-router-dom";
 import ValidadeToken from "@/components/validateToken/ValidateToken";
-import Account from "./Account";
-import ButtonsPage from "./ButtonsPage";
 import HeaderApp from "@/components/header/HeaderAdmin";
 import { useAccount } from "@/components/account/AccountContext";
 import { useNavigate } from "react-router-dom";
@@ -16,10 +14,9 @@ import {
   WebSocketProvider,
   useWebSocketData,
 } from "@/components/websocket/WebSocketProvider";
-import ActionsPage from "./ActionsPage";
-import Options from "./Options";
 import { useToast } from "@/components/ui/use-toast";
 import { SensorInterface, useSensors } from "@/components/sensor/SensorContext";
+import HeaderReport from "@/components/header/HeaderReport";
 import {
   ActionsInteface,
   useActions,
@@ -40,26 +37,26 @@ import {
 import ColumnsReports from "@/Reports/collumnsReports";
 import { Grafico } from "@/components/charts/lineChart";
 import { DataProvider, useData } from "@/Reports/DataContext";
-import Reports from "./reports";
+import Reports from "../admin/reports";
 import {
   UserPbxInterface,
   useUsersPbx,
 } from "@/components/users/usersPbx/UsersPbxContext";
-import { BackupConfig, NotificationsInterface, SmtpConfig, useAppConfig } from "@/components/options/ConfigContext";
+import {
+  BackupConfig,
+  SmtpConfig,
+  useAppConfig,
+} from "@/components/options/ConfigContext";
 import Loader from "@/components/Loader";
 import useWebSocket from "@/components/websocket/useWebSocket";
 import Loader2 from "@/components/Loader2";
 import { set } from "date-fns";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
-import { TouchBackend } from "react-dnd-touch-backend";
-import { isTouchDevice } from "@/components/utils/utilityFunctions";
-import { isMobile } from "react-device-detect";
 
-function AdminLayout() {
+function ReportLayout() {
   const account = useAccount();
   const { setUsers, updateUserStauts } = useUsers();
   const { updateUserPbxStauts } = useUsersPbx();
+  const { updateLicense } = useAppConfig();
   const wss = useWebSocketData();
   const { buttons, setButtons, addButton, updateButton, deleteButton } =
     useButtons();
@@ -87,12 +84,11 @@ function AdminLayout() {
     setPbxStatus,
     addBackupConfig,
     addSmtpConfig,
-    updateLicense,
-    addNotifications
   } = useAppConfig();
   var allBtn: ButtonInterface[];
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
+    console.log("ReportLauyout");
     switch (message.mt) {
       case "SelectButtonsSuccess":
         const firstButtons: ButtonInterface[] = JSON.parse(message.result);
@@ -149,13 +145,13 @@ function AdminLayout() {
         addSensorName(sensorData);
         break;
       case "SelectActionsMessageSuccess":
-        console.log("allActions ", JSON.stringify(message.result));
+        //   console.log("allActions ", JSON.stringify(message.result));
         const allActions: ActionsInteface[] = JSON.parse(message.result);
         setActions(allActions);
         navigate("/admin/actions");
         break;
       case "InsertActionMessageSuccess":
-        console.log(JSON.stringify(message.result));
+        //   console.log(JSON.stringify(message.result));
         const newAction: ActionsInteface = message.result;
         addActions(newAction);
         toast({
@@ -164,10 +160,10 @@ function AdminLayout() {
         break;
       case "UpdateActionMessageSuccess":
         const updatedAction: ActionsInteface = message.result;
-        console.log(
-          "UpdateActionMessageSuccess",
-          JSON.stringify(message.result)
-        );
+        //   console.log(
+        //     "UpdateActionMessageSuccess",
+        //     JSON.stringify(message.result)
+        //   );
         updateActions(updatedAction);
         toast({
           description: "Ação Atualizada com sucesso",
@@ -186,7 +182,7 @@ function AdminLayout() {
         );
         setApiKeyInfo(apiKeyEntries);
 
-        console.log("adminPBXUSer", message.result);
+        //   console.log("adminPBXUSer", message.result);
 
         // Filtra as entradas para pbxEntries e pbxType
         const pbxEntries = message.result.filter(
@@ -203,13 +199,14 @@ function AdminLayout() {
         setPbxStatus(pbxData);
 
         // smtp
-        console.log("SMTP", message.result);
+        //   console.log("SMTP", message.result);
         const smtpEntries = message.result.filter(
-          (item: any) => item.entry === "smtpUsername" ||
+          (item: any) =>
+            item.entry === "smtpUsername" ||
             item.entry === "smtpPassword" ||
             item.entry === "smtpHost" ||
             item.entry === "smtpPort" ||
-            item.entry === "smtpSecure" 
+            item.entry === "smtpSecure"
         );
         const allSmtpInfo: SmtpConfig = {
           smtpUsername: smtpEntries.find(
@@ -253,9 +250,9 @@ function AdminLayout() {
             updatedAt: null,
           },
         };
-        console.log(JSON.stringify(allSmtpInfo));
+        //   console.log(JSON.stringify(allSmtpInfo));
         addSmtpConfig(allSmtpInfo);
-    
+
         //backup
         const backupEntries = message.result.filter(
           (item: any) =>
@@ -335,30 +332,98 @@ function AdminLayout() {
             updatedAt: null,
           },
         };
-        console.log(JSON.stringify(allBackupInfo));
+        //   console.log(JSON.stringify(allBackupInfo));
         addBackupConfig(allBackupInfo);
-
-        const sensorNotification = message.result.find(
-          (item: NotificationsInterface) => item.entry === "sensorNotification"
-        );
-
-        const alarmNotification = message.result.find(
-          (item: NotificationsInterface) => item.entry === "alarmNotification"
-        );
-
-        const chatNotification = message.result.find(
-          (item: NotificationsInterface) => item.entry === "chatNotification"
-        );
-
-        const soundsInfo = [
-          ...(sensorNotification ? [sensorNotification] : []),
-          ...(alarmNotification ? [alarmNotification] : []),
-          ...(chatNotification ? [chatNotification] : []),
-        ];
-
-        soundsInfo.forEach((sound) => addNotifications(sound));
         break;
-      
+
+        if (message.result) {
+          toast({
+            description: "Agendamento de Backup atualizado com sucesso",
+          });
+          //backup
+          const backupEntries = message.result.filter(
+            (item: any) =>
+              item.entry === "backupUsername" ||
+              item.entry === "backupPassword" ||
+              item.entry === "backupHost" ||
+              item.entry === "backupMethod" ||
+              item.entry === "backupPath" ||
+              item.entry === "backupFrequency" ||
+              item.entry === "backupHour" ||
+              item.entry === "backupDay"
+          );
+
+          const allBackupInfo: BackupConfig = {
+            backupUsername: backupEntries.find(
+              (item: any) => item.entry === "backupUsername"
+            ) || {
+              entry: "backupUsername",
+              value: "",
+              createdAt: null,
+              updatedAt: null,
+            },
+            backupPassword: backupEntries.find(
+              (item: any) => item.entry === "backupPassword"
+            ) || {
+              entry: "backupPassword",
+              value: "",
+              createdAt: null,
+              updatedAt: null,
+            },
+            backupPath: backupEntries.find(
+              (item: any) => item.entry === "backupPath"
+            ) || {
+              entry: "backupPath",
+              value: "",
+              createdAt: null,
+              updatedAt: null,
+            },
+            backupHost: backupEntries.find(
+              (item: any) => item.entry === "backupHost"
+            ) || {
+              entry: "backupHost",
+              value: "",
+              createdAt: null,
+              updatedAt: null,
+            },
+            backupFrequency: backupEntries.find(
+              (item: any) => item.entry === "backupFrequency"
+            ) || {
+              entry: "backupFrequency",
+              value: "",
+              createdAt: null,
+              updatedAt: null,
+            },
+            backupHour: backupEntries.find(
+              (item: any) => item.entry === "backupHour"
+            ) || {
+              entry: "backupHour",
+              value: "",
+              createdAt: null,
+              updatedAt: null,
+            },
+            backupDay: backupEntries.find(
+              (item: any) => item.entry === "backupDay"
+            ) || {
+              entry: "backupDay",
+              value: "",
+              createdAt: null,
+              updatedAt: null,
+            },
+            backupMethod: backupEntries.find(
+              (item: any) => item.entry === "backupMethod"
+            ) || {
+              entry: "backupMethod",
+              value: "",
+              createdAt: null,
+              updatedAt: null,
+            },
+          };
+          // console.log(JSON.stringify(allBackupInfo));
+          addBackupConfig(allBackupInfo);
+        }
+        break;
+
       case "PbxStatusResult":
         if (message.result) {
           const status = String(message.result);
@@ -370,7 +435,7 @@ function AdminLayout() {
         }
         break;
       case "ConfigLicenseResult":
-        console.log("Received ConfigLicenseResult message:", message);
+        //   console.log("Received ConfigLicenseResult message:", message);
 
         const licenseKey = message.licenseKey;
         const licenseFile = message.licenseFile;
@@ -390,7 +455,7 @@ function AdminLayout() {
         setGateways(allGateways);
         break;
       case "AddGatewaySuccess":
-        console.log(JSON.stringify(message.result));
+        //   console.log(JSON.stringify(message.result));
         const newGateway: GatewaysInterface = message.result;
         addGateway(newGateway);
         toast({
@@ -399,7 +464,7 @@ function AdminLayout() {
         break;
       case "UpdateGatewaySuccess":
         const updatedGateway: GatewaysInterface = message.gateways;
-        console.log("UpdateGatewaySuccess", JSON.stringify(message.gateways));
+        //   console.log("UpdateGatewaySuccess", JSON.stringify(message.gateways));
         updateGateway(updatedGateway);
         toast({
           description: "Gateway atualizado com sucesso",
@@ -416,7 +481,7 @@ function AdminLayout() {
         setCameras(allCameras);
         break;
       case "AddCameraSuccess":
-        console.log(JSON.stringify(message.result));
+        //   console.log(JSON.stringify(message.result));
         const newCamera: CamerasInterface = message.result;
         addCamera(newCamera);
         toast({
@@ -425,7 +490,7 @@ function AdminLayout() {
         break;
       case "UpdateCameraSuccess":
         const updatedCamera: CamerasInterface = message.result;
-        console.log("UpdateCameraSuccess", JSON.stringify(message.result));
+        //   console.log("UpdateCameraSuccess", JSON.stringify(message.result));
         updateCamera(updatedCamera);
         toast({
           description: "Camera atualizada com sucesso",
@@ -486,14 +551,14 @@ function AdminLayout() {
                 jsonKeys = Object.keys(parsedData[0]);
                 // Formatar datas no formato desejado
               } catch (error) {
-                console.error("Erro ao fazer o parse do JSON:", error);
+                //   console.error("Erro ao fazer o parse do JSON:", error);
                 return prevFragments;
               }
 
               clearDataReport(); // Limpa os dados anteriores
 
               if (message.src === "RptSensors") {
-                console.log(parsedData, "REPORT SENSOR");
+                //   console.log(parsedData, "REPORT SENSOR");
 
                 addDataReport(parsedData, "sensor", jsonKeys, message.src);
               } else {
@@ -587,7 +652,7 @@ function AdminLayout() {
                   return item;
                 });
                 if (message.src === "RptIotHistory") {
-                  console.log("RPT IOT HYSTORY", parsedData);
+                  // console.log("RPT IOT HYSTORY", parsedData);
                   addDataReport(parsedData, "img", jsonKeys, message.src);
                   clearLoadBarData();
                 } else {
@@ -619,7 +684,7 @@ function AdminLayout() {
         });
         break;
       default:
-        console.log("Unknown message type:", message);
+        //   console.log("Unknown message type:", message);
         break;
     }
   };
@@ -629,28 +694,13 @@ function AdminLayout() {
       token={account.accessToken}
       onMessage={handleWebSocketMessage}
     >
+      <>{isLoading ? <Loader /> : 
       <>
-        {isLoading ? (
-          <Loader />
-        ) : (
-          <>
-            <DndProvider backend={isMobile ? TouchBackend : HTML5Backend}>
-            <HeaderApp />
-            {/* Your admin layout here */}
-            <Routes>
-              <Route path="account" element={<Account />} />
-              <Route path="buttons" element={<ButtonsPage />} />
-              <Route path="actions" element={<ActionsPage />} />
-              <Route path="options" element={<Options />} />
-              <Route path="reports" element={<Reports />} />
-              {/* Add more admin routes as needed */}
-            </Routes>
-            </DndProvider>
-          </>
-        )}
-      </>
+        <HeaderReport />
+        <Reports />
+        </>}</>
     </WebSocketProvider>
   );
 }
 
-export default ValidadeToken(AdminLayout);
+export default ValidadeToken(ReportLayout);

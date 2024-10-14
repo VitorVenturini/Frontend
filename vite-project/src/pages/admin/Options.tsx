@@ -9,7 +9,7 @@ import RadioCard from "@/components/options/RadioCard";
 import PbxConfigCard from "@/components/options/Pbx/PbxConfigCard";
 import APIGoogleCard from "@/components/options/ApiGoogle/APIGoogleCard";
 import IotCameraCard from "@/components/options/IotCameraCard";
-import Notify from "@/components/options/Notifications";
+import Notify from "@/components/options/Notifications/Notifications";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 
 export default function MenuOptions() {

@@ -30,7 +30,7 @@ const ValidadeToken = (Component: React.ComponentType) => {
             const currentSession = localStorage.getItem("currentSession")
             localStorage.removeItem(currentSession as string)
             localStorage.removeItem("currentSession")
-            navigate('/login') 
+            navigate('/Login') 
             return;
           }
 
