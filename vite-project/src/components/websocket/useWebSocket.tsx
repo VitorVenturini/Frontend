@@ -30,12 +30,15 @@ const useWebSocket = (
     if (window.location.protocol === "http:") {
       wsUrl = "wss://core.wecom.com.br:443/ws?token=" + token;
     } else {
-      wsUrl = "wss://" + currentUrl + ":443/ws?token=" + token;
+      if (window.location.hostname === "frontend-delta-lake.vercel.app") {
+        wsUrl = "wss://core.wecom.com.br:443/ws?token=" + token;
+      } else {
+        wsUrl = "wss://" + currentUrl + ":443/ws?token=" + token;
+      }
     }
 
     function connect() {
       ws.current = new WebSocket(wsUrl);
-
       ws.current.onopen = () => {
         if (timer.current) clearTimeout(timer.current);
         if (pingTimer.current) clearInterval(pingTimer.current);

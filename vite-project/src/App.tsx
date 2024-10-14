@@ -29,10 +29,18 @@ import ReportLayout from "./pages/report/ReportLayout";
 import Loader from "./components/Loader";
 import TokenRenewer from "./components/validateToken/TokenRenewer";
 
-export const host =
-  window.location.hostname === "localhost"
-    ? "https://core.wecom.com.br"
-    : `https://${window.location.hostname}`;
+let host: string;
+console.log("window.location.hostname", window.location.hostname);
+
+if (window.location.hostname === "localhost") {
+  host = "https://core.wecom.com.br";
+} else if (window.location.hostname === "frontend-delta-lake.vercel.app") {
+  host = "https://core.wecom.com.br";
+} else {
+  host = `https://${window.location.hostname}`;
+}
+
+export { host };
 
 function App() {
   const account = useContext(AccountContext);
@@ -127,11 +135,10 @@ function RootRoute() {
     }
   } else {
     const currentSession = localStorage.getItem("currentSession");
-    localStorage.removeItem(currentSession as string)
-    localStorage.removeItem("currentSession")
-    return <LoginPage/>;
+    localStorage.removeItem(currentSession as string);
+    localStorage.removeItem("currentSession");
+    return <LoginPage />;
   }
-  
 }
 
 function AdminRoute() {

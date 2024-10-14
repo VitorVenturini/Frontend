@@ -21,24 +21,24 @@ export function LanguageToggle() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setLanguage("en")}>
+        {/* <DropdownMenuItem onClick={() => setLanguage("en")}>
           <div className="flex items-center gap-1">
             <US className="h-4 w-4" />
             English
           </div>
-        </DropdownMenuItem>
+        </DropdownMenuItem> */}
         <DropdownMenuItem onClick={() => setLanguage("pt")}>
           <div className="flex items-center gap-1">
             <BR className="h-4 w-4" />
             Português
           </div>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setLanguage("es")}>
+        {/* <DropdownMenuItem onClick={() => setLanguage("es")}>
           <div className="flex items-center gap-1">
             <ES className="h-4 w-4" />
             Español
           </div>
-        </DropdownMenuItem>
+        </DropdownMenuItem> */}
       </DropdownMenuContent>
     </DropdownMenu>
   );
