@@ -30,6 +30,7 @@ import Loader from "./components/Loader";
 import TokenRenewer from "./components/validateToken/TokenRenewer";
 
 let host: string;
+console.log("window.location.hostname", window.location.hostname);
 
 if (window.location.hostname === "localhost") {
   host = "https://core.wecom.com.br";
