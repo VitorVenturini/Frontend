@@ -28,7 +28,8 @@ export default function Actions() {
   // implementar lógica do backend para consultar ações do usuário
   return (
     <div>
-        <TableActions columns={actions} data={actions}></TableActions>
+      {/* @ts-ignore */}
+        <TableActions columns={actions as any} data={actions}></TableActions>
     </div>
   );
 }
