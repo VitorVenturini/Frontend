@@ -199,7 +199,9 @@ export default function CardLogin() {
         setIsLoading2(false);
       } else {
         const data = await response.json();
-        toast({ description: data.message });
+        toast({
+          description: "Erro ao Redefinir Senha.",
+        });
         setIsLoading2(false);
       }
     } catch (error) {

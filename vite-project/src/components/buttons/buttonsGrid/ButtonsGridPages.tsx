@@ -124,17 +124,18 @@ export default function ButtonsGridPages({
                     </PopoverTrigger>
                     <PopoverContent >
                       <div className="relative flex flex-col items-left">
-                        <button
+                        {/* <button
                           className="absolute top-0 right-0 -mt-5 -mr-5 h-6 w-6 rounded-full bg-card-foreground text-gray-600 hover:bg-gray-300 hover:text-black flex items-center justify-center"
                           onClick={handleClosePopover}
                         >
                           X
-                        </button>
-                        <div className="mb-2">Editar nome da Página</div>
+                      </button> */}
+                      {/*  <div className="mb-2">Editar nome da Página</div> */}
                         <div className="flex flex-row items-center gap-3">
                           <div>
                             <Input
-                              value={texts[language].page + " " + pageNumber}
+                              placeholder={texts[language].page + " " + pageNumber}
+                              type="text"
                             />
                           </div>
                           <div>
