@@ -1,47 +1,82 @@
-import React, { useState } from 'react';
-import beep from "../../../src/assets/sounds/bleep.wav";
-import minor from "../../../src/assets/sounds/minor.wav";
-import mobile from "../../../src/assets/sounds/mobile.wav";
-import suspiciou from "../../../src/assets/sounds/suspiciou.wav";
+import React, { useEffect, useState } from "react";
+import beep from "@/assets/sounds/bleep.wav";
+import minor from "@/assets/sounds/minor.wav";
+import mobile from "@/assets/sounds/mobile.wav";
+import suspiciou from "@/assets/sounds/suspiciou.wav";
 import { AudioPlayer } from "react-audio-player-component";
-import { Checkbox } from "../ui/checkbox";
-
+import { Checkbox } from "../../ui/checkbox";
 import {
   Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
+  CardDescription,
 } from "@/components/ui/card";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
+import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
+import { useToast } from "@/components/ui/use-toast";
+import { useAppConfig } from "../ConfigContext";
 
-export default function Notify() {
-  const [selectedAudio, setSelectedAudio] = useState(null);
+const CardNotificationChat = () => {
 
-  const handleCheckboxChange = (audioId: any) => {
+  const {notification,updateNotification} = useAppConfig()
+
+  useEffect(() => {
+    const sensorNotification = notification.find(
+      (item) => item.entry === "chatNotification"
+    );
+    
+    if (sensorNotification) {
+      setSelectedAudio(sensorNotification.value); 
+    }
+  }, [notification]);
+
+  const [selectedAudio, setSelectedAudio] = useState("");
+  const wss = useWebSocketData();
+
+  const handleCheckboxChange = (audioId: string) => {
     setSelectedAudio(audioId);
   };
+  const {toast} = useToast()
 
   const handleClick = () => {
-    console.log('Audio selecionado:', selectedAudio);
+    if(selectedAudio){
+      wss?.sendMessage({
+        api: "admin",
+        mt: "UpdateConfig",
+        entry: "chatNotification",
+        vl: selectedAudio,
+      });
+      toast({
+        variant: "default",
+        description:
+          "Notificação Salva com Sucesso",
+      });
+      updateNotification("chatNotification", selectedAudio);
+    }else{
+      toast({
+        variant: "destructive",
+        description: "Você precisa selecionar algum som de notificação para Chat"
+      })
+    }
+
+  
   };
 
   return (
     <Card className="min-w-[450px] w-fit h-fit p-2">
       <CardHeader className="flex-row items-center align-middle w-full justify-between gap-4">
         <CardTitle>
-          <p>Audio</p>
-          <CardDescription>Selecione um audio padrão</CardDescription>
+          <p>Chat</p>
+          <CardDescription>Selecione um audio padrão para Chat</CardDescription>
         </CardTitle>
-        <Button onClick={() => handleClick}>Salvar</Button>
+        <Button onClick={handleClick}>Salvar</Button>
       </CardHeader>
       <div className="bg-card justify-center items-center gap-2 h-fit">
-        <div className="items-center flex space-x-2 p-2 ">
+        <div className="items-center flex space-x-2 p-2">
           <Checkbox
             id="beep"
-            checked={selectedAudio === 'beep'}
-            onCheckedChange={() => handleCheckboxChange('beep')}
+            checked={selectedAudio === "beep"}
+            onCheckedChange={() => handleCheckboxChange("beep")}
           />
           <AudioPlayer
             src={beep}
@@ -60,11 +95,11 @@ export default function Notify() {
           />
           <p>beep</p>
         </div>
-        <div className="items-center flex space-x-2 p-2 ">
+        <div className="items-center flex space-x-2 p-2">
           <Checkbox
             id="minor"
-            checked={selectedAudio === 'minor'}
-            onCheckedChange={() => handleCheckboxChange('minor')}
+            checked={selectedAudio === "minor"}
+            onCheckedChange={() => handleCheckboxChange("minor")}
           />
           <AudioPlayer
             src={minor}
@@ -83,11 +118,11 @@ export default function Notify() {
           />
           <p>minor</p>
         </div>
-        <div className="items-center flex space-x-2 p-2 ">
+        <div className="items-center flex space-x-2 p-2">
           <Checkbox
             id="mobile"
-            checked={selectedAudio === 'mobile'}
-            onCheckedChange={() => handleCheckboxChange('mobile')}
+            checked={selectedAudio === "mobile"}
+            onCheckedChange={() => handleCheckboxChange("mobile")}
           />
           <AudioPlayer
             src={mobile}
@@ -106,11 +141,11 @@ export default function Notify() {
           />
           <p>mobile</p>
         </div>
-        <div className="items-center flex space-x-2 p-2 ">
+        <div className="items-center flex space-x-2 p-2">
           <Checkbox
             id="suspiciou"
-            checked={selectedAudio === 'suspiciou'}
-            onCheckedChange={() => handleCheckboxChange('suspiciou')}
+            checked={selectedAudio === "suspiciou"}
+            onCheckedChange={() => handleCheckboxChange("suspiciou")}
           />
           <AudioPlayer
             src={suspiciou}
@@ -132,4 +167,6 @@ export default function Notify() {
       </div>
     </Card>
   );
-}
+};
+
+export default CardNotificationChat;

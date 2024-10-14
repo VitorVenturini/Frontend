@@ -36,6 +36,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useDrag } from 'react-dnd';
 
 interface CallComponentProps {
   buttonOnCall?: ButtonInterface;
@@ -216,9 +217,19 @@ export default function CallComponent({
     }
   }, [dialPadCall]);
 
+  const [{ isDragging }, drag] = useDrag(() => ({
+    type: 'CALL',
+    item: { id: buttonOnCall?.id || dialPadCall?.callId },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  }));
+
   return (
-    <Card
-      className={` px-2 py-5 m-1  gap-2 outline outline-2 border-xs ${callStateClass} `}
+     <Card
+      ref={drag}
+      className={`px-2 py-5 m-1 gap-2 outline outline-2 border-xs ${callStateClass}`}
+      style={{ opacity: isDragging ? 0.5 : 1 }}
     >
       <div className="flex items-center gap-3 w-full ">
         {avatarBase64 !== null ? (

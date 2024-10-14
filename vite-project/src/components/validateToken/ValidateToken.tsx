@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { host } from "@/App";
 import { useAccount } from "../account/AccountContext";
 
@@ -30,8 +30,8 @@ const ValidadeToken = (Component: React.ComponentType) => {
             const currentSession = localStorage.getItem("currentSession")
             localStorage.removeItem(currentSession as string)
             localStorage.removeItem("currentSession")
-            navigate('/login') 
-            return;
+            return <Navigate to="/Login"/>
+
           }
 
         const data = await response.json();

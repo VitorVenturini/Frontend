@@ -162,6 +162,7 @@ interface AppConfigContextType {
   smtpConfig: SmtpConfig;
   notification: NotificationsInterface[];
   addNotifications: (notification: NotificationsInterface) => void;
+  updateNotification : (entry: string, newValue: string) => void;
   setPbxStatus: React.Dispatch<React.SetStateAction<PbxInterface[]>>;
   setApiKeyInfo: React.Dispatch<React.SetStateAction<GoogleApiKeyInterface[]>>;
   setLicense: React.Dispatch<React.SetStateAction<License>>;
@@ -264,6 +265,17 @@ export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
     });
   };
   
+  const updateNotification = (entry: string, newValue: string) => {
+    setNotifications((prevNotifications) => {
+      const updatedNotifications = prevNotifications.map((notification) =>
+        notification.entry === entry
+          ? { ...notification, value: newValue } 
+          : notification
+      );
+      return updatedNotifications;
+    });
+  };
+
   const addNotifications = (notification: NotificationsInterface) => {
     setNotifications((prevNotifications) => [
       ...prevNotifications,
@@ -336,6 +348,7 @@ const clearSmtpConfig = () => {
         smtpConfig,
         setPbxStatus,
         addNotifications,
+        updateNotification,
         setApiKeyInfo,
         setLicense,
         setLoadBarData,

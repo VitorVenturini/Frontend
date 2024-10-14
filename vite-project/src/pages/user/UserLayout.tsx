@@ -17,11 +17,10 @@ import {
   useButtons,
   ButtonInterface,
 } from "@/components/buttons/buttonContext/ButtonsContext";
-import { FullScreenButton } from "@/components/FullScreanButton";
 
 import { SensorInterface, useSensors } from "@/components/sensor/SensorContext";
 import { useHistory } from "@/components/history/HistoryContext";
-import { format } from "date-fns";
+
 import { useToast } from "@/components/ui/use-toast";
 import {
   UserInterface,
@@ -46,11 +45,17 @@ import {
   useAppConfig,
 } from "@/components/options/ConfigContext";
 import SoundPlayer from "@/components/soundPlayer/SoundPlayer";
+
 import bleep from "@/assets/sounds/bleep.wav";
 import mobile from "@/assets/sounds/mobile.wav";
-import { checkButtonWarning } from "@/components/utils/utilityFunctions";
-import useWebSocket from "@/components/websocket/useWebSocket";
-import Loader2 from "@/components/Loader2";
+import suspiciou from "@/assets/sounds/suspiciou.wav";
+import minor from "@/assets/sounds/minor.wav";
+
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import { TouchBackend } from "react-dnd-touch-backend";
+import { isMobile } from "react-device-detect"; // Detectar se é um dispositivo móvel
+
 interface User {
   id: string;
   name: string;
@@ -133,7 +138,16 @@ function UserLayout() {
   const { guid } = useContext(AccountContext);
   const [comboStart, setComboStart] = useState(false);
   const { users } = useUsers();
-  const [playNotificationSound, setPlayNotificationSound] = useState(false); // som para notificação
+  const [sensorNotificationSound, setSensorNotificationSound] = useState("");
+  const [chatNotificationSound, setChatNotificationSound] = useState("");
+  const [alarmNotificationSound, setAlarmNotificationSound] = useState("");
+
+  const [playNotificationSoundAlarm, setPlayNotificationSoundAlarm] =
+    useState(false); // tocar o som
+  const [playNotificationSoundChat, setPlayNotificationSoundChat] =
+    useState(false); // tocar o som
+  const [playNotificationSoundSensor, setPlayNotificationSoundSensor] =
+    useState(false); // tocar o som
 
   const isAllowedButtonType = (type: string) => {
     const allowedTypes = [
@@ -151,6 +165,21 @@ function UserLayout() {
   var allBtn: ButtonInterface[];
   var allUsers: UserInterface[];
   var pbxUser: UserPbxInterface[];
+
+  const soundFiles = {
+    bleep: bleep,
+    mobile: mobile,
+    minor: minor,
+    suspiciou: suspiciou,
+  };
+  // Função para verificar se o som existe, caso contrário, retorna um valor padrão
+  const getSoundSrc = (notificationSound: string) => {
+    const soundSrc = soundFiles[notificationSound as keyof typeof soundFiles];
+    if (soundSrc) {
+      return soundSrc;
+    }
+  };
+
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
     switch (message.mt) {
@@ -210,9 +239,12 @@ function UserLayout() {
         })[0];
         setButtonTriggered(message.btn_id, true);
 
-        if (!filteredBtn.muted) {
-          setPlayNotificationSound(true); // Toca o som de notificação
-          setTimeout(() => setPlayNotificationSound(false), 500);
+        if (!filteredBtn?.muted && filteredBtn?.button_type === "sensor") {
+          setTimeout(() => setPlayNotificationSoundSensor(true), 1500);
+          setTimeout(() => setPlayNotificationSoundSensor(false), 2000);
+        } else if (filteredBtn.button_type === "alarm") {
+          setTimeout(() => setPlayNotificationSoundAlarm(true), 1500);
+          setTimeout(() => setPlayNotificationSoundAlarm(false), 2000);
         }
 
         break;
@@ -372,7 +404,7 @@ function UserLayout() {
             true
           );
           setSelectedOptBottom("call");
-        }else{
+        } else {
           const dialPadCallConnected = {
             id: message.call,
             device: message.device,
@@ -543,8 +575,8 @@ function UserLayout() {
         const newMsgFrom: ChatInterface = message.result[0];
         addChatMessage(newMsgFrom);
         if (clickedUserTopRef.current !== newMsgFrom.from_guid) {
-          setPlayNotificationSound(true); // Toca o som de notificação
-          setTimeout(() => setPlayNotificationSound(false), 500);
+          setPlayNotificationSoundChat(true); // Toca o som de notificação
+          setTimeout(() => setPlayNotificationSoundChat(false), 500);
         }
 
         break;
@@ -579,12 +611,19 @@ function UserLayout() {
         const sensorNotification = message.result.find(
           (item: NotificationsInterface) => item.entry === "sensorNotification"
         );
+
         const alarmNotification = message.result.find(
           (item: NotificationsInterface) => item.entry === "alarmNotification"
         );
+
         const chatNotification = message.result.find(
           (item: NotificationsInterface) => item.entry === "chatNotification"
         );
+
+        setSensorNotificationSound(sensorNotification.value);
+        setAlarmNotificationSound(alarmNotification.value);
+        setChatNotificationSound(chatNotification.value);
+
         const soundsInfo = [
           ...(sensorNotification ? [sensorNotification] : []),
           ...(alarmNotification ? [alarmNotification] : []),
@@ -678,6 +717,7 @@ function UserLayout() {
   const handleClickedUserBottom = (newUser: string | null) => {
     setClickedUserBottom(newUser);
   };
+
   return (
     <>
       <WebSocketProvider
@@ -688,48 +728,67 @@ function UserLayout() {
               <Loader />
             ) : ( */}
         <>
-          <div className="flex justify-center items-center min-h-screen">
-            <div className="">
-              <div className="flex gap-1">
-                <div className="gap-1 space-y-1">
-                  <InteractiveGridCopy
-                    interactive="top"
-                    onKeyChange={handleOptChangeTop}
-                    buttons={buttons}
+          <DndProvider backend={isMobile ? TouchBackend : HTML5Backend}>
+            <div className="flex justify-center items-center min-h-screen">
+              <div className="">
+                <div className="flex gap-1">
+                  <div className="gap-1 space-y-1">
+                    <InteractiveGridCopy
+                      interactive="top"
+                      onKeyChange={handleOptChangeTop}
+                      buttons={buttons}
+                      selectedUser={account as any}
+                      selectedOpt={selectedOptTop}
+                      clickedUser={clickedUserTop}
+                      setClickedUser={handleClickedUserTop}
+                    />
+                    <InteractiveGridCopy
+                      interactive="bottom"
+                      onKeyChange={handleOptChangeBottom}
+                      buttons={buttons}
+                      selectedUser={account as any}
+                      selectedOpt={selectedOptBottom}
+                      clickedUser={clickedUserBottom}
+                      setClickedUser={handleClickedUserBottom}
+                    />
+                  </div>
+
+                  <ButtonsGridPage
+                    buttonsGrid={buttons}
                     selectedUser={account as any}
-                    selectedOpt={selectedOptTop}
-                    clickedUser={clickedUserTop}
-                    setClickedUser={handleClickedUserTop}
-                  />
-                  <InteractiveGridCopy
-                    interactive="bottom"
-                    onKeyChange={handleOptChangeBottom}
-                    buttons={buttons}
-                    selectedUser={account as any}
-                    selectedOpt={selectedOptBottom}
-                    clickedUser={clickedUserBottom}
-                    setClickedUser={handleClickedUserBottom}
+                    // selectedOpt={selectedOpt}
+                    // onOptChange={handleOptChange}
+                    // clickedUser={clickedUser}
                   />
                 </div>
-
-                <ButtonsGridPage
-                  buttonsGrid={buttons}
-                  selectedUser={account as any}
-                  // selectedOpt={selectedOpt}
-                  // onOptChange={handleOptChange}
-                  // clickedUser={clickedUser}
-                />
+                <HeaderUser />
               </div>
-              <HeaderUser />
             </div>
-          </div>
+          </DndProvider>
         </>
         {/* )} */}
       </WebSocketProvider>
-      {/* soundPlayer para Notificações Gerais */}
-      <SoundPlayer soundSrc={mobile} play={playNotificationSound} />
-      {/* soundPlayer para Chamadas
-      <SoundPlayer soundSrc={mobile} play={playCallSound} /> */}
+      {/* soundPlayer para cada Notificação */}
+      {alarmNotificationSound && (
+        <SoundPlayer
+          soundSrc={getSoundSrc(alarmNotificationSound) as string}
+          play={playNotificationSoundAlarm}
+        />
+      )}
+
+      {sensorNotificationSound && (
+        <SoundPlayer
+          soundSrc={getSoundSrc(sensorNotificationSound) as string}
+          play={playNotificationSoundSensor}
+        />
+      )}
+
+      {chatNotificationSound && (
+        <SoundPlayer
+          soundSrc={getSoundSrc(chatNotificationSound) as string}
+          play={playNotificationSoundChat}
+        />
+      )}
     </>
   );
 }

@@ -20,7 +20,7 @@ import Loader2 from "../Loader2";
 import useWebSocket from "@/components/websocket/useWebSocket";
 import ReportLayout from "@/pages/report/ReportLayout";
 
-export default function HeaderApp() {
+export default function HeaderReport() {
   const account = useAccount();
   const { clearButtons } = useButtons();
   const { updateAccount } = useAccount();
@@ -50,7 +50,9 @@ export default function HeaderApp() {
   const handleReportsClick = () => {
     navigate("/admin/reports");
   };
-
+  const handleReportsLayoutClick = () => {
+    navigate("/report");
+  };
   const handleUserViewClick = () => {
     clearButtons();
     updateAccount({ isAdmin: false });
@@ -61,7 +63,7 @@ export default function HeaderApp() {
     <header className="flex justify-between items-center p-2">
       {wss?.isReconnecting && <Loader2 />}
       <div className="flex items-center gap-5">
-        <Button className="h-16" variant="ghost" onClick={handleUserViewClick}>
+        <Button className="h-16" variant="ghost" >
           <img src={LogoCore} alt="Logo" className="w- h-16" />
         </Button>
 
@@ -75,24 +77,8 @@ export default function HeaderApp() {
 
       <div className="flex items-end ">
         <div className="flex items-center gap-1">
-          <Button variant="ghost" onClick={handleUserViewClick}>
-            {texts[language].headerConsole}
-          </Button>
-          <Button variant="ghost" onClick={handleButtonsClick}>
-            {texts[language].headerButtons}
-          </Button>
-          <Button variant="ghost" onClick={handleAccountClick}>
-            {texts[language].headerAccount}
-          </Button>
-          <Button variant="ghost" onClick={handleActionsClick}>
-            {texts[language].headerActions}
-          </Button>
-          <Button variant="ghost" onClick={handleOptionsClick}>
-            {texts[language].headerOptions}
-          </Button>
-          <Button variant="ghost" onClick={handleReportsClick}>
-            {texts[language].headerReports}
-          </Button>
+     
+
           <Logout />
           <ModeToggle />
           <LanguageToggle />
