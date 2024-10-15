@@ -1,6 +1,15 @@
 
 import React, { createContext, useState, useContext, ReactNode } from "react";
 
+export interface UserPreferencesInterface{
+  guid: string;
+  page1: string;
+  page2: string;
+  page3: string;
+  page4: string;
+  page5: string;
+}
+
 export interface UserInterface {
   id: number;
   name: string;
@@ -15,10 +24,12 @@ export interface UserInterface {
   status?: string;
   note?: string;
   color?: string;
+  userPreferences?: UserPreferencesInterface;
 }
 
 interface UserContextType {
   users: UserInterface[];
+  setUserPreferences : (preferences: UserPreferencesInterface) => void;
   setUsers: React.Dispatch<React.SetStateAction<UserInterface[]>>;
   addUsers: (user: UserInterface) => void;
   updateUser: (user: UserInterface) => void;
@@ -35,6 +46,16 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const addUsers = (user: UserInterface) => {
     setUsers((prevUsers) => [...prevUsers, user]);
   };
+  const setUserPreferences = (preferences: UserPreferencesInterface) => {
+    setUsers((prevUsers) =>
+      prevUsers.map((user) =>
+        user.guid === preferences.guid
+          ? { ...user, userPreferences: preferences } 
+          : user
+      )
+    );
+  };
+  
   const updateUser = (updatedUser: UserInterface) => {
     setUsers((prevUsers) =>
       prevUsers.map((user) =>
@@ -58,6 +79,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       value={{
         users,
         setUsers,
+        setUserPreferences,
         addUsers,
         updateUser,
         updateUserStauts,

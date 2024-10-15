@@ -58,7 +58,7 @@ import { isMobile } from "react-device-detect";
 
 function AdminLayout() {
   const account = useAccount();
-  const { setUsers, updateUserStauts } = useUsers();
+  const { setUsers, updateUserStauts,setUserPreferences } = useUsers();
   const { updateUserPbxStauts } = useUsersPbx();
   const wss = useWebSocketData();
   const { buttons, setButtons, addButton, updateButton, deleteButton } =
@@ -617,6 +617,12 @@ function AdminLayout() {
           title: "Usuário Desconectado",
           description: "Usuário foi desconectado de sua sessão",
         });
+        break;
+      case "SelectPageNameResult":
+        setUserPreferences(message.result)
+        break;
+      case "SetPageNameResult":
+        setUserPreferences(message.result)
         break;
       default:
         console.log("Unknown message type:", message);

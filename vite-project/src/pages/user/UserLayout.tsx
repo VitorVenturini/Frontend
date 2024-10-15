@@ -138,7 +138,7 @@ function UserLayout() {
   const navigate = useNavigate();
   const { guid } = useContext(AccountContext);
   const [comboStart, setComboStart] = useState(false);
-  const { users } = useUsers();
+  const { users, setUserPreferences} = useUsers();
   const [sensorNotificationSound, setSensorNotificationSound] = useState("");
   const [chatNotificationSound, setChatNotificationSound] = useState("");
   const [alarmNotificationSound, setAlarmNotificationSound] = useState("");
@@ -184,6 +184,9 @@ function UserLayout() {
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
     switch (message.mt) {
+      case "SelectPageNameResult":
+        setUserPreferences(message.result)
+        break;
       case "SelectButtonsSuccess":
         const buttons: ButtonInterface[] = message.result;
         setButtons(buttons);

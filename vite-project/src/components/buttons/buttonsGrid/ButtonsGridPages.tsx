@@ -8,7 +8,10 @@ import { useLanguage } from "@/components/language/LanguageContext";
 import texts from "@/_data/texts.json";
 import { useSensors } from "@/components/sensor/SensorContext";
 import { AccountContext } from "@/components/account/AccountContext";
-import { UserInterface } from "@/components/users/usersCore/UserContext";
+import {
+  UserInterface,
+  useUsers,
+} from "@/components/users/usersCore/UserContext";
 import { Check, Pencil } from "lucide-react";
 import {
   Popover,
@@ -37,12 +40,17 @@ export default function ButtonsGridPages({
   const { buttons, setOldValue, setNewValue } = useButtons(); // todos botões do app
   const { buttonSensors } = useSensors();
   const [pageName, setPageName] = useState("");
+  const { users } = useUsers();
   const buttonsInSelectedPage = buttonsGrid.filter(
     (buttonsGrid) => buttonsGrid.page.toString() === selectedPage
   ); // Filtrar botões com base na página selecionada.
-  const { isAdmin } = useContext(AccountContext);
+  const { isAdmin, guid } = useContext(AccountContext);
   const wss = useWebSocketData();
   const { toast } = useToast();
+
+  const filteredUser = users.filter((u) => {
+    return u.guid === guid || selectedUser;
+  })[0];
   const handlePageChange = (newPage: string) => {
     setSelectedPage(newPage); // Atualizar a página selecionada quando o usuário seleciona uma nova página.
   };
@@ -136,7 +144,11 @@ export default function ButtonsGridPages({
               value={pageNumber}
               className="w-full gap-2"
             >
-              {texts[language].page} {pageNumber}
+              <div>
+                {texts[language].page} {pageNumber} ||{" "}
+                {filteredUser.userPreferences[pageNumber]}
+              </div>
+
               {isPageWarning(pageNumber) && !isAdmin ? (
                 <span className="relative flex h-3 w-3 m-1 ">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
