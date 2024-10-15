@@ -144,10 +144,8 @@ export default function ButtonsGridPages({
               value={pageNumber}
               className="w-full gap-2"
             >
-              <div>
-                {texts[language].page} {pageNumber} ||{" "}
-                {filteredUser.userPreferences[`page${pageNumber}`]}
-              </div>
+              {texts[language].page + " " + pageNumber ||
+                filteredUser?.userPreferences[`page${pageNumber}`]}
 
               {isPageWarning(pageNumber) && !isAdmin ? (
                 <span className="relative flex h-3 w-3 m-1 ">
