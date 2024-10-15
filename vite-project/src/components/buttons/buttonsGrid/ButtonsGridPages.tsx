@@ -146,7 +146,7 @@ export default function ButtonsGridPages({
             >
               <div>
                 {texts[language].page} {pageNumber} ||{" "}
-                {filteredUser.userPreferences[pageNumber]}
+                {filteredUser.userPreferences[`page${pageNumber}`]}
               </div>
 
               {isPageWarning(pageNumber) && !isAdmin ? (
