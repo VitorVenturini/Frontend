@@ -42,7 +42,7 @@ export default function ButtonsGridPages({
   ); // Filtrar botões com base na página selecionada.
   const { isAdmin } = useContext(AccountContext);
   const wss = useWebSocketData();
-  const {toast} = useToast()
+  const { toast } = useToast();
   const handlePageChange = (newPage: string) => {
     setSelectedPage(newPage); // Atualizar a página selecionada quando o usuário seleciona uma nova página.
   };
@@ -54,18 +54,19 @@ export default function ButtonsGridPages({
   const handleClosePopover = () => {
     setOpenEditPageIndex(null); // Fechar o popover
   };
-  const handleSetPageName = () => {
-    if(!pageName){
+  const handleSetPageName = (pageNumber: string) => {
+    if (!pageName) {
       toast({
         variant: "destructive",
-        description: "Por Favor escolha um nome para a página"
-      })
+        description: "Por Favor escolha um nome para a página",
+      });
     }
     wss.sendMessage({
       api: "admin",
       mt: "SetPageName",
       guid: selectedUser?.guid,
-      pageName: pageName
+      pageName: pageName,
+      pageNumber: pageNumber,
     });
   };
 
@@ -148,7 +149,7 @@ export default function ButtonsGridPages({
                     onOpenChange={(open) =>
                       open ? handleOpenPopover(index) : handleClosePopover()
                     } // Definir qual popover abrir/fechar
-                  > 
+                  >
                     <PopoverTrigger>
                       <Pencil size="15px" />
                     </PopoverTrigger>
@@ -171,7 +172,11 @@ export default function ButtonsGridPages({
                               type="text"
                             />
                           </div>
-                          <div onClick={handleSetPageName}>
+                          <div
+                            onClick={() => {
+                              handleSetPageName(pageNumber);
+                            }}
+                          >
                             <Check />
                           </div>
                         </div>
