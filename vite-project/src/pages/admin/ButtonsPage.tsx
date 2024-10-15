@@ -34,15 +34,18 @@ import { useAccount } from "@/components/account/AccountContext";
 import texts from "@/_data/texts.json";
 import { useLanguage } from "@/components/language/LanguageContext";
 import { host } from "@/App";
-import { UserInterface, useUsers } from "@/components/users/usersCore/UserContext";
-
+import {
+  UserInterface,
+  useUsers,
+} from "@/components/users/usersCore/UserContext";
+import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 
 interface ButtonsPageProp {
   buttons: ButtonInterface[];
 }
 
 export default function ButtonsPage() {
-  const {users} = useUsers()
+  const { users } = useUsers();
   const [selectedUser, setSelectedUser] = useState<UserInterface | null>(null); // Inicialmente, o primeiro usuário é selecionado
   const [selectedOptTop, setSelectedOptTop] = useState<string>("floor"); // default for top
   const [selectedOptBottom, setSelectedOptBottom] = useState<string>("floor"); // default for bottom
@@ -50,10 +53,15 @@ export default function ButtonsPage() {
   const account = useAccount();
   const { language } = useLanguage();
   const { buttons } = useButtons();
-
+  const wss = useWebSocketData();
   const handleUserSelect = (value: string) => {
     const user = users.find((user) => String(user.id) === value);
-   setSelectedUser(user || null);
+    setSelectedUser(user || null);
+    wss.sendMessage({
+      api: "admin",
+      mt: "SelectPageName",
+      guid: user?.guid,
+    });
   };
 
   const handleOptChangeTop = (newOpt: string) => {
@@ -91,7 +99,6 @@ export default function ButtonsPage() {
             </SelectGroup>
           </SelectContent>
         </Select>
-        
       </div>
       {!selectedUser ? (
         <div className="flex flex-col justify-center items-center gap-5 mt-5 ">

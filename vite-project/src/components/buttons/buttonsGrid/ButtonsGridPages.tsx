@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
+import { useToast } from "@/components/ui/use-toast";
 
 interface ButtonsGridPagesProps {
   buttonsGrid: ButtonInterface[];
@@ -34,11 +36,13 @@ export default function ButtonsGridPages({
   const { language } = useLanguage();
   const { buttons, setOldValue, setNewValue } = useButtons(); // todos botões do app
   const { buttonSensors } = useSensors();
+  const [pageName, setPageName] = useState("");
   const buttonsInSelectedPage = buttonsGrid.filter(
     (buttonsGrid) => buttonsGrid.page.toString() === selectedPage
   ); // Filtrar botões com base na página selecionada.
   const { isAdmin } = useContext(AccountContext);
-
+  const wss = useWebSocketData();
+  const {toast} = useToast()
   const handlePageChange = (newPage: string) => {
     setSelectedPage(newPage); // Atualizar a página selecionada quando o usuário seleciona uma nova página.
   };
@@ -50,6 +54,32 @@ export default function ButtonsGridPages({
   const handleClosePopover = () => {
     setOpenEditPageIndex(null); // Fechar o popover
   };
+  const handleSetPageName = () => {
+    if(!pageName){
+      toast({
+        variant: "destructive",
+        description: "Por Favor escolha um nome para a página"
+      })
+    }
+    wss.sendMessage({
+      api: "admin",
+      mt: "SetPageName",
+      guid: selectedUser?.guid,
+      pageName: pageName
+    });
+  };
+
+  const handleTypePageName = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPageName(event.target.value);
+  };
+
+  // return (
+  //   <div>
+  //     <input
+  //       value={input}
+  //       placeholder={"Tap on the virtual keyboard to start"}
+  //       onChange={(e) => onChangeInput(e)}
+  //     />
 
   // use effect para piscar nas outras páginas sem ser a atual
   useEffect(() => {
@@ -118,11 +148,11 @@ export default function ButtonsGridPages({
                     onOpenChange={(open) =>
                       open ? handleOpenPopover(index) : handleClosePopover()
                     } // Definir qual popover abrir/fechar
-                  >
+                  > 
                     <PopoverTrigger>
                       <Pencil size="15px" />
                     </PopoverTrigger>
-                    <PopoverContent >
+                    <PopoverContent>
                       <div className="relative flex flex-col items-left">
                         {/* <button
                           className="absolute top-0 right-0 -mt-5 -mr-5 h-6 w-6 rounded-full bg-card-foreground text-gray-600 hover:bg-gray-300 hover:text-black flex items-center justify-center"
@@ -130,15 +160,18 @@ export default function ButtonsGridPages({
                         >
                           X
                       </button> */}
-                      {/*  <div className="mb-2">Editar nome da Página</div> */}
+                        {/*  <div className="mb-2">Editar nome da Página</div> */}
                         <div className="flex flex-row items-center gap-3">
                           <div>
                             <Input
-                              placeholder={texts[language].page + " " + pageNumber}
+                              placeholder={
+                                texts[language].page + " " + pageNumber
+                              }
+                              onChange={handleTypePageName}
                               type="text"
                             />
                           </div>
-                          <div>
+                          <div onClick={handleSetPageName}>
                             <Check />
                           </div>
                         </div>

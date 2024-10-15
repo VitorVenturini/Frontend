@@ -200,7 +200,12 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
       const filteredSensor = sensors.filter((sensor) => {
         return sensor.deveui === item[columnName];
       })[0];
-      item[columnName] = filteredSensor?.sensor_name;
+      if(filteredSensor?.sensor_name){
+        item[columnName] = filteredSensor?.sensor_name;
+      }else{
+        item = item
+      }
+ 
     }
     return item;
   };
