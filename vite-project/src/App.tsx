@@ -28,6 +28,7 @@ import ReportLayout from "./pages/report/ReportLayout";
 
 import Loader from "./components/Loader";
 import TokenRenewer from "./components/validateToken/TokenRenewer";
+import CardResetPassword from "./components/resetPassword/CardResetPassword";
 
 let host: string;
 console.log("window.location.hostname", window.location.hostname);
@@ -86,6 +87,10 @@ function App() {
                                       <Route
                                         path="/login"
                                         element={<RootRoute />}
+                                      />
+                                      <Route
+                                        path="/reset-password/*"
+                                        element={<CardResetPassword />}
                                       />
                                       <Route
                                         path="/reports/*"
