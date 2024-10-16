@@ -62,6 +62,8 @@ export default function CardResetPassword() {
     }
 
     try {
+      const tokenUrl = window.location.href.split("=")
+
       const response = await fetch("/api/reset-password", {
         method: "POST",
         headers: {
@@ -69,7 +71,7 @@ export default function CardResetPassword() {
         },
         body: JSON.stringify({ 
           newPassword: btoa(password),
-          token: "ver com danilo"
+          token: tokenUrl[1]
          }),
       });
 
