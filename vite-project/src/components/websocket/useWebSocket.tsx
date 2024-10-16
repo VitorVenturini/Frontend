@@ -84,7 +84,16 @@ const useWebSocket = (
               msg_id: parsedMessage.result[0].id,
             })
           );
-        }
+        } 
+        // else if (parsedMessage.mt === "TableUsersResult") {
+        //   ws.current?.send(
+        //     JSON.stringify({
+        //       api: "user",
+        //       mt: "SelectUserPreferences",
+        //       guid: account.guid,
+        //     })
+        //   );
+        // }
         if (onMessage) {
           onMessage(parsedMessage);
         }

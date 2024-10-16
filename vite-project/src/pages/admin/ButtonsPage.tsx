@@ -59,7 +59,7 @@ export default function ButtonsPage() {
     setSelectedUser(user || null);
     wss.sendMessage({
       api: "admin",
-      mt: "SelectPageName",
+      mt: "SelectUserPreferences",
       guid: user?.guid,
     });
   };

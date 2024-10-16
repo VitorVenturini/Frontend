@@ -68,6 +68,7 @@ export default function ButtonsGridPages({
         variant: "destructive",
         description: "Por Favor escolha um nome para a página",
       });
+      return
     }
     wss.sendMessage({
       api: "admin",
