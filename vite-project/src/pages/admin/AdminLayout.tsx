@@ -45,7 +45,12 @@ import {
   UserPbxInterface,
   useUsersPbx,
 } from "@/components/users/usersPbx/UsersPbxContext";
-import { BackupConfig, NotificationsInterface, SmtpConfig, useAppConfig } from "@/components/options/ConfigContext";
+import {
+  BackupConfig,
+  NotificationsInterface,
+  SmtpConfig,
+  useAppConfig,
+} from "@/components/options/ConfigContext";
 import Loader from "@/components/Loader";
 import useWebSocket from "@/components/websocket/useWebSocket";
 import Loader2 from "@/components/Loader2";
@@ -58,7 +63,7 @@ import { isMobile } from "react-device-detect";
 
 function AdminLayout() {
   const account = useAccount();
-  const { setUsers, updateUserStauts,setUserPreferences } = useUsers();
+  const { setUsers, updateUserStauts, setUserPreferences } = useUsers();
   const { updateUserPbxStauts } = useUsersPbx();
   const wss = useWebSocketData();
   const { buttons, setButtons, addButton, updateButton, deleteButton } =
@@ -88,12 +93,15 @@ function AdminLayout() {
     addBackupConfig,
     addSmtpConfig,
     updateLicense,
-    addNotifications
+    addNotifications,
   } = useAppConfig();
   var allBtn: ButtonInterface[];
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
     switch (message.mt) {
+      case "SelectUserPreferencesResult":
+        setUserPreferences(message.result);
+        break;
       case "SelectButtonsSuccess":
         const firstButtons: ButtonInterface[] = JSON.parse(message.result);
         setButtons(firstButtons);
@@ -205,11 +213,12 @@ function AdminLayout() {
         // smtp
         console.log("SMTP", message.result);
         const smtpEntries = message.result.filter(
-          (item: any) => item.entry === "smtpUsername" ||
+          (item: any) =>
+            item.entry === "smtpUsername" ||
             item.entry === "smtpPassword" ||
             item.entry === "smtpHost" ||
             item.entry === "smtpPort" ||
-            item.entry === "smtpSecure" 
+            item.entry === "smtpSecure"
         );
         const allSmtpInfo: SmtpConfig = {
           smtpUsername: smtpEntries.find(
@@ -255,7 +264,7 @@ function AdminLayout() {
         };
         console.log(JSON.stringify(allSmtpInfo));
         addSmtpConfig(allSmtpInfo);
-    
+
         //backup
         const backupEntries = message.result.filter(
           (item: any) =>
@@ -358,7 +367,7 @@ function AdminLayout() {
 
         soundsInfo.forEach((sound) => addNotifications(sound));
         break;
-      
+
       case "PbxStatusResult":
         if (message.result) {
           const status = String(message.result);
@@ -618,12 +627,7 @@ function AdminLayout() {
           description: "Usuário foi desconectado de sua sessão",
         });
         break;
-      case "SelectPageNameResult":
-        setUserPreferences(message.result)
-        break;
-      case "SetPageNameResult":
-        setUserPreferences(message.result)
-        break;
+
       default:
         console.log("Unknown message type:", message);
         break;
@@ -641,16 +645,16 @@ function AdminLayout() {
         ) : (
           <>
             <DndProvider backend={isMobile ? TouchBackend : HTML5Backend}>
-            <HeaderApp />
-            {/* Your admin layout here */}
-            <Routes>
-              <Route path="account" element={<Account />} />
-              <Route path="buttons" element={<ButtonsPage />} />
-              <Route path="actions" element={<ActionsPage />} />
-              <Route path="options" element={<Options />} />
-              <Route path="reports" element={<Reports />} />
-              {/* Add more admin routes as needed */}
-            </Routes>
+              <HeaderApp />
+              {/* Your admin layout here */}
+              <Routes>
+                <Route path="account" element={<Account />} />
+                <Route path="buttons" element={<ButtonsPage />} />
+                <Route path="actions" element={<ActionsPage />} />
+                <Route path="options" element={<Options />} />
+                <Route path="reports" element={<Reports />} />
+                {/* Add more admin routes as needed */}
+              </Routes>
             </DndProvider>
           </>
         )}

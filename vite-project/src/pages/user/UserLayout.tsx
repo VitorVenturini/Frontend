@@ -184,7 +184,7 @@ function UserLayout() {
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
     switch (message.mt) {
-      case "SelectPageNameResult":
+      case "SelectUserPreferencesResult":
         setUserPreferences(message.result)
         break;
       case "SelectButtonsSuccess":

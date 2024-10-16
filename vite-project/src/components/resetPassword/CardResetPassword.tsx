@@ -6,8 +6,9 @@ import { useToast } from "@/components/ui/use-toast";
 import texts from "@/_data/texts.json";
 import { useLanguage } from "@/components/language/LanguageContext";
 import LogoCore from "@/assets/LogoCore.svg";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react"; // Ícones de olhinho
+import { Loader2 } from "lucide-react";
 
 export default function CardResetPassword() {
   const [password, setPassword] = useState("");
@@ -17,7 +18,8 @@ export default function CardResetPassword() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false); // Estado para alternar a visualização da senha de confirmação
   const { toast } = useToast();
   const { language } = useLanguage();
-
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate()
   const passwordValidation = (password: string) => {
     if (password.length < 6) {
       toast({
@@ -62,22 +64,22 @@ export default function CardResetPassword() {
     }
 
     try {
-      const tokenUrl = window.location.href.split("=")
+      const tokenUrl = window.location.href.split("=");
 
       const response = await fetch("/api/reset-password", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           newPassword: btoa(password),
-          token: tokenUrl[1]
-         }),
+          token: tokenUrl[1],
+        }),
       });
 
       if (response.ok) {
         toast({ title: "Sucesso", description: "Senha resetada com sucesso!" });
-        return <Navigate to="/Login" />;
+        navigate("/Login")
       } else {
         setError("Erro ao resetar a senha. Tente novamente.");
       }
@@ -135,7 +137,16 @@ export default function CardResetPassword() {
                 {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
-            <Button type="submit">Redefinir Senha</Button>
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Redefinir Senha
+                </>
+              ) : (
+                "Redefinir Senha"
+              )}
+            </Button>
           </CardContent>
         </Card>
       </form>
