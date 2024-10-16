@@ -55,7 +55,7 @@ export default function ModalDevices({ numberToCall,onCallSuccess  }: ModalDevic
 
       <CardContent>
         <ScrollArea className="h-full ">
-          {filteredDevices.devices.map((device) => (
+          {filteredDevices?.devices?.map((device) => (
             <Button
               key={device.hw}
               onClick={() => handleSelectDevice(device.hw)}
