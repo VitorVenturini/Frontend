@@ -22,6 +22,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { useToast } from "@/components/ui/use-toast";
+import { truncateText } from "@/components/utils/utilityFunctions";
 
 interface ButtonsGridPagesProps {
   buttonsGrid: ButtonInterface[];
@@ -152,10 +153,12 @@ export default function ButtonsGridPages({
               value={pageNumber}
               className="w-full gap-2"
             >
-              {filteredUser?.userPreferences?.[`page${pageNumber}`]
-                ? filteredUser?.userPreferences?.[`page${pageNumber}`]
-                : texts[language].page + " " + pageNumber}
-
+            {truncateText(
+                filteredUser?.userPreferences?.[`page${pageNumber}`]
+                  ? filteredUser?.userPreferences?.[`page${pageNumber}`]
+                  : texts[language].page + " " + pageNumber,
+                8
+              )}
               {isPageWarning(pageNumber) && !isAdmin ? (
                 <span className="relative flex h-3 w-3 m-1 ">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
@@ -184,15 +187,14 @@ export default function ButtonsGridPages({
                         <div className="flex flex-row items-center gap-3">
                           <div>
                             <Input
-                              placeholder={
-                                filteredUser?.userPreferences?.[
-                                  `page${pageNumber}`
-                                ]
-                                  ? filteredUser?.userPreferences?.[
-                                      `page${pageNumber}`
-                                    ]
-                                  : texts[language].page + " " + pageNumber
-                              }
+                              placeholder=
+                                {truncateText(
+                                  filteredUser?.userPreferences?.[`page${pageNumber}`]
+                                    ? filteredUser?.userPreferences?.[`page${pageNumber}`]
+                                    : texts[language].page + " " + pageNumber,
+                                  20
+                                )}
+                              
                               onChange={handleTypePageName}
                               type="text"
                             />

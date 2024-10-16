@@ -10,6 +10,10 @@ export const isTouchDevice = () => {
   );
 };
 
+export const truncateText = (text: string, maxLength: number) => {
+  return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
+};
+
 function getDegreeRange(direction: string) {
   switch (direction) {
     case "N":
