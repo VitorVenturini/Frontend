@@ -100,7 +100,7 @@ function AdminLayout() {
   const handleWebSocketMessage = (message: any) => {
     switch (message.mt) {
       case "SelectUserPreferencesResult":
-        setUserPreferences(message.result);
+        setUserPreferences(message.result[0]);
         break;
       case "SelectButtonsSuccess":
         const firstButtons: ButtonInterface[] = JSON.parse(message.result);

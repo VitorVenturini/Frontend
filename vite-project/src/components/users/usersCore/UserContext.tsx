@@ -1,7 +1,6 @@
-
 import React, { createContext, useState, useContext, ReactNode } from "react";
 
-export interface UserPreferencesInterface{
+export interface UserPreferencesInterface {
   guid: string;
   page1: string;
   page2: string;
@@ -29,7 +28,7 @@ export interface UserInterface {
 
 interface UserContextType {
   users: UserInterface[];
-  setUserPreferences : (preferences: UserPreferencesInterface) => void;
+  setUserPreferences: (preferences: UserPreferencesInterface) => void;
   setUsers: React.Dispatch<React.SetStateAction<UserInterface[]>>;
   addUsers: (user: UserInterface) => void;
   updateUser: (user: UserInterface) => void;
@@ -46,16 +45,17 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const addUsers = (user: UserInterface) => {
     setUsers((prevUsers) => [...prevUsers, user]);
   };
+
   const setUserPreferences = (preferences: UserPreferencesInterface) => {
     setUsers((prevUsers) =>
       prevUsers.map((user) =>
-        user.guid === preferences.guid
-          ? { ...user, userPreferences: preferences } 
+        String(user.guid) === String(preferences.guid)
+          ? { ...user, userPreferences: {...preferences} }
           : user
       )
     );
   };
-  
+
   const updateUser = (updatedUser: UserInterface) => {
     setUsers((prevUsers) =>
       prevUsers.map((user) =>
@@ -65,7 +65,9 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   };
   const updateUserStauts = (guid: string, status: string, note?: string) => {
     setUsers((prevUsers) =>
-      prevUsers.map((user) => (user.guid === guid ? { ...user, status, note } : user))
+      prevUsers.map((user) =>
+        user.guid === guid ? { ...user, status, note } : user
+      )
     );
   };
   // const onlineUsers = (guid: string) => {

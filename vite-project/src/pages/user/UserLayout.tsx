@@ -63,7 +63,6 @@ interface User {
   // Adicione aqui outros campos se necessário
 }
 
-
 function UserLayout() {
   const account = useAccount();
   const [isLoading, setIsLoading] = useState(true);
@@ -138,7 +137,7 @@ function UserLayout() {
   const navigate = useNavigate();
   const { guid } = useContext(AccountContext);
   const [comboStart, setComboStart] = useState(false);
-  const { users, setUserPreferences} = useUsers();
+  const { users, setUserPreferences } = useUsers();
   const [sensorNotificationSound, setSensorNotificationSound] = useState("");
   const [chatNotificationSound, setChatNotificationSound] = useState("");
   const [alarmNotificationSound, setAlarmNotificationSound] = useState("");
@@ -185,7 +184,16 @@ function UserLayout() {
   const handleWebSocketMessage = (message: any) => {
     switch (message.mt) {
       case "SelectUserPreferencesResult":
-        setUserPreferences(message.result)
+        if (message.result && message.result[0]) {
+          setUserPreferences({
+            guid: message.result[0].guid,
+            page1: message.result[0].page1 || "",
+            page2: message.result[0].page2 || "",
+            page3: message.result[0].page3 || "",
+            page4: message.result[0].page4 || "",
+            page5: message.result[0].page5 || "",
+          });
+        }
         break;
       case "SelectButtonsSuccess":
         const buttons: ButtonInterface[] = message.result;

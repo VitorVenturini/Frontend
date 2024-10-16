@@ -49,8 +49,13 @@ export default function ButtonsGridPages({
   const { toast } = useToast();
 
   const filteredUser = users.filter((u) => {
-    return u.guid === guid || selectedUser;
+    if (isAdmin) {
+      return u.guid === selectedUser.guid;
+    } else {
+      return u.guid === guid;
+    }
   })[0];
+
   const handlePageChange = (newPage: string) => {
     setSelectedPage(newPage); // Atualizar a página selecionada quando o usuário seleciona uma nova página.
   };
@@ -68,7 +73,7 @@ export default function ButtonsGridPages({
         variant: "destructive",
         description: "Por Favor escolha um nome para a página",
       });
-      return
+      return;
     }
     wss.sendMessage({
       api: "admin",
@@ -124,6 +129,8 @@ export default function ButtonsGridPages({
     });
   };
 
+  console.log(filteredUser);
+
   return (
     <Card className="p-1 flex flex-col gap-1 justify-between">
       <div className="w-full space-y-1 ">
@@ -145,8 +152,9 @@ export default function ButtonsGridPages({
               value={pageNumber}
               className="w-full gap-2"
             >
-              {texts[language].page + " " + pageNumber ||
-                filteredUser?.userPreferences[`page${pageNumber}`]}
+              {filteredUser?.userPreferences?.[`page${pageNumber}`]
+                ? filteredUser?.userPreferences?.[`page${pageNumber}`]
+                : texts[language].page + " " + pageNumber}
 
               {isPageWarning(pageNumber) && !isAdmin ? (
                 <span className="relative flex h-3 w-3 m-1 ">
@@ -177,7 +185,13 @@ export default function ButtonsGridPages({
                           <div>
                             <Input
                               placeholder={
-                                texts[language].page + " " + pageNumber
+                                filteredUser?.userPreferences?.[
+                                  `page${pageNumber}`
+                                ]
+                                  ? filteredUser?.userPreferences?.[
+                                      `page${pageNumber}`
+                                    ]
+                                  : texts[language].page + " " + pageNumber
                               }
                               onChange={handleTypePageName}
                               type="text"
