@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast"; 
-import texts from "@/_data/texts.json"; 
-import { useLanguage } from "@/components/language/LanguageContext"; 
+import { useToast } from "@/components/ui/use-toast";
+import texts from "@/_data/texts.json";
+import { useLanguage } from "@/components/language/LanguageContext";
 import LogoCore from "@/assets/LogoCore.svg";
 import { Navigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react"; // Ícones de olhinho
@@ -67,7 +67,10 @@ export default function CardResetPassword() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ password }),
+        body: JSON.stringify({ 
+          newPassword: btoa(password),
+          token: "ver com danilo"
+         }),
       });
 
       if (response.ok) {
