@@ -44,6 +44,7 @@ export interface ButtonInterface {
   isRunning?: boolean;
   startTime?: number | null;
   time?: number;
+  callId?: number;
 }
 
 interface ButtonContextType {
@@ -74,6 +75,7 @@ interface ButtonContextType {
     ringing?: boolean,
     connected?: boolean,
     onCall?: boolean,
+    callId?: number,
     incomingCall?: boolean,
     note?: string
   ) => void;
@@ -213,6 +215,7 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
     ringing?: boolean,
     onCall?: boolean,
     connected?: boolean,
+    callId?: number,
     incomingCall?: boolean,
     note?: string
   ) => {
@@ -226,6 +229,7 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
               ringing,
               connected,
               onCall,
+              callId,
               incomingCall,
               note,
             }

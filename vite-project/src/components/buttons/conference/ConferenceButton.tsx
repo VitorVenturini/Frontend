@@ -23,9 +23,32 @@ export default function ConferenceButton({ button, handleClick }: NumberProps) {
     handleClick?.(); // para setar a posição na hora de criar botão
   };
 
+  const [callStatusClass, setCallStatusClass] = useState(button?.colorClass || "");
+  const {removeClickedButton} = useButtons()
+  
+  useEffect(() => {
+    switch (button.clickedStatus) {
+      case "callConnected":
+        setCallStatusClass("bg-red-900");
+        break;
+        //setStatusClass("bg-orange-500")
+        setCallStatusClass("bg-orange-700");
+        break;
+      case "callDisconnected":
+        removeClickedButton(button.id);
+        setCallStatusClass("");
+        break;
+      case "userCallRetrieved":
+        //setStatusClass("bg-orange-500")
+        setCallStatusClass("bg-red-900");
+        break;
+
+    }
+  }, [button.onCall]); // monitorar o status da chamada
+
   return (
     <div
-      className={`${commonClasses} flex flex-col cursor-pointer bg-green-800`}
+      className={`${commonClasses} ${callStatusClass} flex flex-col cursor-pointer bg-green-800`}
       onClick={handleClickConf}
     >
       <div className="flex items-center gap-1 cursor-pointer ">

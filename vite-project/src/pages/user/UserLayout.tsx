@@ -315,7 +315,8 @@ function UserLayout() {
                   "bg-red-900",
                   false,
                   true,
-                  true
+                  true,
+                  call_innovaphone as number
                 );
                 const button = allBtn.find((btn) => btn.id === btn_id);
                 if (button) {
@@ -413,7 +414,8 @@ function UserLayout() {
             "bg-orange-700",
             true,
             false,
-            true
+            true,
+            message.call
           );
           setSelectedOptBottom("call");
         } else {
@@ -439,7 +441,8 @@ function UserLayout() {
             "bg-red-900",
             false,
             true,
-            true
+            true,
+            message.call
           );
         } else {
           //CHAMADAS REALIZADAS PELO DIALPAD SEM BTN_ID
@@ -477,7 +480,8 @@ function UserLayout() {
             "bg-purple-900",
             false,
             true,
-            true
+            true,
+           
           );
           setHeldCallByUser(message.btn_id, true);
         } else {
@@ -513,7 +517,8 @@ function UserLayout() {
             "bg-red-900",
             false,
             true,
-            true
+            true,
+            message.call
           );
           setHeldCall(message.btn_id, false);
         } else {

@@ -219,12 +219,12 @@ export default function CallComponent({
 
   const [{ isDragging }, drag] = useDrag(() => ({
     type: 'CALL',
-    item: { call: buttonOnCall?.id || dialPadCall?.callId },
+    item: { call: (buttonOnCall || dialPadCall) },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
   }));
-
+  // console.log("ButtonCALL " + buttonOnCall.call)
   return (
      <Card
       ref={drag}

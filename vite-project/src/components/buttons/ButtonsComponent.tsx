@@ -57,7 +57,7 @@ interface ButtonProps {
 }
 
 interface DraggedItem {
-  call: number;
+  call: any;
 }
 
 export const commonClasses =
@@ -90,7 +90,7 @@ export default function ButtonsComponent({
               api: "user",
               mt: "TriggerConference",
               btn_id: btn_id, // Usar o valor do botão passado como parâmetro
-              calls: [Number(draggedItem.call)], // O ID da chamada que foi arrastada
+              calls: [draggedItem.call.callId], // O ID da chamada que foi arrastada
             });
           }
         },
