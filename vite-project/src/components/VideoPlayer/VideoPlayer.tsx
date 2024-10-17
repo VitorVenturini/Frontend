@@ -3,6 +3,11 @@ import Hls from "hls.js";
 import { Button } from "../ui/button";
 import { useAccount } from "../account/AccountContext";
 import { host } from "@/App";
+import { PlayIcon } from "lucide-react";
+import { Pause } from "lucide-react";
+import { ArrowDownToLine } from "lucide-react";
+import { Loader2 } from "lucide-react";
+
 interface VideoPlayerProps {
   url: string;
   open: boolean;
@@ -14,9 +19,14 @@ export default function VideoPlayer({ url, open }: VideoPlayerProps) {
   const [blobMedia, setBlobMedia] = useState<Blob[]>([]); // Inicializa o estado como um array de blobs
   const [isRecording, setIsRecording] = useState(false);
   const [fileName, setFileName] = useState("video_" + Date.now());
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [recordingState, setRecordingState] = useState<
+    "idle" | "recording" | "recorded"
+  >("idle");
   const account = useAccount();
 
   const handleDownloadData = async () => {
+    setIsDownloading(true);
     console.log("Download", isRecording, blobMedia);
     setIsRecording(false);
 
@@ -57,17 +67,47 @@ export default function VideoPlayer({ url, open }: VideoPlayerProps) {
             window.URL.revokeObjectURL(url);
           }
         } catch (error) {
+          
           console.error("Erro ao receber o MP4:", error);
         }
+        setIsDownloading(false);
         setBlobMedia([]);
-        setFileName('')
+        setFileName("");
       } else {
+        
         console.error("Erro ao enviar o arquivo .ts.");
       }
     } catch (error) {
+      
       console.error("Erro ao enviar o arquivo .ts:", error);
     }
   };
+  const handleButtonClick = () => {
+    if (recordingState === "idle") {
+      setIsRecording(true);
+      setRecordingState("recording");
+    } else if (recordingState === "recording") {
+      setIsRecording(false);
+      setRecordingState("recorded");
+    } else if (recordingState === "recorded") {
+      handleDownloadData();
+      setRecordingState("idle");
+    }
+  };
+
+  const getButtonProps = () => {
+    if (recordingState === "idle") {
+      return { variant: "primary", text: "Iniciar Gravação" };
+    } else if (recordingState === "recording") {
+      return { variant: "destructive", text: "Parar Gravação" };
+    } else if (recordingState === "recorded") {
+      return { variant: "secondary", text: "Download Gravação" };
+    }
+    return { variant: "primary", text: "Iniciar Gravação" }; // Default case
+  };
+
+  const buttonProps = getButtonProps();
+
   const handlePlay = () => {
     setIsRecording(true);
   };
@@ -146,25 +186,42 @@ export default function VideoPlayer({ url, open }: VideoPlayerProps) {
           );
         case "m3u8":
           return (
-            <div>
-              <div className="flex gap-4 justify-center">
-                <Button variant={"default"} size={"icon"} onClick={handlePlay}>
-                  Play
-                </Button>
-                <Button
-                  variant={"outline"}
-                  size={"icon"}
-                  onClick={() => setIsRecording(false)}
-                >
-                  Stop
-                </Button>
-                <Button
-                  variant={"destructive"}
-                  size={"icon"}
-                  onClick={handleDownloadData}
-                >
-                  Down
-                </Button>
+            <div className="relative">
+              <div className="absolute top-2 right-2 flex gap-2 z-10">
+                
+              {/* @ts-ignore */}
+                  <Button
+                    className="flex gap-2"
+                    variant={recordingState === "idle" ? "" : "destructive"}
+                    onClick={() => {
+                      if (recordingState === "idle") {
+                        setIsRecording(true);
+                        setRecordingState("recording");
+                      } else if (recordingState === "recording") {
+                        setIsRecording(false);
+                        setRecordingState("idle");
+                      }
+                    }}
+                  >
+                    {recordingState === "idle" ? <PlayIcon /> : <Pause />}
+                    {recordingState === "idle"
+                      ? "Iniciar Gravação"
+                      : "Parar Gravação"}
+                  </Button>
+                  <Button
+                    className="flex gap-2"
+                    variant="secondary"
+                    size="icon"
+                    onClick={handleDownloadData}
+                    disabled={recordingState !== "idle" || isDownloading}
+                  >
+                    {isDownloading ? (
+                      <Loader2 className="animate-spin" />
+                    ) : (
+                      <ArrowDownToLine />
+                    )}
+                  </Button>
+                
               </div>
 
               <video
