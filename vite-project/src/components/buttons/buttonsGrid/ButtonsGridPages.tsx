@@ -130,8 +130,6 @@ export default function ButtonsGridPages({
     });
   };
 
-  console.log(filteredUser);
-
   return (
     <Card className="p-1 flex flex-col gap-1 justify-between">
       <div className="w-full space-y-1 ">
