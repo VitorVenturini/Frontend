@@ -4,6 +4,7 @@ export interface DeviceInterface {
   hw: string;
   text?: string;
   app?: string;
+  state?: string;
   tls?: boolean;
   trusted?: boolean;
 }

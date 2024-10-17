@@ -10,21 +10,29 @@ import { ScrollArea } from "../ui/scroll-area";
 
 import { AccountContext } from "@/components/account/AccountContext";
 import { useContext } from "react";
-import { useUsersPbx } from "../users/usersPbx/UsersPbxContext";
+import {
+  DeviceInterface,
+  useUsersPbx,
+} from "../users/usersPbx/UsersPbxContext";
 import { useUsers } from "../users/usersCore/UserContext";
 import { Button } from "../ui/button";
 import { useWebSocketData } from "../websocket/WebSocketProvider";
 import { Phone } from "lucide-react";
+import { useToast } from "../ui/use-toast";
 
 interface ModalDevicesProps {
   numberToCall: string;
-  onCallSuccess: () => void; 
+  onCallSuccess: () => void;
 }
-export default function ModalDevices({ numberToCall,onCallSuccess  }: ModalDevicesProps) {
+export default function ModalDevices({
+  numberToCall,
+  onCallSuccess,
+}: ModalDevicesProps) {
   const { guid } = useContext(AccountContext);
   const { usersPbx } = useUsersPbx();
   const { users } = useUsers();
   const wss = useWebSocketData();
+  const { toast } = useToast();
 
   const myUser = users.filter((user) => {
     return user.guid === guid;
@@ -34,14 +42,21 @@ export default function ModalDevices({ numberToCall,onCallSuccess  }: ModalDevic
     return userPbx.guid === myUser.sip;
   })[0];
 
-  const handleSelectDevice = (device: string) => {
-    wss?.sendMessage({
-      api: "user",
-      mt: "TriggerCall",
-      device: device,
-      num: numberToCall,
-    });
-    onCallSuccess()
+  const handleSelectDevice = (device: DeviceInterface) => {
+    if (device.state === "online") {
+      wss?.sendMessage({
+        api: "user",
+        mt: "TriggerCall",
+        device: device.hw,
+        num: numberToCall,
+      });
+      onCallSuccess();
+    } else {
+      toast({
+        variant: "destructive",
+        description: "Dispositivo Indisponível",
+      });
+    }
   };
 
   return (
@@ -58,8 +73,12 @@ export default function ModalDevices({ numberToCall,onCallSuccess  }: ModalDevic
           {filteredDevices?.devices?.map((device) => (
             <Button
               key={device.hw}
-              onClick={() => handleSelectDevice(device.hw)}
-              className="gap-2 bg-green-600 hover:bg-green-600/60 mx-1 mb-2 w-full"
+              onClick={() => handleSelectDevice(device)}
+              className={`gap-2  ${
+                device.state === "online"
+                  ? "bg-green-600 hover:bg-green-600/60"
+                  : "bg-gray-600"
+              }  mx-1 mb-2 w-full`}
             >
               <Phone />
               {device.text}
