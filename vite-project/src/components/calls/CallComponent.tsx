@@ -219,7 +219,7 @@ export default function CallComponent({
 
   const [{ isDragging }, drag] = useDrag(() => ({
     type: 'CALL',
-    item: { call: (buttonOnCall || dialPadCall) },
+    item: { call: (buttonOnCall || dialPadCall || incomingCall) },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),

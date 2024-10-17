@@ -58,7 +58,7 @@ export default function ModalDevices({
       });
     }
   };
-  console.log("DEVICES " +  JSON.stringify(filteredDevices.devices))
+
   return (
     <Card>
       <CardHeader className="flex">

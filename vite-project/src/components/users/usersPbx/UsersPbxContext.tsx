@@ -30,7 +30,7 @@ interface UserPbxContextType {
   usersPbx: UserPbxInterface[];
   setUsersPbx: React.Dispatch<React.SetStateAction<UserPbxInterface[]>>;
   addUsersPbx: (user: UserPbxInterface) => void;
-  updateUserDevices : (devices: DeviceInterface[], guid: string) => void;
+  updateUserDevices: (devices: DeviceInterface[], guid: string) => void;
   updateUserPbx: (user: UserPbxInterface) => void;
   updateUserPbxStauts: (guid: string, status: string, note?: string) => void;
   deleteUserPbx: (id: number) => void;
@@ -52,21 +52,32 @@ export const UserPbxProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
- const updateUserDevices = (newDevices: DeviceInterface[], guid: string) => {
-  setUsersPbx((prevUsers) =>
-    prevUsers.map((user) => {
-      if (user.guid === guid) {
-        // Filtrar os dispositivos que já existem com base no hw
-        const filteredDevices = user?.devices?.filter((newDevice) =>
-          newDevices.some((device) => device.hw === newDevice.hw)
-        );
-        // Retornar o usuário atualizado com os dispositivos filtrados
-        return { ...user, devices: filteredDevices };
-      }
-      return user;
-    })
-  );
-};
+  const updateUserDevices = (newDevices: DeviceInterface[], guid: string) => {
+    setUsersPbx((prevUsers) =>
+      prevUsers.map((user) => {
+        if (user.guid === guid) {
+          // Atualizar os dispositivos com base nos novos dispositivos recebidos
+          const updatedDevices = user.devices.map((existingDevice) => {
+            const matchingNewDevice = newDevices.find(
+              (device) => device.hw === existingDevice.hw
+            );
+
+            if (matchingNewDevice) {
+              // Se o dispositivo existir em newDevices, atualize as propriedades
+              return { ...existingDevice, ...matchingNewDevice, state: "online" };
+            } else {
+              // Caso contrário, defina o estado do dispositivo como offline
+              return { ...existingDevice, state: "offline" };
+            }
+          });
+
+          // Atualizar o usuário com a lista de dispositivos modificada
+          return { ...user, devices: updatedDevices };
+        }
+        return user;
+      })
+    );
+  };
 
   const updateUserPbxStauts = (guid: string, status: string, note?: string) => {
     setUsersPbx((prevUsers) =>
@@ -87,7 +98,7 @@ export const UserPbxProvider = ({ children }: { children: ReactNode }) => {
         updateUserPbx,
         updateUserPbxStauts,
         deleteUserPbx,
-        updateUserDevices
+        updateUserDevices,
       }}
     >
       {children}
