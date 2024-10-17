@@ -75,7 +75,7 @@ export const CallProvider: React.FC<{ children: React.ReactNode }> = ({
     [key: string]: number;
   }>({});
 
-  const [dialPadCalls, setDialPadCalls] = useState<DialPadCallsInterface[]>([]);  
+  const [dialPadCalls, setDialPadCalls] = useState<DialPadCallsInterface[]>([]);
   const [dialPadStartTimes, setDialPadStartTimes] = useState<{
     [key: string]: number;
   }>({});
@@ -84,7 +84,9 @@ export const CallProvider: React.FC<{ children: React.ReactNode }> = ({
     const onCallButtons = buttons.filter((btn) => btn.onCall || btn.ringing);
     setCalls(onCallButtons);
 
-    const connectedCallBtn = buttons.filter((btn) => btn.onCall && btn.connected);
+    const connectedCallBtn = buttons.filter(
+      (btn) => btn.onCall && btn.connected
+    );
 
     // Inicializa os tempos de início para novas chamadas QUE ESTÃO CONECTADAS!!!
     connectedCallBtn.forEach((button) => {
@@ -109,9 +111,7 @@ export const CallProvider: React.FC<{ children: React.ReactNode }> = ({
     const connectedIncomingCalls = incomingCalls.filter(
       (call) => call.connected
     );
-    console.log(
-      "connectedIncomingCalls" + JSON.stringify(connectedIncomingCalls)
-    );
+
     // Inicializa os tempos de início para chamadas conectadas
     connectedIncomingCalls.forEach((call) => {
       if (!incomingStartTimes[call.id]) {
@@ -138,6 +138,20 @@ export const CallProvider: React.FC<{ children: React.ReactNode }> = ({
     // const allDialPadCalls = dialPadCalls.filter((call) => call.ringing);
     const connectedDialPadCalls = dialPadCalls.filter((call) => call.connected);
 
+    const callToReplaceNum = incomingCalls.find((incoming) =>
+      connectedDialPadCalls.some((connected) => connected.callId === incoming.callId)
+    );
+    
+    if (callToReplaceNum) {
+      const connectedCall = connectedDialPadCalls.find(
+        (connected) => connected.callId === callToReplaceNum.callId
+      );
+      if (connectedCall) {
+        const updatedCall = { ...callToReplaceNum, num: connectedCall.num }; 
+        updateIncomingCall(updatedCall); 
+        removeDialPadCalls(connectedCall.callId)
+      }
+    }
     // Inicializa os tempos de início para chamadas conectadas
     connectedDialPadCalls.forEach((call) => {
       if (!dialPadStartTimes[call.id]) {
@@ -199,10 +213,10 @@ export const CallProvider: React.FC<{ children: React.ReactNode }> = ({
     );
   };
 
-  const updateIncomingCall = (Incomingcall: IncomingCallInterface) => {
+  const updateIncomingCall = (incomingCall: IncomingCallInterface) => {
     setIncomingCalls((prevCalls) =>
       prevCalls.map((call) =>
-        call.id === Incomingcall.id ? { ...call, ...Incomingcall } : call
+        call.id === incomingCall.id ? { ...call, num: incomingCall.num } : call
       )
     );
   };
