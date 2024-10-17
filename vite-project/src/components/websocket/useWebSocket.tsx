@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useAccount } from "@/components/account/AccountContext";
 import { WebSocketMessage } from "./WebSocketProvider";
+import { useNavigate } from "react-router-dom";
 
 export interface WebSocketHook {
   data: string;
@@ -21,7 +22,7 @@ const useWebSocket = (
   const account = useAccount();
   const [initialized, setInitialized] = useState(false);
   const [shouldSendMessages, setShouldSendMessages] = useState(false);
-
+  const navigate = useNavigate();
   useEffect(() => {
     if (!account.isLogged) return;
 
@@ -67,7 +68,7 @@ const useWebSocket = (
             console.log("Reconnecting WebSocket...");
             connect();
           }, 5000);
-        }
+        } 
       };
 
       ws.current.onmessage = (message) => {
@@ -84,7 +85,7 @@ const useWebSocket = (
               msg_id: parsedMessage.result[0].id,
             })
           );
-        } 
+        }
         // else if (parsedMessage.mt === "TableUsersResult") {
         //   ws.current?.send(
         //     JSON.stringify({

@@ -30,6 +30,7 @@ interface UserPbxContextType {
   usersPbx: UserPbxInterface[];
   setUsersPbx: React.Dispatch<React.SetStateAction<UserPbxInterface[]>>;
   addUsersPbx: (user: UserPbxInterface) => void;
+  updateUserDevices : (devices: DeviceInterface[], guid: string) => void;
   updateUserPbx: (user: UserPbxInterface) => void;
   updateUserPbxStauts: (guid: string, status: string, note?: string) => void;
   deleteUserPbx: (id: number) => void;
@@ -50,6 +51,23 @@ export const UserPbxProvider = ({ children }: { children: ReactNode }) => {
       )
     );
   };
+
+ const updateUserDevices = (newDevices: DeviceInterface[], guid: string) => {
+  setUsersPbx((prevUsers) =>
+    prevUsers.map((user) => {
+      if (user.guid === guid) {
+        // Filtrar os dispositivos que já existem com base no hw
+        const filteredDevices = user?.devices?.filter((newDevice) =>
+          newDevices.some((device) => device.hw === newDevice.hw)
+        );
+        // Retornar o usuário atualizado com os dispositivos filtrados
+        return { ...user, devices: filteredDevices };
+      }
+      return user;
+    })
+  );
+};
+
   const updateUserPbxStauts = (guid: string, status: string, note?: string) => {
     setUsersPbx((prevUsers) =>
       prevUsers.map((user) =>
@@ -69,6 +87,7 @@ export const UserPbxProvider = ({ children }: { children: ReactNode }) => {
         updateUserPbx,
         updateUserPbxStauts,
         deleteUserPbx,
+        updateUserDevices
       }}
     >
       {children}

@@ -157,6 +157,9 @@ function AdminRoute() {
   }, [account.isAdmin, updateAccount]);
 
   if (!account.isLogged) {
+    const currentSession = localStorage.getItem("currentSession");
+    localStorage.removeItem(currentSession as string);
+    localStorage.removeItem("currentSession");
     return <Navigate to="/Login" />;
   } else {
     if (account.type !== "admin") {
@@ -182,6 +185,9 @@ function UserRoute() {
   }, [account.isAdmin, updateAccount]);
 
   if (!account.isLogged) {
+    const currentSession = localStorage.getItem("currentSession");
+    localStorage.removeItem(currentSession as string);
+    localStorage.removeItem("currentSession");
     return <Navigate to="/Login" />;
   } else {
     if (account.type !== "user" && account.type !== "admin") {
@@ -203,6 +209,9 @@ function ReportRoute() {
   }, [account.isAdmin, updateAccount]);
 
   if (!account.isLogged) {
+    const currentSession = localStorage.getItem("currentSession");
+    localStorage.removeItem(currentSession as string);
+    localStorage.removeItem("currentSession");
     return <Navigate to="/Login" />;
   } else {
     if (account.type !== "reports" && account.type !== "admin") {
@@ -213,19 +222,4 @@ function ReportRoute() {
   return <ReportLayout />;
 }
 
-// function LoginRoute(){
-//   const account = useContext(AccountContext);
-//   // const isLogged = localStorage.getItem("isLogged");
-//   if (account.isLogged) {
-//     if (account.type === "admin") {
-//       return <Navigate to="/admin/buttons" />;
-//     } else if (account.type === "reports") {
-//       return <Navigate to="/reports" />;
-//     } else {
-//       return <Navigate to="/user" />;
-//     }
-//   } else {
-//     <Navigate to="/Login" />;
-//   }
-// }
 export default App;

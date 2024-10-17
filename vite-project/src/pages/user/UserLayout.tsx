@@ -99,7 +99,7 @@ function UserLayout() {
     updateGalleryImages,
     buttonSensors,
   } = useSensors();
-  const { setUsersPbx } = useUsersPbx();
+  const { setUsersPbx,updateUserDevices } = useUsersPbx();
   const { updateUserStauts } = useUsers();
   const { history, addHistory, setHistoryComplete } = useHistory();
   const {
@@ -692,6 +692,18 @@ function UserLayout() {
           description: "Botão Vermelho Disparou",
         });
         break;
+        case "UserEvent":
+
+          const myUser = allUsers.filter((u) =>{
+            return u.guid === account.guid
+          })[0]
+          
+          const filteredPbxUser = pbxUser.filter((userPbx) =>{
+            return userPbx.guid === myUser.sip
+          })[0]
+
+          updateUserDevices(message.devices,filteredPbxUser.guid)
+          break;
       case "TriggerStopAlarmResult":
         setButtonTriggered(message.btn_id, false);
         break;
