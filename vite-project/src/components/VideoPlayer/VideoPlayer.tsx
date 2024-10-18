@@ -192,7 +192,7 @@ export default function VideoPlayer({ url, open }: VideoPlayerProps) {
               
                   <Button
                     className="flex gap-2"
-                    {/* @ts-ignore */}
+                    /* @ts-ignore */
                     variant={recordingState === "idle" ? "" : "destructive"}
                     onClick={() => {
                       if (recordingState === "idle") {
