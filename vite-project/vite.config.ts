@@ -21,7 +21,7 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  base: './',
+  base: '/',
   ...(isLocalhost
     ? {} // Se for localhost, não aplica HTTPS
     : {
