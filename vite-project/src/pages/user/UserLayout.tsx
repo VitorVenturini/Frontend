@@ -123,6 +123,8 @@ function UserLayout() {
     setHeldIncomingCallByUser,
     addDialPadCalls,
     removeDialPadCalls,
+    updateDialPadCalls,
+    
   } = useCalls();
   const [selectedOptTop, setSelectedOptTop] = useState<string>("floor"); // default for top
   const [clickedUserTop, setClickedUserTop] = useState<string | null>(null);
@@ -481,6 +483,7 @@ function UserLayout() {
             false,
             true,
             true,
+            message.call
            
           );
           setHeldCallByUser(message.btn_id, true);
@@ -498,13 +501,17 @@ function UserLayout() {
             "bg-red-900",
             false,
             true,
-            true
+            true,
+            message.call,
+            false,
+            null,
+            message.num
           );
           setHeldCallByUser(message.btn_id, false);
         } else {
-          console.log("Chamada que eu recebi");
           setHeldIncomingCallByUser(String(message.call), false);
           setHeldDialPadCallByUser(String(message.call), false);
+          updateDialPadCalls(message.call, message.num)
         }
         // usuario retomou a chamada
         break;
@@ -518,12 +525,16 @@ function UserLayout() {
             false,
             true,
             true,
-            message.call
+            message.call,
+            false,
+            "",
+            message.num
           );
           setHeldCall(message.btn_id, false);
         } else {
           setHeldIncomingCall(String(message.call), false);
           setHeldDialPadCall(String(message.call), false);
+          updateDialPadCalls(message.call, message.num)
         }
         // eu retomei a chamada
         break;

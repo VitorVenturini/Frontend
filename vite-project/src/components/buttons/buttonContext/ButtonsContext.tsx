@@ -44,6 +44,7 @@ export interface ButtonInterface {
   isRunning?: boolean;
   startTime?: number | null;
   time?: number;
+  num?: string;
   callId?: number;
 }
 
@@ -77,7 +78,8 @@ interface ButtonContextType {
     onCall?: boolean,
     callId?: number,
     incomingCall?: boolean,
-    note?: string
+    note?: string,
+    num?: string
   ) => void;
   setButtonNumberCallStatus: (
     number: string,
@@ -217,7 +219,9 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
     connected?: boolean,
     callId?: number,
     incomingCall?: boolean,
-    note?: string
+    note?: string,
+    num?: string,
+
   ) => {
     setButtons((prevButtons) =>
       prevButtons.map((button) =>
@@ -232,6 +236,7 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
               callId,
               incomingCall,
               note,
+              num
             }
           : button
       )

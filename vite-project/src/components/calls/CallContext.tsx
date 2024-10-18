@@ -43,6 +43,7 @@ interface CallContextProps {
   ) => void;
   removeIncomingCall: (callId: string) => void;
   updateIncomingCall: (Incomingcall: IncomingCallInterface) => void;
+  updateDialPadCalls :  (callId: number, newNumber: string) => void;
   setHeldIncomingCall: (callID: string, isHeld: boolean) => void;
   setHeldIncomingCallByUser: (callID: string, isHeld: boolean) => void;
   setHeldDialPadCall: (callID: string, isHeld: boolean) => void;
@@ -94,7 +95,6 @@ export const CallProvider: React.FC<{ children: React.ReactNode }> = ({
         setStartTimes((prev) => ({ ...prev, [button.id]: Date.now() }));
       }
     });
-
     // Remove chamadas terminadas
     Object.keys(startTimes).forEach((id) => {
       if (!onCallButtons.find((btn) => (btn.id as any) === id)) {
@@ -139,17 +139,21 @@ export const CallProvider: React.FC<{ children: React.ReactNode }> = ({
     const connectedDialPadCalls = dialPadCalls.filter((call) => call.connected);
 
     const callToReplaceNum = incomingCalls.find((incoming) =>
-      connectedDialPadCalls.some((connected) => connected.callId === incoming.callId)
+      connectedDialPadCalls.some(
+        (connected) => connected.callId === incoming.callId
+      )
     );
-    
+
+    console.log("DIALPADCALLS " + JSON.stringify(connectedDialPadCalls[0]?.num))
+
     if (callToReplaceNum) {
       const connectedCall = connectedDialPadCalls.find(
         (connected) => connected.callId === callToReplaceNum.callId
       );
       if (connectedCall) {
-        const updatedCall = { ...callToReplaceNum, num: connectedCall.num }; 
-        updateIncomingCall(updatedCall); 
-        removeDialPadCalls(connectedCall.callId)
+        const updatedCall = { ...callToReplaceNum, num: connectedCall.num };
+        updateIncomingCall(updatedCall);
+        removeDialPadCalls(connectedCall.callId);
       }
     }
     // Inicializa os tempos de início para chamadas conectadas
@@ -217,6 +221,14 @@ export const CallProvider: React.FC<{ children: React.ReactNode }> = ({
     setIncomingCalls((prevCalls) =>
       prevCalls.map((call) =>
         call.id === incomingCall.id ? { ...call, num: incomingCall.num } : call
+      )
+    );
+  };
+
+  const updateDialPadCalls = (callId: number, newNumber: string) => {
+    setDialPadCalls((prevCalls) =>
+      prevCalls.map((call) =>
+        parseInt(call.id) === callId ? { ...call, num: newNumber } : call
       )
     );
   };
@@ -359,6 +371,7 @@ export const CallProvider: React.FC<{ children: React.ReactNode }> = ({
         incomingCalls,
         addIncomingCall,
         updateIncomingCall,
+        updateDialPadCalls,
         setHeldIncomingCall,
         setHeldIncomingCallByUser,
         removeIncomingCall,

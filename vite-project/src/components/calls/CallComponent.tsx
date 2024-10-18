@@ -36,7 +36,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useDrag } from 'react-dnd';
+import { useDrag } from "react-dnd";
 
 interface CallComponentProps {
   buttonOnCall?: ButtonInterface;
@@ -62,7 +62,9 @@ export default function CallComponent({
   const [openKeyboard, setOpenKeyboard] = useState(false);
 
   const filteredUser = usersPbx?.filter((user) => {
-    return user.guid === buttonOnCall?.button_prt;
+    return (
+      user.guid === buttonOnCall?.num || user.guid === buttonOnCall?.button_prt
+    );
   })[0];
 
   const filteredIncomingCallUser = usersPbx?.filter((user) => {
@@ -218,15 +220,15 @@ export default function CallComponent({
   }, [dialPadCall]);
 
   const [{ isDragging }, drag] = useDrag(() => ({
-    type: 'CALL',
-    item: { call: (buttonOnCall || dialPadCall || incomingCall) },
+    type: "CALL",
+    item: { call: buttonOnCall || dialPadCall || incomingCall },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
   }));
   // console.log("ButtonCALL " + buttonOnCall.call)
   return (
-     <Card
+    <Card
       ref={drag}
       className={`px-2 py-5 m-1 gap-2 outline outline-2 border-xs ${callStateClass}`}
       style={{ opacity: isDragging ? 0.5 : 1 }}
@@ -247,13 +249,23 @@ export default function CallComponent({
               : incomingCall.num}
           </div>
         ) : dialPadCall ? (
-          <div>
-            {filteredIncomingCallUser
-              ? filteredIncomingCallUser?.cn
-              : dialPadCall.num}
-          </div>
+          <>
+            <div>
+              {filteredIncomingCallUser
+                ? filteredIncomingCallUser.cn
+                : dialPadCall.num}
+            </div>
+          </>
         ) : (
-          <div>{filteredUser ? filteredUser.cn : buttonOnCall?.button_prt}</div>
+          <>
+            {buttonOnCall.num ? (
+              <div>{buttonOnCall.num}</div>
+            ) : (
+              <div>
+                {filteredUser ? filteredUser.cn : buttonOnCall?.button_prt}
+              </div>
+            )}
+          </>
         )}
         {/*TRATAMENTO PARA RINGING E CONNECTED */}
         {buttonOnCall?.ringing || dialPadCall?.ringing ? (
