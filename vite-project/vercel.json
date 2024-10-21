@@ -1,17 +1,10 @@
 {
-    "cleanUrls": true,
-    "trailingSlash": false,
-    "rewrites": [
-      {
-        "source": "/(.*)",
-        "destination": "/index.html"
-      }
-    ],
-    "routes": [
-      { "src": "/login", "dest": "/" },
-      { "src": "/reset-password/", "dest": "/" },
-      { "src": "/reports/", "dest": "/" },
-      { "src": "/user/", "dest": "/" },
-      { "src": "/admin/", "dest": "/" }
-    ]
-  }
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    {
+      "source": "(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
