@@ -310,7 +310,9 @@ function UserLayout() {
               const callStartTime = new Date(call_started).getTime();
               const now = Date.now();
               const elapsedTime = Math.floor((now - callStartTime) / 1000);
-
+              const filteredUser = pbxUser.filter((user) =>{
+                return user.guid === number
+              })[0]
               setSelectedOptBottom("call");
               if (btn_id) {
                 setButtonClickedStatus(
@@ -323,7 +325,8 @@ function UserLayout() {
                   call_innovaphone as number,
                   false,
                   "",
-                  number
+                  filteredUser?.cn
+                  
                 );
                 const button = allBtn.find((btn) => btn.id === btn_id);
                 if (button) {
@@ -505,7 +508,10 @@ function UserLayout() {
             false,
             true,
             true,
-            message.call
+            message.call,
+            false,
+            "",
+            message.num
           );
           setHeldCallByUser(message.btn_id, true);
         } else {
@@ -568,7 +574,11 @@ function UserLayout() {
             "!bg-blue-800",
             false,
             true,
-            true
+            true,
+            message.call,
+            false,
+            "",
+            message.num
           );
           setHeldCall(message.btn_id, true);
         } else {
