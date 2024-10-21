@@ -1,13 +1,9 @@
 {
   "cleanUrls": true,
   "trailingSlash": false,
-  "routes": [
-    { "src": "/", "dest": "/" },
-    { "src": "/user", "dest": "/" },
-    { "src": "/login", "dest": "/" },
-    { "src": "/reset-password", "dest": "/" },
-    { "src": "/admin", "dest": "/" },
-    { "src": "/reports", "dest": "/" }
-    
-  ]
+  
+    "rewrites": [
+        { "source": "/((?!api/.*).*)", "destination": "/" }
+    ]
+
 }
