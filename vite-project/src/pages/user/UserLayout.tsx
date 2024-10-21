@@ -69,7 +69,7 @@ function UserLayout() {
   const { toast } = useToast();
   const { updateAccount } = useAccount();
   const { setUsers } = useUsers();
-  const { updateUserPbxStauts } = useUsersPbx();
+  const { updateUserPbxStauts, updateUserPbx } = useUsersPbx();
   // const webSocket = useWebSocket(account.accessToken)
   // console.log("MENSAGEM DO WEBSOCKET" + webSocket.data)
   const {
@@ -99,7 +99,7 @@ function UserLayout() {
     updateGalleryImages,
     buttonSensors,
   } = useSensors();
-  const { setUsersPbx,updateUserDevices } = useUsersPbx();
+  const { setUsersPbx, updateUserDevices } = useUsersPbx();
   const { updateUserStauts } = useUsers();
   const { history, addHistory, setHistoryComplete } = useHistory();
   const {
@@ -124,7 +124,6 @@ function UserLayout() {
     addDialPadCalls,
     removeDialPadCalls,
     updateDialPadCalls,
-    
   } = useCalls();
   const [selectedOptTop, setSelectedOptTop] = useState<string>("floor"); // default for top
   const [clickedUserTop, setClickedUserTop] = useState<string | null>(null);
@@ -288,6 +287,9 @@ function UserLayout() {
         setUsersPbx(PbxUsers);
         pbxUser = PbxUsers;
         break;
+      case "ReplicateUpdate":
+        updateUserPbx(message.result[0]);
+        break;
       case "CallsInCurse":
         const callsInCurse = message.result;
         console.log("CallsInCurse received:", callsInCurse.length);
@@ -318,7 +320,10 @@ function UserLayout() {
                   false,
                   true,
                   true,
-                  call_innovaphone as number
+                  call_innovaphone as number,
+                  false,
+                  "",
+                  number
                 );
                 const button = allBtn.find((btn) => btn.id === btn_id);
                 if (button) {
@@ -410,6 +415,10 @@ function UserLayout() {
         break;
       case "CallRinging":
         if (message.btn_id) {
+          const filteredUser = pbxUser?.filter((user) => {
+            return user.guid === message.num;
+          })[0];
+
           setButtonClickedStatus(
             message.btn_id,
             "callRinging",
@@ -417,8 +426,12 @@ function UserLayout() {
             true,
             false,
             true,
-            message.call
+            message.call,
+            false,
+            "",
+            filteredUser?.e164
           );
+
           setSelectedOptBottom("call");
         } else {
           const dialPadCallConnected = {
@@ -435,6 +448,10 @@ function UserLayout() {
         // {"api":"user","mt":"CallRinging","call":325,"device":"SwPh_pietro_65f2e98c"}
         break;
       case "CallConnected":
+        const filteredUser = pbxUser?.filter((user) => {
+          return user.guid === message.num;
+        })[0];
+
         setSelectedOptBottom("call");
         if (message.btn_id) {
           setButtonClickedStatus(
@@ -444,7 +461,10 @@ function UserLayout() {
             false,
             true,
             true,
-            message.call
+            message.call,
+            false,
+            "",
+            filteredUser?.e164
           );
         } else {
           //CHAMADAS REALIZADAS PELO DIALPAD SEM BTN_ID
@@ -471,6 +491,8 @@ function UserLayout() {
           false
         );
         removeCall(message.btn_id);
+        setHeldCallByUser(message.btn_id, false);
+        setHeldCall(message.btn_id, false);
         break;
       case "CallHeld":
         // usuario me colocou em espera
@@ -484,7 +506,6 @@ function UserLayout() {
             true,
             true,
             message.call
-           
           );
           setHeldCallByUser(message.btn_id, true);
         } else {
@@ -511,7 +532,7 @@ function UserLayout() {
         } else {
           setHeldIncomingCallByUser(String(message.call), false);
           setHeldDialPadCallByUser(String(message.call), false);
-          updateDialPadCalls(message.call, message.num)
+          updateDialPadCalls(message.call, message.num);
         }
         // usuario retomou a chamada
         break;
@@ -534,7 +555,7 @@ function UserLayout() {
         } else {
           setHeldIncomingCall(String(message.call), false);
           setHeldDialPadCall(String(message.call), false);
-          updateDialPadCalls(message.call, message.num)
+          updateDialPadCalls(message.call, message.num);
         }
         // eu retomei a chamada
         break;
@@ -703,18 +724,17 @@ function UserLayout() {
           description: "Botão Vermelho Disparou",
         });
         break;
-        case "UserEvent":
+      case "UserEvent":
+        const myUser = allUsers.filter((u) => {
+          return u.guid === account.guid;
+        })[0];
 
-          const myUser = allUsers.filter((u) =>{
-            return u.guid === account.guid
-          })[0]
-          
-          const filteredPbxUser = pbxUser.filter((userPbx) =>{
-            return userPbx.guid === myUser.sip
-          })[0]
+        const filteredPbxUser = pbxUser.filter((userPbx) => {
+          return userPbx.guid === myUser.sip;
+        })[0];
 
-          updateUserDevices(message.devices,filteredPbxUser.guid)
-          break;
+        updateUserDevices(message.devices, filteredPbxUser.guid);
+        break;
       case "TriggerStopAlarmResult":
         setButtonTriggered(message.btn_id, false);
         break;
