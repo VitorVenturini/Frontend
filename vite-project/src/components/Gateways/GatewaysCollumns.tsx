@@ -81,7 +81,7 @@ export const gatewaysCollumns: ColumnDef<GatewaysInterface>[] = [
               </Button>
             </DialogTrigger>
             <DialogContent >
-              <Devices />
+              <Devices gatewayId={gateways} />
             </DialogContent>
           </Dialog>
         </div>

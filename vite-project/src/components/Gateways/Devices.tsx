@@ -18,45 +18,51 @@ import { useSensors } from "../sensor/SensorContext";
 import SensorCell from "../sensor/sensorCell";
 import { ScrollArea } from "../ui/scroll-area";
 
-export default function Devices({
-  existingButton,
-}) {
-    const [filterDevice, setFilterDevice] = useState("");
-  const [selectedSensor, setSelectedSensor] = useState(null);
-
-
- const handlefilterDevice = (event: ChangeEvent<HTMLInputElement>) => {
-        setFilterDevice(event.target.value);
-      };
-    
-const wss = useWebSocketData();
-
-  const handleSensorClick = (sensor) => {
-    setSelectedSensor(sensor);
+export default function Devices({ gatewayId }) {
+  console.log("Devices", gatewayId);
+  const [filterDevice, setFilterDevice] = useState("");
+  const [selectedDeveui, setSelectedDeveui] = useState(null);
+  const handlefilterDevice = (event: ChangeEvent<HTMLInputElement>) => {
+    setFilterDevice(event.target.value);
   };
 
+  const wss = useWebSocketData();
+  const { sensors } = useSensors();
+  const selectedSensor = sensors.find((sensor) => sensor.deveui === selectedDeveui);
 
+  const handleSensorClick = (deveui:string) => {
+    setSelectedDeveui(deveui);
+  };
 
   const renderSensorCard = () => {
-    if (!selectedSensor) return (
+    if (!selectedSensor)
+      return (
         <Card className="w-full p-4">
-            <CardDescription>Selecione um dispositivo para ver os detalhes</CardDescription>
+          <CardDescription>
+            Selecione um dispositivo para ver os detalhes
+          </CardDescription>
         </Card>
-        );
-    ;
-
+      );
     return (
-      <Card className="w-full p-4 bg-muted">
-        <ResponsivePng sensorModel={selectedSensor.description} />
+      <div className="w-full p-4 bg-muted flex flex-col items-center justify-between h-full">
+        <ResponsivePng sensorModel={selectedSensor.description} size="image"/>
+        <div className="flex flex-col p-1 gap-2 w-full justify-start">
+          <div>
+            {selectedSensor.description}
+          </div>
+          <div>
+            {selectedSensor.deveui}
+          </div>
+          <div>
+            {selectedSensor.sensor_name}
+          </div>
 
-        <h2 className="text-xl font-bold">{selectedSensor.name}</h2>
-        <p>ID: {selectedSensor.sensor_name}</p>
-        <p>Status: {selectedSensor.status}</p>
-      </Card>
+        </div>
+      </div>
     );
   };
   return (
-    <div >
+    <div>
       <CardContent className=" w-full flex gap-4 py-4">
         <div className="flex flex-col w-[50%] items-center gap-4">
           <Input

@@ -35,7 +35,7 @@ export default function SensorCell({ onSensorClick, filter }: SensorCellProps) {
         >
           <div className="grid grid-cols-5 grid-rows-1 items-center align-middle">
             {sensor.sensor_name && (
-              <ResponsivePng sensorModel={sensor.description} />
+              <ResponsivePng sensorModel={sensor.description} size="icon" />
             )}
             <p>{sensor.sensor_name}</p>
           </div>

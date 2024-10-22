@@ -12,9 +12,10 @@ import VS121 from "@/assets/SensorsPng/VS121.png";
 import placeHolder from "@/assets/SensorsPng/devicePlaceholder.png"
 interface ButtonProps {
   sensorModel: string | undefined;
+  size: 'icon' | 'image';
 }
 
-export default function ResponsivePng({ sensorModel }: ButtonProps) {
+export default function ResponsivePng({ sensorModel,size }: ButtonProps) {
   let imageSrc;
   let altText;
   //case sensorModel?.startsWith("AM103"):
@@ -64,10 +65,12 @@ export default function ResponsivePng({ sensorModel }: ButtonProps) {
       imageSrc = placeHolder; // ou uma imagem padrão
       altText = "Default Sensor";
   }
+  const width = size === 'icon' ? 20 : 100; // Define o tamanho com base na prop size
+
 
   return (
-    <div className="w-7">
-      <img src={imageSrc} alt={altText} width={20} />
+    <div>
+      <img src={imageSrc} alt={altText} width={width}  />
     </div>
   );
 }
