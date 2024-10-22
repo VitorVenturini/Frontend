@@ -39,7 +39,7 @@ import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { ButtonInterface } from "@/components/buttons/buttonContext/ButtonsContext";
 import { useSensors } from "./SensorContext";
 import { limitButtonName } from "../utils/utilityFunctions";
-import SensorCard from "./sensorCard";
+import SensorCard from "./sensorCell";
 import { ScrollArea } from "../ui/scroll-area";
 import { UserInterface } from "../users/usersCore/UserContext";
 interface ButtonProps {
