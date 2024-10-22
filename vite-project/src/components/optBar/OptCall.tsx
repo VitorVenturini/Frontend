@@ -1,5 +1,5 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useCalls } from "../calls/CallContext";
+import { CallsInterface, useCalls } from "../calls/CallContext";
 import CallComponent from "../calls/CallComponent";
 import { Button } from "../ui/button";
 import { useWebSocketData } from "../websocket/WebSocketProvider";
@@ -8,12 +8,12 @@ import ReceivedCall from "../calls/ReceivedCall";
 import DialPad from "../calls/DialPad";
 
 export default function OptCall() {
-  const { calls, incomingCalls, dialPadCalls } = useCalls();
-  const activeIncomingCalls = incomingCalls.filter((inc) => inc.connected);
+  const { calls } = useCalls();
+  // const activeIncomingCalls = incomingCalls.filter((inc) => inc.connected);
 
-  // Agrupamos as chamadas recebidas pelo número
-  const receivedIncomingCalls = incomingCalls
-    .filter((call) => !call.connected) // Somente chamadas não conectadas
+  // // Agrupamos as chamadas recebidas pelo número
+  const receivedIncomingCalls = calls
+    .filter((call) => call.ringing && call.type === "incoming") // Somente chamadas não conectadas
     .reduce((acc: any, call) => {
       if (!acc[call.num]) {
         acc[call.num] = [];
@@ -33,19 +33,11 @@ export default function OptCall() {
       <div className="w-2/3 p-2">
         <ScrollArea className="h-full w-full">
           {/* CHAMADAS EM ANDAMENTO */}
-          {calls.map((call) => (
-            <CallComponent key={call.id} buttonOnCall={call} />
-          ))}
-      
-          {/* CHAMADAS REALIZADAS PELO DIALPAD (SEM BTN_ID) EM ANDAMENTO */}
-          {dialPadCalls.map((call) => (
-            <CallComponent key={call.id} dialPadCall={call} />
-          ))}
-
-          {/* CHAMADAS RECEBIDAS EM ANDAMENTO */}
-          {activeIncomingCalls.map((call) => (
-            <CallComponent key={call.id} incomingCall={call} />
-          ))}
+          {calls
+            .filter((call) => call.connected)
+            .map((call: CallsInterface) => (
+              <CallComponent key={call.callId} call={call} />
+            ))}
 
           {/* CHAMADAS RECEBIDAS QUE AINDA NÃO FORAM ATENDIDAS */}
           {Object.keys(receivedIncomingCalls).map((num) => (

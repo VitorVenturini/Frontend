@@ -37,7 +37,7 @@ import {
   useUsersPbx,
 } from "@/components/users/usersPbx/UsersPbxContext";
 import { useRef } from "react";
-import { useCalls } from "@/components/calls/CallContext";
+import { CallsInterface, useCalls } from "@/components/calls/CallContext";
 import Loader from "@/components/Loader";
 import HeaderUser from "@/components/header/HeaderUser";
 import {
@@ -99,7 +99,7 @@ function UserLayout() {
     updateGalleryImages,
     buttonSensors,
   } = useSensors();
-  const { setUsersPbx,updateUserDevices } = useUsersPbx();
+  const { setUsersPbx, updateUserDevices } = useUsersPbx();
   const { updateUserStauts } = useUsers();
   const { history, addHistory, setHistoryComplete } = useHistory();
   const {
@@ -112,20 +112,7 @@ function UserLayout() {
     chatRead,
     clearChat,
   } = useChat();
-  const {
-    addCall,
-    addIncomingCall,
-    removeIncomingCall,
-    removeCall,
-    setHeldIncomingCall,
-    setHeldDialPadCall,
-    setHeldDialPadCallByUser,
-    setHeldIncomingCallByUser,
-    addDialPadCalls,
-    removeDialPadCalls,
-    updateDialPadCalls,
-    
-  } = useCalls();
+  const { addCall, updateCall, removeCall, calls } = useCalls();
   const [selectedOptTop, setSelectedOptTop] = useState<string>("floor"); // default for top
   const [clickedUserTop, setClickedUserTop] = useState<string | null>(null);
   const clickedUserTopRef = useRef<string | null>(null);
@@ -288,122 +275,136 @@ function UserLayout() {
         setUsersPbx(PbxUsers);
         pbxUser = PbxUsers;
         break;
-      case "CallsInCurse":
-        const callsInCurse = message.result;
-        console.log("CallsInCurse received:", callsInCurse.length);
-        if (callsInCurse.length > 0) {
-          callsInCurse.forEach((call: any) => {
-            const {
-              btn_id,
-              call_started,
-              call_connected,
-              direction,
-              call_innovaphone,
-              number,
-              device,
-              deviceText,
-            } = call;
-
-            if (call_connected) {
-              const callStartTime = new Date(call_started).getTime();
-              const now = Date.now();
-              const elapsedTime = Math.floor((now - callStartTime) / 1000);
-
-              setSelectedOptBottom("call");
-              if (btn_id) {
-                setButtonClickedStatus(
-                  btn_id,
-                  "callInCurse",
-                  "bg-red-900",
-                  false,
-                  true,
-                  true,
-                  call_innovaphone as number
-                );
-                const button = allBtn.find((btn) => btn.id === btn_id);
-                if (button) {
-                  console.log(`Adding call for button: ${button.button_name}`);
-                  addCall(button, elapsedTime);
-                } else {
-                  console.log(`Button not found for btn_id: ${btn_id}`);
-                }
-              } else if (!btn_id && direction === "inc") {
-                const incomingCallsInCurseConnected = {
-                  id: call_innovaphone,
-                  device: device,
-                  deviceText: deviceText,
-                  num: number,
-                  callId: String(call_innovaphone),
-                  connected: true,
-                };
-                addIncomingCall(incomingCallsInCurseConnected, elapsedTime);
-              } else if (!btn_id && direction === "out") {
-                //CHAMADAS REALIZADAS PELO DIALPAD SEM BTN_ID
-                const dialPadCallConnected = {
-                  id: call_innovaphone,
-                  device: device,
-                  // deviceText: message.deviceText,
-                  num: number,
-                  callId: String(call_innovaphone),
-                  connected: true,
-                };
-
-                addDialPadCalls(dialPadCallConnected, elapsedTime);
-              }
-            } else if (!call_connected && !btn_id && direction === "inc") {
-              const incomingCallsInCurseRinging = {
-                id: call_innovaphone,
-                device: device,
-                deviceText: deviceText,
-                num: number,
-                callId: String(call_innovaphone),
-                connected: false,
-              };
-              setSelectedOptBottom("call");
-              addIncomingCall(incomingCallsInCurseRinging);
-            }
-          });
-        }
-        break;
       case "ConnRemovedByAdmin":
         const currentSession = localStorage.getItem("currentSession");
         localStorage.removeItem(currentSession as string);
         localStorage.removeItem("currentSession");
         navigate("/login");
         localStorage.setItem("disconnected", message.from);
+        break;
+
+      case "CallsInCurse":
+          const callsInCurse = message.result;
+          console.log("CallsInCurse received:", callsInCurse.length);
+          if (callsInCurse.length > 0) {
+            callsInCurse.forEach((call: any) => {
+              const {
+                btn_id,
+                call_started,
+                call_connected,
+                direction,
+                call_innovaphone,
+                number,
+                device,
+                deviceText,
+              } = call;
+
+              if (call_connected) {
+                const callStartTime = new Date(call_started).getTime();
+                const now = Date.now();
+                const elapsedTime = Math.floor((now - callStartTime) / 1000);
+                setSelectedOptBottom("call");
+                if (btn_id) {
+                  setButtonClickedStatus(
+                    btn_id,
+                    "callInCurse",
+                    "bg-red-900",
+                    false,
+                    true,
+                    true
+                  );
+                  const buttonCallInCurse: CallsInterface = {
+                    callId: call_innovaphone as number,
+                    num: number as string,
+                    type: "buttonCall",
+                    connected: true,
+                    ringing: false,
+                    startTime: elapsedTime,
+                    held: false,
+                    heldByUser: false,
+                    device: device,
+                    btn_id: btn_id,
+                  };
+                  addCall(buttonCallInCurse);
+                } else if (!btn_id && direction === "inc") {
+
+                  const incomingCallsInCurseConnected: CallsInterface = {
+                    callId: parseInt(call_innovaphone) ,
+                    num: number as string,
+                    type: "incoming",
+                    connected: true,
+                    ringing: false,
+                    startTime: elapsedTime,
+                    held: false,
+                    heldByUser: false,
+                    device: device,
+                    deviceText: deviceText
+                  };
+                  addCall(incomingCallsInCurseConnected);
+                } else if (!btn_id && direction === "out") {
+                  //CHAMADAS REALIZADAS PELO DIALPAD SEM BTN_ID
+                  const dialPadCallConnected: CallsInterface = {
+                    callId: call_innovaphone as number,
+                    num: number as string,
+                    type: "incoming",
+                    connected: true,
+                    ringing: false,
+                    startTime: elapsedTime,
+                    held: false,
+                    heldByUser: false,
+                    device: device,
+                  };
+                  addCall(dialPadCallConnected);
+                }
+              } else if (!call_connected && !btn_id && direction === "inc") {
+                const incomingCallsInCurseRinging: CallsInterface = {
+                  callId: parseInt(call_innovaphone),
+                  num: number as string,
+                  type: "incoming",
+                  connected: true,
+                  ringing: true,
+                  startTime: null,
+                  held: false,
+                  heldByUser: false,
+                  device: device,
+                  deviceText: deviceText
+                };
+                addCall(incomingCallsInCurseRinging);
+                setSelectedOptBottom("call");
+              }
+            });
+          }
+        break;
+
+      case "IncomingCallRing":
+        setSelectedOptBottom("call");
+
+        const incomingCall: CallsInterface = {
+          callId: message.call as number,
+          num: message.num as string,
+          type: "incoming",
+          connected: true,
+          ringing: true,
+          startTime: null,
+          held: false,
+          heldByUser: false,
+          device: message.device,
+          deviceText: message.deviceText
+        };
+        addCall(incomingCall);
 
         break;
-      case "IncomingCallRing":
-        //    {"api":"user","mt":"IncomingCallRing","device":"Softphone","num":"1015","call":32}
-        //  {api: 'user', mt: 'IncomingCallRing', device: 'IP 112', num: '1015', call: 30}
-        const incomingCallRing = {
-          id: message.call,
-          device: message.device,
-          deviceText: message.deviceText,
-          num: message.num,
-          callId: String(message.call),
-          connected: false,
-        };
-        addIncomingCall(incomingCallRing);
-        // setPlayCallSound(true);
-        setSelectedOptBottom("call");
-        break;
       case "IncomingCallConnected":
-        const incomingCallConnected = {
-          id: message.call,
-          device: message.device,
-          deviceText: message.deviceText,
-          num: message.num,
-          callId: String(message.call),
+        updateCall(message.call as number, {
+          num: message.num as string,
           connected: true,
-        };
-        addIncomingCall(incomingCallConnected);
+          ringing: false,
+          startTime: Date.now(),
+        });
         setSelectedOptBottom("call");
         break;
       case "IncomingCallDisconnected":
-        removeIncomingCall(String(message.call));
-        removeDialPadCalls(String(message.call));
-        // setPlayCallSound(false);
+        removeCall(message.call);
         break;
       case "CallConnecting":
         //tratar chamadas conectando aqui
@@ -416,23 +417,36 @@ function UserLayout() {
             "bg-orange-700",
             true,
             false,
-            true,
-            message.call
+            true
           );
+          const call: CallsInterface = {
+            callId: message.call as number,
+            num: message.num as string,
+            type: "buttonCall",
+            connected: true,
+            ringing: true,
+            startTime: null,
+            held: false,
+            heldByUser: false,
+            device: message.device,
+            btn_id: message.btn_id,
+          };
+          addCall(call);
           setSelectedOptBottom("call");
         } else {
-          const dialPadCallConnected = {
-            id: message.call,
-            device: message.device,
-            // deviceText: message.deviceText,
-            num: message.num,
-            callId: String(message.call),
+          const dialPadCall: CallsInterface = {
+            callId: message.call as number,
+            num: message.num as string,
+            type: "dialpad",
+            connected: true,
             ringing: true,
-            connected: false,
+            startTime: null,
+            held: false,
+            heldByUser: false,
+            device: message.device,
           };
-          addDialPadCalls(dialPadCallConnected);
+          addCall(dialPadCall);
         }
-        // {"api":"user","mt":"CallRinging","call":325,"device":"SwPh_pietro_65f2e98c"}
         break;
       case "CallConnected":
         setSelectedOptBottom("call");
@@ -443,21 +457,41 @@ function UserLayout() {
             "bg-red-900",
             false,
             true,
-            true,
-            message.call
+            true
           );
+          addCall({
+            callId: message.call as number,
+            num: message.num as string,
+            connected: true,
+            ringing: false,
+            startTime: Date.now(),
+            device: message.device,
+            btn_id: message.btn_id,
+            type: "buttonCall",
+            held: false,
+            heldByUser: false
+          });
         } else {
           //CHAMADAS REALIZADAS PELO DIALPAD SEM BTN_ID
-          const dialPadCallConnected = {
-            id: message.call,
-            device: message.device,
-            // deviceText: message.deviceText,
-            num: message.num,
-            callId: String(message.call),
-            ringing: false,
+          // updateCall(message.call as number, {
+          //   num: message.num as string,
+          //   connected: true,
+          //   ringing: false,
+          //   startTime: Date.now(),
+          //   device: message.device,
+          // });
+          addCall({
+            callId: message.call as number,
+            num: message.num as string,
             connected: true,
-          };
-          addDialPadCalls(dialPadCallConnected);
+            ringing: false,
+            startTime: Date.now(),
+            device: message.device,
+            btn_id: message.btn_id,
+            type: "buttonCall",
+            held: false,
+            heldByUser: false
+          });
         }
 
         break;
@@ -470,27 +504,26 @@ function UserLayout() {
           false,
           false
         );
-        removeCall(message.btn_id);
+        removeCall(message.call);
         break;
       case "CallHeld":
         // usuario me colocou em espera
         if (message.btn_id !== "") {
-          console.log("Chamada que eu realizei");
           setButtonClickedStatus(
             message.btn_id,
             "callHeld",
             "bg-purple-900",
             false,
             true,
-            true,
-            message.call
-           
+            true
           );
-          setHeldCallByUser(message.btn_id, true);
+          updateCall(message.call as number, {
+            heldByUser: true,
+          });
         } else {
-          console.log("Chamada que eu recebi");
-          setHeldIncomingCallByUser(String(message.call), true);
-          setHeldDialPadCallByUser(String(message.call), true);
+          updateCall(message.call as number, {
+            heldByUser: true,
+          });
         }
         break;
       case "CallRetrieved":
@@ -501,17 +534,18 @@ function UserLayout() {
             "bg-red-900",
             false,
             true,
-            true,
-            message.call,
-            false,
-            null,
-            message.num
+            true
           );
-          setHeldCallByUser(message.btn_id, false);
+          updateCall(message.call as number, {
+            num: message.num,
+            heldByUser: false,
+          });
         } else {
-          setHeldIncomingCallByUser(String(message.call), false);
-          setHeldDialPadCallByUser(String(message.call), false);
-          updateDialPadCalls(message.call, message.num)
+          // atualizar o num nesse caso por causa da conferencia
+          updateCall(message.call as number, {
+            num: message.num,
+            heldByUser: false,
+          });
         }
         // usuario retomou a chamada
         break;
@@ -524,17 +558,20 @@ function UserLayout() {
             "bg-red-900",
             false,
             true,
-            true,
-            message.call,
-            false,
-            "",
-            message.num
+            true
           );
-          setHeldCall(message.btn_id, false);
+          updateCall(message.call as number, {
+            num: message.num,
+            held: false,
+            btn_id: message.btn_id,
+          });
         } else {
-          setHeldIncomingCall(String(message.call), false);
-          setHeldDialPadCall(String(message.call), false);
-          updateDialPadCalls(message.call, message.num)
+          updateCall(message.call as number, {
+            num: message.num,
+            held: false,
+            btn_id: null,
+            type: "incoming"
+          });
         }
         // eu retomei a chamada
         break;
@@ -549,10 +586,13 @@ function UserLayout() {
             true,
             true
           );
-          setHeldCall(message.btn_id, true);
+          updateCall(message.call as number, {
+            held: true,
+          });
         } else {
-          setHeldIncomingCall(String(message.call), true);
-          setHeldDialPadCall(String(message.call), true);
+          updateCall(message.call as number, {
+            held: true,
+          });
         }
         //eu coloquei em espera
         break;
@@ -703,18 +743,17 @@ function UserLayout() {
           description: "Botão Vermelho Disparou",
         });
         break;
-        case "UserEvent":
+      case "UserEvent":
+        const myUser = allUsers.filter((u) => {
+          return u.guid === account.guid;
+        })[0];
 
-          const myUser = allUsers.filter((u) =>{
-            return u.guid === account.guid
-          })[0]
-          
-          const filteredPbxUser = pbxUser.filter((userPbx) =>{
-            return userPbx.guid === myUser.sip
-          })[0]
+        const filteredPbxUser = pbxUser.filter((userPbx) => {
+          return userPbx.guid === myUser.sip;
+        })[0];
 
-          updateUserDevices(message.devices,filteredPbxUser.guid)
-          break;
+        updateUserDevices(message.devices, filteredPbxUser.guid);
+        break;
       case "TriggerStopAlarmResult":
         setButtonTriggered(message.btn_id, false);
         break;
