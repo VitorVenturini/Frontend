@@ -284,96 +284,143 @@ function UserLayout() {
         break;
 
       case "CallsInCurse":
-          const callsInCurse = message.result;
-          console.log("CallsInCurse received:", callsInCurse.length);
-          if (callsInCurse.length > 0) {
-            callsInCurse.forEach((call: any) => {
-              const {
-                btn_id,
-                call_started,
-                call_connected,
-                direction,
-                call_innovaphone,
-                number,
-                device,
-                deviceText,
-              } = call;
+        const callsInCurse = message.result;
+        console.log("CallsInCurse received:", callsInCurse.length);
+        if (callsInCurse.length > 0) {
+          callsInCurse.forEach((call: any) => {
+            const {
+              btn_id,
+              call_started,
+              call_ringing,
+              call_connected,
+              direction,
+              call_innovaphone,
+              number,
+              device,
+              deviceText,
+            } = call;
 
-              if (call_connected) {
-                const callStartTime = new Date(call_started).getTime();
-                const now = Date.now();
-                const elapsedTime = Math.floor((now - callStartTime) / 1000);
-                setSelectedOptBottom("call");
-                if (btn_id) {
-                  setButtonClickedStatus(
-                    btn_id,
-                    "callInCurse",
-                    "bg-red-900",
-                    false,
-                    true,
-                    true
-                  );
-                  const buttonCallInCurse: CallsInterface = {
-                    callId: call_innovaphone as number,
-                    num: number as string,
-                    type: "buttonCall",
-                    connected: true,
-                    ringing: false,
-                    startTime: elapsedTime,
-                    held: false,
-                    heldByUser: false,
-                    device: device,
-                    btn_id: btn_id,
-                  };
-                  addCall(buttonCallInCurse);
-                } else if (!btn_id && direction === "inc") {
+            if (call_connected) {
+              const callStartTime = new Date(call_started).getTime();
 
-                  const incomingCallsInCurseConnected: CallsInterface = {
-                    callId: parseInt(call_innovaphone) ,
-                    num: number as string,
-                    type: "incoming",
-                    connected: true,
-                    ringing: false,
-                    startTime: elapsedTime,
-                    held: false,
-                    heldByUser: false,
-                    device: device,
-                    deviceText: deviceText
-                  };
-                  addCall(incomingCallsInCurseConnected);
-                } else if (!btn_id && direction === "out") {
-                  //CHAMADAS REALIZADAS PELO DIALPAD SEM BTN_ID
-                  const dialPadCallConnected: CallsInterface = {
-                    callId: call_innovaphone as number,
-                    num: number as string,
-                    type: "incoming",
-                    connected: true,
-                    ringing: false,
-                    startTime: elapsedTime,
-                    held: false,
-                    heldByUser: false,
-                    device: device,
-                  };
-                  addCall(dialPadCallConnected);
-                }
-              } else if (!call_connected && !btn_id && direction === "inc") {
-                const incomingCallsInCurseRinging: CallsInterface = {
+              setSelectedOptBottom("call");
+              if (btn_id) {
+                setButtonClickedStatus(
+                  btn_id,
+                  "callInCurse",
+                  "bg-red-900",
+                  false,
+                  true,
+                  true
+                );
+                const buttonCallInCurse: CallsInterface = {
+                  callId: parseInt(call_innovaphone),
+                  num: number as string,
+                  type: "buttonCall",
+                  connected: true,
+                  ringing: false,
+                  startTime: callStartTime,
+                  held: false,
+                  heldByUser: false,
+                  device: device,
+                  btn_id: btn_id,
+                };
+                addCall(buttonCallInCurse);
+              } else if (!btn_id && direction === "inc") {
+                const incomingCallsInCurseConnected: CallsInterface = {
                   callId: parseInt(call_innovaphone),
                   num: number as string,
                   type: "incoming",
                   connected: true,
-                  ringing: true,
-                  startTime: null,
+                  ringing: false,
+                  startTime: callStartTime,
                   held: false,
                   heldByUser: false,
                   device: device,
-                  deviceText: deviceText
+                  deviceText: deviceText,
                 };
-                addCall(incomingCallsInCurseRinging);
-                setSelectedOptBottom("call");
+                addCall(incomingCallsInCurseConnected);
+              } else if (!btn_id && direction === "out") {
+                //CHAMADAS REALIZADAS PELO DIALPAD SEM BTN_ID
+                const dialPadCallConnected: CallsInterface = {
+                  callId: parseInt(call_innovaphone),
+                  num: number as string,
+                  type: "incoming",
+                  connected: true,
+                  ringing: false,
+                  startTime: callStartTime,
+                  held: false,
+                  heldByUser: false,
+                  device: device,
+                };
+                addCall(dialPadCallConnected);
               }
-            });
-          }
+            }
+            // CHAMADAS NAO CONECTADAS , OU SEJA , QUE ESTÃO RINGING TANTO INCOMING QUANTO OUTCOMING
+            else if (
+              !call_connected &&
+              call_ringing !== null &&
+              !btn_id &&
+              direction === "inc"
+            ) {
+              const incomingCallsInCurseRinging: CallsInterface = {
+                callId: parseInt(call_innovaphone),
+                num: number as string,
+                type: "incoming",
+                connected: true,
+                ringing: true,
+                startTime: null,
+                held: false,
+                heldByUser: false,
+                device: device,
+                deviceText: deviceText,
+              };
+              addCall(incomingCallsInCurseRinging);
+              setSelectedOptBottom("call");
+            } else if (
+              !call_connected &&
+              call_ringing !== null &&
+              !btn_id &&
+              direction === "out"
+            ) {
+              const dialPadCallsInCurseRinging: CallsInterface = {
+                callId: parseInt(call_innovaphone),
+                num: number as string,
+                type: "dialpad",
+                connected: true,
+                ringing: true,
+                startTime: null,
+                held: false,
+                heldByUser: false,
+                device: device,
+                deviceText: deviceText,
+              };
+              addCall(dialPadCallsInCurseRinging);
+              setSelectedOptBottom("call");
+            } else if (
+              !call_connected &&
+              call_ringing !== null &&
+              btn_id &&
+              direction === "out"
+            ) {
+              const buttonCallInCurseRinging: CallsInterface = {
+                callId: parseInt(call_innovaphone),
+                num: number as string,
+                type: "buttonCall",
+                btn_id: btn_id,
+                connected: true,
+                ringing: true,
+                startTime: null,
+                held: false,
+                heldByUser: false,
+                device: device,
+                deviceText: deviceText,
+              };
+              addCall(buttonCallInCurseRinging);
+              setSelectedOptBottom("call");
+            }
+          });
+        }
         break;
 
       case "IncomingCallRing":
@@ -389,7 +436,7 @@ function UserLayout() {
           held: false,
           heldByUser: false,
           device: message.device,
-          deviceText: message.deviceText
+          deviceText: message.deviceText,
         };
         addCall(incomingCall);
 
@@ -450,6 +497,7 @@ function UserLayout() {
         break;
       case "CallConnected":
         setSelectedOptBottom("call");
+        // assim fica certinho os segundos no elapsedTime
         if (message.btn_id) {
           setButtonClickedStatus(
             message.btn_id,
@@ -469,17 +517,10 @@ function UserLayout() {
             btn_id: message.btn_id,
             type: "buttonCall",
             held: false,
-            heldByUser: false
+            heldByUser: false,
           });
         } else {
           //CHAMADAS REALIZADAS PELO DIALPAD SEM BTN_ID
-          // updateCall(message.call as number, {
-          //   num: message.num as string,
-          //   connected: true,
-          //   ringing: false,
-          //   startTime: Date.now(),
-          //   device: message.device,
-          // });
           addCall({
             callId: message.call as number,
             num: message.num as string,
@@ -490,7 +531,7 @@ function UserLayout() {
             btn_id: message.btn_id,
             type: "buttonCall",
             held: false,
-            heldByUser: false
+            heldByUser: false,
           });
         }
 
@@ -570,7 +611,7 @@ function UserLayout() {
             num: message.num,
             held: false,
             btn_id: null,
-            type: "incoming"
+            type: "incoming",
           });
         }
         // eu retomei a chamada

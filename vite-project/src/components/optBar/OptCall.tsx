@@ -34,7 +34,18 @@ export default function OptCall() {
         <ScrollArea className="h-full w-full">
           {/* CHAMADAS EM ANDAMENTO */}
           {calls
-            .filter((call) => call.connected)
+            .filter((call) => {
+              // Se a chamada for do tipo 'incoming' e estiver 'ringing', não aparece
+              if (call.type === "incoming" && call.ringing) {
+                return false;
+              }
+              // Se for 'incoming' e não estiver 'ringing', mas estiver 'connected', aparece
+              if (call.type === "incoming" && !call.ringing && call.connected) {
+                return true;
+              }
+              // Para as outras chamadas (não 'incoming'), aparecem normalmente
+              return call.connected;
+            })
             .map((call: CallsInterface) => (
               <CallComponent key={call.callId} call={call} />
             ))}

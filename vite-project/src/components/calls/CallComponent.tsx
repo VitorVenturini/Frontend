@@ -38,9 +38,9 @@ interface CallComponentProps {
   call: CallsInterface;
 }
 export default function CallComponent({ call }: CallComponentProps) {
-  {
-    /*se nao tiver chamadas retorna um skeleton */
-  }
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
+
   const { usersPbx } = useUsersPbx();
   const { setHeldCall, setClickedStatusClass } = useButtons();
   const wss = useWebSocketData();
@@ -53,13 +53,46 @@ export default function CallComponent({ call }: CallComponentProps) {
     return user.e164 === call.num;
   })[0];
 
-  // const filteredIncomingCallUser = usersPbx?.filter((user) => {
-  //   return user.e164 === (incomingCall?.num || dialPadCall?.num);
-  // })[0];
-
   const initials = getInitials(filteredUser?.cn);
   const avatarBase64 = initials ? generateAvatar(initials) : null;
 
+  useEffect(() => {
+    if (call?.connected && call?.startTime !== null) {
+      // call.startTime já está em milissegundos, então não precisa de conversão.
+      const nowInTimeStamp = Date.now(); // Pega o timestamp atual
+  
+      // Calcula o tempo inicial decorrido em segundos
+      const initialElapsedTime = Math.floor((nowInTimeStamp - call.startTime) / 1000);
+      setElapsedTime(initialElapsedTime); // Define o tempo decorrido inicial
+  
+      // A cada segundo, incrementa o tempo decorrido
+      const id = setInterval(() => {
+        setElapsedTime((prevTime) => prevTime + 1); // Incrementa o tempo em 1 segundo a cada intervalo
+      }, 1000);
+  
+      setIntervalId(id);
+
+      // const startTime = button.startTime;
+      // const elapsedTime = Date.now() - startTime + (button.time || 0);
+      // setTime(elapsedTime);
+      // const id = setInterval(() => {
+      //   setTime(Date.now() - startTime + (button.time || 0));
+      // }, 10);
+      // setIntervalId(id);
+
+    } else if (!call?.connected && intervalId) {
+      clearInterval(intervalId);
+      setIntervalId(null);
+    }
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [call.startTime]);
+  
+  // Função para formatar a duração da chamada em HH:MM:SS
   const formatDuration = (seconds: number) => {
     const h = Math.floor(seconds / 3600);
     const m = Math.floor((seconds % 3600) / 60);
@@ -68,6 +101,7 @@ export default function CallComponent({ call }: CallComponentProps) {
       .toString()
       .padStart(2, "0")}`;
   };
+
   const handleHeldCall = () => {
     if (call.type === "incoming") {
       wss?.sendMessage({
@@ -145,7 +179,7 @@ export default function CallComponent({ call }: CallComponentProps) {
   };
   // // monitorar se a ligação está em espera ou nao
   useEffect(() => {
-    console.log("TESTE")
+    console.log("TESTE");
     if (call?.held) {
       // eu coloquei em espera
       setCallStateClass("border-blue-800 outline-blue-800");
@@ -199,8 +233,8 @@ export default function CallComponent({ call }: CallComponentProps) {
         ) : (
           <User2 />
         )}
-        {/* <div>{filteredUser?.cn || call?.num}</div> */}
-        {<div>"SEM NOME POR ENQUANTO"</div> }
+        <div>{filteredUser?.cn || call?.num}</div>
+        {/* {<div>"SEM NOME POR ENQUANTO"</div>} */}
         {/*TRATAMENTO PARA RINGING E CONNECTED */}
         {(call?.type === "buttonCall" || call?.type === "dialpad") &&
         call?.ringing ? (
@@ -213,7 +247,7 @@ export default function CallComponent({ call }: CallComponentProps) {
         ) : (
           <>
             <div className="text-xs mt-1">
-              <div>{formatDuration(call?.startTime)}</div>
+              <div>{formatDuration(elapsedTime)}</div>
             </div>
             <div className="flex items-center gap-4 mt-2">
               <div>
@@ -231,25 +265,17 @@ export default function CallComponent({ call }: CallComponentProps) {
                     <Keyboard
                       onKeyPress={handleKeyPress}
                       forwarded={false}
-                      call ={call}
+                      call={call}
                     />
                   </PopoverContent>
                 </Popover>
               </div>
               <Button
-                onClick={
-                  call.held
-                    ? handleRetrieveCall
-                    : handleHeldCall
-                }
+                onClick={call.held ? handleRetrieveCall : handleHeldCall}
                 size="icon"
                 variant="secondary"
               >
-                {call.held ? (
-                  <Play />
-                ) : (
-                  <Pause />
-                )}
+                {call.held ? <Play /> : <Pause />}
               </Button>
               <div>
                 <Popover open={openKeyboard} onOpenChange={setOpenKeyboard}>
@@ -262,7 +288,7 @@ export default function CallComponent({ call }: CallComponentProps) {
                     <Keyboard
                       onKeyPress={handleKeyPress}
                       forwarded={true}
-                      call ={call}
+                      call={call}
                     />
                   </PopoverContent>
                 </Popover>

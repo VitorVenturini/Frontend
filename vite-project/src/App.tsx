@@ -30,15 +30,15 @@ import Loader from "./components/Loader";
 import TokenRenewer from "./components/validateToken/TokenRenewer";
 import CardResetPassword from "./components/resetPassword/CardResetPassword";
 
+const host_name_api = String(import.meta.env.VITE_API_HOSTNAME);
 let host: string;
-console.log("window.location.hostname", window.location.hostname);
 
 if (window.location.hostname === "localhost") {
-  host = "https://core.wecom.com.br";
+  host = `https://${host_name_api}`;
 } else if (window.location.hostname === "frontend-delta-lake.vercel.app") {
-  host = "https://core.wecom.com.br";
+  host = `https://${host_name_api}`;
 } else {
-  host = `https://${window.location.hostname}`;
+  host = `https://${host_name_api}`;
 }
 
 export { host };
