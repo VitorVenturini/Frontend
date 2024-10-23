@@ -4,7 +4,7 @@ import {
 } from "@/components/buttons/buttonContext/ButtonsContext";
 import { Rss } from "lucide-react";
 import SensorResponsiveInfo from "@/components/sensor/SensorResponsiveInfo";
-import ResponsivePng from "@/components/sensor/ResponsivePng";
+
 import { useAccount } from "@/components/account/AccountContext";
 import { useSensors } from "@/components/sensor/SensorContext";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";

@@ -234,14 +234,15 @@ export default function CallComponent({
       style={{ opacity: isDragging ? 0.5 : 1 }}
     >
       <div className="flex items-center gap-3 w-full ">
-        {avatarBase64 !== null ? (
+        <User2 />
+        {/* {avatarBase64 !== null ? (
           <Avatar>
             <AvatarImage src={avatarBase64 as string} />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
         ) : (
           <User2 />
-        )}
+        )} */}
         {incomingCall ? (
           <div>
             {filteredIncomingCallUser

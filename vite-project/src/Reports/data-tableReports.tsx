@@ -1,14 +1,22 @@
 import React, { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
 import {
   ColumnDef,
   useReactTable,
   getCoreRowModel,
   getSortedRowModel,
+  VisibilityState,
   getFilteredRowModel,
   flexRender,
   SortingState,
   ColumnFiltersState,
 } from "@tanstack/react-table";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableHeader,
@@ -51,6 +59,8 @@ export function DataTable<TData>({
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
+  const [columnVisibility, setColumnVisibility] =
+  React.useState<VisibilityState>({});
   const [loading, setLoading] = useState<boolean>(true);
   const { language } = useLanguage();
   const { users } = useUsers();
@@ -91,12 +101,15 @@ export function DataTable<TData>({
     }),
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
+    
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    onColumnVisibilityChange: setColumnVisibility,
     state: {
       sorting,
       columnFilters,
+      columnVisibility,
     },
   });
   useEffect(() => {
@@ -146,6 +159,34 @@ export function DataTable<TData>({
               </SelectGroup>
             </SelectContent>
           </Select>
+          <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="ml-auto">
+              Columns
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {table
+              .getAllColumns()
+              .filter(
+                (column) => column.getCanHide()
+              )
+              .map((column) => {
+                return (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    className="capitalize"
+                    checked={column.getIsVisible()}
+                    onCheckedChange={(value) =>
+                      column.toggleVisibility(!!value)
+                    }
+                  >
+                    {column.id}
+                  </DropdownMenuCheckboxItem>
+                )
+              })}
+          </DropdownMenuContent>
+        </DropdownMenu>
         </div>
       )}
       <Table>

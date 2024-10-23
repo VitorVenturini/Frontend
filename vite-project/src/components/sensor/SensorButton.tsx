@@ -87,6 +87,7 @@ export default function SensorButton({ handleClick, button }: ButtonProps) {
     >
       <div className="flex items-center  gap-1 cursor-pointer ">
         <ResponsivePng
+        size="icon"
           sensorModel={
             account.isAdmin ? sensorModel?.description : (button.img as any)
           }
