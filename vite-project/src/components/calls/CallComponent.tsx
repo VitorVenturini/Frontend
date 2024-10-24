@@ -60,26 +60,14 @@ export default function CallComponent({ call }: CallComponentProps) {
     if (call?.connected && call?.startTime !== null) {
       // call.startTime já está em milissegundos, então não precisa de conversão.
       const nowInTimeStamp = Date.now(); // Pega o timestamp atual
-  
       // Calcula o tempo inicial decorrido em segundos
       const initialElapsedTime = Math.floor((nowInTimeStamp - call.startTime) / 1000);
       setElapsedTime(initialElapsedTime); // Define o tempo decorrido inicial
-  
       // A cada segundo, incrementa o tempo decorrido
       const id = setInterval(() => {
         setElapsedTime((prevTime) => prevTime + 1); // Incrementa o tempo em 1 segundo a cada intervalo
       }, 1000);
-  
       setIntervalId(id);
-
-      // const startTime = button.startTime;
-      // const elapsedTime = Date.now() - startTime + (button.time || 0);
-      // setTime(elapsedTime);
-      // const id = setInterval(() => {
-      //   setTime(Date.now() - startTime + (button.time || 0));
-      // }, 10);
-      // setIntervalId(id);
-
     } else if (!call?.connected && intervalId) {
       clearInterval(intervalId);
       setIntervalId(null);

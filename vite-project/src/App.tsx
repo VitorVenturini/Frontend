@@ -31,14 +31,15 @@ import TokenRenewer from "./components/validateToken/TokenRenewer";
 import CardResetPassword from "./components/resetPassword/CardResetPassword";
 
 const host_name_api = String(import.meta.env.VITE_API_HOSTNAME);
+const host_port_api = String(import.meta.env.VITE_API_PORT)
 let host: string;
 
 if (window.location.hostname === "localhost") {
-  host = `https://${host_name_api}`;
+  host = `https://${host_name_api}:${host_port_api}`;
 } else if (window.location.hostname === "frontend-delta-lake.vercel.app") {
-  host = `https://${host_name_api}`;
+  host = `https://${host_name_api}:${host_port_api}`;
 } else {
-  host = `https://${host_name_api}`;
+  host = `https://${host_name_api}:${host_port_api}`;
 }
 
 export { host };

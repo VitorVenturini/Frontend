@@ -580,12 +580,14 @@ function UserLayout() {
           updateCall(message.call as number, {
             num: message.num,
             heldByUser: false,
+            btn_id: message.btn_id
           });
         } else {
           // atualizar o num nesse caso por causa da conferencia
           updateCall(message.call as number, {
             num: message.num,
             heldByUser: false,
+            btn_id: message.btn_id
           });
         }
         // usuario retomou a chamada
