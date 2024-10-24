@@ -216,6 +216,25 @@
     "backUpDBTitle": "Backup do Banco de dados",
     "backUpDBDescription": "Download do backup do banco de dados",
     "filter": "Filtro",
-    "export": "Exportar em..."
+    "export": "Exportar em...",
+    "id": "ID",
+    "guid": "GUID",
+    "name": "Nome",
+    "date": "Data",
+    "status": "Status",
+    "details": "Detalhe",
+    "call_started": "Iniciada",
+    "call_ringing": "Tocando",
+    "call_ended": "Encerrada",
+    "call_connected": "Conectada",
+    "direction": "Direção",
+    "from": "De",
+    "prt": "PRT",
+    "chat_id": "ID Chat",
+    "from_guid": "Origem",
+    "to_guid": "Destino",
+    "msg": "Mensagem",
+    "delivered": "Entregue",
+    "read": "Lido"
   }
 }
