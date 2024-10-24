@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button } from './ui/button';
+import { Maximize } from 'lucide-react';
 
 export const FullScreenButton: React.FC = () => {
   const enterFullScreen = () => {
@@ -13,8 +14,8 @@ export const FullScreenButton: React.FC = () => {
   };
 
   return (
-    <Button onClick={enterFullScreen} variant="outline">
-      Tela cheia
+    <Button onClick={enterFullScreen} variant="outline" size='icon'>
+      <Maximize/>
     </Button>
   );
 };

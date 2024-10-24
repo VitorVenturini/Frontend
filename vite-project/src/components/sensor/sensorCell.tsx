@@ -3,12 +3,12 @@ import { Button } from "../ui/button";
 import { useSensors } from "./SensorContext";
 import ResponsivePng from "./ResponsivePng";
 
-interface SensorCardProps {
+interface SensorCellProps {
   onSensorClick: (deveui: string) => void; // Define a prop para a função de callback
   filter: string;
 }
 
-export default function SensorCard({ onSensorClick, filter }: SensorCardProps) {
+export default function SensorCell({ onSensorClick, filter }: SensorCellProps) {
   const { sensors } = useSensors();
   const [clickedSensor, setClickedSensor] = useState<string | null>(null);
   
@@ -22,6 +22,8 @@ export default function SensorCard({ onSensorClick, filter }: SensorCardProps) {
     sensor.sensor_name.toLowerCase().includes(filter.toLowerCase())
   );
 
+  
+
   return (
     <div className="w-full justify-between">
       {filteredSensors.map((sensor) => (
@@ -33,7 +35,7 @@ export default function SensorCard({ onSensorClick, filter }: SensorCardProps) {
         >
           <div className="grid grid-cols-5 grid-rows-1 items-center align-middle">
             {sensor.sensor_name && (
-              <ResponsivePng sensorModel={sensor.description} />
+              <ResponsivePng sensorModel={sensor.description} size="icon" />
             )}
             <p>{sensor.sensor_name}</p>
           </div>

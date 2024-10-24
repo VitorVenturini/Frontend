@@ -47,7 +47,7 @@ export const UserPbxProvider = ({ children }: { children: ReactNode }) => {
   const updateUserPbx = (updatedUser: UserPbxInterface) => {
     setUsersPbx((prevUsers) =>
       prevUsers.map((user) =>
-        user.id === updatedUser.id ? { ...user, ...updatedUser } : user
+        user.guid === updatedUser.guid ? { ...user, ...updatedUser } : user
       )
     );
   };

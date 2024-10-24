@@ -192,7 +192,7 @@ export default function ButtonsGridPages({
                                     : texts[language].page + " " + pageNumber,
                                   20
                                 )}
-                              
+                              maxLength={8}
                               onChange={handleTypePageName}
                               type="text"
                             />

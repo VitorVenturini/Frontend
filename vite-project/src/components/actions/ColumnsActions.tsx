@@ -125,7 +125,10 @@ export const columnsActions: ColumnDef<ActionsInteface>[] = [
           <NotifyActions id={actions.id} />
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger>
+              <Button variant="ghost" size="icon">
               <Pencil />
+              </Button>
+              
             </DialogTrigger>
             <DialogContent className="max-w-5xl">
               <CardCreateAction

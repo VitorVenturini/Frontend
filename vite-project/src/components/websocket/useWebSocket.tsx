@@ -9,6 +9,8 @@ export interface WebSocketHook {
   sendMessage: (message: WebSocketMessage) => void;
   isReconnecting: boolean;
 }
+const wssPort = Number(import.meta.env.VITE_WSS_PORT) || 443;
+const wssHost = String(import.meta.env.VITE_WSS_HOSTNAME);
 
 const useWebSocket = (
   token: string,
@@ -29,12 +31,12 @@ const useWebSocket = (
     const currentUrl = window.location.hostname;
     let wsUrl = "";
     if (window.location.protocol === "http:") {
-      wsUrl = "wss://core.wecom.com.br:443/ws?token=" + token;
+      wsUrl = `wss://${wssHost}:${wssPort}/ws?token=` + token;
     } else {
       if (window.location.hostname === "frontend-delta-lake.vercel.app") {
-        wsUrl = "wss://core.wecom.com.br:443/ws?token=" + token;
+        wsUrl = `wss://${wssHost}:${wssPort}/ws?token=` + token;
       } else {
-        wsUrl = "wss://" + currentUrl + ":443/ws?token=" + token;
+        wsUrl = `wss://${wssHost}":${wssPort}/ws?token=` + token;
       }
     }
 

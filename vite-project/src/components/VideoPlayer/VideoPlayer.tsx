@@ -189,7 +189,7 @@ export default function VideoPlayer({ url, open }: VideoPlayerProps) {
             <div className="relative">
               <div className="absolute top-2 right-2 flex gap-2 z-10">
                 
-              
+            
                   <Button
                     className="flex gap-2"
                     /* @ts-ignore */
