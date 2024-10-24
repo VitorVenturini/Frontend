@@ -586,7 +586,7 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
                 </TabsContent>
               </div>
             </div>
-            <ScrollArea className="w-full lg:h-[300px] xl:h-[400px] xl2:h-[500px] xl3:h-[600px]">
+            <ScrollArea className="w-full lg:h-[300px] xl:h-[500px] xl2:h-[600px] xl3:h-[700px]">
               <TabsContent value="RptSensors" className="gap-4 py-4">
                 {dataReport.chart.length == 0 && loadBarData.unitValue > 0 ? (
                   <div className="w-full align-middle items-center justify-center lg:h-[100px] xl:h-[100px] xl2:h-[100px] xl3:h-[100px] flex">

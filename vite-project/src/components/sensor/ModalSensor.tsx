@@ -39,7 +39,7 @@ import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { ButtonInterface } from "@/components/buttons/buttonContext/ButtonsContext";
 import { useSensors } from "./SensorContext";
 import { limitButtonName } from "../utils/utilityFunctions";
-import SensorCard from "./sensorCard";
+import SensorCard from "./sensorCell";
 import { ScrollArea } from "../ui/scroll-area";
 import { UserInterface } from "../users/usersCore/UserContext";
 interface ButtonProps {
@@ -446,7 +446,7 @@ export default function ModalSensor({
             <div className={commonClasses}>
               <div className="flex flex-col justify-between cursor-pointer active:bg-red-900 bg-buttonSensor">
                 <div className="flex items-center  gap-1 cursor-pointer ">
-                  <ResponsivePng sensorModel={filteredModel?.description} />
+                  <ResponsivePng sensorModel={filteredModel?.description} size="icon"/>
                   <p className=" flex text-sm font-medium leading-none xl4:text-2xl">
                     {nameButton}
                   </p>

@@ -7,6 +7,14 @@ import { AudioPlayer } from "react-audio-player-component"; // Substitua pela bi
 import texts from "@/_data/texts.json";
 import { useLanguage } from "@/components/language/LanguageContext";
 import { getText } from "@/components/utils/utilityFunctions";
+import { Button } from "@/components/ui/button";
+import { ArrowUpDown } from "lucide-react";
+
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 interface ColumnsReportsProps {
   report: string;
@@ -34,7 +42,15 @@ const ColumnsReports: React.FC<ColumnsReportsProps> = ({
       )
       .map((key) => ({
         accessorKey: key,
-        header: key.toUpperCase(),
+        header: ({ column }) => (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            {getText(key, texts[language]).toUpperCase()}
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        ),
       }));
 
     if (report === "RptCalls") {
@@ -47,59 +63,46 @@ const ColumnsReports: React.FC<ColumnsReportsProps> = ({
 
           const isLinkAvailable = recordLink && recordLink.trim() !== "";
 
-          return isPlaying && isLinkAvailable ? (
-            <div className="flex items-center gap-2">
-              <AudioPlayer
-                src={`${host}${recordLink}`}
-                minimal={true}
-                width={300}
-                trackHeight={20}
-                barWidth={1}
-                gap={2}
-                visualise={false}
-                backgroundColor="#1e293b"
-                barColor="#1e293b"
-                barPlayedColor="#ffffff"
-                skipDuration={2}
-                showLoopOption={false}
-                showVolumeControl={false}
-              />
-              <a
-                href={`${host}${recordLink}`}
-                download
-                onClick={(e) => {
-                  if (!isLinkAvailable) {
-                    e.preventDefault(); // Previne o comportamento padrão se o link não estiver disponível
-                  }
-                }}
-              >
-                <Download />
-              </a>
-            </div>
-          ) : (
-            <div className="flex space-x-2">
-              <Play
-                className={`cursor-pointer ${
-                  !isLinkAvailable && "opacity-50 cursor-not-allowed"
-                }`}
-                onClick={() => isLinkAvailable && setIsPlaying(true)}
-              />
-              <a
-                href={`${host}${recordLink}`}
-                download
-                onClick={(e) => {
-                  if (!isLinkAvailable) {
-                    e.preventDefault(); // Previne o comportamento padrão se o link não estiver disponível
-                  }
-                }}
-              >
-                <Download
-                  className={`cursor-pointer ${
-                    !isLinkAvailable && "opacity-50 cursor-not-allowed"
-                  }`}
+          return (
+            <Popover>
+              <PopoverTrigger disabled={!isLinkAvailable}>
+                <Button variant="ghost" size="icon" disabled={!isLinkAvailable}>
+                  <Play />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent>
+                <AudioPlayer
+                  src={`${host}${recordLink}`}
+                  minimal={true}
+                  width={300}
+                  trackHeight={20}
+                  barWidth={1}
+                  gap={2}
+                  visualise={false}
+                  backgroundColor="#1e293b"
+                  barColor="#1e293b"
+                  barPlayedColor="#ffffff"
+                  skipDuration={2}
+                  showLoopOption={false}
+                  showVolumeControl={false}
                 />
+                <Button variant="ghost" size="icon">
+              <a
+                href={`${host}${recordLink}`}
+                download
+                onClick={(e) => {
+                  if (!isLinkAvailable) {
+                    e.preventDefault(); // Previne o comportamento padrão se o link não estiver disponível
+                  }
+                }}
+              >
+              
               </a>
-            </div>
+                <Download />
+              </Button>
+              </PopoverContent>
+              
+            </Popover>
           );
         },
       });
@@ -111,7 +114,7 @@ const ColumnsReports: React.FC<ColumnsReportsProps> = ({
   return (
     <div className="space-y-2">
       <h4 className="scroll-m-20 text-xl flex font-semibold tracking-tight justify-center">
-        {report ? getText(report, texts[language]) :  texts[language].report}
+        {report ? getText(report, texts[language]) : texts[language].report}
       </h4>
       <DataTable columns={columns} data={data} filter={filter} />
     </div>

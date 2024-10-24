@@ -2,11 +2,13 @@ import { Button } from "@/components/ui/button";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 import { Pencil } from "lucide-react";
+import { TableProperties } from 'lucide-react';
 import CardCreateGateway from "./CardCreateGateway";
 import { GatewaysInterface } from "./GatewaysContext";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { useState } from "react";
 import DeleteGateways from "./DeleteGateway";
+import Devices from "./Devices";
 
 export const gatewaysCollumns: ColumnDef<GatewaysInterface>[] = [
   {
@@ -59,7 +61,9 @@ export const gatewaysCollumns: ColumnDef<GatewaysInterface>[] = [
         <div className="flex justify-center gap-1 items-center">
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger>
+              <Button variant="ghost" size="icon">
               <Pencil />
+              </Button>
             </DialogTrigger>
             <DialogContent className="max-w-5xl">
               <CardCreateGateway
@@ -70,6 +74,16 @@ export const gatewaysCollumns: ColumnDef<GatewaysInterface>[] = [
             </DialogContent>
           </Dialog>
           <DeleteGateways id={gateways.id}/>
+          <Dialog>
+            <DialogTrigger>
+              <Button variant="ghost" size="icon">
+              <TableProperties  />
+              </Button>
+            </DialogTrigger>
+            <DialogContent >
+              <Devices gatewayId={gateways} />
+            </DialogContent>
+          </Dialog>
         </div>
       );
     },

@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useState } from "react";
+import Devices from "./Devices";
 import {
   ColumnDef,
   flexRender,
@@ -40,11 +41,16 @@ export function DataTableGateways<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isDeviceView, setIsDeviceView] = useState(false);
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const handleCellClick = () => {
+    setIsDeviceView(true);
+  };
+  
 
   const table = useReactTable({
     data,
