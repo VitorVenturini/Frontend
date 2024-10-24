@@ -60,7 +60,7 @@ export function DataTable<TData>({
     []
   );
   const [columnVisibility, setColumnVisibility] =
-  React.useState<VisibilityState>({});
+    React.useState<VisibilityState>({});
   const [loading, setLoading] = useState<boolean>(true);
   const { language } = useLanguage();
   const { users } = useUsers();
@@ -87,7 +87,7 @@ export function DataTable<TData>({
                 </DialogTrigger>
                 <DialogContent className="">
                   <div>
-                    <img src={message}/>
+                    <img src={message} />
                   </div>
                 </DialogContent>
               </Dialog>
@@ -101,7 +101,7 @@ export function DataTable<TData>({
     }),
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
-    
+
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
@@ -159,34 +159,44 @@ export function DataTable<TData>({
               </SelectGroup>
             </SelectContent>
           </Select>
+          <div className="flex items-center py-4">
+            <Input
+              placeholder="Filter Guid..."
+              value={
+                (table.getColumn("guid")?.getFilterValue() as string) ?? ""
+              }
+              onChange={(event) =>
+                table.getColumn("guid")?.setFilterValue(event.target.value)
+              }
+              className="max-w-sm"
+            />
+          </div>
           <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter(
-                (column) => column.getCanHide()
-              )
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="ml-auto">
+                Columns
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }
+                    >
+                      {column.id}
+                    </DropdownMenuCheckboxItem>
+                  );
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       )}
       <Table>
