@@ -3,24 +3,18 @@ import { ArrowRightLeftIcon, CircleX, Delete } from "lucide-react";
 import { Button } from "../ui/button";
 import { useWebSocketData } from "../websocket/WebSocketProvider";
 import { ButtonInterface } from "../buttons/buttonContext/ButtonsContext";
-import {
-  DialPadCallsInterface,
-  IncomingCallInterface,
-} from "../calls/CallContext";
+import { CallsInterface } from "../calls/CallContext";
+
 interface KeyboardProps {
   onKeyPress: (key: string) => void;
   forwarded: boolean;
-  buttonOnCall?: ButtonInterface;
-  incoming?: IncomingCallInterface;
-  dialPadCall?: DialPadCallsInterface;
+   call: CallsInterface
 }
 
 const Keyboard: React.FC<KeyboardProps> = ({
   onKeyPress,
   forwarded,
-  dialPadCall,
-  buttonOnCall,
-  incoming,
+call,
 }) => {
   const [keySequence, setKeySequence] = useState<string[]>([]);
   const wss = useWebSocketData();
@@ -34,28 +28,28 @@ const Keyboard: React.FC<KeyboardProps> = ({
   const handleKeyPress = (key: string) => {
     setKeySequence((prevSequence) => [...prevSequence, key]);
     onKeyPress(key);
-    if (!forwarded && incoming) {
+    if (!forwarded && call.type === "incoming") {
       wss?.sendMessage({
         api: "user",
         mt: "SendDtmfDigitsIncomingCall",
         digit: key,
-        device: incoming.device,
-        call: incoming.callId,
+        device: call?.device,
+        call: call.callId,
       });
-    } else if (!forwarded && !incoming && !buttonOnCall) {
+    } else if (!forwarded && call.type !== "incoming" && call.type !== "buttonCall") {
       wss?.sendMessage({
         api: "user",
         mt: "SendDtmfDigits",
         digit: key,
-        device: dialPadCall?.device,
-        call: dialPadCall?.callId,
+        device: call?.device,
+        call: call?.callId,
       });
-    } else if (!forwarded && !incoming && !dialPadCall) {
+    } else if (!forwarded && call.type !== "incoming" && call.type !== "dialpad") {
       wss?.sendMessage({
         api: "user",
         mt: "SendDtmfDigits",
         digit: key,
-        btn_id: buttonOnCall?.id,
+        btn_id: call?.btn_id,
       });
     }
   };
@@ -65,27 +59,27 @@ const Keyboard: React.FC<KeyboardProps> = ({
   };
 
   const handleRedirectCall = () => {
-    if (incoming) {
+    if (call.type === "incoming") {
       wss?.sendMessage({
         api: "user",
         mt: "RedirectIncomingCall",
-        device: incoming.device,
-        call: incoming.callId,
+        device: call?.device,
+        call: call.callId,
         destination: keySequence.join(""),
       });
-    } else if(dialPadCall){
+    } else if(call.type === "dialpad"){
       wss?.sendMessage({
         api: "user",
         mt: "RedirectCall",
-        device: dialPadCall.device,
-        call: dialPadCall.callId,
+        device: call?.device,
+        call: call.callId,
         destination: keySequence.join(""),
       });
     } else{
       wss?.sendMessage({
         api: "user",
         mt: "RedirectCall",
-        btn_id: buttonOnCall?.id,
+        btn_id: call?.btn_id,
         destination: keySequence.join(""),
       });
     }

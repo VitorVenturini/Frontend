@@ -1,5 +1,4 @@
 import { Card } from "@/components/ui/card";
-import { IncomingCallInterface } from "./CallContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useUsersPbx } from "../users/usersPbx/UsersPbxContext";
 import { generateAvatar, getInitials } from "../utils/utilityFunctions";
@@ -11,9 +10,10 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { CallsInterface } from "./CallContext";
 
 interface ReceivedCallProps {
-  receivedCalls: IncomingCallInterface[]; // Agora recebemos um array de chamadas
+  receivedCalls: CallsInterface[]; // Agora recebemos um array de chamadas
 }
 
 export default function ReceivedCall({ receivedCalls }: ReceivedCallProps) {
@@ -28,7 +28,7 @@ export default function ReceivedCall({ receivedCalls }: ReceivedCallProps) {
   const avatarBase64 = initials ? generateAvatar(initials) : null;
 
   // Função para atender a chamada de um device específico
-  const handleSelectDevice = (device: string, callId: string) => {
+  const handleSelectDevice = (device: string, callId: number) => {
     console.log("Device Escolhido: " + device);
     wss?.sendMessage({
       api: "user",
@@ -94,8 +94,9 @@ export default function ReceivedCall({ receivedCalls }: ReceivedCallProps) {
               onClick={() => handleSelectDevice(call.device, call.callId)}
               className="gap-2 bg-green-600 hover:bg-green-600/60 mx-1"
             >
-              <Phone />
-              {call.deviceText}
+              <div className="flex justify-center items-center gap-1">
+                <Phone  size={20}/> {call.deviceText}
+              </div>
             </Button>
           ))}
         </div>
