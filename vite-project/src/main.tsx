@@ -3,9 +3,6 @@ import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
 import { BrowserRouter } from "react-router-dom";
-import 'core-js/stable';
-import 'regenerator-runtime/runtime';
-
 import Loader from "./components/Loader"; // Supondo que você tenha um componente Loader
 
 function Main() {
