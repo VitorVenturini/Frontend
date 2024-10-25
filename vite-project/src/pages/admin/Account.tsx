@@ -11,7 +11,7 @@ export default function Account() {
   const { usersPbx } = useUsersPbx();
   let ajustData
 
-  ajustData = users.map((item: any) => {
+  ajustData = users?.map((item: any) => {
     if(users){
       item = replaceData(usersPbx, item, 'sip')
       
@@ -24,7 +24,7 @@ export default function Account() {
     item: any,
     columnName: string
   ): any {
-    const user = users.find(
+    const user = users?.find(
       (user: any) =>
         user.guid === item[columnName] || user.sip === item[columnName]
     );
