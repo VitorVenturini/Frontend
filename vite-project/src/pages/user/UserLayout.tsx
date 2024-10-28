@@ -587,7 +587,7 @@ function UserLayout() {
           updateCall(message.call as number, {
             num: message.num,
             heldByUser: false,
-            btn_id: message.btn_id
+            btn_id: message.btn_id === "" ? null : message.btn_id
           });
         }
         // usuario retomou a chamada
