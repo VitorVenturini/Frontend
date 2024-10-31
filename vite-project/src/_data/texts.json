@@ -235,6 +235,14 @@
     "to_guid": "Destino",
     "msg": "Mensagem",
     "delivered": "Entregue",
-    "read": "Lido"
+    "read": "lido",
+    "threshold": "parâmetro",
+    "call": "ligação",
+    "inc": "recebida",
+    "start": "iniciada",
+    "stop": "parada",
+    "temperature": "temperatura",
+    "out": "chamou",
+    "to": "para"
   }
 }
