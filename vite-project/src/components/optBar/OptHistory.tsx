@@ -14,7 +14,9 @@ import { useUsers } from "../users/usersCore/UserContext";
 import { useButtons } from "../buttons/buttonContext/ButtonsContext";
 import { filterButtonByID } from "../utils/utilityFunctions";
 import { useSensors } from "../sensor/SensorContext";
-
+import { getText } from "../utils/utilityFunctions";
+import { useLanguage } from "@/components/language/LanguageContext";
+import texts from "@/_data/texts.json";
 
 interface HistoryCellProps {
   historyInfo: HistoryInterface;
@@ -45,8 +47,10 @@ const badgeVariants = cva(
 
 const HistoryCell: React.FC<HistoryCellProps> = ({ historyInfo }) => {
   const { users } = useUsers();
-  const {sensors} = useSensors()
+  const { sensors } = useSensors();
   const { buttons } = useButtons();
+  const { language } = useLanguage();
+
   const isValidVariant = (
     variant: string
   ): variant is "threshold" | "status" | "alarm" | "message" | "default" => {
@@ -75,26 +79,43 @@ const HistoryCell: React.FC<HistoryCellProps> = ({ historyInfo }) => {
     <div className="flex flex-col bg-muted w-[500px] xl2:w-[700px] xl4:w-[1000px] mt-2 ">
       <div className="flex gap-1 bg-card/50 px-2 py-1 justify-between items-center">
         <div className="flex gap-1 ">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground font-black">
             {replaceDataForName(users, historyInfo.from, sensors)}
           </p>
-          <p className="text-sm text-muted">para</p>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground">{getText('to', texts[language])}</p>
+          <p className="text-sm text-foreground font-black">
             {replaceDataForName(users, historyInfo.guid, sensors)}
           </p>
         </div>
         <div className="flex items-center gap-1">
-          <p className="text-sm ">{filterButtonByID(historyInfo.details,buttons)}</p>
+          <p className="text-sm ">
+            {filterButtonByID(historyInfo.details, buttons)}
+          </p>
         </div>
       </div>
       <div className=" flex justify-between rounded-md my-2 items-center px-2 py-1">
-        <div className="flex items-center gap-1">
-          <span className={badgeVariant}>{historyInfo.name}</span>
-          <p className="text-sm font-black">{truncatedPrt}</p>
-          <p className="text-sm ">{historyInfo.status}</p>
+        <div className="flex items-center gap-1 capitalize">
+          <span className={badgeVariant}>
+            {historyInfo.name
+              ? getText(historyInfo.name, texts[language])
+              : historyInfo.name}
+          </span>
+          <p className="text-sm capitalize ">
+            {historyInfo.status
+              ? getText(historyInfo.status, texts[language])
+              : historyInfo.status}
+          </p>
+          <p className="text-sm font-black ">
+            {truncatedPrt
+              ? getText(truncatedPrt, texts[language])
+              : truncatedPrt}
+          </p>
+
         </div>
         <p className="text-sm text-muted-foreground text-wrap mr-2">
-          {formattedDate}
+          {formattedDate
+            ? getText(formattedDate, texts[language])
+            : formattedDate}
         </p>
       </div>
     </div>
