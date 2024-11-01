@@ -9,6 +9,7 @@ import { useLanguage } from "@/components/language/LanguageContext";
 import { getText } from "@/components/utils/utilityFunctions";
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown } from "lucide-react";
+
 import {
   Popover,
   PopoverContent,
@@ -46,7 +47,7 @@ const ColumnsReports: React.FC<ColumnsReportsProps> = ({
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            {key.toUpperCase()}
+            {getText(key, texts[language]).toUpperCase()}
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         ),

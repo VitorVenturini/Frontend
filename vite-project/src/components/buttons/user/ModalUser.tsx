@@ -197,7 +197,7 @@ export default function ModalUser({
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>Dispositivos</SelectLabel>
-                {filteredDevices?.devices.map((dev, index) => (
+                {filteredDevices?.devices?.map((dev, index) => (
                   <SelectItem key={index} value={dev.hw as string}>
                     {dev.text}
                   </SelectItem>

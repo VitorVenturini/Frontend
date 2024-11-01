@@ -9,7 +9,7 @@ import vercel from 'vite-plugin-vercel';
 dotenv.config();
 
 const isLocalhost = process.env.VITE_HOSTNAME === "localhost";
-const hostPort = Number(process.env.HOST_PORT) || 3000;  
+const hostPort = Number(process.env.VITE_HOST_PORT) || 3000;  
 const keyPath = process.env.KEY_PATH
 const pemPath = process.env.PEM_PATH
 // https://vite.dev/config/
