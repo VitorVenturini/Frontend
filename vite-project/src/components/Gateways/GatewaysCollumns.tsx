@@ -80,7 +80,7 @@ export const gatewaysCollumns: ColumnDef<GatewaysInterface>[] = [
               <TableProperties  />
               </Button>
             </DialogTrigger>
-            <DialogContent >
+            <DialogContent className="max-w-5xl">
               <Devices gatewayId={gateways} />
             </DialogContent>
           </Dialog>

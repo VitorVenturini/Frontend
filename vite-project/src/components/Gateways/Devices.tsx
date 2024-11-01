@@ -37,24 +37,27 @@ export default function Devices({ gatewayId }) {
   const renderSensorCard = () => {
     if (!selectedSensor)
       return (
-        <Card className="w-full p-4">
-          <CardDescription>
-            Selecione um dispositivo para ver os detalhes
-          </CardDescription>
+        <Card className="w-full p-4 h-full justify-center items-center flex">
+          <div>
+            Selecione um dispositivo para ver os detalhes 
+          </div>
         </Card>
       );
     return (
       <div className="w-full p-4 bg-muted flex flex-col items-center justify-between h-full">
+        <div className="w-full h-full items-center justify-center flex">
         <ResponsivePng sensorModel={selectedSensor.description} size="image"/>
+        </div>
+        
         <div className="flex flex-col p-1 gap-2 w-full justify-start">
           <div>
-            {selectedSensor.description}
+            Modelo: {selectedSensor.description}
           </div>
           <div>
-            {selectedSensor.deveui}
+            Deveui: {selectedSensor.deveui}
           </div>
           <div>
-            {selectedSensor.sensor_name}
+            Nome: {selectedSensor.sensor_name}
           </div>
 
         </div>
@@ -63,6 +66,12 @@ export default function Devices({ gatewayId }) {
   };
   return (
     <div>
+      <CardHeader>
+        <CardTitle>Dispositivos</CardTitle>
+        <CardDescription>
+            Dispositivos vinculados ao gateway selecionado 
+          </CardDescription> 
+      </CardHeader>
       <CardContent className=" w-full flex gap-4 py-4">
         <div className="flex flex-col w-[50%] items-center gap-4">
           <Input
