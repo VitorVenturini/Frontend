@@ -38,10 +38,8 @@ export default function HeaderApp() {
   };
 
   const handleActionsClick = () => {
-    wss?.sendMessage({ api: "admin", mt: "SelectActions" });
-    //setTimeout(() => {
-    //navigate("/admin/actions");
-    //}, 900);
+    // wss?.sendMessage({ api: "admin", mt: "SelectActions" });
+    navigate("/admin/actions");
   };
 
   const handleOptionsClick = () => {
