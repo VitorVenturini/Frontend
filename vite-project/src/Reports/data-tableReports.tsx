@@ -96,6 +96,33 @@ export function DataTable<TData>({
             );
           },
         };
+      }else if((column as any).accessorKey === "prt"){
+        return {
+          ...column,
+          cell: ({ row }: { row: any }) => {
+            const message = row.original.prt;
+            const isBase64 = isBase64File(message); // Função que verifica se é Base64
+
+            // Retorna o ícone de imagem se for Base64, senão retorna o conteúdo da mensagem
+            return isBase64 ? (
+              <Dialog>
+                <DialogTrigger className="flex justify-center">
+                  <div className="flex items-center gap-2">
+                    <Image size={16} style={{ marginRight: "5px" }} />
+                    Imagem
+                  </div>
+                </DialogTrigger>
+                <DialogContent className="">
+                  <div>
+                    <img src={message} />
+                  </div>
+                </DialogContent>
+              </Dialog>
+            ) : (
+              message
+            );
+          },
+        };
       }
       return column;
     }),
