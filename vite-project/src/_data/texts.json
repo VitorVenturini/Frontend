@@ -83,6 +83,7 @@
     "actionNamePlaceholder": "Digite o nome da ação",
     "fillAllFields": "Por favor, preencha todos os campos antes de criar a ação",
     "creatingAction": "Criando Ação",
+    "updatingAction": "Atualizando Ação",
     "execParametersDescription": "Configuração dos parâmetros de execução",
     "type": "Tipo",
     "selectType": "Selecione o Tipo",

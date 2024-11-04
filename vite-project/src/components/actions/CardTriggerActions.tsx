@@ -211,8 +211,8 @@ export default function CardTriggerActions({
               <SelectContent>
                 <SelectGroup>
                   <SelectLabel>{texts[language].commandOpenClose}</SelectLabel>
-                  <SelectItem value="open">{texts[language].open}</SelectItem>
-                  <SelectItem value="closed">
+                  <SelectItem value="1">{texts[language].open}</SelectItem>
+                  <SelectItem value="0">
                     {texts[language].closed}
                   </SelectItem>
                 </SelectGroup>

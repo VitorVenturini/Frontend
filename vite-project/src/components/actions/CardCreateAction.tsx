@@ -172,13 +172,13 @@ export default function CardCreateAction({
           <CardFooter className="flex justify-end">
             {!isCreating && (
               <Button onClick={handleCreateAction}>
-                {texts[language].createAction} {/* Tradução do botão "Criar Ação" */}
+              {!isUpdate ? texts[language].createAction : texts[language].updateAction}   {/* Tradução do botão "Criar Ação" */}
               </Button>
             )}
             {isCreating && (
               <Button disabled>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {texts[language].creatingAction} {/* Tradução para "Criando Ação" */}
+                {!isUpdate ? texts[language].creatingAction : texts[language].updatingAction}  {/* Tradução para "Criando Ação" */}
               </Button>
             )}
           </CardFooter>
