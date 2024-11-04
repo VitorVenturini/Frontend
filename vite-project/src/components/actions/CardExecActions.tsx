@@ -49,8 +49,10 @@ export default function CardExecActions({
   const [actionExecTypeCommandMode, setActionExecTypeCommandMode] = useState(
     action?.action_exec_type_command_mode || ""
   );
+  const filteredSipUser = users.find((user) => (user.guid as any) === selectedUser);
+
   const filteredDevices = usersPbx?.filter((u) => {
-    return u.guid === selectedUser;
+    return u.guid === filteredSipUser?.sip;
   })[0];
   console.log('ACTION PRT', actionExecPrt)
   const { language } = useLanguage();
@@ -78,19 +80,19 @@ export default function CardExecActions({
   };
 
   const handleUserSelect = (value: string) => {
-    const user = users.find((user) => (user.id as any) === value);
+  
     setSelectedUser(value);
     onUpdateExecActionDetails("selectedUser", value);
   };
 
   const handleDeviceDest = (value: string) => {
     setDeviceDest(value);
-    onUpdateExecActionDetails("deviceDest", value);
+    onUpdateExecActionDetails("actionExecDevice", value);
   };
 
   const handleButtonSelect = (value: string) => {
     setActionExecPrt(value);
-    onUpdateExecActionDetails("actionExecValue", value);
+    onUpdateExecActionDetails("actionExecPrt", value);
   };
 
   const handleActionExecTypeCommandMode = (value: string) => {
@@ -149,7 +151,7 @@ export default function CardExecActions({
             </Label>
             <Select
               onValueChange={handleUserSelect}
-              value={action?.action_exec_user}
+              value={selectedUser}
             >
               <SelectTrigger className="col-span-3">
                 <SelectValue
@@ -160,7 +162,7 @@ export default function CardExecActions({
                 <SelectGroup>
                   <SelectLabel>{texts[language].users}</SelectLabel>
                   {users.map((user) => (
-                    <SelectItem key={user.id} value={user.sip}>
+                    <SelectItem key={user.id} value={user.guid}>
                       {user.name}
                     </SelectItem>
                   ))}
@@ -177,7 +179,7 @@ export default function CardExecActions({
               <SelectContent>
                 <SelectGroup>
                   <SelectLabel>{texts[language].devices}</SelectLabel>
-                  {filteredDevices?.devices.map((dev, index) => (
+                  {filteredDevices?.devices?.map((dev, index) => (
                     <SelectItem key={index} value={dev.hw as string}>
                       {dev.text}
                     </SelectItem>

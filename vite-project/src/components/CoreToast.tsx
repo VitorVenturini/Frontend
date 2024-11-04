@@ -70,8 +70,8 @@ const HistoryCell: React.FC<HistoryCellProps> = ({ historyInfo }) => {
 
   let formattedDate = "Invalid date";
   try {
-    const parsedDate = parseISO(historyInfo.date);
-    formattedDate = format(new Date(historyInfo.date as any), "dd/mm HH:mm");
+    const parsedDate = parseISO(historyInfo?.date);
+    formattedDate = format(new Date(historyInfo?.date as any), "dd/mm HH:mm");
   } catch (error) {
     console.error("Error parsing date:", error);
   }
@@ -83,17 +83,17 @@ const HistoryCell: React.FC<HistoryCellProps> = ({ historyInfo }) => {
     <div className="flex  bg-card  items-center p-2 w-full border px-3">
       <div className="flex justify-start gap-2 basis-1/3">
         <span className={badgeVariant}>
-          {historyInfo.name
-            ? getText(historyInfo.name, texts[language])
-            : historyInfo.name}
+          {historyInfo?.name
+            ? getText(historyInfo?.name, texts[language])
+            : historyInfo?.name}
         </span>
         <p className="text-sm font-black ">
           {truncatedPrt ? getText(truncatedPrt, texts[language]) : truncatedPrt}
         </p>
         <p className="text-sm capitalize ">
-          {historyInfo.status
-            ? getText(historyInfo.status, texts[language])
-            : historyInfo.status}
+          {historyInfo?.status
+            ? getText(historyInfo?.status, texts[language])
+            : historyInfo?.status}
         </p>
       </div>
       <div className="flex  gap-2  basis-1/3 justify-center">
