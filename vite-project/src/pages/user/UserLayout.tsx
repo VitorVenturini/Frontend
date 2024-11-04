@@ -7,7 +7,7 @@ import {
   useAccount,
 } from "@/components/account/AccountContext";
 import { Button } from "@/components/ui/button";
-import React, { ReactElement, useContext, useState } from "react";
+import React, { ReactElement, useContext, useEffect, useState } from "react";
 
 import Logout from "@/components/logout/Logout";
 import { WebSocketProvider } from "@/components/websocket/WebSocketProvider";
@@ -866,6 +866,44 @@ function UserLayout() {
   const handleClickedUserBottom = (newUser: string | null) => {
     setClickedUserBottom(newUser);
   };
+
+  const startListening = () => {
+    // Verifica se o navegador suporta SpeechRecognition
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      console.warn("Speech Recognition API não é suportada neste navegador.");
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'pt-BR';
+    recognition.interimResults = false;
+
+    recognition.onresult = (event) => {
+      const command = event.results[0][0].transcript;
+      console.log("Comando reconhecido:", command);
+      // Função para enviar o comando ao backend
+      sendCommandToBackend(command);
+    };
+
+    recognition.onend = () => {
+      // Reinicia a escuta ao final de cada sessão de reconhecimento
+      startListening();
+    };
+
+    recognition.start();
+  };
+
+  // Função para enviar o comando ao backend
+  const sendCommandToBackend = (command) => {
+    // Lógica para enviar o comando ao backend, como via WebSocket
+  };
+
+  useEffect(() => {
+    startListening();
+  }, []);
+
+
 
   return (
     <>
