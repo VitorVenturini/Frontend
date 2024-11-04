@@ -66,7 +66,7 @@ const HistoryCell: React.FC<HistoryCellProps> = ({ historyInfo }) => {
   let formattedDate = "Invalid date";
   try {
     const parsedDate = parseISO(historyInfo.date);
-    formattedDate = format(new Date(historyInfo.date as any), "dd/mm HH:mm");
+    formattedDate = format(new Date(historyInfo.date as any), "dd/MM HH:mm");
   } catch (error) {
     console.error("Error parsing date:", error);
   }
@@ -114,9 +114,7 @@ const HistoryCell: React.FC<HistoryCellProps> = ({ historyInfo }) => {
           </p>
         </div>
         <p className="text-sm text-muted-foreground text-wrap mr-2">
-          {formattedDate
-            ? getText(formattedDate, texts[language])
-            : formattedDate}
+          {formattedDate}
         </p>
       </div>
     </div>
