@@ -233,7 +233,33 @@ function UserLayout() {
         updateSensorButton(sensorDataReceived);
         updateGraphSensor(sensorDataReceived);
         break;
-
+      case "ButtonRequest":
+        comboStarted(message.btn_id);
+        const ButtonRequest = allBtn?.filter((btn) => {
+          return btn.id === message.btn_id;
+        })[0];
+        console.log("BUTTONREQUEST " + JSON.stringify(ButtonRequest))
+        if (ButtonRequest) {
+          if (ButtonRequest.position_y === "1") {
+            if (isAllowedButtonType(message.type)) {
+              setSelectedOptTop(
+                message.type === "camera" ? "sensor" : message.type
+              );
+              //nao existe opt camera , entao se o botão for do tipo camera colocamos a opt Sensor
+            }
+          } else if (ButtonRequest.position_y === "2") {
+            if (isAllowedButtonType(message.type)) {
+              setSelectedOptBottom(
+                message.type === "camera" ? "sensor" : message.type
+              );
+              //nao existe opt camera , entao se o botão for do tipo camera colocamos a opt Sensor
+              console.log(
+                "OptBottom" + selectedOptBottom + "OptTop" + selectedOptTop
+              );
+            }
+          }
+        }
+        break;
       case "AlarmReceived":
         const filteredBtn = allBtn.filter((btn) => {
           return btn.id === message.btn_id;
@@ -258,6 +284,7 @@ function UserLayout() {
         break;
       case "IncreaseButtons":
         const newButton: ButtonInterface = message.result;
+        allBtn.push(newButton)
         addButton(newButton);
         break;
       case "UpdateButtonSuccess":
