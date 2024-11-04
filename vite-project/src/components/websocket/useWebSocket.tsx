@@ -36,7 +36,7 @@ const useWebSocket = (
       if (window.location.hostname === "frontend-delta-lake.vercel.app") {
         wsUrl = `wss://${wssHost}:${wssPort}/ws?token=` + token;
       } else {
-        wsUrl = `wss://${wssHost}":${wssPort}/ws?token=` + token;
+        wsUrl = `wss://${wssHost}:${wssPort}/ws?token=` + token;
       }
     }
 
