@@ -243,6 +243,9 @@
     "stop": "parada",
     "temperature": "temperatura",
     "out": "chamou",
-    "to": "para"
+    "to": "para",
+    "load":"carregar",
+    "plus": "mais",
+    "historyEnd": "Fim do Histórico"
   }
 }

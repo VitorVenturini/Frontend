@@ -82,7 +82,9 @@ const HistoryCell: React.FC<HistoryCellProps> = ({ historyInfo }) => {
           <p className="text-sm text-muted-foreground font-black">
             {replaceDataForName(users, historyInfo.from, sensors)}
           </p>
-          <p className="text-sm text-muted-foreground">{getText('to', texts[language])}</p>
+          <p className="text-sm text-muted-foreground">
+            {getText("to", texts[language])}
+          </p>
           <p className="text-sm text-foreground font-black">
             {replaceDataForName(users, historyInfo.guid, sensors)}
           </p>
@@ -110,7 +112,6 @@ const HistoryCell: React.FC<HistoryCellProps> = ({ historyInfo }) => {
               ? getText(truncatedPrt, texts[language])
               : truncatedPrt}
           </p>
-
         </div>
         <p className="text-sm text-muted-foreground text-wrap mr-2">
           {formattedDate
@@ -149,7 +150,7 @@ const OptHistory: React.FC = () => {
   const hasMore = !historyComplete;
   const wss = useWebSocketData();
   const [isLoading, setIsLoading] = useState(false);
-
+  const { language } = useLanguage();
   useEffect(() => {
     const sortedItems = [...history].sort(
       (a, b) => parseInt(a.id) - parseInt(b.id)
@@ -191,10 +192,16 @@ const OptHistory: React.FC = () => {
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Carregar mais
+                {getText("load", texts[language]) +
+                  " " +
+                  getText("plus", texts[language])}
               </>
             ) : (
-              "Carregar mais"
+              <>
+                {getText("load", texts[language]) +
+                  " " +
+                  getText("plus", texts[language])}
+              </>
             )}
           </Button>
         }
@@ -202,7 +209,7 @@ const OptHistory: React.FC = () => {
           <>
             {historyComplete && (
               <p style={{ textAlign: "center" }}>
-                <b>Fim do histórico</b>
+                <b>{getText("historyEnd", texts[language])}</b>
               </p>
             )}
           </>
