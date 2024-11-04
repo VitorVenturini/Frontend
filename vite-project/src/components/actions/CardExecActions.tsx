@@ -196,7 +196,7 @@ export default function CardExecActions({
             </Label>
             <Select
               onValueChange={handleUserSelect}
-              value={action?.action_exec_user}
+              value={selectedUser}
             >
               <SelectTrigger className="col-span-3">
                 <SelectValue
