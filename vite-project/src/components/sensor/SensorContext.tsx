@@ -10,9 +10,9 @@ export interface SensorInterface {
   gateway_id: string;
   parameters: any[];
   humidity?: string;
-  short_press?: string;
-  long_press?: string;
-  double_press?: string;
+  press_short?: string;
+  press_long?: string;
+  press_double?: string;
   temperature?: string;
   leak?: string | null;
   daylight?: string | null;
