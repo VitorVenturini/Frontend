@@ -119,6 +119,9 @@ export default function CardTriggerActions({
                 <SelectItem value="minValue">
                   {texts[language].sensorMinValue}
                 </SelectItem>
+                <SelectItem value="equalValue">
+                  Valor Igual que
+                </SelectItem>
                 <SelectItem value="maxValue">
                   {texts[language].sensorMaxValue}
                 </SelectItem>

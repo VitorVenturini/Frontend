@@ -23,32 +23,12 @@ import { useSensors } from "./sensor/SensorContext";
 import { getText } from "./utils/utilityFunctions";
 import { useLanguage } from "@/components/language/LanguageContext";
 import texts from "@/_data/texts.json";
+import { createHistoryContent } from "./history/ResponsiveHistoryInfo";
+
 interface HistoryCellProps {
   historyInfo: HistoryInterface;
 }
 
-const badgeVariants = cva(
-  "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-  {
-    variants: {
-      variant: {
-        threshold:
-          "border-transparent bg-red-900 text-red-100 hover:bg-red-800",
-        status:
-          "border-transparent bg-green-900 text-green-100 hover:bg-green-800",
-        alarm:
-          "border-transparent bg-yellow-900 text-yellow-100 hover:bg-yellow-800",
-        message:
-          "border-transparent bg-blue-900 text-blue-100 hover:bg-blue-800",
-        default:
-          "border-transparent bg-gray-900 text-gray-100 hover:bg-gray-800",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-    },
-  }
-);
 
 const HistoryCell: React.FC<HistoryCellProps> = ({ historyInfo }) => {
   const { users } = useUsers();
@@ -64,9 +44,6 @@ const HistoryCell: React.FC<HistoryCellProps> = ({ historyInfo }) => {
     );
   };
 
-  const badgeVariant = badgeVariants({
-    variant: isValidVariant(historyInfo?.name) ? historyInfo?.name : "default",
-  });
 
   let formattedDate = "Invalid date";
   try {
@@ -79,10 +56,12 @@ const HistoryCell: React.FC<HistoryCellProps> = ({ historyInfo }) => {
     historyInfo?.prt?.length > 20
       ? `${historyInfo?.prt.slice(0, 20)}...`
       : historyInfo?.prt;
+
+      
   return (
     <div className="flex justify-between bg-card  items-center p-2 w-full border px-3">
       <div className="flex justify-start gap-2 ">
-        <span className={badgeVariant}>
+        <span className={createHistoryContent(historyInfo?.name).badgeVariant}>
           {historyInfo?.name
             ? getText(historyInfo?.name, texts[language])
             : historyInfo?.name}
