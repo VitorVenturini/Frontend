@@ -80,8 +80,8 @@ const HistoryCell: React.FC<HistoryCellProps> = ({ historyInfo }) => {
       ? `${historyInfo?.prt.slice(0, 20)}...`
       : historyInfo?.prt;
   return (
-    <div className="flex  bg-card  items-center p-2 w-full border px-3">
-      <div className="flex justify-start gap-2 basis-1/3">
+    <div className="flex justify-between bg-card  items-center p-2 w-full border px-3">
+      <div className="flex justify-start gap-2 ">
         <span className={badgeVariant}>
           {historyInfo?.name
             ? getText(historyInfo?.name, texts[language])
@@ -95,19 +95,12 @@ const HistoryCell: React.FC<HistoryCellProps> = ({ historyInfo }) => {
             ? getText(historyInfo?.status, texts[language])
             : historyInfo?.status}
         </p>
-      </div>
-      <div className="flex  gap-2  basis-1/3 justify-center">
         <p className="text-sm text-muted-foreground">
           {replaceDataForName(users, historyInfo?.from, sensors)}
         </p>
-        <p className="text-sm text-muted-foreground">
-          {getText("to", texts[language])}
-        </p>
-        <p className="text-sm text-muted-foreground">
-          {replaceDataForName(users, historyInfo?.guid, sensors)}
-        </p>
       </div>
-      <div className="flex j gap-2  basis-1/3 justify-end">
+ 
+      <div className="flex j gap-2 justify-end">
         <p className="text-sm ">
           {filterButtonByID(historyInfo?.details, buttons)}
         </p>
