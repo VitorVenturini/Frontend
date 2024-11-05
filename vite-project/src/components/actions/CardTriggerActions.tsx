@@ -76,7 +76,7 @@ export default function CardTriggerActions({
     onUpdateTriggerActionDetails("actionStartDevicePrt", value);
   };
   const shouldRenderInput =
-    actionStartType === "minValue" || actionStartType === "maxValue";
+    actionStartType === "minValue" || actionStartType === "maxValue" || actionStartType === "equalValue";
 
   const selectedStartSensor = sensors.filter((p) => {
     return p.deveui === actionSensorName;
