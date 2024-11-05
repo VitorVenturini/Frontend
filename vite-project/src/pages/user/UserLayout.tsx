@@ -269,7 +269,7 @@ function UserLayout() {
         if (!filteredBtn?.muted && filteredBtn?.button_type === "sensor") {
           setTimeout(() => setPlayNotificationSoundSensor(true), 1500);
           setTimeout(() => setPlayNotificationSoundSensor(false), 2000);
-        } else if (filteredBtn.button_type === "alarm") {
+        } else if (filteredBtn?.button_type === "alarm") {
           setTimeout(() => setPlayNotificationSoundAlarm(true), 1500);
           setTimeout(() => setPlayNotificationSoundAlarm(false), 2000);
         }
@@ -556,7 +556,7 @@ function UserLayout() {
             startTime: Date.now(),
             device: message.device,
             btn_id: message.btn_id,
-            type: "buttonCall",
+            type: "dialpad",
             held: false,
             heldByUser: false,
           });
