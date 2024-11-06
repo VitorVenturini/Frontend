@@ -10,7 +10,10 @@ import { Button } from "@/components/ui/button";
 import React, { ReactElement, useContext, useEffect, useState } from "react";
 
 import Logout from "@/components/logout/Logout";
-import { WebSocketProvider } from "@/components/websocket/WebSocketProvider";
+import {
+  useWebSocketData,
+  WebSocketProvider,
+} from "@/components/websocket/WebSocketProvider";
 import ButtonsGridPage from "@/components/buttons/buttonsGrid/ButtonsGridPages";
 import {
   ButtonProvider,
@@ -55,12 +58,22 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { TouchBackend } from "react-dnd-touch-backend";
 import { isMobile } from "react-device-detect"; // Detectar se é um dispositivo móvel
+import { useLanguage } from "@/components/language/LanguageContext";
+import CoreIA, { speak } from "@/components/IA-Core";
 
 interface User {
   id: string;
   name: string;
   guid: string;
   // Adicione aqui outros campos se necessário
+}
+
+// Declarações de tipo para SpeechRecognition e webkitSpeechRecognition
+declare global {
+  interface Window {
+    SpeechRecognition: any;
+    webkitSpeechRecognition: any;
+  }
 }
 
 function UserLayout() {
@@ -102,6 +115,7 @@ function UserLayout() {
   const { setUsersPbx, updateUserDevices } = useUsersPbx();
   const { updateUserStauts } = useUsers();
   const { history, addHistory, setHistoryComplete } = useHistory();
+  const { language } = useLanguage();
   const {
     setChat,
     allMessages,
@@ -130,7 +144,7 @@ function UserLayout() {
   const [sensorNotificationSound, setSensorNotificationSound] = useState("");
   const [chatNotificationSound, setChatNotificationSound] = useState("");
   const [alarmNotificationSound, setAlarmNotificationSound] = useState("");
-
+  const wss = useWebSocketData();
   const [playNotificationSoundAlarm, setPlayNotificationSoundAlarm] =
     useState(false); // tocar o som
   const [playNotificationSoundChat, setPlayNotificationSoundChat] =
@@ -172,6 +186,9 @@ function UserLayout() {
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
     switch (message.mt) {
+      case "ActivationVoiceResult":
+        speak(message.result, "pt-BR");
+        break;
       case "SelectUserPreferencesResult":
         if (message.result && message.result[0]) {
           setUserPreferences({
@@ -867,57 +884,6 @@ function UserLayout() {
     setClickedUserBottom(newUser);
   };
 
-  function startRecognition() {
-    const recognition = new (window.SpeechRecognition ||
-      window.webkitSpeechRecognition)();
-    recognition.lang = "pt-BR";
-    recognition.interimResults = false;
-    recognition.continuous = true; // Continuously listen
-
-    let isActivated = false; // Control variable to track activation status
-
-    recognition.onresult = (event) => {
-      const command =
-        event.results[event.results.length - 1][0].transcript.toLowerCase();
-      console.log("Comando capturado:", command);
-
-      // Check if "Ei, CORE" or "Hey CORE" is detected to activate command mode
-      if (isActivationPhrase(command) && !isActivated) {
-        isActivated = true;
-        speak("Estou ouvindo");
-      } else if (isActivated) {
-        sendVoiceCommand(command); // Send the command to the backend
-        isActivated = false; // Reset activation for next time
-      }
-    };
-
-    recognition.onerror = (event) =>
-      console.error("Erro no reconhecimento de voz:", event);
-
-    recognition.start();
-  }
-
-  function isActivationPhrase(command) {
-    const activationPhrases = ["ei cor", "hey cor"];
-    return activationPhrases.some((phrase) => command.includes(phrase));
-  }
-
-  function sendVoiceCommand(command) {
-    // Function to send the command to the backend
-    console.log("Enviando comando para o backend:", command);
-    // Add WebSocket or other methods here to send the command to the backend
-  }
-
-  function speak(text) {
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = "pt-BR";
-    window.speechSynthesis.speak(utterance);
-  }
-
-  useEffect(() => {
-    startRecognition();
-  }, []);
-
   return (
     <>
       <WebSocketProvider
@@ -967,6 +933,7 @@ function UserLayout() {
           </DndProvider>
         </>
         {/* )} */}
+        <CoreIA language="pt-BR" />
       </WebSocketProvider>
       {/* soundPlayer para cada Notificação */}
       {alarmNotificationSound && (
