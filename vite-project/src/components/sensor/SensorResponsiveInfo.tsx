@@ -2,6 +2,9 @@ import { useSensors } from "@/components/sensor/SensorContext";
 import ResponsiveIcon from "./ResponsiveIcon";
 import { ButtonInterface } from "@/components/buttons/buttonContext/ButtonsContext";
 import { useAccount } from "../account/AccountContext";
+import texts from "../../_data/texts.json"
+import { useLanguage } from "../language/LanguageContext";
+import { getText } from "../utils/utilityFunctions";
 
 interface ButtonProps {
   button: ButtonInterface;
@@ -16,6 +19,7 @@ export default function SensorResponsiveInfo({
 }: ButtonProps) {
   const { buttonSensors } = useSensors();
   const account = useAccount();
+  const {language} = useLanguage()
 
   function getWindDirection(degrees: number) {
     if (degrees >= 0 && degrees < 22.5) {
@@ -65,13 +69,13 @@ export default function SensorResponsiveInfo({
     let formattedValue;
     let metric;
 
-    switch (sensorType) {
+    switch (sensorType.toLowerCase()) {
       case "leak":
         formattedValue = value === 0 ? "Normal" : "Alagado";
         metric = "";
         break;
       case "magnet_status":
-        formattedValue = value === 1 ? "Open" : "Closed";
+        formattedValue = value === 1 ? "Aberto" : "Fechado";
         metric = "";
         break;
       case "tamper_status":
@@ -152,7 +156,10 @@ export default function SensorResponsiveInfo({
                   sensorType={button.sensor_type}
                 />
                 <p className="text-[10px] font-bold leading-none text-foreground xl4:text-lg">
-                  {button.sensor_type}
+                {getText(
+                       button.sensor_type.toLowerCase(),
+                        texts[language]
+                      )}
                 </p>
               </div>
 

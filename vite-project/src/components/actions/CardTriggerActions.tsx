@@ -29,6 +29,7 @@ import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { useLanguage } from "@/components/language/LanguageContext";
 import { useSensors } from "@/components/sensor/SensorContext";
 import { ActionsInteface } from "./ActionsContext";
+import { getText } from "../utils/utilityFunctions";
 
 interface UpdateActionsProps {
   action?: ActionsInteface;
@@ -187,9 +188,9 @@ export default function CardTriggerActions({
                 <SelectContent position="popper">
                   <SelectGroup>
                     <SelectLabel>{texts[language].sensors}</SelectLabel>
-                    {filteredStartSensor.map((sensor, i) => (
-                      <SelectItem key={i} value={sensor.parameter}>
-                        {sensor.name}
+                    {filteredStartSensor.map((param, i) => (
+                      <SelectItem key={i} value={param.parameter}>
+                          {getText(param.parameter.toLowerCase(), texts[language])}
                       </SelectItem>
                     ))}
                   </SelectGroup>

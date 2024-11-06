@@ -38,10 +38,12 @@ import { Loader2 } from "lucide-react";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { ButtonInterface } from "@/components/buttons/buttonContext/ButtonsContext";
 import { useSensors } from "./SensorContext";
-import { limitButtonName } from "../utils/utilityFunctions";
+import { getText, limitButtonName } from "../utils/utilityFunctions";
 import SensorCard from "./sensorCell";
 import { ScrollArea } from "../ui/scroll-area";
 import { UserInterface } from "../users/usersCore/UserContext";
+import { useLanguage } from "../language/LanguageContext";
+import texts from "../../_data/texts.json";
 interface ButtonProps {
   clickedPosition: { i: number; j: number } | null;
   selectedUser: UserInterface | null;
@@ -88,7 +90,7 @@ export default function ModalSensor({
   const { toast } = useToast();
   const { sensors } = useSensors();
   const wss = useWebSocketData();
-
+  const { language } = useLanguage();
   const handleSensorClick = (deveui: string) => {
     setNameSensor(deveui); // Atualiza o estado do sensor clicado
     setTypeMeasure("");
@@ -213,7 +215,7 @@ export default function ModalSensor({
   const selectedSensor = sensors.filter((sensor) => {
     return sensor.deveui === nameSensor;
   })[0];
-  
+
   let sensorParameters = selectedSensor ? selectedSensor.parameters : [];
   // remover parâmetros que contêm "out" no nome se a descrição do sensor começar com "UC" (todos iot controllers)
   if (selectedSensor?.description?.startsWith("UC")) {
@@ -286,7 +288,7 @@ export default function ModalSensor({
                 <SelectContent position="popper">
                   {sensorParameters.map((param, index) => (
                     <SelectItem key={index} value={param.parameter}>
-                      {param.name}
+                      {getText(param.parameter.toLowerCase(), texts[language])}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -446,7 +448,10 @@ export default function ModalSensor({
             <div className={commonClasses}>
               <div className="flex flex-col justify-between cursor-pointer active:bg-red-900 bg-buttonSensor">
                 <div className="flex items-center  gap-1 cursor-pointer ">
-                  <ResponsivePng sensorModel={filteredModel?.description} size="icon"/>
+                  <ResponsivePng
+                    sensorModel={filteredModel?.description}
+                    size="icon"
+                  />
                   <p className=" flex text-sm font-medium leading-none xl4:text-2xl">
                     {nameButton}
                   </p>
@@ -463,28 +468,27 @@ export default function ModalSensor({
       <CardFooter className="flex justify-end w-full">
         {isUpdate && (
           <div className="flex w-full justify-between">
-                      <Button variant="secondary">
-            <AlertDialog>
-              <AlertDialogTrigger>Excluir</AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Essa ação não pode ser desfeita. Isso irá deletar
-                    permanentemente o botão Sensor.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleDeleteButton}>
-                    Excluir
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </Button>
+            <Button variant="secondary">
+              <AlertDialog>
+                <AlertDialogTrigger>Excluir</AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Essa ação não pode ser desfeita. Isso irá deletar
+                      permanentemente o botão Sensor.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDeleteButton}>
+                      Excluir
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </Button>
           </div>
-
         )}
         {!isCreating && (
           <Button onClick={handleCreateButton}>

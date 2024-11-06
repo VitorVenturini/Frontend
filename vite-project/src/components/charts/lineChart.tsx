@@ -13,6 +13,10 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { getText } from "../utils/utilityFunctions";
+import texts from "../../_data/texts.json"
+import { useLanguage } from "../language/LanguageContext";
+
 
 type ChartConfig = {
   [key: string]: {
@@ -29,6 +33,7 @@ export function Grafico({ chartData }: GraficoProps) {
   const [activeChart, setActiveChart] = useState<string | null>(null);
   const [dataChartConfig, setDataChartConfig] = useState<ChartConfig>({});
   const [keys, setKeys] = useState<string[]>([]);
+  const {language} = useLanguage()
   const [minMaxValues, setMinMaxValues] = useState<[number, number] | null>(null);
 
   // Função para gerar uma cor baseada em um índice
@@ -85,11 +90,11 @@ export function Grafico({ chartData }: GraficoProps) {
               <button
                 key={key}
                 data-active={activeChart === key}
-                className="flex flex-1 flex-col justify-center gap-1 border-t px-6 py-4 text-left even:border-l data-[active=true]:bg-muted/50 sm:border-l sm:border-t-0 sm:px-8 sm:py-6"
+                className="flex flex-1 flex-col justify-center items-center gap-1 border-t px-6 py-4 text-left even:border-l data-[active=true]:bg-muted/50 sm:border-l sm:border-t-0 sm:px-8 sm:py-6"
                 onClick={() => setActiveChart(key)}
               >
                 <span className="text-xs text-muted-foreground">
-                  {dataChartConfig[key]?.label}
+                  {getText(dataChartConfig[key]?.label.toLowerCase(), texts[language])}
                 </span>
               </button>
             );

@@ -32,6 +32,9 @@ import {
 } from "@/components/ui/select";
 import { useSensors } from "@/components/sensor/SensorContext";
 import { Label } from "@/components/ui/label";
+import { getText } from "../utils/utilityFunctions";
+import texts from "../../_data/texts.json";
+import { useLanguage } from "../language/LanguageContext";
 
 type ChartConfig = {
   [key: string]: {
@@ -46,6 +49,7 @@ interface SensorGraphProps {
 
 export function SensorGraph({ chartData }: SensorGraphProps) {
   const [activeChart, setActiveChart] = useState<string | null>(null);
+  const { language } = useLanguage();
   const [dataChartConfig, setDataChartConfig] = useState<ChartConfig>({});
   const [keys, setKeys] = useState<string[]>([]);
   const [actionExecDevice, setActionExecDevice] = useState("");
@@ -140,7 +144,10 @@ export function SensorGraph({ chartData }: SensorGraphProps) {
                     onClick={() => setActiveChart(key)}
                   >
                     <span className="text-xs text-muted-foreground">
-                      {dataChartConfig[key]?.label}
+                      {getText(
+                        dataChartConfig[key]?.label.toLowerCase(),
+                        texts[language]
+                      )}
                     </span>
                   </button>
                 );
