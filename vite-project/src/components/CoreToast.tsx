@@ -106,6 +106,6 @@ const CoreToast: React.FC = () => {
     setItems(sortedItems);
   }, [history]);
 
-  return <HistoryCell historyInfo={history[0]} />;
+  return <HistoryCell historyInfo={items[items.length -1]} />;
 };
 export default CoreToast;
