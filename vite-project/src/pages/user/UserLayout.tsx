@@ -238,7 +238,7 @@ function UserLayout() {
         const ButtonRequest = allBtn?.filter((btn) => {
           return btn.id === message.btn_id;
         })[0];
-        console.log("BUTTONREQUEST " + JSON.stringify(ButtonRequest))
+        console.log("BUTTONREQUEST " + JSON.stringify(ButtonRequest));
         if (ButtonRequest) {
           if (ButtonRequest.position_y === "1") {
             if (isAllowedButtonType(message.type)) {
@@ -284,7 +284,7 @@ function UserLayout() {
         break;
       case "IncreaseButtons":
         const newButton: ButtonInterface = message.result;
-        allBtn.push(newButton)
+        allBtn.push(newButton);
         addButton(newButton);
         break;
       case "UpdateButtonSuccess":
@@ -607,14 +607,14 @@ function UserLayout() {
           updateCall(message.call as number, {
             num: message.num,
             heldByUser: false,
-            btn_id: message.btn_id
+            btn_id: message.btn_id,
           });
         } else {
           // atualizar o num nesse caso por causa da conferencia
           updateCall(message.call as number, {
             num: message.num,
             heldByUser: false,
-            btn_id: message.btn_id
+            btn_id: message.btn_id,
           });
         }
         // usuario retomou a chamada
@@ -867,43 +867,56 @@ function UserLayout() {
     setClickedUserBottom(newUser);
   };
 
-  const startListening = () => {
-    // Verifica se o navegador suporta SpeechRecognition
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      console.warn("Speech Recognition API não é suportada neste navegador.");
-      return;
-    }
-
-    const recognition = new SpeechRecognition();
-    recognition.lang = 'pt-BR';
+  function startRecognition() {
+    const recognition = new (window.SpeechRecognition ||
+      window.webkitSpeechRecognition)();
+    recognition.lang = "pt-BR";
     recognition.interimResults = false;
+    recognition.continuous = true; // Continuously listen
+
+    let isActivated = false; // Control variable to track activation status
 
     recognition.onresult = (event) => {
-      const command = event.results[0][0].transcript;
-      console.log("Comando reconhecido:", command);
-      // Função para enviar o comando ao backend
-      sendCommandToBackend(command);
+      const command =
+        event.results[event.results.length - 1][0].transcript.toLowerCase();
+      console.log("Comando capturado:", command);
+
+      // Check if "Ei, CORE" or "Hey CORE" is detected to activate command mode
+      if (isActivationPhrase(command) && !isActivated) {
+        isActivated = true;
+        speak("Estou ouvindo");
+      } else if (isActivated) {
+        sendVoiceCommand(command); // Send the command to the backend
+        isActivated = false; // Reset activation for next time
+      }
     };
 
-    recognition.onend = () => {
-      // Reinicia a escuta ao final de cada sessão de reconhecimento
-      startListening();
-    };
+    recognition.onerror = (event) =>
+      console.error("Erro no reconhecimento de voz:", event);
 
     recognition.start();
-  };
+  }
 
-  // Função para enviar o comando ao backend
-  const sendCommandToBackend = (command) => {
-    // Lógica para enviar o comando ao backend, como via WebSocket
-  };
+  function isActivationPhrase(command) {
+    const activationPhrases = ["ei cor", "hey cor"];
+    return activationPhrases.some((phrase) => command.includes(phrase));
+  }
+
+  function sendVoiceCommand(command) {
+    // Function to send the command to the backend
+    console.log("Enviando comando para o backend:", command);
+    // Add WebSocket or other methods here to send the command to the backend
+  }
+
+  function speak(text) {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "pt-BR";
+    window.speechSynthesis.speak(utterance);
+  }
 
   useEffect(() => {
-    startListening();
+    startRecognition();
   }, []);
-
-
 
   return (
     <>
