@@ -15,6 +15,14 @@ import { ChangeEvent, useState, useEffect } from "react";
 import { useAccount } from "../account/AccountContext";
 import { useToast } from "@/components/ui/use-toast";
 import Logomarca from "../Logomarca";
+import { ModeToggle } from "../mode-toggle";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 import { useWebSocketData } from "../websocket/WebSocketProvider";
 import logoWecom2 from "@/assets/LogoWecom2.svg";
@@ -24,6 +32,8 @@ export default function ApparenceCard() {
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [fileContent, setFileContent] = useState<File | null>(null);
   const [isCreating, setIsCreating] = useState(false);
+  const [updateColor , setUpdateColor] = useState(false);
+  const [selectedColor, setSelectedColor] = useState<string>("blue");
   const account = useAccount();
   const { toast } = useToast();
   const wss = useWebSocketData();
@@ -109,7 +119,47 @@ export default function ApparenceCard() {
       setIsCreating(false);
     }
   };
+  const handleUpdatecolor = async () => {
+    setUpdateColor(true);
 
+    try {
+      const formData = new FormData();
+      formData.append("file", fileContent, "logomarca.png");
+
+      const response = await fetch(`${host}/api/systemPreference`, {
+        method: "POST",
+        headers: {
+          "x-auth": account.accessToken || "",
+        },
+        body: formData,
+      });
+
+      if (response.ok) {
+        toast({
+          description: "Cor atualizada com sucesso!",
+        });
+      } else {
+        const data = await response.json();
+        console.error("Erro ao enviar a imagem", data);
+        toast({
+          variant: "destructive",
+          description: "Erro Atualiza a cor.",
+        });
+      }
+    } catch (error) {
+      console.error("Erro ao atualizar a cor", error);
+      toast({
+        variant: "destructive",
+        description: "Erro ao atualizar a cor.",
+      });
+    } finally {
+      setUpdateColor(false);
+    }
+  };
+  const handleSave = async () => {
+    await handleUpdateLogo();
+    await handleUpdatecolor();
+  };
   return (
     <div>
       {}
@@ -146,9 +196,25 @@ export default function ApparenceCard() {
           <div>
             <Logomarca />
           </div>
+          <ModeToggle />
+          <div className="mt-4">
+            <label htmlFor="color-select" className="block text-sm font-medium text-gray-700">
+              Selecione uma cor:
+            </label>
+            <Select onValueChange={(value) => setSelectedColor(value)}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Theme" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="blue">Blue</SelectItem>
+                <SelectItem value="red">Red</SelectItem>
+                <SelectItem value="zinc">Zinc</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </CardContent>
         <CardFooter className="justify-end">
-          <Button disabled={isLoading} onClick={handleUpdateLogo}>
+          <Button disabled={isLoading} onClick={handleSave}>
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
