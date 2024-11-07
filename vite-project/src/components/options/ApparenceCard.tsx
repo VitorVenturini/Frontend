@@ -158,7 +158,7 @@ export default function ApparenceCard() {
   };
   const handleSave = async () => {
     await handleUpdateLogo();
-    await handleUpdatecolor();
+
   };
   return (
     <div>
