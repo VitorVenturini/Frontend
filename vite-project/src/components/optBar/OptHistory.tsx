@@ -30,13 +30,13 @@ const HistoryCell: React.FC<HistoryCellProps> = ({ historyInfo }) => {
     <div className="flex flex-col bg-muted w-[500px] xl2:w-[700px] xl4:w-[1000px] mt-2 ">
       <div className="flex gap-1 bg-card/50 px-2 py-1 justify-between items-center">
         <div className="flex gap-1 ">
-          <p className="text-sm text-muted-foreground font-black">
+          <p className="text-sm  font-black">
             {replaceDataForName(users, historyInfo.from, sensors)}
           </p>
           <p className="text-sm text-muted-foreground">
             {getText("to", texts[language])}
           </p>
-          <p className="text-sm text-foreground font-black">
+          <p className="text-sm text-fuchsia">
             {replaceDataForName(users, historyInfo.guid, sensors)}
           </p>
         </div>

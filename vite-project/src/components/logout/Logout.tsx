@@ -49,8 +49,7 @@ export default function Logout() {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>{texts[language].cancel}</AlertDialogCancel>
-          <AlertDialogAction asChild>
-            <a onClick={handleLogout}>{texts[language].logout}</a>
+          <AlertDialogAction onClick={handleLogout}>{texts[language].logout}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

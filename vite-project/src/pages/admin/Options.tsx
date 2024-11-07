@@ -11,6 +11,7 @@ import APIGoogleCard from "@/components/options/ApiGoogle/APIGoogleCard";
 import IotCameraCard from "@/components/options/IotCameraCard";
 import Notify from "@/components/options/Notifications/Notifications";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
+import ApparenceCard from "@/components/options/ApparenceCard";
 
 export default function MenuOptions() {
   const [activeButton, setActiveButton] = useState<string | null>(null);
@@ -49,6 +50,8 @@ export default function MenuOptions() {
         return <Notify />;
         case "Email":
           return <SMTPconfig />;
+      case "Apparence":
+        return <ApparenceCard />;    
       default:
         
         return null;
@@ -64,6 +67,13 @@ export default function MenuOptions() {
           onClick={() => handleClick("License")}
         >
           License
+        </Button>
+        <Button
+          className="focus:bg-accent"
+          variant={"ghost"}
+          onClick={() => handleClick("Apparence")}  
+        >
+          Aparência
         </Button>
         <Button
           className="focus:bg-accent"
