@@ -29,6 +29,7 @@ import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { useLanguage } from "@/components/language/LanguageContext";
 import { useSensors } from "@/components/sensor/SensorContext";
 import { ActionsInteface } from "./ActionsContext";
+import { getText } from "../utils/utilityFunctions";
 
 interface UpdateActionsProps {
   action?: ActionsInteface;
@@ -76,7 +77,7 @@ export default function CardTriggerActions({
     onUpdateTriggerActionDetails("actionStartDevicePrt", value);
   };
   const shouldRenderInput =
-    actionStartType === "minValue" || actionStartType === "maxValue";
+    actionStartType === "minValue" || actionStartType === "maxValue" || actionStartType === "equalValue";
 
   const selectedStartSensor = sensors.filter((p) => {
     return p.deveui === actionSensorName;
@@ -118,6 +119,9 @@ export default function CardTriggerActions({
                 </SelectItem>
                 <SelectItem value="minValue">
                   {texts[language].sensorMinValue}
+                </SelectItem>
+                <SelectItem value="equalValue">
+                  Valor Igual que
                 </SelectItem>
                 <SelectItem value="maxValue">
                   {texts[language].sensorMaxValue}
@@ -184,9 +188,9 @@ export default function CardTriggerActions({
                 <SelectContent position="popper">
                   <SelectGroup>
                     <SelectLabel>{texts[language].sensors}</SelectLabel>
-                    {filteredStartSensor.map((sensor, i) => (
-                      <SelectItem key={i} value={sensor.parameter}>
-                        {sensor.name}
+                    {filteredStartSensor.map((param, i) => (
+                      <SelectItem key={i} value={param.parameter}>
+                          {getText(param.parameter.toLowerCase(), texts[language])}
                       </SelectItem>
                     ))}
                   </SelectGroup>
@@ -211,8 +215,8 @@ export default function CardTriggerActions({
               <SelectContent>
                 <SelectGroup>
                   <SelectLabel>{texts[language].commandOpenClose}</SelectLabel>
-                  <SelectItem value="open">{texts[language].open}</SelectItem>
-                  <SelectItem value="closed">
+                  <SelectItem value="1">{texts[language].open}</SelectItem>
+                  <SelectItem value="0">
                     {texts[language].closed}
                   </SelectItem>
                 </SelectGroup>

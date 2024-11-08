@@ -74,6 +74,7 @@ export default function ButtonsGridPages({
         variant: "destructive",
         description: "Por Favor escolha um nome para a página",
       });
+      setPageName("")
       return;
     }
     wss.sendMessage({
@@ -83,6 +84,7 @@ export default function ButtonsGridPages({
       pageName: pageName,
       pageNumber: pageNumber,
     });
+    setPageName("")
   };
 
   const handleTypePageName = (event: React.ChangeEvent<HTMLInputElement>) => {

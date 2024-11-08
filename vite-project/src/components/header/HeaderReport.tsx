@@ -1,5 +1,5 @@
 import { ThemeProvider } from "@/components/theme-provider";
-import { ModeToggle } from "@/components/mode-toggle";
+
 import logo from "@/assets/principal.svg";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -80,7 +80,7 @@ export default function HeaderReport() {
      
 
           <Logout />
-          <ModeToggle />
+
           <LanguageToggle />
         </div>
       </div>

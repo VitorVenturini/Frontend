@@ -55,7 +55,10 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { TouchBackend } from "react-dnd-touch-backend";
 import { isMobile } from "react-device-detect"; // Detectar se é um dispositivo móvel
-
+import {
+  setBusyLightColor,
+  stopBusyLightColor,
+} from "@/components/api/ApiFunctions";
 interface User {
   id: string;
   name: string;
@@ -233,31 +236,61 @@ function UserLayout() {
         updateSensorButton(sensorDataReceived);
         updateGraphSensor(sensorDataReceived);
         break;
-
+      case "ButtonRequest":
+        comboStarted(message.btn_id);
+        const ButtonRequest = allBtn?.filter((btn) => {
+          return btn.id === message.btn_id;
+        })[0];
+        console.log("BUTTONREQUEST " + JSON.stringify(ButtonRequest));
+        if (ButtonRequest) {
+          if (ButtonRequest.position_y === "1") {
+            if (isAllowedButtonType(message.type)) {
+              setSelectedOptTop(
+                message.type === "camera" ? "sensor" : message.type
+              );
+              //nao existe opt camera , entao se o botão for do tipo camera colocamos a opt Sensor
+            }
+          } else if (ButtonRequest.position_y === "2") {
+            if (isAllowedButtonType(message.type)) {
+              setSelectedOptBottom(
+                message.type === "camera" ? "sensor" : message.type
+              );
+              //nao existe opt camera , entao se o botão for do tipo camera colocamos a opt Sensor
+              console.log(
+                "OptBottom" + selectedOptBottom + "OptTop" + selectedOptTop
+              );
+            }
+          }
+        }
+        break;
       case "AlarmReceived":
         const filteredBtn = allBtn.filter((btn) => {
           return btn.id === message.btn_id;
         })[0];
         setButtonTriggered(message.btn_id, true);
-
         if (!filteredBtn?.muted && filteredBtn?.button_type === "sensor") {
+          setBusyLightColor();
           setTimeout(() => setPlayNotificationSoundSensor(true), 1500);
           setTimeout(() => setPlayNotificationSoundSensor(false), 2000);
-        } else if (filteredBtn.button_type === "alarm") {
+        } else if (filteredBtn?.button_type === "alarm") {
+          setBusyLightColor();
           setTimeout(() => setPlayNotificationSoundAlarm(true), 1500);
           setTimeout(() => setPlayNotificationSoundAlarm(false), 2000);
         }
-
+        // colocar cor na busy light
         break;
       case "AlarmStopReceived":
         setStopButtonTriggered(message.alarm, false); // caso o usuário tenha mais de 1 botão com o mesmo código de alarme
         setButtonTriggered(message.btn_id, false);
+        // desativa a cor na busy light
+        stopBusyLightColor();
         break;
       case "DeleteButtonsSuccess":
         deleteButton(message.id_deleted);
         break;
       case "IncreaseButtons":
         const newButton: ButtonInterface = message.result;
+        allBtn.push(newButton);
         addButton(newButton);
         break;
       case "UpdateButtonSuccess":
@@ -529,7 +562,7 @@ function UserLayout() {
             startTime: Date.now(),
             device: message.device,
             btn_id: message.btn_id,
-            type: "buttonCall",
+            type: "dialpad",
             held: false,
             heldByUser: false,
           });
@@ -580,14 +613,16 @@ function UserLayout() {
           updateCall(message.call as number, {
             num: message.num,
             heldByUser: false,
-            btn_id: message.btn_id
+            btn_id: message.btn_id,
           });
         } else {
           // atualizar o num nesse caso por causa da conferencia
           updateCall(message.call as number, {
             num: message.num,
             heldByUser: false,
+
             btn_id: message.btn_id === "" ? null : message.btn_id
+
           });
         }
         // usuario retomou a chamada
@@ -775,13 +810,7 @@ function UserLayout() {
         break;
       case "SmartButtonReceived":
         setButtonTriggered(message.btn_id, true);
-        // addHistory({
-        //   date: message.date
-        //     ? format(new Date(message.date), "dd/MM HH:mm")
-        //     : format(new Date(), "dd/MM HH:mm"),
-        //   type: "sensor",
-        //   message: "Botão Vermelho Disparou",
-        // });
+        setBusyLightColor()
         toast({
           description: "Botão Vermelho Disparou",
         });

@@ -112,12 +112,14 @@ export function checkButtonWarning(
   return false;
 }
 //função para o typeScript parar de encher o saco
-export const getText = (key: string | undefined, languageTexts: {}): string => {
-  if (key && key in languageTexts) {
+export const getText = (key: string | undefined, languageTexts: {} = {}): string => {
+  if (key && languageTexts && key in languageTexts) {
     return languageTexts[key as keyof typeof languageTexts];
   }
-  return key || ""; // ou outra mensagem padrão
+  return key || ""; // Retorna a chave ou uma mensagem padrão
 };
+
+
 
 export function generateAvatar(initials: string, size: number = 64): string {
   const canvas = document.createElement("canvas");

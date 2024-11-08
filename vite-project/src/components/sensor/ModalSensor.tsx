@@ -38,10 +38,12 @@ import { Loader2 } from "lucide-react";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { ButtonInterface } from "@/components/buttons/buttonContext/ButtonsContext";
 import { useSensors } from "./SensorContext";
-import { limitButtonName } from "../utils/utilityFunctions";
+import { getText, limitButtonName } from "../utils/utilityFunctions";
 import SensorCard from "./sensorCell";
 import { ScrollArea } from "../ui/scroll-area";
 import { UserInterface } from "../users/usersCore/UserContext";
+import { useLanguage } from "../language/LanguageContext";
+import texts from "../../_data/texts.json";
 interface ButtonProps {
   clickedPosition: { i: number; j: number } | null;
   selectedUser: UserInterface | null;
@@ -75,6 +77,9 @@ export default function ModalSensor({
   const [minValue, setMinValue] = useState(
     existingButton?.sensor_min_threshold || ""
   );
+  const [pressValue, setPressValue] = useState(
+    existingButton?.button_device || ""
+  );
 
   const [geralThreshold, setGeralThreshold] = useState(
     existingButton?.sensor_max_threshold || ""
@@ -88,10 +93,14 @@ export default function ModalSensor({
   const { toast } = useToast();
   const { sensors } = useSensors();
   const wss = useWebSocketData();
-
+  const { language } = useLanguage();
   const handleSensorClick = (deveui: string) => {
     setNameSensor(deveui); // Atualiza o estado do sensor clicado
     setTypeMeasure("");
+  };
+
+  const handlePressValue = (event: ChangeEvent<HTMLInputElement>) => {
+    setPressValue(event.target.value);
   };
 
   const handleNameButton = (event: ChangeEvent<HTMLInputElement>) => {
@@ -150,6 +159,7 @@ export default function ModalSensor({
           name: nameButton,
           value: nameSensor, //devEUID
           guid: selectedUser?.guid,
+          device: pressValue,
           type: "sensor",
           img: filteredModel.description,
           min: showSelectOnly ? "" : minValue,
@@ -207,13 +217,15 @@ export default function ModalSensor({
     "daylight",
   ];
 
+  const typesWithInputNumber = ["press_short", "press_double", "press_long"];
   const showMinMaxFields = !typesWithoutMinMax.includes(typeMeasure);
   const showSelectOnly = typesWithSelectOnly.includes(typeMeasure);
+  const showInputNumber = typesWithInputNumber.includes(typeMeasure);
 
   const selectedSensor = sensors.filter((sensor) => {
     return sensor.deveui === nameSensor;
   })[0];
-  
+
   let sensorParameters = selectedSensor ? selectedSensor.parameters : [];
   // remover parâmetros que contêm "out" no nome se a descrição do sensor começar com "UC" (todos iot controllers)
   if (selectedSensor?.description?.startsWith("UC")) {
@@ -286,7 +298,7 @@ export default function ModalSensor({
                 <SelectContent position="popper">
                   {sensorParameters.map((param, index) => (
                     <SelectItem key={index} value={param.parameter}>
-                      {param.name}
+                      {getText(param.parameter.toLowerCase(), texts[language])}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -381,7 +393,27 @@ export default function ModalSensor({
                 </div>
               </>
             )}
-
+            {showInputNumber && (
+              <>
+                <div className="grid grid-cols-4 items-center py-1 gap-4">
+                  <Label className="text-end" htmlFor="numButton">
+                    Número do Botão
+                  </Label>
+                  <Input
+                    className="col-span-3"
+                    id="minValue"
+                    placeholder="00"
+                    type="number"
+                    value={pressValue}
+                    onChange={handlePressValue}
+                    required
+                    disabled={!typeMeasure}
+                    min={1}
+                    max={6}
+                  />
+                </div>
+              </>
+            )}
             {typeMeasure === "wind_direction" && (
               <div>
                 <div className="grid grid-cols-4 py-1 items-center gap-4 mb-4">
@@ -442,11 +474,14 @@ export default function ModalSensor({
             )}
           </div>
           <div className="flex-col gap-4 items-start justify-end align-bottom h-[25%]">
-            <h4>Preview</h4>
+            <h4>{texts[language].preview}</h4>
             <div className={commonClasses}>
               <div className="flex flex-col justify-between cursor-pointer active:bg-red-900 bg-buttonSensor">
                 <div className="flex items-center  gap-1 cursor-pointer ">
-                  <ResponsivePng sensorModel={filteredModel?.description} size="icon"/>
+                  <ResponsivePng
+                    sensorModel={filteredModel?.description}
+                    size="icon"
+                  />
                   <p className=" flex text-sm font-medium leading-none xl4:text-2xl">
                     {nameButton}
                   </p>
@@ -454,7 +489,7 @@ export default function ModalSensor({
                 <p className="text-[9px] font-medium leading-none text-muted-foreground">
                   {filteredModel?.sensor_name}
                 </p>
-                {typePreview}
+                {getText(typePreview.toLowerCase(), texts[language])}
               </div>
             </div>
           </div>
@@ -463,28 +498,27 @@ export default function ModalSensor({
       <CardFooter className="flex justify-end w-full">
         {isUpdate && (
           <div className="flex w-full justify-between">
-                      <Button variant="secondary">
-            <AlertDialog>
-              <AlertDialogTrigger>Excluir</AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Essa ação não pode ser desfeita. Isso irá deletar
-                    permanentemente o botão Sensor.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleDeleteButton}>
-                    Excluir
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </Button>
+            <Button variant="secondary">
+              <AlertDialog>
+                <AlertDialogTrigger>Excluir</AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Essa ação não pode ser desfeita. Isso irá deletar
+                      permanentemente o botão Sensor.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDeleteButton}>
+                      Excluir
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </Button>
           </div>
-
         )}
         {!isCreating && (
           <Button onClick={handleCreateButton}>

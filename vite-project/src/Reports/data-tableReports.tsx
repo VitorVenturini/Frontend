@@ -41,7 +41,7 @@ import { useLanguage } from "@/components/language/LanguageContext";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PdfProps } from "./ExportReports";
-import { isBase64File } from "@/components/utils/utilityFunctions";
+import { getText, isBase64File } from "@/components/utils/utilityFunctions";
 import { Image } from "lucide-react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 interface DataTableProps<TData> {
@@ -96,7 +96,7 @@ export function DataTable<TData>({
             );
           },
         };
-      }else if((column as any).accessorKey === "prt"){
+      } else if ((column as any).accessorKey === "prt") {
         return {
           ...column,
           cell: ({ row }: { row: any }) => {
@@ -119,9 +119,18 @@ export function DataTable<TData>({
                 </DialogContent>
               </Dialog>
             ) : (
-              message
+              getText(message, texts[language])
             );
           },
+        };
+      } else if ((column as any).accessorKey === "name") {
+        return {
+          ...column,
+          cell: ({ row }: { row: any }) => {
+            const message = row.original.name;
+            // Retorna o ícone de imagem se for Base64, senão retorna o conteúdo da mensagem
+            return getText(message, texts[language])
+          }
         };
       }
       return column;

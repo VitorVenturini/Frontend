@@ -16,6 +16,7 @@ import CoreToast from "@/components/CoreToast";
 import Loader2 from "../Loader2";
 import useWebSocket from "@/components/websocket/useWebSocket";
 import { useWebSocketData } from "../websocket/WebSocketProvider";
+import Logomarca from "../Logomarca";
 
 export default function HeaderUser() {
   const account = useAccount();
@@ -51,7 +52,9 @@ export default function HeaderUser() {
         <div className="basis-1/2">
           <CoreToast />
         </div>
-        <img src={LogoWecom2} className="h-4 opacity-30" />
+        <div className="h-[44px]" >
+          <Logomarca/>
+        </div>
         <Button className="flex justify-center basis-1/8" variant="secondary">
           <DigitalClock />
         </Button>
