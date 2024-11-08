@@ -119,8 +119,14 @@ export default function SensorResponsiveInfo({
         metric = "";
         break;
       default:
-        formattedValue = value;
-        metric = "";
+        if(sensorType.toLowerCase().startsWith("press_")){
+          formattedValue = button?.button_device
+          metric = "";
+        }else{
+          formattedValue = value;
+          metric = "";
+        } 
+      
         break;
     }
 

@@ -14,7 +14,7 @@ interface HistoryCellProps {
 export const createHistoryContent = (
   name: string,
   status?: string,
-  truncatedPrt?: string
+  prt?: string
 ) => {
   let badgeVariant: string =
     "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ";
@@ -34,12 +34,19 @@ export const createHistoryContent = (
     case "threshold":
       badgeVariant +=
         "border-transparent bg-red-900 text-red-100 hover:bg-red-800";
-      content = `Limite: ${truncatedPrt}`;
+      content = `Limite: ${prt}`;
       break;
+    case "button":
+      if(prt?.startsWith("press_")){
+        badgeVariant +=
+        "border-transparent bg-purple-900 text-red-100 hover:bg-purple-800";
+      content = `Limite: ${prt}`;
+      }
+    break;
     default:
       badgeVariant +=
         "border-transparent bg-gray-900 text-gray-100 hover:bg-gray-800";
-      content = truncatedPrt;
+      content = prt;
   }
 
   return { badgeVariant, content };
@@ -67,7 +74,7 @@ export default function ResponsiveHistoryInfo({
     <>
       <div className=" flex justify-between rounded-md my-2 items-center px-2 py-1">
         <div className="flex items-center gap-1 capitalize">
-          <span className={createHistoryContent(historyInfo.name).badgeVariant}>
+          <span className={createHistoryContent(historyInfo?.name,null,historyInfo?.prt).badgeVariant}>
             {historyInfo.name
               ? getText(historyInfo.name, texts[language])
               : historyInfo.name}
