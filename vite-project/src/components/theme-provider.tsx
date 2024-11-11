@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useState } from "react"
+import { host } from "@/App"
+import { set } from "date-fns"
 
-type Theme = "zinc" | "red" | "root" 
+type Theme = "zinc" | "red" | "root"
 
 type ThemeProviderProps = {
   children: React.ReactNode
@@ -31,6 +33,25 @@ export function ThemeProvider({
   )
 
   useEffect(() => {
+    const fetchSystemPreferences = async () => {
+      try {
+        const response = await fetch(`${host}/api/systemPreferences`)
+        const data = await response.json()
+        if (data.theme) {
+          setTheme(data.theme as Theme)
+          localStorage.setItem(storageKey, data.theme)
+          console.log(data.theme)
+        }
+      } catch (error) {
+        console.error("Failed to fetch system preferences:", error)
+      }
+      
+    }
+
+    fetchSystemPreferences()
+  }, [storageKey])
+
+  useEffect(() => {
     const root = window.document.documentElement
 
     root.classList.remove("light", "dark")
@@ -40,34 +61,17 @@ export function ThemeProvider({
         .matches
         ? "dark"
         : "light"
-
       root.classList.add(systemTheme)
-      return
+    } else {
+      root.classList.add(theme)
     }
-
-    root.classList.add(theme)
   }, [theme])
 
-  const value = {
-    theme,
-    setTheme: (theme: Theme) => {
-      localStorage.setItem(storageKey, theme)
-      setTheme(theme)
-    },
-  }
-
   return (
-    <ThemeProviderContext.Provider {...props} value={value}>
+    <ThemeProviderContext.Provider value={{ theme, setTheme }}>
       {children}
     </ThemeProviderContext.Provider>
   )
 }
 
-export const useTheme = () => {
-  const context = useContext(ThemeProviderContext)
-
-  if (context === undefined)
-    throw new Error("useTheme must be used within a ThemeProvider")
-
-  return context
-}
+export const useTheme = () => useContext(ThemeProviderContext)
