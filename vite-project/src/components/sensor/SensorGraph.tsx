@@ -105,6 +105,8 @@ export function SensorGraph({ chartData }: SensorGraphProps) {
   const handleExecDevice = (value: string) => {
     setActionExecDevice(value);
   };
+
+  console.log("keys "  + keys)
   return (
     <Card
       className="w-full   lg:h-[200px] xl:h-[250px] xl2:h-[300px] xl3:h-[370px] xl4:h-[450px] relative
@@ -112,48 +114,25 @@ export function SensorGraph({ chartData }: SensorGraphProps) {
     >
       <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
         <div className="flex flex-1 justify-center gap-1 px-2 py-2 ">
-          {keys.length >= 8 ? (
-            <>
-              <Label className="text-sm" htmlFor="framework" id="typeMeasure">
-                Tipo de medida
-              </Label>
-              <Select
-                value={activeChart as string}
-                onValueChange={setActiveChart}
-              >
-                <SelectTrigger className="col-span-3" id="SelectTypeMeasure">
-                  <SelectValue placeholder="Selecione o tipo de medida" />
-                </SelectTrigger>
-                <SelectContent position="popper">
-                  {keys.map((key, index) => (
-                    <SelectItem key={index} value={key}>
-                      {dataChartConfig[key]?.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </>
-          ) : (
-            <>
-              {keys.map((key) => {
-                return (
-                  <button
-                    key={key}
-                    data-active={activeChart === key}
-                    className="flex flex-1 flex-col justify-center gap-1 border-t p-2  text-left  data-[active=true]:bg-muted/50"
-                    onClick={() => setActiveChart(key)}
-                  >
-                    <span className="text-xs text-muted-foreground">
-                      {getText(
-                        dataChartConfig[key]?.label.toLowerCase(),
-                        texts[language]
-                      )}
-                    </span>
-                  </button>
-                );
-              })}
-            </>
-          )}
+          <>
+            {keys.map((key) => {
+              return (
+                <button
+                  key={key}
+                  data-active={activeChart === key}
+                  className="flex flex-1 flex-col justify-center gap-1 border-t p-2  text-left  data-[active=true]:bg-muted/50"
+                  onClick={() => setActiveChart(key)}
+                >
+                  <span className="text-xs text-muted-foreground">
+                    {getText(
+                      dataChartConfig[key]?.label.toLowerCase(),
+                      texts[language]
+                    )}
+                  </span>
+                </button>
+              );
+            })}
+          </>
         </div>
       </CardHeader>
       <CardContent className="h-full w-full  p-0">
