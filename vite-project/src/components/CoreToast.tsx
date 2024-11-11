@@ -80,7 +80,7 @@ const HistoryCell: React.FC<HistoryCellProps> = ({ historyInfo }) => {
                 historyInfo?.prt,
                 language,
                 filteredButton,
-                filteredSensorValue
+                historyInfo?.value
               ).content
             : truncatedPrt}
         </p>
@@ -92,7 +92,7 @@ const HistoryCell: React.FC<HistoryCellProps> = ({ historyInfo }) => {
                 historyInfo?.prt,
                 language,
                 filteredButton,
-                filteredSensorValue
+                historyInfo?.value
               ).statusValue
             : historyInfo?.status}
         </p>

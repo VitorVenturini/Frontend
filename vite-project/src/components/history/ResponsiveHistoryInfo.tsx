@@ -147,7 +147,7 @@ export default function ResponsiveHistoryInfo({
                   historyInfo?.prt,
                   language,
                   filteredButton,
-                  filteredSensorValue
+                  historyInfo?.value
                 ).content
               : truncatedPrt}
           </p>
@@ -159,7 +159,7 @@ export default function ResponsiveHistoryInfo({
                   historyInfo?.prt,
                   language,
                   filteredButton,
-                  filteredSensorValue
+                  historyInfo?.value
                 ).statusValue
               : historyInfo?.status}
           </p>

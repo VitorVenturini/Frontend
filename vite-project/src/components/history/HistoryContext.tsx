@@ -8,6 +8,7 @@ export interface HistoryInterface {
   name: string;
   date: string;
   status: string;
+  value?: string
   prt: string;
   details: string;
 
