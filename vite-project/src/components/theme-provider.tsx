@@ -1,8 +1,9 @@
 import { createContext, useContext, useEffect, useState } from "react"
 import { host } from "@/App"
 import { set } from "date-fns"
+import { useWebSocketData } from "./websocket/WebSocketProvider"
 
-type Theme = "zinc" | "red" | "root"
+type Theme = "zinc" | "red" | "root" | "blue"
 
 type ThemeProviderProps = {
   children: React.ReactNode
@@ -20,6 +21,7 @@ const initialState: ThemeProviderState = {
   setTheme: () => null,
 }
 
+
 const ThemeProviderContext = createContext<ThemeProviderState>(initialState)
 
 export function ThemeProvider({
@@ -31,6 +33,8 @@ export function ThemeProvider({
   const [theme, setTheme] = useState<Theme>(
     () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
   )
+
+  const wss = useWebSocketData();
 
   useEffect(() => {
     const fetchSystemPreferences = async () => {

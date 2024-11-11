@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useTheme } from "@/components/theme-provider"
+import { useTheme } from "@/components/theme-provider";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -39,7 +39,7 @@ export default function ApparenceCard() {
   const account = useAccount();
   const { toast } = useToast();
   const wss = useWebSocketData();
-  const { setTheme } = useTheme()
+  const { setTheme } = useTheme();
 
   useEffect(() => {
     // Fetch the current logo from the backend
@@ -87,19 +87,9 @@ export default function ApparenceCard() {
         vl: selectedColor,
         entry: "theme",
       });
-      toast({
-        title: "Success",
-        description: "Theme color updated successfully",
-        
-      });
-      setTheme(selectedColor);
+      setTheme(selectedColor as any);
     } catch (error) {
       console.error("Error updating theme color:", error);
-      toast({
-        title: "Error",
-        description: "Failed to update theme color",
-        
-      });
     } finally {
       setUpdateColor(false);
     }
@@ -140,24 +130,39 @@ export default function ApparenceCard() {
             </Card>
             <div className="flex justify-between w-full items-center">
               <Label> Escolha uma cor</Label>
-              <select
-          
-              value={selectedColor}
-              onChange={(e) => setSelectedColor(e.target.value)}
-              className="mt-1 block w-full"
-            >
-              <option value="root">Blue</option>
-              <option value="red">Red</option>
-              <option value="zinc">Zinc</option>
-            </select>
+
+              <Button
+                onClick={() => {
+                  setSelectedColor("blue");
+                  setTheme("blue");
+                }}
+              >
+                Azul
+              </Button>
+              <Button
+                onClick={() => {
+                  setSelectedColor("red");
+                  setTheme("red");
+                }}
+              >
+                Vermelho
+              </Button>
+              <Button
+                onClick={() => {
+                  setSelectedColor("zinc");
+                  setTheme("zinc");
+                }}
+              >
+                Zinco
+              </Button>
             </div>
             <Button
-            onClick={handleUpdateColor}
-            disabled={updateColor}
-            className="mt-4"
-          >
-            {updateColor ? "Saving..." : "Save"}
-          </Button>
+              onClick={handleUpdateColor}
+              disabled={updateColor}
+              className="mt-4"
+            >
+              {updateColor ? "Saving..." : "Salvar este tema"}
+            </Button>
           </div>
         </CardContent>
         <CardFooter className="justify-end">
