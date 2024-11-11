@@ -88,7 +88,7 @@ call,
   };
   return (
     <div className="m-2">
-      <div className="w-full flex justify-between m-1 p-1  ">
+      <div className="w-full flex justify-between m-1 p-1">
         <div className="w-full">{keySequence.join(" ")}</div>
         <div className="cursor-pointer" onClick={handleClearKey}>
           <Delete />

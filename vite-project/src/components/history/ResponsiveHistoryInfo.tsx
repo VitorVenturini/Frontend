@@ -122,9 +122,6 @@ export default function ResponsiveHistoryInfo({
     return sensor.deveui === filteredButton?.button_prt;
   })[0];
 
-  console.log(
-    "filteredSensor" + filteredSensor?.[`${filteredButton.sensor_type}`]
-  );
   const filteredSensorValue = filteredSensor?.[`${filteredButton.sensor_type}`];
 
   return (
