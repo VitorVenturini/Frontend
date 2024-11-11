@@ -213,6 +213,30 @@ export default function ApparenceCard() {
                 Zinco
                 <div className="bg-zinc-400 w-[20px] h-[20px]" />
               </Button>
+              <Button
+                variant="outline"
+                className="gap-2 flex items-center"
+                onClick={() => handlePreviewColor("green")}
+              >
+                Verde
+                <div className="bg-green-400 w-[20px] h-[20px]" />
+              </Button>
+              <Button
+                variant="outline"
+                className="gap-2 flex items-center"
+                onClick={() => handlePreviewColor("orange")}
+              >
+                Laranja
+                <div className="bg-orange-400 w-[20px] h-[20px]" />
+              </Button>
+              <Button
+                variant="outline"
+                className="gap-2 flex items-center"
+                onClick={() => handlePreviewColor("violet")}
+              >
+                Roxo
+                <div className="bg-violet-500 w-[20px] h-[20px]" />
+              </Button>
             </div>
             <Button
               onClick={handleUpdateColor}

@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { host } from "@/App";
 import { useWebSocketData } from "./websocket/WebSocketProvider";
 
-export type Theme = "zinc" | "red" | "root" | "blue";
+export type Theme = "zinc" | "red" | "root" | "blue" | "violet" | "orange" |"green";
 
 type ThemeProviderProps = {
   children: React.ReactNode;
@@ -65,7 +65,7 @@ export function ThemeProvider({
 
   useEffect(() => {
     const root = window.document.documentElement;
-    root.classList.remove("light", "dark", "zinc", "red", "blue");
+    root.classList.remove("light", "dark", "zinc", "red", "blue", "violet", "orange", "green");
 
     const appliedTheme = previewTheme === "root"
       ? window.matchMedia("(prefers-color-scheme: dark)").matches
