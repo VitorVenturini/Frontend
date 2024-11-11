@@ -2,7 +2,7 @@ import { useSensors } from "@/components/sensor/SensorContext";
 import ResponsiveIcon from "./ResponsiveIcon";
 import { ButtonInterface } from "@/components/buttons/buttonContext/ButtonsContext";
 import { useAccount } from "../account/AccountContext";
-import texts from "../../_data/texts.json"
+import texts from "../../_data/texts.json";
 import { useLanguage } from "../language/LanguageContext";
 import { getText } from "../utils/utilityFunctions";
 
@@ -12,63 +12,55 @@ interface ButtonProps {
   newValue?: number;
 }
 
-export default function SensorResponsiveInfo({
-  button,
-  oldValue,
-  newValue,
-}: ButtonProps) {
-  const { buttonSensors } = useSensors();
-  const account = useAccount();
-  const {language} = useLanguage()
-
-  function getWindDirection(degrees: number) {
-    if (degrees >= 0 && degrees < 22.5) {
-      return "N";
-    } else if (degrees >= 22.5 && degrees < 67.5) {
-      return "NE";
-    } else if (degrees >= 67.5 && degrees < 112.5) {
-      return "E";
-    } else if (degrees >= 112.5 && degrees < 157.5) {
-      return "SE";
-    } else if (degrees >= 157.5 && degrees < 202.5) {
-      return "S";
-    } else if (degrees >= 202.5 && degrees < 247.5) {
-      return "SW";
-    } else if (degrees >= 247.5 && degrees < 292.5) {
-      return "W";
-    } else if (degrees >= 292.5 && degrees < 337.5) {
-      return "NW";
-    } else if (degrees >= 337.5 && degrees <= 360) {
-      return "N";
-    } else {
-      return "Invalid direction";
-    }
+function getWindDirection(degrees: number) {
+  if (degrees >= 0 && degrees < 22.5) {
+    return "N";
+  } else if (degrees >= 22.5 && degrees < 67.5) {
+    return "NE";
+  } else if (degrees >= 67.5 && degrees < 112.5) {
+    return "E";
+  } else if (degrees >= 112.5 && degrees < 157.5) {
+    return "SE";
+  } else if (degrees >= 157.5 && degrees < 202.5) {
+    return "S";
+  } else if (degrees >= 202.5 && degrees < 247.5) {
+    return "SW";
+  } else if (degrees >= 247.5 && degrees < 292.5) {
+    return "W";
+  } else if (degrees >= 292.5 && degrees < 337.5) {
+    return "NW";
+  } else if (degrees >= 337.5 && degrees <= 360) {
+    return "N";
+  } else {
+    return "Invalid direction";
   }
+}
 
-  function getLightLevel(level: number) {
-    switch (level) {
-      case 0:
-        return "Sem Luz"
-      case 1:
-        return "Muito Baixa"
-      case 2:
-        return "Baixa"
-      case 3:
-        return "Média"
-      case 4:
-        return "Alta"
-      case 5:
-        return "Muito Alta"
+function getLightLevel(level: number) {
+  switch (level) {
+    case 0:
+      return "Sem Luz";
+    case 1:
+      return "Muito Baixa";
+    case 2:
+      return "Baixa";
+    case 3:
+      return "Média";
+    case 4:
+      return "Alta";
+    case 5:
+      return "Muito Alta";
 
-      default:
-        break;
-    }
+    default:
+      break;
   }
+}
 
-  const handleSensorSpecificValue = (sensorType: string, value: any) => {
-    let formattedValue;
-    let metric;
+export const handleSensorSpecificValue = (sensorType: string, value: any, button: ButtonInterface) => {
+  let formattedValue;
+  let metric;
 
+  if(sensorType){
     switch (sensorType.toLowerCase()) {
       case "leak":
         formattedValue = value === 0 ? "Normal" : "Alagado";
@@ -111,27 +103,43 @@ export default function SensorResponsiveInfo({
         metric = "";
         break;
       case "wind_speed":
-        formattedValue = value
+        formattedValue = value;
         metric = "km/h";
         break;
       case "light_level":
-        formattedValue = getLightLevel(value)
+        formattedValue = getLightLevel(value);
         metric = "";
         break;
       default:
-        formattedValue = value;
-        metric = "";
+        if (sensorType.toLowerCase().startsWith("press_")) {
+          formattedValue = button?.button_device;
+          metric = "";
+        } else {
+          formattedValue = value;
+          metric = "";
+        }
+  
         break;
     }
+  }
 
-    return { formattedValue, metric };
-  };
+  return { formattedValue, metric };
+};
+
+export default function SensorResponsiveInfo({
+  button,
+  oldValue,
+  newValue,
+}: ButtonProps) {
+  const { buttonSensors } = useSensors();
+  const account = useAccount();
+  const { language } = useLanguage();
 
   const formatValue = (value: number | undefined, sensorValue: any) => {
     if (isNaN(value as number)) {
-      return handleSensorSpecificValue(button.sensor_type as any, sensorValue);
+      return handleSensorSpecificValue(button.sensor_type as any, sensorValue,button);
     } else {
-      return handleSensorSpecificValue(button.sensor_type as any, value);
+      return handleSensorSpecificValue(button.sensor_type as any, value,button);
     }
   };
 
@@ -152,21 +160,18 @@ export default function SensorResponsiveInfo({
               key={index}
             >
               <div className="flex items-center">
-                <ResponsiveIcon
-                  sensorType={button.sensor_type}
-                />
+                <ResponsiveIcon sensorType={button.sensor_type} />
                 <p className="text-[10px] font-bold leading-none text-foreground xl4:text-lg">
-                {getText(
-                       button.sensor_type.toLowerCase(),
-                        texts[language]
-                      )}
+                  {getText(button.sensor_type.toLowerCase(), texts[language])}
                 </p>
               </div>
 
               <div className="flex gap-1">
                 <div className="flex items-center gap-1">
                   {!account.isAdmin && (
-                    <p className="text-md font-extrabold xl3:text-2xl">{formattedValue}</p>
+                    <p className="text-md font-extrabold xl3:text-2xl">
+                      {formattedValue}
+                    </p>
                   )}
                   <p className="text-[8px] text-muted-foreground">{metric}</p>
                 </div>

@@ -6,6 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useTheme } from "@/components/theme-provider"
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -22,7 +23,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
+import useWebSocket from "../websocket/useWebSocket";
 
 import { useWebSocketData } from "../websocket/WebSocketProvider";
 import logoWecom2 from "@/assets/LogoWecom2.svg";
@@ -32,11 +34,12 @@ export default function ApparenceCard() {
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [fileContent, setFileContent] = useState<File | null>(null);
   const [isCreating, setIsCreating] = useState(false);
-  const [updateColor , setUpdateColor] = useState(false);
-  const [selectedColor, setSelectedColor] = useState<string>("blue");
+  const [updateColor, setUpdateColor] = useState(false);
+  const [selectedColor, setSelectedColor] = useState<string>("root");
   const account = useAccount();
   const { toast } = useToast();
   const wss = useWebSocketData();
+  const { setTheme } = useTheme()
 
   useEffect(() => {
     // Fetch the current logo from the backend
@@ -74,96 +77,37 @@ export default function ApparenceCard() {
     }
   };
 
-  const handleUpdateLogo = async () => {
-    if (!fileContent) {
-      toast({
-        variant: "destructive",
-        description: "Por favor, selecione um arquivo antes de salvar.",
-      });
-      return;
-    }
-
-    setIsCreating(true);
-
-    try {
-      const formData = new FormData();
-      formData.append("file", fileContent, "logomarca.png");
-
-      const response = await fetch(`${host}/api/uploadFiles`, {
-        method: "POST",
-        headers: {
-          "x-auth": account.accessToken || "",
-        },
-        body: formData,
-      });
-
-      if (response.ok) {
-        toast({
-          description: "Imagem atualizada com sucesso!",
-        });
-      } else {
-        const data = await response.json();
-        console.error("Erro ao enviar a imagem", data);
-        toast({
-          variant: "destructive",
-          description: "Erro ao enviar a imagem.",
-        });
-      }
-    } catch (error) {
-      console.error("Erro ao enviar a imagem", error);
-      toast({
-        variant: "destructive",
-        description: "Erro ao enviar a imagem.",
-      });
-    } finally {
-      setIsCreating(false);
-    }
-  };
-  const handleUpdatecolor = async () => {
+  const handleUpdateColor = async () => {
     setUpdateColor(true);
 
     try {
-      const formData = new FormData();
-      formData.append("file", fileContent, "logomarca.png");
-
-      const response = await fetch(`${host}/api/systemPreference`, {
-        method: "POST",
-        headers: {
-          "x-auth": account.accessToken || "",
-        },
-        body: formData,
+      wss?.sendMessage({
+        api: "admin",
+        mt: "UpdateConfig",
+        vl: selectedColor,
+        entry: "theme",
       });
-
-      if (response.ok) {
-        toast({
-          description: "Cor atualizada com sucesso!",
-        });
-      } else {
-        const data = await response.json();
-        console.error("Erro ao enviar a imagem", data);
-        toast({
-          variant: "destructive",
-          description: "Erro Atualiza a cor.",
-        });
-      }
-    } catch (error) {
-      console.error("Erro ao atualizar a cor", error);
       toast({
-        variant: "destructive",
-        description: "Erro ao atualizar a cor.",
+        title: "Success",
+        description: "Theme color updated successfully",
+        
+      });
+      setTheme(selectedColor);
+    } catch (error) {
+      console.error("Error updating theme color:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update theme color",
+        
       });
     } finally {
       setUpdateColor(false);
     }
   };
-  const handleSave = async () => {
-    await handleUpdateLogo();
-
-  };
   return (
     <div>
       {}
-      <Card>
+      <Card className="w-[800px]">
         <CardHeader>
           <CardTitle>Aparecia</CardTitle>
           <CardDescription>
@@ -172,49 +116,52 @@ export default function ApparenceCard() {
         </CardHeader>
 
         <CardContent>
-          <div className="flex items-center justify-between gap-3">
-            <h4 className="scroll-m-20 text-xl font-semibold basis-1/2">
-              Logo
-            </h4>
-            <Input
-              type="file"
-              id="logo"
-              placeholder="Selecione um arquivo"
-              onChange={handleLogoChange}
-            />
-          </div>
-          <Card className="max-h-[500px] max-w-[500px]">
-            <CardHeader>
-              <CardTitle className="flex justify-center">preview</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-col items-center justify-between gap-3">
-                {logoUrl && <img src={logoUrl} alt="Logo" />}
-              </div>
-            </CardContent>
-          </Card>
-          <div>
-            <Logomarca />
-          </div>
-          <ModeToggle />
-          <div className="mt-4">
-            <label htmlFor="color-select" className="block text-sm font-medium text-gray-700">
-              Selecione uma cor:
-            </label>
-            <Select onValueChange={(value) => setSelectedColor(value)}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Theme" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="blue">Blue</SelectItem>
-                <SelectItem value="red">Red</SelectItem>
-                <SelectItem value="zinc">Zinc</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="flex flex-col gap-3 ">
+            <div className="flex items-center justify-between gap-3">
+              <h4 className="scroll-m-20 text-xl font-semibold basis-1/2">
+                Logo
+              </h4>
+              <Input
+                type="file"
+                id="logo"
+                placeholder="Selecione um arquivo"
+                onChange={handleLogoChange}
+              />
+            </div>
+            <Card className="max-h-[500px] max-w-[500px]">
+              <CardHeader>
+                <CardTitle className="flex justify-center">preview</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-col items-center justify-between gap-3">
+                  {logoUrl && <img src={logoUrl} alt="Logo" />}
+                </div>
+              </CardContent>
+            </Card>
+            <div className="flex justify-between w-full items-center">
+              <Label> Escolha uma cor</Label>
+              <select
+          
+              value={selectedColor}
+              onChange={(e) => setSelectedColor(e.target.value)}
+              className="mt-1 block w-full"
+            >
+              <option value="root">Blue</option>
+              <option value="red">Red</option>
+              <option value="zinc">Zinc</option>
+            </select>
+            </div>
+            <Button
+            onClick={handleUpdateColor}
+            disabled={updateColor}
+            className="mt-4"
+          >
+            {updateColor ? "Saving..." : "Save"}
+          </Button>
           </div>
         </CardContent>
         <CardFooter className="justify-end">
-          <Button disabled={isLoading} onClick={handleSave}>
+          <Button disabled={isLoading}>
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />

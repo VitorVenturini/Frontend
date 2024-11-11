@@ -77,6 +77,9 @@ export default function ModalSensor({
   const [minValue, setMinValue] = useState(
     existingButton?.sensor_min_threshold || ""
   );
+  const [pressValue, setPressValue] = useState(
+    existingButton?.button_device || ""
+  );
 
   const [geralThreshold, setGeralThreshold] = useState(
     existingButton?.sensor_max_threshold || ""
@@ -94,6 +97,10 @@ export default function ModalSensor({
   const handleSensorClick = (deveui: string) => {
     setNameSensor(deveui); // Atualiza o estado do sensor clicado
     setTypeMeasure("");
+  };
+
+  const handlePressValue = (event: ChangeEvent<HTMLInputElement>) => {
+    setPressValue(event.target.value);
   };
 
   const handleNameButton = (event: ChangeEvent<HTMLInputElement>) => {
@@ -152,6 +159,7 @@ export default function ModalSensor({
           name: nameButton,
           value: nameSensor, //devEUID
           guid: selectedUser?.guid,
+          device: pressValue,
           type: "sensor",
           img: filteredModel.description,
           min: showSelectOnly ? "" : minValue,
@@ -209,8 +217,10 @@ export default function ModalSensor({
     "daylight",
   ];
 
+  const typesWithInputNumber = ["press_short", "press_double", "press_long"];
   const showMinMaxFields = !typesWithoutMinMax.includes(typeMeasure);
   const showSelectOnly = typesWithSelectOnly.includes(typeMeasure);
+  const showInputNumber = typesWithInputNumber.includes(typeMeasure);
 
   const selectedSensor = sensors.filter((sensor) => {
     return sensor.deveui === nameSensor;
@@ -383,7 +393,27 @@ export default function ModalSensor({
                 </div>
               </>
             )}
-
+            {showInputNumber && (
+              <>
+                <div className="grid grid-cols-4 items-center py-1 gap-4">
+                  <Label className="text-end" htmlFor="numButton">
+                    Número do Botão
+                  </Label>
+                  <Input
+                    className="col-span-3"
+                    id="minValue"
+                    placeholder="00"
+                    type="number"
+                    value={pressValue}
+                    onChange={handlePressValue}
+                    required
+                    disabled={!typeMeasure}
+                    min={1}
+                    max={6}
+                  />
+                </div>
+              </>
+            )}
             {typeMeasure === "wind_direction" && (
               <div>
                 <div className="grid grid-cols-4 py-1 items-center gap-4 mb-4">
@@ -444,7 +474,7 @@ export default function ModalSensor({
             )}
           </div>
           <div className="flex-col gap-4 items-start justify-end align-bottom h-[25%]">
-            <h4>Preview</h4>
+            <h4>{texts[language].preview}</h4>
             <div className={commonClasses}>
               <div className="flex flex-col justify-between cursor-pointer active:bg-red-900 bg-buttonSensor">
                 <div className="flex items-center  gap-1 cursor-pointer ">
@@ -459,7 +489,7 @@ export default function ModalSensor({
                 <p className="text-[9px] font-medium leading-none text-muted-foreground">
                   {filteredModel?.sensor_name}
                 </p>
-                {typePreview}
+                {getText(typePreview.toLowerCase(), texts[language])}
               </div>
             </div>
           </div>
