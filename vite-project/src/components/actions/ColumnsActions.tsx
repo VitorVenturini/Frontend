@@ -18,21 +18,6 @@ export const columnsActions: ColumnDef<ActionsInteface>[] = [
     header: "ID",
   },
   {
-    accessorKey: "create_user",
-    header: ({ column }) => {
-      const { language } = useLanguage(); // Obtém o idioma selecionado
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          {texts[language].lastEditedBy}
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-  },
-  {
     accessorKey: "action_name",
     header: ({ column }) => {
       const { language } = useLanguage();
@@ -48,17 +33,17 @@ export const columnsActions: ColumnDef<ActionsInteface>[] = [
     },
   },
   {
-    accessorKey: "action_start_prt",
-    header: ({ column }) => {
-      const { language } = useLanguage();
-      return texts[language].inputParameter;
-    },
-  },
-  {
     accessorKey: "action_start_type",
     header: ({ column }) => {
       const { language } = useLanguage();
       return texts[language].trigger;
+    },
+  },
+  {
+    accessorKey: "action_start_prt",
+    header: ({ column }) => {
+      const { language } = useLanguage();
+      return texts[language].inputParameter;
     },
   },
   {
@@ -90,6 +75,13 @@ export const columnsActions: ColumnDef<ActionsInteface>[] = [
     },
   },
   {
+    accessorKey: "action_exec_type",
+    header: ({ column }) => {
+      const { language } = useLanguage();
+      return texts[language].outputActionExecType;
+    },
+  },
+  {
     accessorKey: "action_exec_prt",
     header: ({ column }) => {
       const { language } = useLanguage();
@@ -104,10 +96,25 @@ export const columnsActions: ColumnDef<ActionsInteface>[] = [
     },
   },
   {
-    accessorKey: "createdAt",
+    accessorKey: "updatedAt",
     header: ({ column }) => {
       const { language } = useLanguage();
-      return texts[language].createdAt;
+      return texts[language].updatedAt;
+    },
+  },
+  {
+    accessorKey: "create_user",
+    header: ({ column }) => {
+      const { language } = useLanguage(); // Obtém o idioma selecionado
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          {texts[language].lastEditedBy}
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
     },
   },
   {
