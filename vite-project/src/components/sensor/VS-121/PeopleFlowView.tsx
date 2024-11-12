@@ -36,7 +36,6 @@ export default function PeopleFlowView({
     return dateB - dateA;
   });
 
-  console.log("sortedParams "+ JSON.stringify(sortedParams))
   // Extrai os movimentos de direção com contagem > 0 para exibição
   const flowData = sortedParams.flatMap((entry) =>
     Object.entries(entry)
@@ -52,13 +51,10 @@ export default function PeopleFlowView({
         return { from, to, date: entry.date, count: value };
       })
   );
-
-  const latestFlow = flowData[0] || { from: "A", to: "B", count: 0, date: "" };
-  console.log("latestFlow " + JSON.stringify(latestFlow))
   return (
     <div className="flex items-center justify-center w-full h-full">
       <div className="w-[55%] flex items-center justify-center">
-        <Square from={latestFlow.from} to={latestFlow.to} />
+      <Square data={sortedParams[0]} />
       </div>
       <ScrollArea className="w-[45%] flex flex-col m-2 mt-4 space-y-2 h-full mb-5">
         {flowData.map((flow, index) => (
