@@ -122,9 +122,6 @@ export default function ResponsiveHistoryInfo({
     return sensor.deveui === filteredButton?.button_prt;
   })[0];
 
-  console.log(
-    "filteredSensor" + filteredSensor?.[`${filteredButton.sensor_type}`]
-  );
   const filteredSensorValue = filteredSensor?.[`${filteredButton.sensor_type}`];
 
   return (
@@ -150,7 +147,7 @@ export default function ResponsiveHistoryInfo({
                   historyInfo?.prt,
                   language,
                   filteredButton,
-                  filteredSensorValue
+                  historyInfo?.value
                 ).content
               : truncatedPrt}
           </p>
@@ -162,7 +159,7 @@ export default function ResponsiveHistoryInfo({
                   historyInfo?.prt,
                   language,
                   filteredButton,
-                  filteredSensorValue
+                  historyInfo?.value
                 ).statusValue
               : historyInfo?.status}
           </p>

@@ -39,7 +39,7 @@ const DialPad = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-full bg-gray-900 rounded-lg w-full">
+    <div className="flex flex-col items-center justify-center h-full bg-muted/25 rounded-lg w-full">
       {/* Exibição do número */}
       <div className="text-white xl2:text-xl font-bold mb-4 w-full text-center py-2">
         {phoneNumber || "Digite o número"}
@@ -52,11 +52,11 @@ const DialPad = () => {
             <button
               key={digit}
               onClick={handleDigitClick(digit[0])}
-              className=" lg:w-9 lg:h-9 xl:w-11 xl:h-11 2xl:w-15 2xl:h-15  text-white text-lg bg-gray-700 hover:bg-gray-600 rounded-full flex items-center justify-center"
+              className=" lg:w-9 lg:h-9 xl:w-11 xl:h-11 2xl:w-15 2xl:h-15  text-white text-lg bg-muted hover:bg-gray-600 rounded-full flex items-center justify-center"
             >
               <div className="flex flex-col items-center">
                 {digit[0]}
-                <span className="text-xs text-gray-400">{digit.slice(2)}</span>
+                <span className="text-xs bg-muted-foreground">{digit.slice(2)}</span>
               </div>
             </button>
           )
@@ -85,7 +85,7 @@ const DialPad = () => {
 
         <button
           onClick={handleBackspaceClick}
-          className="bg-gray-500 hover:bg-gray-600 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center"
+          className="bg-muted-foreground hover:bg-muted-foreground w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center"
         >
           <Delete className="text-white" />
         </button>

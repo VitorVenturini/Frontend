@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import ValidadeToken from "@/components/validateToken/ValidateToken";
 import Account from "./Account";
 import ButtonsPage from "./ButtonsPage";
+import { useTheme } from "@/components/theme-provider"
 import HeaderApp from "@/components/header/HeaderAdmin";
 import { useAccount } from "@/components/account/AccountContext";
 import { useNavigate } from "react-router-dom";
@@ -62,6 +63,7 @@ import { isTouchDevice } from "@/components/utils/utilityFunctions";
 import { isMobile } from "react-device-detect";
 
 function AdminLayout() {
+  const { setTheme } = useTheme()
   const account = useAccount();
   const { setUsers, updateUserStauts, setUserPreferences } = useUsers();
   const { updateUserPbxStauts } = useUsersPbx();
@@ -439,6 +441,11 @@ function AdminLayout() {
         toast({
           description: "Camera atualizada com sucesso",
         });
+        break;
+      case "UpdateConfig":
+        console.log("UpdateConfig", message);
+        setTheme (message.vl); 
+        
         break;
       case "DeleteCameraSuccess":
         deleteCamera(message.id_deleted);

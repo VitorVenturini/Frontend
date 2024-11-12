@@ -2,41 +2,30 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Theme, useTheme } from "@/components/theme-provider";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { host } from "@/App";
-import { Loader2 } from "lucide-react";
-import { ChangeEvent, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useAccount } from "../account/AccountContext";
 import { useToast } from "@/components/ui/use-toast";
-import Logomarca from "../Logomarca";
-import { ModeToggle } from "../mode-toggle";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-
 import { useWebSocketData } from "../websocket/WebSocketProvider";
-import logoWecom2 from "@/assets/LogoWecom2.svg";
+import { previousWednesday } from "date-fns";
 
 export default function ApparenceCard() {
   const [isLoading, setIsLoading] = useState(false);
+  const wss = useWebSocketData();
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [fileContent, setFileContent] = useState<File | null>(null);
   const [isCreating, setIsCreating] = useState(false);
-  const [updateColor , setUpdateColor] = useState(false);
-  const [selectedColor, setSelectedColor] = useState<string>("blue");
+  const [updateColor, setUpdateColor] = useState(false);
   const account = useAccount();
   const { toast } = useToast();
-  const wss = useWebSocketData();
+  const { previewTheme, setTheme, setPreviewTheme,resetPreviewTheme } = useTheme();
 
   useEffect(() => {
     // Fetch the current logo from the backend
@@ -82,13 +71,10 @@ export default function ApparenceCard() {
       });
       return;
     }
-
     setIsCreating(true);
-
     try {
       const formData = new FormData();
       formData.append("file", fileContent, "logomarca.png");
-
       const response = await fetch(`${host}/api/uploadFiles`, {
         method: "POST",
         headers: {
@@ -96,7 +82,6 @@ export default function ApparenceCard() {
         },
         body: formData,
       });
-
       if (response.ok) {
         toast({
           description: "Imagem atualizada com sucesso!",
@@ -119,112 +104,151 @@ export default function ApparenceCard() {
       setIsCreating(false);
     }
   };
-  const handleUpdatecolor = async () => {
+
+  useEffect(() => {
+    return () => {
+      resetPreviewTheme();
+    };
+   
+  }, []);
+
+
+  const handlePreviewColor = (color: Theme) => {
+    setPreviewTheme(color); // Preview temporário da cor
+  };
+
+  const handleUpdateColor = async () => {
     setUpdateColor(true);
 
     try {
-      const formData = new FormData();
-      formData.append("file", fileContent, "logomarca.png");
-
-      const response = await fetch(`${host}/api/systemPreference`, {
-        method: "POST",
-        headers: {
-          "x-auth": account.accessToken || "",
-        },
-        body: formData,
+      wss?.sendMessage({
+        api: "admin",
+        mt: "UpdateConfig",
+        vl: previewTheme,
+        entry: "theme",
       });
-
-      if (response.ok) {
-        toast({
-          description: "Cor atualizada com sucesso!",
-        });
-      } else {
-        const data = await response.json();
-        console.error("Erro ao enviar a imagem", data);
-        toast({
-          variant: "destructive",
-          description: "Erro Atualiza a cor.",
-        });
-      }
+      setPreviewTheme(previewTheme);
+      setTheme(previewTheme)
+      localStorage.removeItem("vite-ui-theme");
+      localStorage.setItem("vite-ui-theme", previewTheme);
+      toast({
+        description: "Tema atualizado com sucesso !",
+      });
     } catch (error) {
-      console.error("Erro ao atualizar a cor", error);
+      console.error("Error updating theme color:", error);
       toast({
         variant: "destructive",
-        description: "Erro ao atualizar a cor.",
+        description: "Erro ao atualizar a cor do tema.",
       });
     } finally {
       setUpdateColor(false);
     }
   };
-  const handleSave = async () => {
-    await handleUpdateLogo();
-    await handleUpdatecolor();
-  };
+
   return (
     <div>
-      {}
-      <Card>
+      <Card className="w-[800px]">
         <CardHeader>
-          <CardTitle>Aparecia</CardTitle>
+          <CardTitle>Aparência</CardTitle>
           <CardDescription>
-            Altere aqui a aparencia da aplicação como logo, cor e fonte
+            Altere aqui a aparência da aplicação como logo, cor e fonte
           </CardDescription>
         </CardHeader>
 
         <CardContent>
-          <div className="flex items-center justify-between gap-3">
-            <h4 className="scroll-m-20 text-xl font-semibold basis-1/2">
-              Logo
-            </h4>
-            <Input
-              type="file"
-              id="logo"
-              placeholder="Selecione um arquivo"
-              onChange={handleLogoChange}
-            />
-          </div>
-          <Card className="max-h-[500px] max-w-[500px]">
-            <CardHeader>
-              <CardTitle className="flex justify-center">preview</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-col items-center justify-between gap-3">
-                {logoUrl && <img src={logoUrl} alt="Logo" />}
-              </div>
-            </CardContent>
-          </Card>
-          <div>
-            <Logomarca />
-          </div>
-          <ModeToggle />
-          <div className="mt-4">
-            <label htmlFor="color-select" className="block text-sm font-medium text-gray-700">
-              Selecione uma cor:
-            </label>
-            <Select onValueChange={(value) => setSelectedColor(value)}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Theme" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="blue">Blue</SelectItem>
-                <SelectItem value="red">Red</SelectItem>
-                <SelectItem value="zinc">Zinc</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="flex flex-col gap-3 ">
+            <div className="flex items-center justify-between gap-3">
+              <h4 className="scroll-m-20 text-xl font-semibold basis-1/2">
+                Logo
+              </h4>
+              <Input
+                type="file"
+                id="logo"
+                placeholder="Selecione um arquivo"
+                onChange={handleLogoChange}
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <Card className="max-h-[500px] max-w-[500px]">
+                <CardHeader>
+                  <CardTitle className="flex justify-center">Preview</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-col items-center justify-between gap-3">
+                    {logoUrl && <img src={logoUrl} alt="Logo" />}
+                  </div>
+                </CardContent>
+              </Card>
+              <Button
+                onClick={handleUpdateLogo}
+                disabled={isCreating}
+                className="mt-4"
+              >
+                {isCreating ? "Saving..." : "Salvar imagem"}
+              </Button>
+            </div>
+
+            <div className="flex justify-between w-full items-center">
+              <Label>Escolha uma cor</Label>
+
+              <Button
+                variant="outline"
+                className="gap-2 flex items-center"
+                onClick={() => handlePreviewColor("blue")}
+              >
+                Azul
+                <div className="bg-blue-400 w-[20px] h-[20px]" />
+              </Button>
+              <Button
+                variant="outline"
+                className="gap-2 flex items-center"
+                onClick={() => handlePreviewColor("red")}
+              >
+                Vermelho
+                <div className="bg-red-400 w-[20px] h-[20px]" />
+              </Button>
+              <Button
+                variant="outline"
+                className="gap-2 flex items-center"
+                onClick={() => handlePreviewColor("zinc")}
+              >
+                Zinco
+                <div className="bg-zinc-400 w-[20px] h-[20px]" />
+              </Button>
+              <Button
+                variant="outline"
+                className="gap-2 flex items-center"
+                onClick={() => handlePreviewColor("green")}
+              >
+                Verde
+                <div className="bg-green-400 w-[20px] h-[20px]" />
+              </Button>
+              <Button
+                variant="outline"
+                className="gap-2 flex items-center"
+                onClick={() => handlePreviewColor("orange")}
+              >
+                Laranja
+                <div className="bg-orange-400 w-[20px] h-[20px]" />
+              </Button>
+              <Button
+                variant="outline"
+                className="gap-2 flex items-center"
+                onClick={() => handlePreviewColor("violet")}
+              >
+                Roxo
+                <div className="bg-violet-500 w-[20px] h-[20px]" />
+              </Button>
+            </div>
+            <Button
+              onClick={handleUpdateColor}
+              disabled={updateColor}
+              className="mt-4"
+            >
+              {updateColor ? "Saving..." : "Salvar este tema"}
+            </Button>
           </div>
         </CardContent>
-        <CardFooter className="justify-end">
-          <Button disabled={isLoading} onClick={handleSave}>
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Salvando
-              </>
-            ) : (
-              "Salvar"
-            )}
-          </Button>
-        </CardFooter>
       </Card>
     </div>
   );
