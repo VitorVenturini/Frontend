@@ -54,27 +54,30 @@ export default function PeopleFlowView({
   return (
     <div className="flex items-center justify-center w-full h-full">
       <div className="w-[55%] flex items-center justify-center">
-      <Square data={sortedParams[0]} />
+        <Square data={sortedParams[0]} />
       </div>
       <ScrollArea className="w-[45%] flex flex-col m-2 mt-4 space-y-2 h-full mb-5">
-        {flowData.map((flow, index) => (
-          <div
-            key={index}
-            className="bg-muted p-5 w-full mb-2 flex justify-between items-center relative"
-          >
-            <span className="absolute top-1 left-1 text-xs text-muted-foreground">
-              {format(new Date(flow?.date), "dd/MM HH:mm")}
-            </span>
-            <div className="flex gap-3">
-              <span>{flow.from.toUpperCase()}</span>
-              <MoveRight />
-              <span>{flow.to.toUpperCase()}</span>
-            </div>
-            <div>
-              <span className="text-lg font-semibold">{flow.count}</span>
-            </div>
-          </div>
-        ))}
+        {flowData.map(
+          (flow, index) =>
+            flow.count > 0 && (
+              <div
+                key={index}
+                className="bg-muted p-5 w-full mb-2 flex justify-between items-center relative"
+              >
+                <span className="absolute top-1 left-1 text-xs text-muted-foreground">
+                  {format(new Date(flow?.date), "dd/MM HH:mm")}
+                </span>
+                <div className="flex gap-3">
+                  <span>{flow.from.toUpperCase()}</span>
+                  <MoveRight />
+                  <span>{flow.to.toUpperCase()}</span>
+                </div>
+                <div>
+                  <span className="text-lg font-semibold">{flow.count}</span>
+                </div>
+              </div>
+            )
+        )}
       </ScrollArea>
     </div>
   );
