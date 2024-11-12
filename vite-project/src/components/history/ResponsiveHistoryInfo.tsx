@@ -20,30 +20,31 @@ const ButtonCircles = ({ type }: { type: string }) => {
   const splitedType = type.split("_");
   if (type.startsWith("press_short")) {
     return (
-      <div className="flex items-center gap-2">
-        <div className="w-4 h-4 bg-white rounded-full"></div>
+      <span className="flex items-center gap-2">
+        <span className="w-4 h-4 bg-white rounded-full"></span>
         <span>nº {splitedType[2]} </span>
-      </div>
+      </span>
     );
   } else if (type.startsWith("press_double")) {
     return (
-      <div className="flex items-center gap-2">
-        <div className="w-4 h-4 bg-white rounded-full"></div>
-        <div className="w-4 h-4 bg-white rounded-full"></div>
+      <span className="flex items-center gap-1">
+        <span className="w-4 h-4 bg-white rounded-full"></span>
+        <span className="w-4 h-4 bg-white rounded-full"></span>
         <span>nº {splitedType[2]} </span>
-      </div>
+      </span>
     );
   } else if (type.startsWith("press_long")) {
     return (
-      <div className="flex items-center gap-2">
-        <div className="w-12 h-4 bg-white rounded-full"></div>
+      <span className="flex items-center gap-2">
+        <span className="w-10 h-4 bg-white rounded-full"></span>
         <span>nº {splitedType[2]} </span>
-      </div>
+      </span>
     );
   } else {
     return null;
   }
 };
+
 
 export const createHistoryContent = (
   name: string,
