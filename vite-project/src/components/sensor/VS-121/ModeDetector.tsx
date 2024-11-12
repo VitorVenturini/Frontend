@@ -4,7 +4,7 @@ export type SensorModes = "LINE_CROSSING" | "PEOPLE_FLOW_ANALYSIS" | "REGION_PEO
 
 export interface SensorModeResult {
   mode: SensorModes;
-  availableParams: Partial<SensorInterface>; // retorna um objeto parcial de SensorInterface
+  availableParams: Partial<SensorInterface>; 
 }
 
 export default function ModeDetector(valueKeys: string[]): SensorModeResult | null {
