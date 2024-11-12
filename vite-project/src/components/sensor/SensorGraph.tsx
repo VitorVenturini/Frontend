@@ -65,6 +65,17 @@ export function SensorGraph({ chartData }: SensorGraphProps) {
           key !== "id"
       );
       setKeys(keys);
+
+//       const keys2 = Object.keys(chartData[chartData.length -1]).filter(
+//         (key) =>
+//           key !== "date" &&
+//           key !== "sensor_name" &&
+//           key !== "deveui" &&
+//           key !== "battery" &&
+//           key !== "id"
+//       );
+// console.log("Keys " + keys2)
+
       const detectedModeSensorVS121 = ModeDetector(keys);
       setSensorModeData(detectedModeSensorVS121);
 
