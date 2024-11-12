@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { host } from "@/App";
 import { useWebSocketData } from "./websocket/WebSocketProvider";
 
-export type Theme = "zinc" | "red" | "root" | "blue" | "violet" | "orange" |"green";
+export type Theme = "zinc" | "red" | "root" | "blue" | "violet" | "orange" | "green";
 
 type ThemeProviderProps = {
   children: React.ReactNode;
@@ -13,7 +13,7 @@ type ThemeProviderProps = {
 
 type ThemeProviderState = {
   theme: Theme;
-  previewTheme: Theme;
+  previewTheme: Theme | null;
   setTheme: (theme: Theme) => void;
   setPreviewTheme: (theme: Theme) => void;
   resetPreviewTheme: () => void;
@@ -21,7 +21,7 @@ type ThemeProviderState = {
 
 const initialState: ThemeProviderState = {
   theme: "root",
-  previewTheme: "root",
+  previewTheme: null,
   setTheme: () => null,
   setPreviewTheme: () => null,
   resetPreviewTheme: () => null,
@@ -37,11 +37,10 @@ export function ThemeProvider({
   const [theme, setTheme] = useState<Theme>(
     () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
   );
-  const [previewTheme, setPreviewTheme] = useState<Theme>(theme);
-  const wss = useWebSocketData();
+  const [previewTheme, setPreviewTheme] = useState<Theme | null>(null);
 
   const resetPreviewTheme = () => {
-    setPreviewTheme(theme);
+    setPreviewTheme(null); // Volta ao último tema salvo
   };
 
   useEffect(() => {
@@ -51,9 +50,7 @@ export function ThemeProvider({
         const data = await response.json();
         if (data.theme) {
           setTheme(data.theme as Theme);
-          setPreviewTheme(data.theme as Theme);
           localStorage.setItem(storageKey, data.theme);
-          console.log(data.theme);
         }
       } catch (error) {
         console.error("Failed to fetch system preferences:", error);
@@ -67,23 +64,24 @@ export function ThemeProvider({
     const root = window.document.documentElement;
     root.classList.remove("light", "dark", "zinc", "red", "blue", "violet", "orange", "green");
 
-    const appliedTheme = previewTheme === "root"
-      ? window.matchMedia("(prefers-color-scheme: dark)").matches
-        ? "dark"
-        : "light"
-      : previewTheme;
+    const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    const appliedTheme = previewTheme || theme;
+    const themeClass = appliedTheme === "root" ? systemTheme : appliedTheme;
 
-    root.classList.add(appliedTheme);
-  }, [previewTheme]);
+    root.classList.add(themeClass);
+  }, [theme, previewTheme]);
 
   return (
     <ThemeProviderContext.Provider
       value={{
         theme,
-        previewTheme,
-        setTheme,
+        previewTheme: previewTheme || theme,
+        setTheme: (newTheme) => {
+          setTheme(newTheme);
+          localStorage.setItem(storageKey, newTheme);
+        },
         setPreviewTheme,
-        resetPreviewTheme
+        resetPreviewTheme,
       }}
     >
       {children}

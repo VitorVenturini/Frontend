@@ -14,6 +14,7 @@ import { useState, useEffect } from "react";
 import { useAccount } from "../account/AccountContext";
 import { useToast } from "@/components/ui/use-toast";
 import { useWebSocketData } from "../websocket/WebSocketProvider";
+import { previousWednesday } from "date-fns";
 
 export default function ApparenceCard() {
   const [isLoading, setIsLoading] = useState(false);
@@ -126,7 +127,8 @@ export default function ApparenceCard() {
         vl: previewTheme,
         entry: "theme",
       });
-      setTheme(previewTheme);
+      setPreviewTheme(previewTheme);
+      setTheme(previewTheme)
       localStorage.removeItem("vite-ui-theme");
       localStorage.setItem("vite-ui-theme", previewTheme);
       toast({
