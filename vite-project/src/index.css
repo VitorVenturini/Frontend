@@ -239,6 +239,32 @@
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
   }
+  .light {
+    --background: 240 2% 65%;
+    --foreground: 0 0% 98%;
+    --card: 240 2% 60%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 2% 45%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 5.9% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 2% 45%;
+    --muted-foreground: 240 5% 90.9%;
+    --accent: 240 2% 45%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 2% 45%;
+    --input: 240 2% 45%;
+    --ring: 240 4.9% 83.9%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
 }
 
 @font-face {
@@ -260,7 +286,7 @@
     @apply border-border;
   }
   body {
-    @apply bg-black text-foreground;
+    @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
