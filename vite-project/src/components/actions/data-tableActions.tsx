@@ -47,6 +47,7 @@ interface TableData {
   action_start_device: string;
   action_exec_type: string;
   action_exec_prt: string;
+  action_exec_device: string;
 }
 
 interface DataTableProps<TData, TValue> {
@@ -167,13 +168,22 @@ export function DataTable<TData extends TableData, TValue>({
                     }else{
                       cellValue = startDevice
                     }
-                    
-                    
                   }
                   if (cell.column.id === "action_exec_user") {
                     const userId = (cell.row.original as TableData).action_exec_user;
                     const user = users.find((u) => u.guid === userId);
                     cellValue = user ? user.name : texts[language].unknownUser; // Texto de tradução
+                  }
+                  if ((cell.row.original as TableData).action_exec_type == "command" && cell.column.id === "action_exec_device") {
+                    const execDevice = (cell.row.original as TableData).action_exec_device;
+                    if(execDevice != ''){
+                      const dev = sensors.find((s) => s.deveui === execDevice);
+                      if(dev){
+                        cellValue = dev.sensor_name
+                      }
+                    }else{
+                      cellValue = execDevice
+                    }
                   }
                   if (cell.column.id === "create_user") {
                     const userId = (cell.row.original as TableData).create_user;
