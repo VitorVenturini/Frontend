@@ -1,8 +1,15 @@
 import { MoveLeft, MoveRight, PersonStanding } from "lucide-react";
 import { SensorInterface } from "../SensorContext";
 
+interface LineCrossingParameters {
+  people_in: number;
+  people_out: number;
+  people_total_in: number;
+  people_total_out: number;
+  date: string;
+}
 interface LineCrossingViewProps {
-  availableParams: SensorInterface[];
+  availableParams: LineCrossingParameters[];
 }
 
 export default function LineCrossingView({
@@ -27,22 +34,22 @@ export default function LineCrossingView({
             <div className="bg-muted p-5 m-2 flex gap-2 w-full items-center justify-between">
               TOTAL IN
               <div className="flex">
-              <span>{sortedParams[0]?.people_total_in}</span>
-              <span>{<PersonStanding />}</span>
+                <span>{sortedParams[0]?.people_total_in}</span>
+                <span>{<PersonStanding />}</span>
               </div>
             </div>
           </div>
           <div className="flex w-full">
             <div className="bg-muted p-5 m-2 flex gap-2 w-full items-center justify-between">
-              OUT 
+              OUT
               <span>{<MoveLeft />}</span>{" "}
               <span>{sortedParams[0]?.people_out}</span>
             </div>
             <div className="bg-muted p-5 m-2 flex gap-2 w-full items-center justify-between">
               TOTAL OUT
               <div className="flex">
-              <span>{sortedParams[0]?.people_total_out}</span>
-              <span>{<PersonStanding />}</span>
+                <span>{sortedParams[0]?.people_total_out}</span>
+                <span>{<PersonStanding />}</span>
               </div>
             </div>
           </div>
