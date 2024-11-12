@@ -190,7 +190,7 @@ export default function OptComponent({
             <DialogTrigger asChild>
               <div
                 className={`${commonClasses} flex flex-col cursor-pointer ${
-                  isClicked ? "bg-zinc-950" : ""
+                  isClicked ? "bg-muted" : ""
                 }`}
                 onClick={handleClick}
               >
@@ -224,7 +224,7 @@ export default function OptComponent({
             <DialogTrigger asChild>
               <div
                 className={`${commonClasses} flex flex-col cursor-pointer text-wrap ${
-                  isClicked ? "bg-zinc-950" : ""
+                  isClicked ? "bg-muted" : ""
                 }`}
                 onClick={handleClick}
               >
@@ -258,7 +258,7 @@ export default function OptComponent({
             <DialogTrigger asChild>
               <div
                 className={`${commonClasses} flex flex-col cursor-pointer ${
-                  isClicked ? "bg-zinc-950" : ""
+                  isClicked ? "bg-muted" : ""
                 }`}
                 onClick={handleClick}
               >
