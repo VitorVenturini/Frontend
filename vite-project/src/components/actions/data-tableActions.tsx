@@ -28,6 +28,11 @@ import { useUsers } from "@/components/users/usersCore/UserContext";
 import LogoCore from "@/assets/Vector.svg";
 import texts from "@/_data/texts.json";
 import { useLanguage } from "@/components/language/LanguageContext"; // Importação do contexto de idioma
+import { useButtons } from "../buttons/buttonContext/ButtonsContext";
+import { useSensors } from "../sensor/SensorContext";
+import { useCameras } from "../cameras/CameraContext";
+
+
 
 interface User {
   id: string;
@@ -38,6 +43,10 @@ interface User {
 interface TableData {
   action_exec_user: string; 
   create_user: string; 
+  action_start_type: string;
+  action_start_device: string;
+  action_exec_type: string;
+  action_exec_prt: string;
 }
 
 interface DataTableProps<TData, TValue> {
@@ -57,7 +66,10 @@ export function DataTable<TData extends TableData, TValue>({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [loading, setLoading] = useState<boolean>(true);
   const {users} = useUsers();
-  
+  const { buttons } = useButtons();
+  const { sensors } = useSensors();
+  const { cameras } = useCameras();
+
   const handleRowClick = () => {
     console.log("Linha Clicada");
   };
@@ -138,6 +150,26 @@ export function DataTable<TData extends TableData, TValue>({
                     cell.column.columnDef.cell,
                     cell.getContext()
                   );
+                  if (cell.column.id === "action_start_type") {
+                    const startType = (cell.row.original as TableData).action_start_type;
+                    cellValue = startType ? texts[language][startType] : startType; // Texto de tradução
+                  }
+                  if (cell.column.id === "action_start_device") {
+                    const startDevice = (cell.row.original as TableData).action_start_device;
+                    if(startDevice != ''){
+                      const dev = sensors.find((s) => s.deveui === startDevice);
+                      if(dev){
+                        cellValue = dev.sensor_name
+                      }else{
+                        const dev = cameras.find((c) => c.mac === startDevice);
+                        cellValue = dev.nickname
+                      }
+                    }else{
+                      cellValue = startDevice
+                    }
+                    
+                    
+                  }
                   if (cell.column.id === "action_exec_user") {
                     const userId = (cell.row.original as TableData).action_exec_user;
                     const user = users.find((u) => u.guid === userId);
@@ -147,6 +179,15 @@ export function DataTable<TData extends TableData, TValue>({
                     const userId = (cell.row.original as TableData).create_user;
                     const user = users.find((u) => u.guid === userId);
                     cellValue = user ? user.name : texts[language].unknownUser; // Texto de tradução
+                  }
+                  if (cell.column.id === "action_exec_type") {
+                    const execType = (cell.row.original as TableData).action_exec_type;
+                    cellValue = execType ? texts[language][execType] : execType; // Texto de tradução
+                  }
+                  if ((cell.row.original as TableData).action_exec_type == "button" && cell.column.id === "action_exec_prt") {
+                    const btnId = (cell.row.original as TableData).action_exec_prt;
+                    const btn = buttons.find((b) => b.id == parseInt(btnId));
+                    cellValue = btn ? btn.button_name : btnId; // Texto de tradução
                   }
                   return <TableCell key={cell.id}>{cellValue}</TableCell>;
                 })}
