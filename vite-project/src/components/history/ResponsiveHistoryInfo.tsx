@@ -58,7 +58,6 @@ export const createHistoryContent = (
   let statusValue: any;
   const translatedPrt = prt ? getText(prt, texts[language]) : "";
   const translatedStatus = status ? getText(status, texts[language]) : "";
-  const parsedDetails = details ? JSON.parse(details) : [];
   switch (name) {
     case "message":
       badgeVariant +=
@@ -82,11 +81,11 @@ export const createHistoryContent = (
     case "threshold":
       badgeVariant +=
         "border-transparent bg-red-900 text-red-100 hover:bg-red-800";
-      content = parsedDetails.sensor_type;
+      content = details?.sensor_type;
       statusValue = handleSensorSpecificValue(
-        parsedDetails.sensor_type,
+        details?.sensor_type,
         parseInt(translatedPrt),
-        parsedDetails
+        details
       ).formattedValue;
       // translatedPrt nesse caso é o valor atual do sensor
       break;
