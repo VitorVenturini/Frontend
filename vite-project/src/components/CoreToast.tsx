@@ -38,16 +38,6 @@ const HistoryCell: React.FC<HistoryCellProps> = ({ historyInfo }) => {
   const { buttons } = useButtons();
   const { language } = useLanguage();
 
-  const filteredButton = buttons?.filter((btn: ButtonInterface) => {
-    return String(btn.id) === historyInfo?.details;
-  })[0];
-
-  const filteredSensor = buttonSensors?.filter((sensor) => {
-    return sensor.deveui === filteredButton?.button_prt;
-  })[0];
-
-  const filteredSensorValue = filteredSensor?.[`${filteredButton.sensor_type}`];
-
   let formattedDate: string;
   if (historyInfo?.date) {
     formattedDate = format(new Date(historyInfo?.date as any), "dd/MM HH:mm");
@@ -79,8 +69,7 @@ const HistoryCell: React.FC<HistoryCellProps> = ({ historyInfo }) => {
                 historyInfo?.status,
                 historyInfo?.prt,
                 language,
-                filteredButton,
-                historyInfo?.value
+                historyInfo?.details
               ).content
             : truncatedPrt}
         </p>
@@ -91,8 +80,7 @@ const HistoryCell: React.FC<HistoryCellProps> = ({ historyInfo }) => {
                 historyInfo?.status,
                 historyInfo?.prt,
                 language,
-                filteredButton,
-                historyInfo?.value
+                historyInfo?.details
               ).statusValue
             : historyInfo?.status}
         </p>

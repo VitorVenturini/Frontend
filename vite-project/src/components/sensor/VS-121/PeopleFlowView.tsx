@@ -43,7 +43,7 @@ export default function PeopleFlowView({
         ([key, value]) =>
           key !== "timestamp" &&
           key !== "date" &&
-          //   Number(value) > 0 && // Garante que a contagem seja maior que zero
+            Number(value) > 0 && // Garante que a contagem seja maior que zero
           key.includes("_to_")
       )
       .map(([key, value]) => {
