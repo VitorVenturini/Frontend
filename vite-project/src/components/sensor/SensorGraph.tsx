@@ -23,6 +23,7 @@ import ModeDetector, {
   SensorModeResult,
 } from "@/components/sensor/VS-121/ModeDetector";
 import LineCrossingView from "./VS-121/LineCrossingView";
+import PeopleFlowView from "./VS-121/PeopleFlowView";
 
 type ChartConfig = {
   [key: string]: {
@@ -64,8 +65,19 @@ export function SensorGraph({ chartData }: SensorGraphProps) {
           key !== "id"
       );
       setKeys(keys);
-      const detectedModeData = ModeDetector(keys);
-      setSensorModeData(detectedModeData);
+
+//       const keys2 = Object.keys(chartData[chartData.length -1]).filter(
+//         (key) =>
+//           key !== "date" &&
+//           key !== "sensor_name" &&
+//           key !== "deveui" &&
+//           key !== "battery" &&
+//           key !== "id"
+//       );
+// console.log("Keys " + keys2)
+
+      const detectedModeSensorVS121 = ModeDetector(keys);
+      setSensorModeData(detectedModeSensorVS121);
 
       const newChartConfig: ChartConfig = keys.reduce((acc, key, index) => {
         acc[key] = {
@@ -96,6 +108,8 @@ export function SensorGraph({ chartData }: SensorGraphProps) {
     <>
       {sensorModeData?.mode === "LINE_CROSSING" ? (
         <LineCrossingView availableParams={chartData} />
+      ) : sensorModeData?.mode === "PEOPLE_FLOW_ANALYSIS" ? (
+        <PeopleFlowView availableParams={chartData}/>
       ) : (
         <Card className="w-full lg:h-[200px] xl:h-[250px] xl2:h-[300px] xl3:h-[370px] xl4:h-[450px] relative">
           <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">

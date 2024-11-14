@@ -1,11 +1,11 @@
 import { HistoryInterface } from "./HistoryContext";
-import { getText } from "../utils/utilityFunctions";
+import { getText, isBase64File } from "../utils/utilityFunctions";
 import { Badge } from "@/components/ui/badge";
 import { cva } from "class-variance-authority";
 import { useLanguage } from "@/components/language/LanguageContext";
 import texts from "@/_data/texts.json";
 import { format, parseISO } from "date-fns";
-import { HistoryIcon, Image } from "lucide-react";
+import { HistoryIcon, Image, ImageIcon } from "lucide-react";
 import {
   ButtonInterface,
   useButtons,
@@ -20,25 +20,25 @@ const ButtonCircles = ({ type }: { type: string }) => {
   const splitedType = type.split("_");
   if (type.startsWith("press_short")) {
     return (
-      <div className="flex items-center gap-2">
-        <div className="w-4 h-4 bg-white rounded-full"></div>
+      <span className="flex items-center gap-2">
+        <span className="w-4 h-4 bg-white rounded-full"></span>
         <span>nº {splitedType[2]} </span>
-      </div>
+      </span>
     );
   } else if (type.startsWith("press_double")) {
     return (
-      <div className="flex items-center gap-2">
-        <div className="w-4 h-4 bg-white rounded-full"></div>
-        <div className="w-4 h-4 bg-white rounded-full"></div>
+      <span className="flex items-center gap-1">
+        <span className="w-4 h-4 bg-white rounded-full"></span>
+        <span className="w-4 h-4 bg-white rounded-full"></span>
         <span>nº {splitedType[2]} </span>
-      </div>
+      </span>
     );
   } else if (type.startsWith("press_long")) {
     return (
-      <div className="flex items-center gap-2">
-        <div className="w-12 h-4 bg-white rounded-full"></div>
+      <span className="flex items-center gap-2">
+        <span className="w-10 h-4 bg-white rounded-full"></span>
         <span>nº {splitedType[2]} </span>
-      </div>
+      </span>
     );
   } else {
     return null;
@@ -50,21 +50,26 @@ export const createHistoryContent = (
   status?: string,
   prt?: string,
   language?: string,
-  button?: ButtonInterface,
-  sensorValue?: any
+  details?: ButtonInterface | any
 ) => {
   let badgeVariant: string =
     "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ";
   let content: string | JSX.Element;
   let statusValue: any;
-  // Obtenha o texto traduzido de maneira segura
   const translatedPrt = prt ? getText(prt, texts[language]) : "";
   const translatedStatus = status ? getText(status, texts[language]) : "";
   switch (name) {
     case "message":
       badgeVariant +=
         "border-transparent bg-blue-900 text-blue-100 hover:bg-blue-800";
-      content = translatedPrt;
+      content = isBase64File(translatedPrt) ? (
+        <span style={{ display: "flex", alignItems: "center" }}>
+          <Image size={16} style={{ marginRight: "5px" }} />
+          Imagem
+        </span>
+      ) : (
+        `${translatedPrt?.slice(0, 20)}...`
+      );
       statusValue = translatedStatus;
       break;
     case "alarm":
@@ -76,8 +81,13 @@ export const createHistoryContent = (
     case "threshold":
       badgeVariant +=
         "border-transparent bg-red-900 text-red-100 hover:bg-red-800";
-      content = translatedPrt;
-      statusValue = handleSensorSpecificValue(button?.sensor_type,sensorValue,button).formattedValue;
+      content = details?.sensor_type;
+      statusValue = handleSensorSpecificValue(
+        details?.sensor_type,
+        parseInt(translatedPrt),
+        details
+      ).formattedValue;
+      // translatedPrt nesse caso é o valor atual do sensor
       break;
     case "button":
       if (prt?.startsWith("press_")) {
@@ -114,16 +124,6 @@ export default function ResponsiveHistoryInfo({
     formattedDate = format(new Date(historyInfo?.date as any), "dd/MM HH:mm");
   }
 
-  const filteredButton = buttons?.filter((btn: ButtonInterface) => {
-    return String(btn.id) === historyInfo?.details;
-  })[0];
-
-  const filteredSensor = buttonSensors?.filter((sensor) => {
-    return sensor.deveui === filteredButton?.button_prt;
-  })[0];
-
-  const filteredSensorValue = filteredSensor?.[`${filteredButton.sensor_type}`];
-
   return (
     <>
       <div className=" flex justify-between rounded-md my-2 items-center px-2 py-1">
@@ -146,8 +146,7 @@ export default function ResponsiveHistoryInfo({
                   historyInfo?.status,
                   historyInfo?.prt,
                   language,
-                  filteredButton,
-                  historyInfo?.value
+                  historyInfo?.details
                 ).content
               : truncatedPrt}
           </p>
@@ -158,8 +157,7 @@ export default function ResponsiveHistoryInfo({
                   historyInfo?.status,
                   historyInfo?.prt,
                   language,
-                  filteredButton,
-                  historyInfo?.value
+                  historyInfo?.details
                 ).statusValue
               : historyInfo?.status}
           </p>

@@ -28,8 +28,10 @@ import texts from "@/_data/texts.json";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { useLanguage } from "@/components/language/LanguageContext";
 import { useSensors } from "@/components/sensor/SensorContext";
+import { useCameras } from "@/components/cameras/CameraContext";
 import { ActionsInteface } from "./ActionsContext";
 import { getText } from "../utils/utilityFunctions";
+import { Textarea } from "../ui/textarea";
 
 interface UpdateActionsProps {
   action?: ActionsInteface;
@@ -54,12 +56,17 @@ export default function CardTriggerActions({
     action?.action_start_device_parameter || ""
   );
   const { sensors } = useSensors();
+  const { cameras } = useCameras();
 
   const handleActionStartType = (value: string) => {
     setActionType(value);
     onUpdateTriggerActionDetails("actionStartType", value);
   };
   const handleParameterInsert = (event: ChangeEvent<HTMLInputElement>) => {
+    setActionParameter(event.target.value);
+    onUpdateTriggerActionDetails("actionStartPrt", event.target.value);
+  };
+  const handleCameraPromptInsert = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setActionParameter(event.target.value);
     onUpdateTriggerActionDetails("actionStartPrt", event.target.value);
   };
@@ -78,6 +85,12 @@ export default function CardTriggerActions({
   };
   const shouldRenderInput =
     actionStartType === "minValue" || actionStartType === "maxValue" || actionStartType === "equalValue";
+
+  const shouldRenderCameraSelect =
+    actionStartType === "camera";
+
+  const shouldRenderValueInput =
+    actionStartType == 'origemNumber' || actionStartType == 'destNumber' || actionStartType == 'alarm';
 
   const selectedStartSensor = sensors.filter((p) => {
     return p.deveui === actionSensorName;
@@ -118,13 +131,16 @@ export default function CardTriggerActions({
                   {texts[language].destNumber}
                 </SelectItem>
                 <SelectItem value="minValue">
-                  {texts[language].sensorMinValue}
+                  {texts[language].minValue}
                 </SelectItem>
                 <SelectItem value="equalValue">
-                  Valor Igual que
+                  {texts[language].equalValue}
                 </SelectItem>
                 <SelectItem value="maxValue">
-                  {texts[language].sensorMaxValue}
+                  {texts[language].maxValue}
+                </SelectItem>
+                <SelectItem value="camera">
+                  {texts[language].camera}
                 </SelectItem>
               </SelectGroup>
             </SelectContent>
@@ -200,7 +216,7 @@ export default function CardTriggerActions({
           </div>
         )}
         {actionSensorParameter === "magnet_status" ||
-        actionSensorParameter === "tamper_status" ? (
+        actionSensorParameter === "tamper_status" && (
           <div className="grid grid-cols-3 items-center gap-4">
             <Label className="text-end" htmlFor="name">
               {texts[language].command}
@@ -223,7 +239,65 @@ export default function CardTriggerActions({
               </SelectContent>
             </Select>
           </div>
-        ) : (
+        )}
+        {shouldRenderCameraSelect && (
+          <div className="gap-1">
+            <div className="grid grid-cols-3 items-center gap-4 mb-4">
+              <div className="flex justify-end gap-1">
+                <Label
+                  htmlFor="name"
+                  title={texts[language].triggerValueTooltip}
+                >
+                  {texts[language].triggerParameterCamera}
+                </Label>
+                <Info className="size-[12px]" />
+              </div>
+
+              <Select
+                onValueChange={handleNameSensor}
+                value={actionSensorName}
+              >
+                <SelectTrigger className="col-span-2">
+                  <SelectValue placeholder={texts[language].selectDevice} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>{texts[language].selectCameraPlaceholder}</SelectLabel>
+                    {cameras.map((cam) => (
+                        <SelectItem
+                          key={cam.nickname}
+                          value={cam?.mac as string}
+                        >
+                          {cam.nickname}
+                        </SelectItem>
+                      ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid grid-cols-3 items-center gap-4">
+              <div className="flex justify-end gap-1">
+                <Label
+                  htmlFor="name"
+                  title={texts[language].triggerValueTooltip}
+                >
+                  {texts[language].triggerCameraParameter}
+                </Label>
+                <Info className="size-[12px]" />
+              </div>
+
+              <Textarea
+                className="col-span-4"
+                id="name"
+                placeholder={texts[language].triggerCameraPromptPlaceholder}
+                value={actionStartParameter}
+                onChange={handleCameraPromptInsert}
+              />
+            </div>
+          </div>
+          
+        )}
+        {shouldRenderValueInput && (
           <div className="grid grid-cols-3 items-center gap-4">
             <div className="flex justify-end gap-1">
               <Label
@@ -244,7 +318,7 @@ export default function CardTriggerActions({
               onChange={handleParameterInsert}
             />
           </div>
-        )}
+        )} 
       </div>
     </div>
   );
