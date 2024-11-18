@@ -108,7 +108,7 @@ const CoreToast: React.FC = () => {
 
   useEffect(() => {
     const sortedItems = [...history].sort(
-      (a, b) => parseInt(a.id) - parseInt(b.id)
+      (a, b) => parseInt(a?.id) - parseInt(b?.id)
     );
     setItems(sortedItems);
   }, [history]);
