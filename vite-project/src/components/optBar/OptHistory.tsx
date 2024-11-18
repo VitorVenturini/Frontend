@@ -46,7 +46,7 @@ const HistoryCell: React.FC<HistoryCellProps> = ({ historyInfo }) => {
           </p>
         </div>
       </div>
-      <ResponsiveHistoryInfo historyInfo={historyInfo}/>
+      <ResponsiveHistoryInfo historyInfo={historyInfo} />
     </div>
   );
 };
@@ -55,11 +55,20 @@ const HistoryGrid: React.FC<{ history: HistoryInterface[] }> = ({
   history,
 }) => {
   // ordenar por data
-  const sortedHistory = [...history]?.sort((a, b) => {
-    const dateA = parse(a?.date, "yyyy-MM-dd HH:mm:ss.SSS X", new Date());
-    const dateB = parse(b?.date, "yyyy-MM-dd HH:mm:ss.SSS X", new Date());
-    return dateB?.getTime() - dateA?.getTime();
-  });
+  console.log(history);
+  // ordenar por data
+  const sortedHistory = [...history]
+    .filter((entry) => entry?.date)
+    .sort((a, b) => {
+      try {
+        const dateA = parse(a.date, "yyyy-MM-dd HH:mm:ss.SSS XXX", new Date());
+        const dateB = parse(b.date, "yyyy-MM-dd HH:mm:ss.SSS XXX", new Date());
+        return dateB.getTime() - dateA.getTime();
+      } catch (error) {
+        console.error("Error parsing date:", error, { a, b });
+        return 0;
+      }
+    });
 
   return (
     <>
@@ -106,7 +115,11 @@ const OptHistory: React.FC = () => {
 
   return (
     <ScrollArea className="w-full lg:h-[310px] xl:h-[340px] xl2:h-[380px] xl3:h-[480px] xl4:h-[500px]  relative justify-center align-middle items-center">
-      <InfiniteScroll
+      <>
+      {items.length > 0 ?
+(
+
+        <InfiniteScroll
         dataLength={items.length}
         className="justify-center align-middle items-center flex flex-col"
         next={fetchMoreData}
@@ -145,6 +158,13 @@ const OptHistory: React.FC = () => {
       >
         <HistoryGrid history={items} />
       </InfiniteScroll>
+      ) :       (
+        <p style={{ textAlign: "center" }}>
+        <b>{getText("noHistory", texts[language])}</b>
+      </p>
+      )  }
+      
+      </>
     </ScrollArea>
   );
 };
