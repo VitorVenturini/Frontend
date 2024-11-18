@@ -56,8 +56,8 @@ const HistoryGrid: React.FC<{ history: HistoryInterface[] }> = ({
 }) => {
   // ordenar por data
   const sortedHistory = [...history].sort((a, b) => {
-    const dateA = parse(a.date, "yyyy-MM-dd HH:mm:ss.SSS X", new Date());
-    const dateB = parse(b.date, "yyyy-MM-dd HH:mm:ss.SSS X", new Date());
+    const dateA = parse(a?.date, "yyyy-MM-dd HH:mm:ss.SSS X", new Date());
+    const dateB = parse(b?.date, "yyyy-MM-dd HH:mm:ss.SSS X", new Date());
     return dateB.getTime() - dateA.getTime();
   });
 
@@ -81,13 +81,13 @@ const OptHistory: React.FC = () => {
   const { language } = useLanguage();
   useEffect(() => {
     const sortedItems = [...history].sort(
-      (a, b) => parseInt(a.id) - parseInt(b.id)
+      (a, b) => parseInt(a?.id) - parseInt(b?.id)
     );
     setItems(sortedItems);
   }, [history]);
 
   const fetchMoreData = () => {
-    if (items.length >= history.length) {
+    if (items.length >= history?.length) {
       // setHasMore(false);
       return;
     }
