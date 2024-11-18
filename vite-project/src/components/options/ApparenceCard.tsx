@@ -25,7 +25,8 @@ export default function ApparenceCard() {
   const [updateColor, setUpdateColor] = useState(false);
   const account = useAccount();
   const { toast } = useToast();
-  const { previewTheme, setTheme, setPreviewTheme,resetPreviewTheme } = useTheme();
+  const { previewTheme, setTheme, setPreviewTheme, resetPreviewTheme } =
+    useTheme();
 
   useEffect(() => {
     // Fetch the current logo from the backend
@@ -109,9 +110,7 @@ export default function ApparenceCard() {
     return () => {
       resetPreviewTheme();
     };
-   
   }, []);
-
 
   const handlePreviewColor = (color: Theme) => {
     setPreviewTheme(color); // Preview temporário da cor
@@ -128,7 +127,7 @@ export default function ApparenceCard() {
         entry: "theme",
       });
       setPreviewTheme(previewTheme);
-      setTheme(previewTheme)
+      setTheme(previewTheme);
       localStorage.removeItem("vite-ui-theme");
       localStorage.setItem("vite-ui-theme", previewTheme);
       toast({
@@ -187,10 +186,11 @@ export default function ApparenceCard() {
                 {isCreating ? "Saving..." : "Salvar imagem"}
               </Button>
             </div>
+            <h4 className="scroll-m-20 text-xl font-semibold basis-1/2">
+              Cor do tema
+            </h4>
 
             <div className="flex justify-between w-full items-center">
-              <Label>Escolha uma cor</Label>
-
               <Button
                 variant="outline"
                 className="gap-2 flex items-center"
@@ -244,9 +244,54 @@ export default function ApparenceCard() {
                 className="gap-2 flex items-center"
                 onClick={() => handlePreviewColor("light")}
               >
-                branco
-                <div className="bg-white- w-[20px] h-[20px]" />
+                Claro
+                <div className="bg-white w-[20px] h-[20px]" />
               </Button>
+            </div>
+            <div className="flex gap-2">
+              <div className="h-[50px] w-[50px] bg-background text-background-foreground">
+                background
+              </div>
+              <div className="h-[50px] w-[50px] bg-card text-card-foreground">
+                card
+              </div>
+              <div className="h-[50px] w-[50px] bg-popover text-popover-foreground">
+                popover
+              </div>
+              <div className="h-[50px] w-[50px] bg-primary text-primary-foreground">
+                primary
+              </div>
+              <div className="h-[50px] w-[50px] bg-secondary text-secondary-foreground">
+                secondary
+              </div>
+              <div className="h-[50px] w-[50px] bg-muted text-muted-foreground">
+                muted
+              </div>
+              <div className="h-[50px] w-[50px] bg-accent text-accent-foreground">
+                accent
+              </div>
+              <div className="h-[50px] w-[50px] bg-destructive text-destructive-foreground">
+                destructive
+              </div>
+              <div className="h-[50px] w-[50px] bg-border ">
+                border
+              </div>
+              <div className="h-[50px] w-[50px] bg-input">
+                input
+              </div>
+              <div className="h-[50px] w-[50px] bg-ring">
+                ring
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <div className="h-[50px] w-[50px] bg-foreground"></div>
+              <div className="h-[50px] w-[50px] bg-card-foreground"></div>
+              <div className="h-[50px] w-[50px] bg-popover-foreground"></div>
+              <div className="h-[50px] w-[50px] bg-primary-foreground"></div>
+              <div className="h-[50px] w-[50px] bg-secondary-foreground"></div>
+              <div className="h-[50px] w-[50px] bg-muted-foreground"></div>
+              <div className="h-[50px] w-[50px] bg-accent-foreground"></div>
+              <div className="h-[50px] w-[50px] bg-destructive-foreground"></div>
             </div>
             <Button
               onClick={handleUpdateColor}
