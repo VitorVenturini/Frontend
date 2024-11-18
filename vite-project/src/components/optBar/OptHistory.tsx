@@ -55,15 +55,15 @@ const HistoryGrid: React.FC<{ history: HistoryInterface[] }> = ({
   history,
 }) => {
   // ordenar por data
-  const sortedHistory = [...history].sort((a, b) => {
+  const sortedHistory = [...history]?.sort((a, b) => {
     const dateA = parse(a?.date, "yyyy-MM-dd HH:mm:ss.SSS X", new Date());
     const dateB = parse(b?.date, "yyyy-MM-dd HH:mm:ss.SSS X", new Date());
-    return dateB.getTime() - dateA.getTime();
+    return dateB?.getTime() - dateA?.getTime();
   });
 
   return (
     <>
-      {sortedHistory.reverse().map((hist, index) => (
+      {sortedHistory?.reverse()?.map((hist, index) => (
         <div key={index} className="w-full gap-1 space-x-1">
           <HistoryCell historyInfo={hist} />
         </div>
