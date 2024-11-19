@@ -17,18 +17,22 @@ import {
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider"; // Importe o useWebSocketData
 import texts from "@/_data/texts.json";
 import { useLanguage } from "@/components/language/LanguageContext";
+import { useHistory } from "../history/HistoryContext";
 
 export default function Logout() {
+
   const { updateAccount} = useAccount();
   const account = useAccount()
   const navigate = useNavigate();
   const ws = useWebSocketData();
   const { language } = useLanguage();
+  const { clearHistory } = useHistory();
 
   const handleLogout = () => {
    account.isLogged ? updateAccount({ isLogged: false }) : ""
     if (ws) {
       ws.closeConnection(); // Fecha a conexão WebSocket
+      clearHistory()
     }
     return <Navigate to="/login" />;
   };
