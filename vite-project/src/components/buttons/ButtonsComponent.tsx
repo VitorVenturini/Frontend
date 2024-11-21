@@ -47,6 +47,7 @@ import ModalConference from "./conference/ModalConference";
 import ConferenceButton from "./conference/ConferenceButton";
 import { useWebSocketData } from "../websocket/WebSocketProvider";
 import { useDrop } from "react-dnd";
+import ModalFlic from "./flic/ModalFlic";
 
 interface ButtonProps {
   button: ButtonInterface;
@@ -124,6 +125,15 @@ export default function ButtonsComponent({
       case "alarm":
         return (
           <ModalAlarm
+            selectedPage={selectedPage}
+            selectedUser={selectedUser}
+            clickedPosition={clickedPosition}
+            onClose={() => setIsDialogOpen(false)}
+          />
+        );
+      case "flic":
+        return (
+          <ModalFlic
             selectedPage={selectedPage}
             selectedUser={selectedUser}
             clickedPosition={clickedPosition}
@@ -244,6 +254,7 @@ export default function ButtonsComponent({
                     </SelectTrigger>
                     <SelectContent position="popper">
                       <SelectItem value="alarm">Alarme</SelectItem>
+                      <SelectItem value="flic">Flic</SelectItem>
                       <SelectItem value="number">Número</SelectItem>
                       <SelectItem value="user">Usuário</SelectItem>
                       <SelectItem value="sensor">Sensor</SelectItem>
