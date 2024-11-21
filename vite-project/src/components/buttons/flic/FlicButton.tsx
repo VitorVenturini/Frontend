@@ -50,6 +50,20 @@ export default function FlicButton({ button, handleClick }: ButtonProps) {
 
   const handleClickFlic = () => {
     handleClick?.();
+    setInitiatedByUser(true);
+    if (!account.isAdmin) {
+      const isTriggered = button.triggered;
+      if (isTriggered) {
+        removeClickedButton(button.id);
+        setClickedClass("");
+        wss?.sendMessage({
+          api: "user",
+          mt: "TriggerStopAlarm",
+          prt: button.button_prt,
+          btn_id: button.id,
+        });
+      }
+    }
   };
   return (
     <div

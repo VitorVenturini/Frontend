@@ -10,7 +10,7 @@ export interface HistoryInterface {
   status: string;
   value?: string
   prt: string;
-  details: string;
+  details: any;
 
 }
 

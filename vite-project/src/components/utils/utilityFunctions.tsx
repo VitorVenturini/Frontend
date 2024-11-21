@@ -112,14 +112,15 @@ export function checkButtonWarning(
   return false;
 }
 //função para o typeScript parar de encher o saco
-export const getText = (key: string | undefined, languageTexts: {} = {}): string => {
+export const getText = (
+  key: string | undefined,
+  languageTexts: {} = {}
+): string => {
   if (key && languageTexts && key in languageTexts) {
     return languageTexts[key as keyof typeof languageTexts];
   }
   return key || ""; // Retorna a chave ou uma mensagem padrão
 };
-
-
 
 export function generateAvatar(initials: string, size: number = 64): string {
   const canvas = document.createElement("canvas");
@@ -186,26 +187,27 @@ export const replaceDataForName = (
   const sensor = sensors?.filter((sensor) => {
     return sensor.deveui === guidOrEuid;
   })[0];
-  if(sensor){
+  if (sensor) {
     return sensor.sensor_name;
   }
- 
+
+  return guidOrEuid;
 };
 export const filterButtonByID = (
   btnID: string,
   buttons: ButtonInterface[]
 ): string | undefined => {
-  const button = buttons.filter((btn : ButtonInterface) => {
-    return String(btn.id) === btnID
+  const button = buttons.filter((btn: ButtonInterface) => {
+    return String(btn.id) === btnID;
   })[0];
 
-  if(button){
-    return button.button_name
+  if (button) {
+    return button.button_name;
   }
 };
 
 export function isBase64File(base64String: string): boolean {
-  //regex dus guri p verificar se é base64 
+  //regex dus guri p verificar se é base64
   const base64Pattern = /^data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+);base64,/;
 
   return base64Pattern.test(base64String);

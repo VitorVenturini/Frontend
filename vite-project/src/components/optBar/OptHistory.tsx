@@ -25,7 +25,6 @@ const HistoryCell: React.FC<HistoryCellProps> = ({ historyInfo }) => {
   const { sensors } = useSensors();
   const { buttons } = useButtons();
   const { language } = useLanguage();
-
   return (
     <div className="flex flex-col bg-muted w-[500px] xl2:w-[700px] xl4:w-[1000px] mt-2 ">
       <div className="flex gap-1 bg-card/50 px-2 py-1 justify-between items-center">
@@ -42,7 +41,7 @@ const HistoryCell: React.FC<HistoryCellProps> = ({ historyInfo }) => {
         </div>
         <div className="flex items-center gap-1">
           <p className="text-sm ">
-            {filterButtonByID(historyInfo.details, buttons)}
+            {filterButtonByID(historyInfo.details.id, buttons)}
           </p>
         </div>
       </div>
@@ -51,12 +50,11 @@ const HistoryCell: React.FC<HistoryCellProps> = ({ historyInfo }) => {
   );
 };
 
+
 const HistoryGrid: React.FC<{ history: HistoryInterface[] }> = ({
   history,
 }) => {
-  // ordenar por data
-  console.log(history);
-  // ordenar por data
+
   const sortedHistory = [...history]
     .filter((entry) => entry?.date)
     .sort((a, b) => {
