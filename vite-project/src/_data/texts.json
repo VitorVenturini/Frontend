@@ -155,8 +155,8 @@
     "updateAlarmButtonDescription": "Atualize o botão de alarme com as mudanças necessárias",
     "alarmButtonNameLabel": "Nome do Botão de Alarme",
     "alarmButtonNamePlaceholder": "Digite o nome do botão de alarme",
-    "alarmNumberLabel": "Número do Alarme",
-    "alarmNumberPlaceholder": "Digite o número do alarme",
+    "alarmNumberLabel": "Alarme",
+    "alarmNumberPlaceholder": "Digite o alarme",
     "creatingAlarmButton": "Criando Botão de Alarme",
     "updatingAlarmButton": "Atualizando Botão de Alarme",
     "confirmDeleteTitle": "Você tem certeza?",
@@ -164,7 +164,7 @@
     "delete": "Excluir",
     "fillAllFieldsForAlarm": "Por favor, preencha todos os campos para o alarme.",
     "alarmButtonRequired": "Nome do botão de alarme é obrigatório.",
-    "alarmNumberRequired": "Número do alarme é obrigatório.",
+    "alarmNumberRequired": "Parâmetro do alarme é obrigatório.",
     "createClockButton": "Criar Botão de Relógio",
     "updateClockButton": "Atualizar Botão de Relógio",
     "createClockButtonDescription": "Preencha os campos abaixo para criar um botão de relógio",
@@ -346,7 +346,24 @@
   "d_to_b": "D para B",
   "d_to_c": "D para C",
   "d_to_d": "D para D",
-  "noHistory": "Não há histórico"
-    
+  "noHistory": "Não há histórico",
+  "openAiCardTitle": "OpenAI API",
+  "openAiCardLabel": "Informações da API Open AI (Chat GPT)",
+  "key": "Chave",
+  "organization": "Organização",
+  "project": "Projeto",
+  "googleCardTitle":"Google API",
+  "googleCardLabel": "Chave da API do google",
+  "configApisLabel": "API's",
+  "configCamerasLabel": "Iot Câmeras",
+  "configGatewaysLabel": "Iot Gateways",
+  "configNotificationsLabel": "Notificações",
+  "configSmtpLabel": "Serviço de Email",
+  "configPbxLabel": "PBX",
+  "configRadioLabel": "Rádio",
+  "configBackupLabel": "Backup",
+  "configLicenseLabel": "Licença",
+  "configThemeLabel": "Aparência"
+
   }
 }

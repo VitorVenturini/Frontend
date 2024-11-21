@@ -7,15 +7,18 @@ import ContaCard from "@/components/options/ContaCard";
 import SMTPconfig from "@/components/options/SMTPconfig";
 import RadioCard from "@/components/options/RadioCard";
 import PbxConfigCard from "@/components/options/Pbx/PbxConfigCard";
-import APIGoogleCard from "@/components/options/ApiGoogle/APIGoogleCard";
 import IotCameraCard from "@/components/options/IotCameraCard";
 import Notify from "@/components/options/Notifications/Notifications";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import ApparenceCard from "@/components/options/ApparenceCard";
+import APIsOption from "@/components/options/Apis/ApisOptions";
+import texts from "@/_data/texts.json";
+import { useLanguage } from "@/components/language/LanguageContext";
 
 export default function MenuOptions() {
   const [activeButton, setActiveButton] = useState<string | null>(null);
   const wss = useWebSocketData();
+  const { language } = useLanguage();
   const handleClick = (buttonMenu: string) => {
     if (buttonMenu === "TelephonePBX") {
       wss?.sendMessage({
@@ -42,8 +45,8 @@ export default function MenuOptions() {
         return <RadioCard />;
       case "TelephonePBX":
         return <PbxConfigCard />;
-      case "APIGoogle":
-        return <APIGoogleCard />;
+      case "APIs":
+        return <APIsOption />;
       case "IotCamera":
         return <IotCameraCard />;
       case "Notifications":
@@ -65,71 +68,66 @@ export default function MenuOptions() {
           className={ `${activeButton === "License" ? "bg-accent" : ""} focus:bg-accent`} 
           variant={"ghost"}
           onClick={() => handleClick("License")}
-        >
-          License
+        >{texts[language].configLicenseLabel}
         </Button>
         <Button
           className="focus:bg-accent"
           variant={"ghost"}
           onClick={() => handleClick("Apparence")}  
         >
-          Aparência
+         {texts[language].configThemeLabel} 
         </Button>
         <Button
           className="focus:bg-accent"
           variant={"ghost"}
           onClick={() => handleClick("DataBase")}
-        >
-          Backup
+        >{texts[language].configBackupLabel}
         </Button>
         <Button
           className="focus:bg-accent"
           variant={"ghost"}
           onClick={() => handleClick("Radio")}
-        >
-          Radio
+        >{texts[language].configRadioLabel}
         </Button>
         <Button
           className="focus:bg-accent"
           variant={"ghost"}
           onClick={() => handleClick("TelephonePBX")}
-        >
-          PBX
+        >{texts[language].configPbxLabel}
         </Button>
         <Button
           className="focus:bg-accent"
           variant={"ghost"}
-          onClick={() => handleClick("APIGoogle")}
+          onClick={() => handleClick("APIs")}
         >
-          API Google
+          {texts[language].configApisLabel}
         </Button>
         <Button
           className="focus:bg-accent"
           variant={"ghost"}
           onClick={() => handleClick("IotCamera")}
         >
-          Iot Câmeras
+          {texts[language].configCamerasLabel}
         </Button>
         <Button
           className="focus:bg-accent"
           variant={"ghost"}
           onClick={() => handleClick("Gateways")}
-        >
-          Iot Gateways
+        >{texts[language].configGatewaysLabel}
         </Button>
         <Button
           className="focus:bg-accent"
           variant={"ghost"}
           onClick={() => handleClick("Notifications")}
-        >
-          Notificações
+        >{texts[language].configNotificationsLabel}
+          
         </Button>
         <Button
           className="focus:bg-accent"
           variant={"ghost"}
           onClick={() => handleClick("Email")}
-        >
-          Serviço de Email
+        >{texts[language].configSmtpLabel}
+
         </Button>
       </div>
       <div className="flex justify-center items-start w-full">

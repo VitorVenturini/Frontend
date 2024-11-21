@@ -23,6 +23,27 @@ export interface GoogleApiKeyInterface {
   updatedAt?: string | null;
 }
 
+export interface OpenAIApiKeyInterface {
+  openaiKey:{
+    entry: string;
+    value: string;
+    createdAt: string | null;
+    updatedAt: string | null;
+  }
+  openaiOrg:{
+    entry: string;
+    value: string;
+    createdAt: string | null;
+    updatedAt: string | null;
+  }
+  openaiProj:{
+    entry: string;
+    value: string;
+    createdAt: string | null;
+    updatedAt: string | null;
+  }
+}
+
 export interface LicenseDetail {
   value: string;
   createdAt: string | null;
@@ -155,7 +176,8 @@ export interface SmtpConfig {
 
 interface AppConfigContextType {
   pbxStatus: PbxInterface[];
-  apiKeyInfo: GoogleApiKeyInterface[];
+  googleApiKeyInfo: GoogleApiKeyInterface[];
+  openAIApiConfig: OpenAIApiKeyInterface;
   licenseApi: License;
   loadBarData: LoaderBarProps;
   backupConfig: BackupConfig;
@@ -164,7 +186,7 @@ interface AppConfigContextType {
   addNotifications: (notification: NotificationsInterface) => void;
   updateNotification : (entry: string, newValue: string) => void;
   setPbxStatus: React.Dispatch<React.SetStateAction<PbxInterface[]>>;
-  setApiKeyInfo: React.Dispatch<React.SetStateAction<GoogleApiKeyInterface[]>>;
+  setGoogleApiKeyInfo: React.Dispatch<React.SetStateAction<GoogleApiKeyInterface[]>>;
   setLicense: React.Dispatch<React.SetStateAction<License>>;
   setLoadBarData: React.Dispatch<React.SetStateAction<LoaderBarProps>>;
   addPbx: (pbx: PbxInterface) => void;
@@ -180,6 +202,7 @@ interface AppConfigContextType {
   clearLicense: () => void;
   clearLoadBarData: () => void;
   addBackupConfig: (backupConfig: BackupConfig) => void;
+  setOpenAiApiConfig: ( openAIApiConfig: OpenAIApiKeyInterface) => void;
   clearBackupConfig: () => void;
   addSmtpConfig: (smtpConfig: SmtpConfig) => void;
   clearSmtpConfig: () => void;
@@ -191,7 +214,12 @@ const AppConfigContext = createContext<AppConfigContextType | undefined>(
 
 export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
   const [pbxStatus, setPbxStatus] = useState<PbxInterface[]>([]);
-  const [apiKeyInfo, setApiKeyInfo] = useState<GoogleApiKeyInterface[]>([]);
+  const [googleApiKeyInfo, setGoogleApiKeyInfo] = useState<GoogleApiKeyInterface[]>([]);
+  const [openAIApiConfig, setOpenAIApi] = useState<OpenAIApiKeyInterface>({
+    openaiKey: { entry: "", value: "", createdAt: null, updatedAt: null },
+    openaiOrg: { entry: "", value: "", createdAt: null, updatedAt: null },
+    openaiProj: { entry: "", value: "", createdAt: null, updatedAt: null },
+  });
   const [notification, setNotifications] = useState<NotificationsInterface[]>([]);
   const [backupConfig, setBackupConfig] = useState<BackupConfig>({
     backupUsername: { entry: "", value: "", createdAt: null, updatedAt: null },
@@ -232,7 +260,7 @@ export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
   // Funções para limpar/clearar o estado
 
   const clearPbxStatus = () => setPbxStatus([]);
-  const clearApiKeyInfo = () => setApiKeyInfo([]);
+  const clearApiKeyInfo = () => setGoogleApiKeyInfo([]);
   const clearLicense = () =>
     setLicense({
       status: "active",
@@ -284,7 +312,7 @@ export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const addApiKey = (apiKey: GoogleApiKeyInterface) => {
-    setApiKeyInfo((prevApiKeys) => [...prevApiKeys, apiKey]);
+    setGoogleApiKeyInfo((prevApiKeys) => [...prevApiKeys, apiKey]);
   };
 
   const updateLicense = (
@@ -301,12 +329,20 @@ export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
       licenseInstallDate,
     });
   };
+  const setOpenAiApiConfig = (newConfig: OpenAIApiKeyInterface) => {
+    setOpenAIApi((prevConfig) => ({
+      ...prevConfig,
+      ...newConfig,
+    }));
+  };
+
   const addBackupConfig = (newBackupConfig: BackupConfig) => {
     setBackupConfig((prevBackupConfig) => ({
       ...prevBackupConfig,
       ...newBackupConfig,
-    }));
-};
+      }));
+  };
+
 
   const clearBackupConfig = () => {
     setBackupConfig({
@@ -325,22 +361,24 @@ export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
       ...prevSmtpConfig,
       ...newSmtpConfig,
     }));
-}
-const clearSmtpConfig = () => {
-  setSmtpConfig({
-    smtpUsername: { entry: "smtpUsername", value: "", createdAt: null, updatedAt: null },
-    smtpPassword: { entry: "smtpPassword", value: "", createdAt: null, updatedAt: null },
-    smtpHost: { entry: "smtpHost", value: "", createdAt: null, updatedAt: null },
-    smtpPort: { entry: "smtpPort", value: "", createdAt: null, updatedAt: null },
-    smtpSecure: { entry: "smtpSecure", value: '', createdAt: null, updatedAt: null },
-  });
-};
+  }
+  const clearSmtpConfig = () => {
+    setSmtpConfig({
+      smtpUsername: { entry: "smtpUsername", value: "", createdAt: null, updatedAt: null },
+      smtpPassword: { entry: "smtpPassword", value: "", createdAt: null, updatedAt: null },
+      smtpHost: { entry: "smtpHost", value: "", createdAt: null, updatedAt: null },
+      smtpPort: { entry: "smtpPort", value: "", createdAt: null, updatedAt: null },
+      smtpSecure: { entry: "smtpSecure", value: '', createdAt: null, updatedAt: null },
+    });
+  };
+
 
   return (
     <AppConfigContext.Provider
       value={{
         pbxStatus,
-        apiKeyInfo,
+        googleApiKeyInfo,
+        openAIApiConfig,
         licenseApi,
         loadBarData,
         notification,
@@ -349,7 +387,7 @@ const clearSmtpConfig = () => {
         setPbxStatus,
         addNotifications,
         updateNotification,
-        setApiKeyInfo,
+        setGoogleApiKeyInfo,
         setLicense,
         setLoadBarData,
         addPbx,
@@ -361,6 +399,7 @@ const clearSmtpConfig = () => {
         clearLoadBarData,
         addBackupConfig,
         clearBackupConfig,
+        setOpenAiApiConfig,
         addSmtpConfig,
         clearSmtpConfig,
       }}
