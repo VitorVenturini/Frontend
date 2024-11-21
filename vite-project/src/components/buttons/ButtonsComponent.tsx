@@ -48,6 +48,7 @@ import ConferenceButton from "./conference/ConferenceButton";
 import { useWebSocketData } from "../websocket/WebSocketProvider";
 import { useDrop } from "react-dnd";
 import ModalFlic from "./flic/ModalFlic";
+import FlicButton from "./flic/FlicButton";
 
 interface ButtonProps {
   button: ButtonInterface;
@@ -292,6 +293,32 @@ export default function ButtonsComponent({
                 <DialogContent className="space-y-6 min-h-[250px] flex flex-col content-between p-0 min-w-[600px]">
                   {
                     <ModalAlarm
+                      selectedPage={selectedPage}
+                      selectedUser={selectedUser}
+                      clickedPosition={clickedPosition}
+                      existingButton={button}
+                      isUpdate={true}
+                      onClose={() => setIsDialogOpen(false)}
+                    />
+                  }
+                </DialogContent>
+              )}
+            </Dialog>
+          </div>
+        );
+      case "flic":
+        return (
+          <div>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <div>
+                  <FlicButton button={button} handleClick={handleClick} />
+                </div>
+              </DialogTrigger>
+              {isAdmin && (
+                <DialogContent className="space-y-6 min-h-[250px] flex flex-col content-between p-0 min-w-[600px]">
+                  {
+                    <ModalFlic
                       selectedPage={selectedPage}
                       selectedUser={selectedUser}
                       clickedPosition={clickedPosition}
