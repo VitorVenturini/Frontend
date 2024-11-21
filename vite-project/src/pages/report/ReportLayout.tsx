@@ -80,7 +80,7 @@ function ReportLayout() {
   const {
     setLoadBarData,
     clearLoadBarData,
-    setApiKeyInfo,
+    addApiKey,
     setPbxStatus,
     addBackupConfig,
     addSmtpConfig,
@@ -180,7 +180,7 @@ function ReportLayout() {
         const apiKeyEntries = message.result.filter(
           (item: any) => item.entry === "googleApiKey"
         );
-        setApiKeyInfo(apiKeyEntries);
+        addApiKey(apiKeyEntries);
 
         //   console.log("adminPBXUSer", message.result);
 
