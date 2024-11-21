@@ -107,8 +107,8 @@ const CoreToast: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const sortedItems = [...history].sort(
-      (a, b) => parseInt(a.id) - parseInt(b.id)
+    const sortedItems = [...history]?.sort(
+      (a, b) => parseInt(a?.id) - parseInt(b?.id)
     );
     setItems(sortedItems);
   }, [history]);

@@ -320,6 +320,7 @@
   "pt100_1": "PT100 1",
   "pt100_2": "PT100 2",
   "people_count_all": "Total de Pessoas",
+  "region_count" : "Contagem Região",
   "people_count_max": "Máxima de Pessoas",
   "people_in": "Pessoas Entrando",
   "people_out": "Pessoas Saindo",
@@ -356,8 +357,25 @@
   "d_to_a": "D para A",
   "d_to_b": "D para B",
   "d_to_c": "D para C",
-  "d_to_d": "D para D"
+  "d_to_d": "D para D",
+  "noHistory": "Não há histórico",
+  "openAiCardTitle": "OpenAI API",
+  "openAiCardLabel": "Informações da API Open AI (Chat GPT)",
+  "key": "Chave",
+  "organization": "Organização",
+  "project": "Projeto",
+  "googleCardTitle":"Google API",
+  "googleCardLabel": "Chave da API do google",
+  "configApisLabel": "API's",
+  "configCamerasLabel": "Iot Câmeras",
+  "configGatewaysLabel": "Iot Gateways",
+  "configNotificationsLabel": "Notificações",
+  "configSmtpLabel": "Serviço de Email",
+  "configPbxLabel": "PBX",
+  "configRadioLabel": "Rádio",
+  "configBackupLabel": "Backup",
+  "configLicenseLabel": "Licença",
+  "configThemeLabel": "Aparência"
 
-    
   }
 }

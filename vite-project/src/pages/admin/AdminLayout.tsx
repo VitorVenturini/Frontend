@@ -49,13 +49,14 @@ import {
 import {
   BackupConfig,
   NotificationsInterface,
+  OpenAIApiKeyInterface,
   SmtpConfig,
   useAppConfig,
 } from "@/components/options/ConfigContext";
 import Loader from "@/components/Loader";
 import useWebSocket from "@/components/websocket/useWebSocket";
 import Loader2 from "@/components/Loader2";
-import { set } from "date-fns";
+import { add, set } from "date-fns";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { TouchBackend } from "react-dnd-touch-backend";
@@ -90,9 +91,10 @@ function AdminLayout() {
   const {
     setLoadBarData,
     clearLoadBarData,
-    setApiKeyInfo,
+    setGoogleApiKeyInfo,
     setPbxStatus,
     addBackupConfig,
+    setOpenAiApiConfig,
     addSmtpConfig,
     updateLicense,
     addNotifications,
@@ -194,7 +196,7 @@ function AdminLayout() {
         const apiKeyEntries = message.result.filter(
           (item: any) => item.entry === "googleApiKey"
         );
-        setApiKeyInfo(apiKeyEntries);
+        setGoogleApiKeyInfo(apiKeyEntries);
 
         console.log("adminPBXUSer", message.result);
 
@@ -348,6 +350,43 @@ function AdminLayout() {
         };
         console.log(JSON.stringify(allBackupInfo));
         addBackupConfig(allBackupInfo);
+
+        //openai
+        const openaiEntries = message.result.filter(
+          (item: any) =>
+            item.entry === "openaiKey" ||
+            item.entry === "openaiOrg" ||
+            item.entry === "openaiProj"
+        );
+
+        const allOpenAIInfo: OpenAIApiKeyInterface = {
+          openaiKey: openaiEntries.find(
+            (item: any) => item.entry === "openaiKey"
+          ) || {
+            entry: "openaiKey",
+            value: "",
+            createdAt: null,
+            updatedAt: null,
+          },
+          openaiOrg: openaiEntries.find(
+            (item: any) => item.entry === "openaiOrg"
+          ) || {
+            entry: "openaiOrg",
+            value: "",
+            createdAt: null,
+            updatedAt: null,
+          },
+          openaiProj: openaiEntries.find(
+            (item: any) => item.entry === "openaiProj"
+          ) || {
+            entry: "openaiProj",
+            value: "",
+            createdAt: null,
+            updatedAt: null,
+          }
+        };
+        console.log('OpenAiConfig',JSON.stringify(allOpenAIInfo));
+        setOpenAiApiConfig(allOpenAIInfo);
 
         const sensorNotification = message.result.find(
           (item: NotificationsInterface) => item.entry === "sensorNotification"

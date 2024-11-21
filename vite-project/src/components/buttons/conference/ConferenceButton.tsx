@@ -48,7 +48,7 @@ export default function ConferenceButton({ button, handleClick }: NumberProps) {
 
   return (
     <div
-      className={`${commonClasses} ${callStatusClass} flex flex-col cursor-pointer bg-green-800`}
+      className={`${commonClasses} ${callStatusClass} flex flex-col cursor-pointer text-card-foreground bg-green-800 `}
       onClick={handleClickConf}
     >
       <div className="flex items-center gap-1 cursor-pointer ">
@@ -60,7 +60,7 @@ export default function ConferenceButton({ button, handleClick }: NumberProps) {
       <div className="text-sm flex justify-end font-extrabold">
         <p className="xl3:text-2xl">{button.button_prt}</p>
       </div>
-      <div className="text-[10px] xl2:text-sm flex justify-center text-foreground/75 mt-auto w-full">
+      <div className="text-[10px] xl2:text-sm flex justify-center text-white/55 mt-auto w-full">
         {button.note ? getText(button?.note, texts[language]) : "Disponível"}
       </div>
     </div>
