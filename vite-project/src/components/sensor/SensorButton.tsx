@@ -80,7 +80,7 @@ export default function SensorButton({ handleClick, button }: ButtonProps) {
     <div
       className={
         account.isAdmin
-          ? `${commonClasses} flex flex-col justify-between cursor-pointer active:bg-red-900 bg-buttonSensor`
+          ? `${commonClasses} flex flex-col justify-between cursor-pointer active:bg-red-900 bg-buttonSensor `
           : getButtonClassName()
       }
       onClick={handleClickButton}

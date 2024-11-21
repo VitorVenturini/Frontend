@@ -159,7 +159,7 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
 
   return (
     <div
-      className={`${commonClasses} flex flex-col justify-between  cursor-pointer ${
+      className={`${commonClasses} flex flex-col justify-between text-card-foreground cursor-pointer ${
         button.clicked
           ? callStatusClass
           : filteredUser?.status === "offline"
@@ -180,7 +180,7 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
         </div>
       </div>
       <div
-        className={`text-[10px] xl2:text-sm text-foreground/55 flex justify-center mt-auto w-full ${statusClass}`}
+        className={`text-[10px] xl2:text-sm text-white/55 flex justify-center mt-auto w-full ${statusClass}`}
       >
         {getText(filteredUser?.note, texts[language])}
       </div>
