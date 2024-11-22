@@ -161,10 +161,10 @@
     "flicButtonNameLabel": "Nome do Botão de Flic",
     "alarmButtonNamePlaceholder": "Digite o nome do botão de alarme",
     "flicButtonNamePlaceholder": "Digite o nome do botão de flic",
-    "alarmNumberLabel": "Número do Alarme",
-    "flicNumberLabel": "Número do flic",
-    "alarmNumberPlaceholder": "Digite o número do alarme",
-    "flicNumberPlaceholder": "Digite o número do flic",
+    "alarmNumberLabel": "Alarme",
+    "flicNumberLabel": "Flic",
+    "alarmNumberPlaceholder": "Digite o alarme",
+    "flicNumberPlaceholder": "Digite parâmetro flic",
     "creatingAlarmButton": "Criando Botão de Alarme",
     "updatingAlarmButton": "Atualizando Botão de Alarme",
     "confirmDeleteTitle": "Você tem certeza?",
@@ -174,8 +174,8 @@
     "fillAllFieldsForFlic": "Por favor, preencha todos os campos para o flic.",
     "alarmButtonRequired": "Nome do botão de alarme é obrigatório.",
     "flicButtonRequired": "Nome do botão de flic é obrigatório.",
-    "alarmNumberRequired": "Número do alarme é obrigatório.",
-    "flicNumberRequired": "Número do flic é obrigatório.",
+    "alarmNumberRequired": "Parâmetro do alarme é obrigatório.",
+    "flicNumberRequired": "Parâmet do flic é obrigatório.",
     "createClockButton": "Criar Botão de Relógio",
     "updateClockButton": "Atualizar Botão de Relógio",
     "createClockButtonDescription": "Preencha os campos abaixo para criar um botão de relógio",
@@ -375,7 +375,10 @@
   "configRadioLabel": "Rádio",
   "configBackupLabel": "Backup",
   "configLicenseLabel": "Licença",
-  "configThemeLabel": "Aparência"
+  "configThemeLabel": "Aparência",
+  "flicCardTitle": "Flic API",
+  "flicCardLabel": "Caso deseje, informe uma chave de segurança para ser requerida no Header das requisições",
+  "UpdateConfigSuccess": "Configuração atualizada com Sucesso!"
 
   }
 }

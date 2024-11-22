@@ -62,6 +62,8 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { TouchBackend } from "react-dnd-touch-backend";
 import { isTouchDevice } from "@/components/utils/utilityFunctions";
 import { isMobile } from "react-device-detect";
+import texts from "@/_data/texts.json";
+import { useLanguage } from "@/components/language/LanguageContext";
 
 function AdminLayout() {
   const { setTheme } = useTheme()
@@ -92,6 +94,7 @@ function AdminLayout() {
     setLoadBarData,
     clearLoadBarData,
     setGoogleApiKeyInfo,
+    setFlicSecretApi,
     setPbxStatus,
     addBackupConfig,
     setOpenAiApiConfig,
@@ -100,6 +103,7 @@ function AdminLayout() {
     addNotifications,
   } = useAppConfig();
   var allBtn: ButtonInterface[];
+  const { language } = useLanguage();
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
     switch (message.mt) {
@@ -124,6 +128,11 @@ function AdminLayout() {
         updateButton(updatedButton);
         toast({
           description: "Botão Atualizado com sucesso",
+        });
+        break;
+      case "UpdateConfigSuccess":
+        toast({
+          description: texts[language].UpdateConfigSuccess,
         });
         break;
       case "DeleteButtonsSuccess":
@@ -197,6 +206,11 @@ function AdminLayout() {
           (item: any) => item.entry === "googleApiKey"
         );
         setGoogleApiKeyInfo(apiKeyEntries);
+
+        const flicSecretApiEntries = message.result.filter(
+          (item: any) => item.entry === "flicSecretApi"
+        )[0];
+        setFlicSecretApi(flicSecretApiEntries);
 
         console.log("adminPBXUSer", message.result);
 
