@@ -1,6 +1,23 @@
 import { createContext, useState, useContext, ReactNode } from "react";
 import { SetStateAction } from "react";
 
+export interface CallDetails {
+  id: string;
+  guid: string;
+  number: string;
+  call_started: string | null;
+  call_ringing: string | null;
+  call_connected: string | null;
+  call_ended: string | null;
+  status: number;
+  direction: string;
+  record_id: string | null;
+  btn_id: string | null;
+  call_innovaphone: string;
+  device: string;
+  record_link: string;
+}
+
 export interface HistoryInterface {
   id: string;
   guid: string;
@@ -8,10 +25,9 @@ export interface HistoryInterface {
   name: string;
   date: string;
   status: string;
-  value?: string
+  value?: string;
   prt: string;
-  details: string;
-
+  details: CallDetails; // Alterado de string para o tipo correto
 }
 
 interface HistoryContextType {

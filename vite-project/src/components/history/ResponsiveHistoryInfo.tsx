@@ -12,10 +12,36 @@ import {
 } from "../buttons/buttonContext/ButtonsContext";
 import { SensorInterface, useSensors } from "../sensor/SensorContext";
 import { handleSensorSpecificValue } from "../sensor/SensorResponsiveInfo";
+import { PlayIcon } from "lucide-react";
+import { DownloadIcon } from "lucide-react";
+import { Button } from "../ui/button";
+import { host } from "@/App";
+import { AudioPlayer } from "react-audio-player-component"; // Substitua pela biblioteca de áudio que você está usando
 
 interface HistoryCellProps {
   historyInfo: HistoryInterface;
 }
+const calculateDuration = (
+  connected: string | null,
+  ended: string | null
+): string => {
+  if (!connected || !ended) return "00:00"; // Garantir que as datas sejam válidas
+
+  const start = new Date(connected);
+  const end = new Date(ended);
+  const durationInMs = end.getTime() - start.getTime(); // Diferença em milissegundos
+  const durationInSeconds = Math.floor(durationInMs / 1000); // Converter para segundos
+
+  const minutes = Math.floor(durationInSeconds / 60);
+  const seconds = durationInSeconds % 60;
+
+  // Formatar para mm:ss
+  const formattedMinutes = String(minutes).padStart(2, "0");
+  const formattedSeconds = String(seconds).padStart(2, "0");
+
+  return `${formattedMinutes}:${formattedSeconds}`;
+};
+
 const ButtonCircles = ({ type }: { type: string }) => {
   const splitedType = type.split("_");
   if (type.startsWith("press_short")) {
@@ -114,14 +140,23 @@ export default function ResponsiveHistoryInfo({
   const { buttons } = useButtons();
   const { buttonSensors } = useSensors();
 
+  const details = historyInfo.details;
+  const recordLink = details.record_link;
+  const isLinkAvailable = recordLink;
+  const duration = calculateDuration(
+    details.call_connected,
+    details.call_ended
+  );
+
+  console.log("Link available", host + recordLink);
   const truncatedPrt =
     historyInfo?.prt?.length > 20
       ? `${historyInfo?.prt.slice(0, 20)}...`
       : historyInfo?.prt;
 
-  let formattedDate: string;
-  if (historyInfo?.date) {
-    formattedDate = format(new Date(historyInfo?.date as any), "dd/MM HH:mm");
+  let formattedDate = "";
+  if (historyInfo.date) {
+    formattedDate = format(new Date(historyInfo.date), "dd/MM HH:mm");
   }
 
   return (
@@ -138,18 +173,20 @@ export default function ResponsiveHistoryInfo({
               ? getText(historyInfo?.name, texts[language])
               : historyInfo?.name}
           </span>
+          {!recordLink && (
+            <p className="text-sm font-black ">
+              {truncatedPrt
+                ? createHistoryContent(
+                    historyInfo?.name,
+                    historyInfo?.status,
+                    historyInfo?.prt,
+                    language,
+                    historyInfo?.details
+                  ).content
+                : truncatedPrt}
+            </p>
+          )}
 
-          <p className="text-sm font-black ">
-            {truncatedPrt
-              ? createHistoryContent(
-                  historyInfo?.name,
-                  historyInfo?.status,
-                  historyInfo?.prt,
-                  language,
-                  historyInfo?.details
-                ).content
-              : truncatedPrt}
-          </p>
           <p className="text-sm capitalize ">
             {historyInfo.status
               ? createHistoryContent(
@@ -161,6 +198,47 @@ export default function ResponsiveHistoryInfo({
                 ).statusValue
               : historyInfo?.status}
           </p>
+          {historyInfo.name === "call" && (
+            <div className="flex justify-between rounded-md my-2 items-center px-2 py-1">
+              <div className="flex items-center gap-1 capitalize">
+                <p className="text-sm font-bold">Duração: {duration}</p>
+              </div>
+            </div>
+          )}
+          {recordLink && (
+            <div className="flex justify-stretch m-2 p-1">
+              <Button variant="ghost" size="icon" disabled={!isLinkAvailable} className="w-[300px]">
+                <PlayIcon />
+                <AudioPlayer
+                  src={`${host}${recordLink}`}
+                  minimal={true}
+                  width={200}
+                  trackHeight={20}
+                  barWidth={1}
+                  gap={2}
+                  visualise={true}
+                  backgroundColor="#1e293b"
+                  barColor="#1e293b"
+                  barPlayedColor="#ffffff"
+                  skipDuration={2}
+                  showLoopOption={false}
+                  showVolumeControl={false}
+                />
+              </Button>
+              <Button variant="ghost" size="icon">
+                <a
+                  href={`${host}${recordLink}`}
+                  download
+                  onClick={(e) => {
+                    if (!isLinkAvailable) {
+                      e.preventDefault(); // Previne o comportamento padrão se o link não estiver disponível
+                    }
+                  }}
+                ></a>
+                <DownloadIcon />
+              </Button>
+            </div>
+          )}
         </div>
         <p className="text-sm text-muted-foreground text-wrap mr-2">
           {formattedDate}
