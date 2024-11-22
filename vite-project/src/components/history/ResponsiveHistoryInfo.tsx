@@ -12,8 +12,8 @@ import {
 } from "../buttons/buttonContext/ButtonsContext";
 import { SensorInterface, useSensors } from "../sensor/SensorContext";
 import { handleSensorSpecificValue } from "../sensor/SensorResponsiveInfo";
-import { PlayIcon } from "lucide-react";
-import { DownloadIcon } from "lucide-react";
+import { PlayIcon, DownloadIcon, PauseIcon } from "lucide-react";
+import React, { useRef, useState } from "react";
 import { Button } from "../ui/button";
 import { host } from "@/App";
 import { AudioPlayer } from "react-audio-player-component"; // Substitua pela biblioteca de áudio que você está usando
@@ -21,6 +21,7 @@ import { AudioPlayer } from "react-audio-player-component"; // Substitua pela bi
 interface HistoryCellProps {
   historyInfo: HistoryInterface;
 }
+
 const calculateDuration = (
   connected: string | null,
   ended: string | null
@@ -147,7 +148,44 @@ export default function ResponsiveHistoryInfo({
     details.call_connected,
     details.call_ended
   );
+  const AudioPlayerButton = ({ audioSrc }: { audioSrc: string }) => {
+    const audioRef = useRef<HTMLAudioElement>(null);
+    const [isPlaying, setIsPlaying] = useState(false);
 
+    const toggleAudioPlayback = () => {
+      if (audioRef.current) {
+        if (isPlaying) {
+          audioRef.current.pause();
+          setIsPlaying(false);
+        } else {
+          audioRef.current.play();
+          setIsPlaying(true);
+        }
+      }
+    };
+    const handleAudioEnd = () => {
+      setIsPlaying(false);
+    };
+
+    return (
+      <div>
+        <audio
+          ref={audioRef}
+          src={audioSrc}
+          preload="auto"
+          onEnded={handleAudioEnd}
+        />
+        <Button
+          variant="ghost"
+          size="icon"
+          disabled={!isLinkAvailable}
+          onClick={toggleAudioPlayback}
+        >
+          {isPlaying ? <PauseIcon /> : <PlayIcon />}
+        </Button>
+      </div>
+    );
+  };
   console.log("Link available", host + recordLink);
   const truncatedPrt =
     historyInfo?.prt?.length > 20
@@ -206,37 +244,35 @@ export default function ResponsiveHistoryInfo({
             </div>
           )}
           {recordLink && (
-            <div className="flex justify-stretch m-2 p-1">
-              <Button variant="ghost" size="icon" disabled={!isLinkAvailable} className="w-[300px]">
-                <PlayIcon />
-                <AudioPlayer
-                  src={`${host}${recordLink}`}
-                  minimal={true}
-                  width={200}
-                  trackHeight={20}
-                  barWidth={1}
-                  gap={2}
-                  visualise={true}
-                  backgroundColor="#1e293b"
-                  barColor="#1e293b"
-                  barPlayedColor="#ffffff"
-                  skipDuration={2}
-                  showLoopOption={false}
-                  showVolumeControl={false}
-                />
-              </Button>
-              <Button variant="ghost" size="icon">
+            <div >
+              {isLinkAvailable ? (
+                <div className="flex justify-stretch p-1">
+                <AudioPlayerButton audioSrc={`${host}${recordLink}`} />
+                <Button
+                variant="ghost"
+                size="icon"
+                onClick={(e) => {
+                  console.log("link", host + recordLink);
+                }}
+              >
                 <a
                   href={`${host}${recordLink}`}
                   download
                   onClick={(e) => {
                     if (!isLinkAvailable) {
-                      e.preventDefault(); // Previne o comportamento padrão se o link não estiver disponível
+                      e.preventDefault();
+                      // Previne o comportamento padrão se o link não estiver disponível
                     }
                   }}
-                ></a>
-                <DownloadIcon />
+                >
+                  <DownloadIcon />
+                </a>
               </Button>
+              </div>
+              ) : (
+                <p>Áudio não disponível</p>
+              )}
+              
             </div>
           )}
         </div>

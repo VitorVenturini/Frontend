@@ -95,8 +95,9 @@ const ColumnsReports: React.FC<ColumnsReportsProps> = ({
                         e.preventDefault(); // Previne o comportamento padrão se o link não estiver disponível
                       }
                     }}
-                  ></a>
-                  <Download />
+                  >
+                    <Download />
+                  </a>
                 </Button>
               </PopoverContent>
             </Popover>
