@@ -48,7 +48,7 @@ const ButtonCircles = ({ type }: { type: string }) => {
     return (
       <span className="flex items-center gap-2">
         <span className="w-4 h-4 bg-white rounded-full"></span>
-        <span>nº {splitedType[2]} </span>
+        {splitedType[2] && <span>nº {splitedType[2]} </span>}
       </span>
     );
   } else if (type.startsWith("press_double")) {
@@ -56,14 +56,14 @@ const ButtonCircles = ({ type }: { type: string }) => {
       <span className="flex items-center gap-1">
         <span className="w-4 h-4 bg-white rounded-full"></span>
         <span className="w-4 h-4 bg-white rounded-full"></span>
-        <span>nº {splitedType[2]} </span>
+        {splitedType[2] && <span>nº {splitedType[2]} </span>}
       </span>
     );
   } else if (type.startsWith("press_long")) {
     return (
       <span className="flex items-center gap-2">
         <span className="w-10 h-4 bg-white rounded-full"></span>
-        <span>nº {splitedType[2]} </span>
+        {splitedType[2] && <span>nº {splitedType[2]} </span>}
       </span>
     );
   } else {

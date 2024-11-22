@@ -52,12 +52,11 @@ const HistoryCell: React.FC<HistoryCellProps> = ({ historyInfo }) => {
   );
 };
 
+
 const HistoryGrid: React.FC<{ history: HistoryInterface[] }> = ({
   history,
 }) => {
-  // ordenar por data
-  console.log(history);
-  // ordenar por data
+
   const sortedHistory = [...history]
     .filter((entry) => entry?.date)
     .sort((a, b) => {

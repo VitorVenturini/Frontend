@@ -49,18 +49,21 @@ import {
 import {
   BackupConfig,
   NotificationsInterface,
+  OpenAIApiKeyInterface,
   SmtpConfig,
   useAppConfig,
 } from "@/components/options/ConfigContext";
 import Loader from "@/components/Loader";
 import useWebSocket from "@/components/websocket/useWebSocket";
 import Loader2 from "@/components/Loader2";
-import { set } from "date-fns";
+import { add, set } from "date-fns";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { TouchBackend } from "react-dnd-touch-backend";
 import { isTouchDevice } from "@/components/utils/utilityFunctions";
 import { isMobile } from "react-device-detect";
+import texts from "@/_data/texts.json";
+import { useLanguage } from "@/components/language/LanguageContext";
 
 function AdminLayout() {
   const { setTheme } = useTheme()
@@ -90,14 +93,17 @@ function AdminLayout() {
   const {
     setLoadBarData,
     clearLoadBarData,
-    setApiKeyInfo,
+    setGoogleApiKeyInfo,
+    setFlicSecretApi,
     setPbxStatus,
     addBackupConfig,
+    setOpenAiApiConfig,
     addSmtpConfig,
     updateLicense,
     addNotifications,
   } = useAppConfig();
   var allBtn: ButtonInterface[];
+  const { language } = useLanguage();
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
     switch (message.mt) {
@@ -122,6 +128,11 @@ function AdminLayout() {
         updateButton(updatedButton);
         toast({
           description: "Botão Atualizado com sucesso",
+        });
+        break;
+      case "UpdateConfigSuccess":
+        toast({
+          description: texts[language].UpdateConfigSuccess,
         });
         break;
       case "DeleteButtonsSuccess":
@@ -194,7 +205,12 @@ function AdminLayout() {
         const apiKeyEntries = message.result.filter(
           (item: any) => item.entry === "googleApiKey"
         );
-        setApiKeyInfo(apiKeyEntries);
+        setGoogleApiKeyInfo(apiKeyEntries);
+
+        const flicSecretApiEntries = message.result.filter(
+          (item: any) => item.entry === "flicSecretApi"
+        )[0];
+        setFlicSecretApi(flicSecretApiEntries);
 
         console.log("adminPBXUSer", message.result);
 
@@ -348,6 +364,43 @@ function AdminLayout() {
         };
         console.log(JSON.stringify(allBackupInfo));
         addBackupConfig(allBackupInfo);
+
+        //openai
+        const openaiEntries = message.result.filter(
+          (item: any) =>
+            item.entry === "openaiKey" ||
+            item.entry === "openaiOrg" ||
+            item.entry === "openaiProj"
+        );
+
+        const allOpenAIInfo: OpenAIApiKeyInterface = {
+          openaiKey: openaiEntries.find(
+            (item: any) => item.entry === "openaiKey"
+          ) || {
+            entry: "openaiKey",
+            value: "",
+            createdAt: null,
+            updatedAt: null,
+          },
+          openaiOrg: openaiEntries.find(
+            (item: any) => item.entry === "openaiOrg"
+          ) || {
+            entry: "openaiOrg",
+            value: "",
+            createdAt: null,
+            updatedAt: null,
+          },
+          openaiProj: openaiEntries.find(
+            (item: any) => item.entry === "openaiProj"
+          ) || {
+            entry: "openaiProj",
+            value: "",
+            createdAt: null,
+            updatedAt: null,
+          }
+        };
+        console.log('OpenAiConfig',JSON.stringify(allOpenAIInfo));
+        setOpenAiApiConfig(allOpenAIInfo);
 
         const sensorNotification = message.result.find(
           (item: NotificationsInterface) => item.entry === "sensorNotification"

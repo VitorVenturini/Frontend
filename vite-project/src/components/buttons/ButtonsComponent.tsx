@@ -47,6 +47,8 @@ import ModalConference from "./conference/ModalConference";
 import ConferenceButton from "./conference/ConferenceButton";
 import { useWebSocketData } from "../websocket/WebSocketProvider";
 import { useDrop } from "react-dnd";
+import ModalFlic from "./flic/ModalFlic";
+import FlicButton from "./flic/FlicButton";
 
 interface ButtonProps {
   button: ButtonInterface;
@@ -61,7 +63,7 @@ interface DraggedItem {
 }
 
 export const commonClasses =
-  "w-[128px] h-[70px] xl:w-[128px] xl:h-[77px] xl2:w-[150px] xl2:h-[90px] xl3:w-[190px] xl3:h-[112px] xl4:w-[230px] xl4:h-[139px] rounded-lg border bg-border text-card-foreground shadow-sm p-1 justify-between";
+  "w-[128px] h-[70px] xl:w-[128px] xl:h-[77px] xl2:w-[150px] xl2:h-[90px] xl3:w-[190px] xl3:h-[112px] xl4:w-[230px] xl4:h-[139px] text-white rounded-lg border bg-border shadow-sm p-1 justify-between";
 
 export default function ButtonsComponent({
   button,
@@ -124,6 +126,15 @@ export default function ButtonsComponent({
       case "alarm":
         return (
           <ModalAlarm
+            selectedPage={selectedPage}
+            selectedUser={selectedUser}
+            clickedPosition={clickedPosition}
+            onClose={() => setIsDialogOpen(false)}
+          />
+        );
+      case "flic":
+        return (
+          <ModalFlic
             selectedPage={selectedPage}
             selectedUser={selectedUser}
             clickedPosition={clickedPosition}
@@ -244,6 +255,7 @@ export default function ButtonsComponent({
                     </SelectTrigger>
                     <SelectContent position="popper">
                       <SelectItem value="alarm">Alarme</SelectItem>
+                      <SelectItem value="flic">Flic</SelectItem>
                       <SelectItem value="number">Número</SelectItem>
                       <SelectItem value="user">Usuário</SelectItem>
                       <SelectItem value="sensor">Sensor</SelectItem>
@@ -281,6 +293,32 @@ export default function ButtonsComponent({
                 <DialogContent className="space-y-6 min-h-[250px] flex flex-col content-between p-0 min-w-[600px]">
                   {
                     <ModalAlarm
+                      selectedPage={selectedPage}
+                      selectedUser={selectedUser}
+                      clickedPosition={clickedPosition}
+                      existingButton={button}
+                      isUpdate={true}
+                      onClose={() => setIsDialogOpen(false)}
+                    />
+                  }
+                </DialogContent>
+              )}
+            </Dialog>
+          </div>
+        );
+      case "flic":
+        return (
+          <div>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <div>
+                  <FlicButton button={button} handleClick={handleClick} />
+                </div>
+              </DialogTrigger>
+              {isAdmin && (
+                <DialogContent className="space-y-6 min-h-[250px] flex flex-col content-between p-0 min-w-[600px]">
+                  {
+                    <ModalFlic
                       selectedPage={selectedPage}
                       selectedUser={selectedUser}
                       clickedPosition={clickedPosition}
