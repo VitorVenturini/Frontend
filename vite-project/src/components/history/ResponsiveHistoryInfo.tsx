@@ -124,6 +124,12 @@ export const createHistoryContent = (
         statusValue = translatedStatus;
       }
       break;
+      case "call":
+        badgeVariant +=
+          "border-transparent bg-green-900 text-green-100 hover:bg-green-800";
+        content = translatedPrt;
+        statusValue = translatedStatus;
+        break
     default:
       badgeVariant +=
         "border-transparent bg-gray-900 text-gray-100 hover:bg-gray-800";
