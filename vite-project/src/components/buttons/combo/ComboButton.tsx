@@ -52,7 +52,7 @@ export default function ComboButton({ button, handleClick }: ComboProps) {
       onClick={handleClickCombo}
     >
       <div className="flex items-center gap-1 cursor-pointer align-middle justify-center h-full ">
-        <p className="text-sm font-bold xl3:text-2xl leading-none">{button.button_name}</p>
+        <p className="text-[9px] xl3:text-sm xl4:text-md leading-none">{button.button_name}</p>
       </div>
     </div>
   );

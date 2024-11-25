@@ -72,7 +72,7 @@ export default function FlicButton({ button, handleClick }: ButtonProps) {
     >
       <div className="flex items-center gap-1 cursor-pointer ">
         <CircleDot size={17} color="white" />
-        <p className="text-sm font-medium leading-none  xl3:text-xl xl4:text-2xl">
+        <p className=" font-medium leading-none text-[9px] xl3:text-sm xl4:text-md">
           {button.button_name}
         </p>
       </div>

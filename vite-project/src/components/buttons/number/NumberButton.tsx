@@ -142,7 +142,7 @@ export default function NumberButton({ button, onClick }: NumberProps) {
     >
       <div className="flex items-center gap-1 cursor-pointer ">
         {IconComponent && <IconComponent size={17} />}
-        <p className="text-sm leading-none xl4:text-2xl  text-">
+        <p className=" leading-none text-[9px] xl3:text-sm xl4:text-md">
           {button.button_name}
         </p>
       </div>

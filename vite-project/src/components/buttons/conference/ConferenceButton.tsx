@@ -53,7 +53,7 @@ export default function ConferenceButton({ button, handleClick }: NumberProps) {
     >
       <div className="flex items-center gap-1 cursor-pointer ">
         {<Icons.Group />}
-        <p className="text-sm leading-none xl4:text-2xl">
+        <p className=" leading-none text-[9px] xl3:text-sm xl4:text-md">
           {button.button_name}
         </p>
       </div>

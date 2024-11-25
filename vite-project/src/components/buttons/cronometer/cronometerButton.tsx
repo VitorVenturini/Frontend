@@ -90,7 +90,7 @@ export default function CronometerButton({ button, handleClick }: ButtonProps) {
     <div
       className={`${commonClasses} flex flex-col justify-between cursor-pointer ${clickedClass}`}
     >
-      <p className="text-sm font-medium leading-none text-white xl3:text-lg xl4:text-xl">
+      <p className="font-medium leading-none text-white text-[9px] xl3:text-sm xl4:text-md">
         {button.button_name}
       </p>
       <div className="font-extrabold xl3:text-2xl xl4:text-3xl font-mono w-[10ch] text-center">

@@ -171,7 +171,7 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
       <div className="flex-grow xl3:space-y-2">
         <div className="flex items-center gap-1  cursor-pointer ">
           <User size={16} />
-          <p className="text-sm leading-none xl4:text-2xl ">
+          <p className=" leading-none text-[9px] xl3:text-sm xl4:text-md ">
             {button.button_name}
           </p>
         </div>

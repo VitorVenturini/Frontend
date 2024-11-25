@@ -92,7 +92,7 @@ export default function SensorButton({ handleClick, button }: ButtonProps) {
             account.isAdmin ? sensorModel?.description : (button.img as any)
           }
         />
-        <p className=" flex text-sm font-medium leading-none xl4:text-2xl">
+        <p className=" flex text-sm font-medium leading-none text-[9px] xl3:text-sm xl4:text-md">
           {button.button_name}
         </p>
       </div>
