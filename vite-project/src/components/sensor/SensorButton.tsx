@@ -22,7 +22,13 @@ export default function SensorButton({ handleClick, button }: ButtonProps) {
     useButtons();
   const account = useAccount();
   const wss = useWebSocketData();
-  const redButtonPrt = ["press_short", "press_long", "press_double"].includes(button.sensor_type as string)
+  const redButtonPrt = ["press_short", "press_long", "press_double"].includes(
+    button.sensor_type as string
+  );
+  const buttonClass =
+    button.button_name.length < 10
+      ? "text-md xl3:text-xl xl4:text-3xl"
+      : "text-[9px] xl3:text-sm xl4:text-md";
   const handleClickButton = () => {
     handleClick?.(); // handleClick utilizado no admin para setar a posição do botão
     if (!account.isAdmin && !redButtonPrt) {
@@ -44,7 +50,7 @@ export default function SensorButton({ handleClick, button }: ButtonProps) {
         });
       }
       // triggered false
-    }else if(!account.isAdmin && redButtonPrt && button.triggered){
+    } else if (!account.isAdmin && redButtonPrt && button.triggered) {
       wss?.sendMessage({
         api: "user",
         mt: "TriggerStopAlarm",
@@ -87,12 +93,12 @@ export default function SensorButton({ handleClick, button }: ButtonProps) {
     >
       <div className="flex items-center  gap-1 cursor-pointer ">
         <ResponsivePng
-        size="icon"
+          size="icon"
           sensorModel={
             account.isAdmin ? sensorModel?.description : (button.img as any)
           }
         />
-        <p className=" flex text-sm font-medium leading-none text-[9px] xl3:text-sm xl4:text-md">
+        <p className={`flex font-medium leading-none ${buttonClass}`}>
           {button.button_name}
         </p>
       </div>

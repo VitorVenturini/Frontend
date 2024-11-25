@@ -20,6 +20,10 @@ export default function ClockmButton({ button, handleClick }: ButtonProps) {
   const wss = useWebSocketData();
   const [initiatedByUser, setInitiatedByUser] = useState(false);
   const [localTime, setLocalTime] = useState("");
+  const buttonClass =
+    button.button_name.length < 10
+      ? "text-md xl3:text-xl xl4:text-3xl"
+      : "text-[9px] xl3:text-sm xl4:text-md";
 
   const getGmtOffSetTime = (gmtOffsetString: string): string => {
     const gmtOffsetInSeconds = Number(gmtOffsetString);
@@ -28,11 +32,13 @@ export default function ClockmButton({ button, handleClick }: ButtonProps) {
       return "Invalid GMT Offset";
     }
 
-    const localDate = new Date(); 
-    const localOffsetInMilliseconds = localDate.getTimezoneOffset() * 60 * 1000; 
-    const gmtOffsetInMilliseconds = gmtOffsetInSeconds * 1000; 
+    const localDate = new Date();
+    const localOffsetInMilliseconds = localDate.getTimezoneOffset() * 60 * 1000;
+    const gmtOffsetInMilliseconds = gmtOffsetInSeconds * 1000;
 
-    const targetTime = new Date(localDate.getTime() + gmtOffsetInMilliseconds + localOffsetInMilliseconds);
+    const targetTime = new Date(
+      localDate.getTime() + gmtOffsetInMilliseconds + localOffsetInMilliseconds
+    );
     return targetTime.toLocaleTimeString("en-US", { hour12: false });
   };
 
@@ -57,12 +63,10 @@ export default function ClockmButton({ button, handleClick }: ButtonProps) {
       className={`${commonClasses} flex flex-col justify-center items-center cursor-pointer ${clickedClass}`}
       onClick={handleClickAlarm}
     >
-      <div className="flex items-center gap-1 text-[9px] xl3:text-sm xl4:text-md">
+      <div className={`flex items-center gap-1 ${buttonClass}`}>
         {button.button_name}
-        
       </div>
       <div className=" items-center gap-1 font-extrabold  text-2xl xl3:text-3xl xl4:text-4xl font-mono h-full ">
-      
         {localTime}
       </div>
     </div>

@@ -27,6 +27,10 @@ export default function CommandButton({ handleClick, button }: ButtonProps) {
   //const [isLoading, setIsLoading] = useState(false);
   const [initiatedByUser, setInitiatedByUser] = useState(false);
   const [clickedClass, setClickedClass] = useState("");
+  const buttonClass =
+    button.button_name.length < 10
+      ? "text-md xl3:text-xl xl4:text-3xl"
+      : "text-[9px] xl3:text-sm xl4:text-md";
 
   const handleClickCommand = () => {
     if (button.loading) return; // impede novos cliques enquanto está carregando
@@ -79,7 +83,7 @@ export default function CommandButton({ handleClick, button }: ButtonProps) {
   // const commandValue = buttonState?.commandValue;
 
   useEffect(() => {
-    console.log("value " + button.commandValue)
+    console.log("value " + button.commandValue);
     setButtonLoading(button.id, false);
     if (button.comboStart) {
       // parar o combo se ele tiver ativo
@@ -93,8 +97,12 @@ export default function CommandButton({ handleClick, button }: ButtonProps) {
       onClick={handleClickCommand}
     >
       <div>
-      <p className=" font-medium leading-none text-[9px] xl3:text-sm xl4:text-md">{button.button_name}</p>
-      <p className="text-[10px] font-medium leading-none text-muted-foreground xl4:text-md">{button.button_prt}</p>
+        <p className={`font-medium leading-none ${buttonClass}`}>
+          {button.button_name}
+        </p>
+        <p className="text-[10px] font-medium leading-none text-muted-foreground xl4:text-md">
+          {button.button_prt}
+        </p>
       </div>
       <div className="flex justify-end">
         {!account.isAdmin && (

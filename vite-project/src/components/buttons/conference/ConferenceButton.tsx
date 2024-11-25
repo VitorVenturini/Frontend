@@ -18,14 +18,20 @@ interface NumberProps {
 export default function ConferenceButton({ button, handleClick }: NumberProps) {
   const { language } = useLanguage();
   const wss = useWebSocketData();
+  const buttonClass =
+    button.button_name.length < 10
+      ? "text-md xl3:text-xl xl4:text-3xl"
+      : "text-[9px] xl3:text-sm xl4:text-md";
 
   const handleClickConf = () => {
     handleClick?.(); // para setar a posição na hora de criar botão
   };
 
-  const [callStatusClass, setCallStatusClass] = useState(button?.colorClass || "");
-  const {removeClickedButton} = useButtons()
-  
+  const [callStatusClass, setCallStatusClass] = useState(
+    button?.colorClass || ""
+  );
+  const { removeClickedButton } = useButtons();
+
   useEffect(() => {
     switch (button.clickedStatus) {
       case "callConnected":
@@ -42,7 +48,6 @@ export default function ConferenceButton({ button, handleClick }: NumberProps) {
         //setStatusClass("bg-orange-500")
         setCallStatusClass("bg-red-900");
         break;
-
     }
   }, [button.onCall]); // monitorar o status da chamada
 
@@ -53,9 +58,7 @@ export default function ConferenceButton({ button, handleClick }: NumberProps) {
     >
       <div className="flex items-center gap-1 cursor-pointer ">
         {<Icons.Group />}
-        <p className=" leading-none text-[9px] xl3:text-sm xl4:text-md">
-          {button.button_name}
-        </p>
+        <p className={`leading-none ${buttonClass}`}>{button.button_name}</p>
       </div>
       <div className="text-sm flex justify-end font-extrabold">
         <p className="xl3:text-2xl">{button.button_prt}</p>

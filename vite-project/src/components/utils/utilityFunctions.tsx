@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { UserInterface } from "../users/usersCore/UserContext";
 import { SensorInterface } from "../sensor/SensorContext";
 
+
 export const isTouchDevice = () => {
   return (
     "ontouchstart" in window || // Verifica se o evento de toque é suportado
