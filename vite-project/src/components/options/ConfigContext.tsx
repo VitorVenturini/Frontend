@@ -6,6 +6,14 @@ export interface LoaderBarProps {
   unitValue: number;
 }
 
+export interface ConfigInterface {
+  id?: number;
+  entry: string;
+  value: string;
+  createdAt?: string | null;
+  updatedAt?: string | null;
+}
+
 export interface PbxInterface {
   id?: number;
   entry?: string;
@@ -177,6 +185,7 @@ export interface SmtpConfig {
 interface AppConfigContextType {
   pbxStatus: PbxInterface[];
   googleApiKeyInfo: GoogleApiKeyInterface[];
+  flicSecretApi: ConfigInterface;
   openAIApiConfig: OpenAIApiKeyInterface;
   licenseApi: License;
   loadBarData: LoaderBarProps;
@@ -187,6 +196,7 @@ interface AppConfigContextType {
   updateNotification : (entry: string, newValue: string) => void;
   setPbxStatus: React.Dispatch<React.SetStateAction<PbxInterface[]>>;
   setGoogleApiKeyInfo: React.Dispatch<React.SetStateAction<GoogleApiKeyInterface[]>>;
+  setFlicSecretApi: React.Dispatch<React.SetStateAction<ConfigInterface>>;
   setLicense: React.Dispatch<React.SetStateAction<License>>;
   setLoadBarData: React.Dispatch<React.SetStateAction<LoaderBarProps>>;
   addPbx: (pbx: PbxInterface) => void;
@@ -215,6 +225,9 @@ const AppConfigContext = createContext<AppConfigContextType | undefined>(
 export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
   const [pbxStatus, setPbxStatus] = useState<PbxInterface[]>([]);
   const [googleApiKeyInfo, setGoogleApiKeyInfo] = useState<GoogleApiKeyInterface[]>([]);
+
+  const [flicSecretApi, setFlicSecretApiState] = useState<ConfigInterface | null>(null);
+
   const [openAIApiConfig, setOpenAIApi] = useState<OpenAIApiKeyInterface>({
     openaiKey: { entry: "", value: "", createdAt: null, updatedAt: null },
     openaiOrg: { entry: "", value: "", createdAt: null, updatedAt: null },
@@ -258,6 +271,10 @@ export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
   });
 
   // Funções para limpar/clearar o estado
+
+  const setFlicSecretApi = (config: ConfigInterface) => {
+    setFlicSecretApiState(config);
+  };
 
   const clearPbxStatus = () => setPbxStatus([]);
   const clearApiKeyInfo = () => setGoogleApiKeyInfo([]);
@@ -379,6 +396,7 @@ export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
         pbxStatus,
         googleApiKeyInfo,
         openAIApiConfig,
+        flicSecretApi,
         licenseApi,
         loadBarData,
         notification,
@@ -388,6 +406,7 @@ export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
         addNotifications,
         updateNotification,
         setGoogleApiKeyInfo,
+        setFlicSecretApi,
         setLicense,
         setLoadBarData,
         addPbx,

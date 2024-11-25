@@ -36,10 +36,19 @@ import React, { useState, ChangeEvent } from "react";
 import { Loader2, CircleAlert } from "lucide-react";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { ButtonInterface } from "@/components/buttons/buttonContext/ButtonsContext";
-import { limitButtonName } from "@/components/utils/utilityFunctions";
+import { getText, limitButtonName } from "@/components/utils/utilityFunctions";
 import { UserInterface } from "@/components/users/usersCore/UserContext";
 import texts from "@/_data/texts.json";
 import { useLanguage } from "@/components/language/LanguageContext";
+import {
+  Select,
+  SelectTrigger,
+  SelectItem,
+  SelectValue,
+  SelectLabel,
+  SelectGroup,
+  SelectContent,
+} from "@/components/ui/select";
 
 interface ButtonProps {
   clickedPosition: { i: number; j: number } | null;
@@ -58,7 +67,7 @@ export default function ModalFlic({
   isUpdate = false,
   onClose,
 }: ButtonProps) {
-  const [numberFlic, setNumberFlic] = useState(
+  const [flicParamSelected, setFlicParam] = useState(
     existingButton?.button_prt || ""
   );
   const [nameButton, setNameButton] = useState(
@@ -73,20 +82,20 @@ export default function ModalFlic({
     const limitedName = limitButtonName(event.target.value);
     setNameButton(limitedName);
   };
-  const handleNumberFlic = (event: ChangeEvent<HTMLInputElement>) => {
-    setNumberFlic(event.target.value);
+  const handleFlicParam = (value: string) => {
+    setFlicParam(value);
   };
 
   const handleCreateButton = () => {
     try {
-      if (nameButton && numberFlic) {
+      if (nameButton && flicParamSelected) {
         setIsCreating(true);
         const message = {
           api: "admin",
           mt: isUpdate ? "UpdateButton" : "InsertButton",
           ...(isUpdate && { id: existingButton?.id }),
           name: nameButton,
-          value: numberFlic,
+          value: flicParamSelected,
           guid: selectedUser?.guid,
           type: "flic",
           page: selectedPage,
@@ -157,23 +166,25 @@ export default function ModalFlic({
           )}
         </div>
         <div className="grid grid-cols-4 items-center gap-4">
-          <Label className="text-end" htmlFor="numberAlarm">
-            {texts[language].flicNumberLabel}
+          <Label className="text-end" htmlFor="SelectValue">
+            Valor Mínimo
           </Label>
-          <Input
-            className="col-span-2"
-            id="numberFlic"
-            placeholder={texts[language].flicNumberPlaceholder}
-            value={numberFlic}
-            onChange={handleNumberFlic}
-            required
-          />
-          {numberFlic.trim() === "" && (
-            <div className="text-sm text-red-400 flex gap-1 align-middle items-center p-2 col-start-4">
-              <CircleAlert size={15} />
-              {texts[language].flicNumberRequired}
-            </div>
-          )}
+          <Select value={flicParamSelected} onValueChange={handleFlicParam}>
+            <SelectTrigger className="col-span-2" id="SelectValue">
+              <SelectValue placeholder="Selecione um Valor" />
+            </SelectTrigger>
+            <SelectContent position="popper">
+              <SelectItem value="press_short">
+                {getText("press_short", texts[language])}
+              </SelectItem>
+              <SelectItem value="press_double">
+                {getText("press_double", texts[language])}
+              </SelectItem>
+              <SelectItem value="press_long">
+                {getText("press_long", texts[language])}
+              </SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </CardContent>
       <CardFooter className="flex justify-end w-full">

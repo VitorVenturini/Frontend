@@ -87,21 +87,19 @@ const ColumnsReports: React.FC<ColumnsReportsProps> = ({
                   showVolumeControl={false}
                 />
                 <Button variant="ghost" size="icon">
-              <a
-                href={`${host}${recordLink}`}
-                download
-                onClick={(e) => {
-                  if (!isLinkAvailable) {
-                    e.preventDefault(); // Previne o comportamento padrão se o link não estiver disponível
-                  }
-                }}
-              >
-              
-              </a>
-                <Download />
-              </Button>
+                  <a
+                    href={`${host}${recordLink}`}
+                    download
+                    onClick={(e) => {
+                      if (!isLinkAvailable) {
+                        e.preventDefault(); // Previne o comportamento padrão se o link não estiver disponível
+                      }
+                    }}
+                  >
+                    <Download />
+                  </a>
+                </Button>
               </PopoverContent>
-              
             </Popover>
           );
         },
