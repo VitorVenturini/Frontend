@@ -17,7 +17,6 @@ export default function LoginPage() {
 
           <div className="flex space-x-2 justify-end">
             <LanguageToggle />
-            <ModeToggle />
             <FullScreenButton />
           </div>
         </div>

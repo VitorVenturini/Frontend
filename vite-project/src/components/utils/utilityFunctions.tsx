@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { UserInterface } from "../users/usersCore/UserContext";
 import { SensorInterface } from "../sensor/SensorContext";
 
+
 export const isTouchDevice = () => {
   return (
     "ontouchstart" in window || // Verifica se o evento de toque é suportado
@@ -37,7 +38,7 @@ function getDegreeRange(direction: string) {
   }
 }
 export function limitButtonName(name: string) {
-  return name.slice(0, 10);
+  return name.slice(0, 15);
 }
 
 function isWithinRange(value: number, min: number, max: number) {

@@ -29,11 +29,17 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
   })[0];
 
   const [statusClass, setStatusClass] = useState("");
-  const [callStatusClass, setCallStatusClass] = useState(button?.colorClass || "");
+  const [callStatusClass, setCallStatusClass] = useState(
+    button?.colorClass || ""
+  );
   // const [clickedButton, setClickedButton] = useState(false);
-  const {setClickedButton,removeClickedButton} = useButtons()
+  const { setClickedButton, removeClickedButton } = useButtons();
   const account = useAccount();
   const wss = useWebSocketData();
+  const buttonClass =
+    button.button_name.length < 10
+      ? "text-md xl3:text-xl xl4:text-3xl"
+      : "text-[9px] xl3:text-sm xl4:text-md";
 
   // combo ligação
   useEffect(() => {
@@ -41,13 +47,13 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
       if (!account.isAdmin) {
         if (filteredUser.status !== "offline") {
           // ligar
-          setCallStatusClass("bg-red-900")
+          setCallStatusClass("bg-red-900");
           wss?.sendMessage({
             api: "user",
             mt: "TriggerCall",
             btn_id: button.id,
           });
-          setClickedButton(button.id)
+          setClickedButton(button.id);
           setStopCombo(button.id);
         }
       }
@@ -65,7 +71,7 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
           btn_id: button.id,
         });
         //setStatusClass("bg-red-800");
-        setClickedButton(button.id)
+        setClickedButton(button.id);
       } else if (button.clicked && filteredUser.status !== "offline") {
         if (button.incomingCall) {
           wss?.sendMessage({
@@ -73,7 +79,7 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
             mt: "EndIncomingCall",
             btn_id: button.id,
             device: button.button_device,
-            num: filteredUser.e164
+            num: filteredUser.e164,
           });
         } else {
           // desligar quando eu cliquei
@@ -171,9 +177,7 @@ export default function UserButton({ button, handleClick }: ButtonProps) {
       <div className="flex-grow xl3:space-y-2">
         <div className="flex items-center gap-1  cursor-pointer ">
           <User size={16} />
-          <p className="text-sm leading-none xl4:text-2xl ">
-            {button.button_name}
-          </p>
+          <p className={`leading-none ${buttonClass}`}>{button.button_name}</p>
         </div>
         <div className="text-sm flex font-extrabold justify-end xl3:px-2">
           <p className="xl3:text-xl">{filteredUser?.cn}</p>

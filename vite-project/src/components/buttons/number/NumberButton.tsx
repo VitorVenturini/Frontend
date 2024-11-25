@@ -32,20 +32,24 @@ export default function NumberButton({ button, onClick }: NumberProps) {
   const { language } = useLanguage();
   const wss = useWebSocketData();
   const { setStopCombo, setClickedButton, removeClickedButton } = useButtons();
+  const buttonClass =
+    button.button_name.length < 10
+      ? "text-md xl3:text-xl xl4:text-3xl"
+      : "text-[9px] xl3:text-sm xl4:text-md";
 
   //combo ligação
   useEffect(() => {
     if (button.comboStart) {
       if (!account.isAdmin) {
-          // ligar
-          wss?.sendMessage({
-            api: "user",
-            mt: "TriggerCall",
-            btn_id: button.id,
-          });
-          setClickedButton(button.id);
-          setClickedStatusClass("bg-red-900");
-          setStopCombo(button.id);
+        // ligar
+        wss?.sendMessage({
+          api: "user",
+          mt: "TriggerCall",
+          btn_id: button.id,
+        });
+        setClickedButton(button.id);
+        setClickedStatusClass("bg-red-900");
+        setStopCombo(button.id);
       }
     }
   }, [button]);
@@ -142,9 +146,7 @@ export default function NumberButton({ button, onClick }: NumberProps) {
     >
       <div className="flex items-center gap-1 cursor-pointer ">
         {IconComponent && <IconComponent size={17} />}
-        <p className="text-sm leading-none xl4:text-2xl  text-">
-          {button.button_name}
-        </p>
+        <p className={`leading-none ${buttonClass}`}>{button.button_name}</p>
       </div>
       <div className="text-sm flex justify-end font-extrabold">
         <p className="xl3:text-2xl ">{button.button_prt}</p>

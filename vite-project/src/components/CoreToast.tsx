@@ -69,7 +69,7 @@ const HistoryCell: React.FC<HistoryCellProps> = ({ historyInfo }) => {
                 historyInfo?.status,
                 historyInfo?.prt,
                 language,
-                historyInfo?.details
+                historyInfo?.details,
               ).content
             : truncatedPrt}
         </p>
@@ -88,7 +88,7 @@ const HistoryCell: React.FC<HistoryCellProps> = ({ historyInfo }) => {
 
       <div className="flex j gap-2 justify-end">
         <p className="text-sm ">
-          {filterButtonByID(historyInfo?.details, buttons)}
+          {filterButtonByID(historyInfo?.details?.toString(), buttons)}
         </p>
 
         <p className="text-sm text-muted-foreground text-wrap mr-2">

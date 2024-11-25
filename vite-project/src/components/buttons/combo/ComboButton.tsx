@@ -16,11 +16,16 @@ export default function ComboButton({ button, handleClick }: ComboProps) {
 
   const [isFocused, setIsFocused] = useState(false);
   const buttonRef = useRef<HTMLDivElement>(null);
-
-
+  const buttonClass =
+    button.button_name.length < 10
+      ? "text-md xl3:text-xl xl4:text-3xl"
+      : "text-[9px] xl3:text-sm xl4:text-md";
 
   const handleClickOutside = (event: MouseEvent) => {
-    if (buttonRef.current && !buttonRef.current.contains(event.target as Node)) {
+    if (
+      buttonRef.current &&
+      !buttonRef.current.contains(event.target as Node)
+    ) {
       setIsFocused(false);
     }
   };
@@ -47,12 +52,13 @@ export default function ComboButton({ button, handleClick }: ComboProps) {
   return (
     <div
       ref={buttonRef}
-      className={`${commonClasses} ${isFocused ? "bg-cyan-900" : "bg-cyan-600"
-        } flex flex-col cursor-pointer`}
+      className={`${commonClasses} ${
+        isFocused ? "bg-cyan-900" : "bg-cyan-600"
+      } flex flex-col cursor-pointer`}
       onClick={handleClickCombo}
     >
       <div className="flex items-center gap-1 cursor-pointer align-middle justify-center h-full ">
-        <p className="text-sm font-bold xl3:text-2xl leading-none">{button.button_name}</p>
+        <p className={`leading-none ${buttonClass}`}>{button.button_name}</p>
       </div>
     </div>
   );
