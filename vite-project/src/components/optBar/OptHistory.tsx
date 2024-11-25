@@ -26,6 +26,7 @@ const HistoryCell: React.FC<HistoryCellProps> = ({ historyInfo }) => {
   const { buttons } = useButtons();
   const { language } = useLanguage();
   const details = historyInfo.details;
+
   return (
     <div className="flex flex-col bg-muted w-[500px] xl2:w-[700px] xl4:w-[1000px] mt-2 ">
       <div className="flex gap-1 bg-card/50 px-2 py-1 justify-between items-center">
@@ -42,7 +43,7 @@ const HistoryCell: React.FC<HistoryCellProps> = ({ historyInfo }) => {
         </div>
         <div className="flex items-center gap-1">
           <p className="text-sm ">
-            {filterButtonByID(historyInfo.details as any, buttons)}
+            {filterButtonByID(details.id, buttons)}
           </p>
         </div>
 

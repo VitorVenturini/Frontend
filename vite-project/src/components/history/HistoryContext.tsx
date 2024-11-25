@@ -48,7 +48,8 @@ export const HistoryProvider = ({ children }: { children: ReactNode }) => {
   const addHistory = (newHistory: HistoryInterface) => {
     // Verifica se já existe uma entrada com o mesmo id
     const isDuplicate = history.some((hist) => hist.id === newHistory.id);
-
+    console.log('histContext newHistory', newHistory)
+    console.log('histContext history', history)
     // Só adiciona se não for duplicado
     if (!isDuplicate) {
       setHistoryState((prevHistory) => [newHistory, ...prevHistory]);

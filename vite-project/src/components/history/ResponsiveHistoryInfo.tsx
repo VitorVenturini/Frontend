@@ -186,7 +186,7 @@ export default function ResponsiveHistoryInfo({
       </div>
     );
   };
-  console.log("Link available", host + recordLink);
+  console.log("historyInfo", historyInfo);
   const truncatedPrt =
     historyInfo?.prt?.length > 20
       ? `${historyInfo?.prt.slice(0, 20)}...`
@@ -239,7 +239,7 @@ export default function ResponsiveHistoryInfo({
           {historyInfo.name === "call" && (
             <div className="flex justify-between rounded-md my-2 items-center px-2 py-1">
               <div className="flex items-center gap-1 capitalize">
-                <p className="text-sm font-bold">Duração: {duration}</p>
+                <p className="text-sm font-bold">{getText('durationTxt', texts[language]) + duration}</p>
               </div>
             </div>
           )}
@@ -251,9 +251,6 @@ export default function ResponsiveHistoryInfo({
                 <Button
                 variant="ghost"
                 size="icon"
-                onClick={(e) => {
-                  console.log("link", host + recordLink);
-                }}
               >
                 <a
                   href={`${host}${recordLink}`}
@@ -270,7 +267,7 @@ export default function ResponsiveHistoryInfo({
               </Button>
               </div>
               ) : (
-                <p>Áudio não disponível</p>
+                getText('noAudio', texts[language])
               )}
               
             </div>

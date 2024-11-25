@@ -378,7 +378,8 @@
   "configThemeLabel": "Aparência",
   "flicCardTitle": "Flic API",
   "flicCardLabel": "Caso deseje, informe uma chave de segurança para ser requerida no Header das requisições",
-  "UpdateConfigSuccess": "Configuração atualizada com Sucesso!"
-
+  "UpdateConfigSuccess": "Configuração atualizada com Sucesso!",
+  "noAudio": "Audio não disponível",
+  "durationTxt": "Duração: "
   }
 }
