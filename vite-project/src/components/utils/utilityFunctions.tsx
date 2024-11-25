@@ -2,7 +2,7 @@ import { ButtonInterface } from "../buttons/buttonContext/ButtonsContext";
 import { useState, useEffect } from "react";
 import { UserInterface } from "../users/usersCore/UserContext";
 import { SensorInterface } from "../sensor/SensorContext";
-
+import { HistoryInterface } from "../history/HistoryContext";
 
 export const isTouchDevice = () => {
   return (
@@ -193,6 +193,20 @@ export const replaceDataForName = (
   }
 
   return guidOrEuid;
+};
+export const replaceSipForName = (
+  users: UserInterface[],
+  sip: string
+): string | undefined => {
+  const user = users?.filter((user) => {
+    return user.sip === sip;
+  })[0];
+
+  if (user) {
+    return user.name;
+  }
+
+  return sip;
 };
 export const filterButtonByID = (
   btnID: string,

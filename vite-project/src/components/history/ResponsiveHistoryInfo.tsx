@@ -217,7 +217,7 @@ export default function ResponsiveHistoryInfo({
               ? getText(historyInfo?.name, texts[language])
               : historyInfo?.name}
           </span>
-          {!recordLink && (
+          {!recordLink && historyInfo.from.length < 5 && (
             <p className="text-sm font-black ">
               {truncatedPrt
                 ? createHistoryContent(
@@ -240,7 +240,7 @@ export default function ResponsiveHistoryInfo({
                   language,
                   historyInfo?.details
                 ).statusValue
-              : historyInfo?.status}
+              : historyInfo?.status} 
           </p>
           {historyInfo.name === "call" && (
             <div className="flex justify-between rounded-md my-2 items-center px-2 py-1">
