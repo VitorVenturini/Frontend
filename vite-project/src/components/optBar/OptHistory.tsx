@@ -35,7 +35,6 @@ const HistoryCell: React.FC<HistoryCellProps> = ({ historyInfo }) => {
             {historyInfo.name === 'call' ? replaceSipForName(users, historyInfo.from) :
             replaceDataForName(users, historyInfo.from, sensors)}
           </p>
-          <p>{historyInfo.id}</p> 
           <p className="text-sm text-muted-foreground">
             {getText("to", texts[language])}
           </p>

@@ -217,7 +217,7 @@ export default function ResponsiveHistoryInfo({
               ? getText(historyInfo?.name, texts[language])
               : historyInfo?.name}
           </span>
-          {!recordLink && historyInfo.from.length < 5 && (
+          {historyInfo.name !== 'call' && (
             <p className="text-sm font-black ">
               {truncatedPrt
                 ? createHistoryContent(
