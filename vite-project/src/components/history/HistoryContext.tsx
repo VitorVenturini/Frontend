@@ -62,6 +62,8 @@ export const HistoryProvider = ({ children }: { children: ReactNode }) => {
             hist.id === newHistory.id ? { ...hist, ...newHistory } : hist
           )
         );
+        console.log("//////////////  NEW History /////////////", newHistory);
+        console.log("///////////// histContext history /////////////", history);
       }
     };
 
