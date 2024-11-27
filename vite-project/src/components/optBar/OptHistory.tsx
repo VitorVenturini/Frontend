@@ -103,14 +103,14 @@ const OptHistory: React.FC = () => {
       return;
     }
   };
-
+  console.log("itens", items)
   // Função para adicionar mais itens manualmente
   const addMoreItems = () => {
     setIsLoading(true);
     wss?.sendMessage({
       api: "user",
       mt: "getHistory",
-      startId: items[0].id,
+      startId: items[0] === null ? items[1].id : items[0].id,
     });
     setIsLoading(false);
   };
