@@ -85,6 +85,7 @@ export const createHistoryContent = (
   let statusValue: any;
   const translatedPrt = prt ? getText(prt, texts[language]) : "";
   const translatedStatus = status ? getText(status, texts[language]) : "";
+
   switch (name) {
     case "message":
       badgeVariant +=
@@ -192,7 +193,7 @@ export default function ResponsiveHistoryInfo({
       </div>
     );
   };
-  console.log("historyInfo", historyInfo);
+
   const truncatedPrt =
     historyInfo?.prt?.length > 20
       ? `${historyInfo?.prt.slice(0, 20)}...`
@@ -243,7 +244,7 @@ export default function ResponsiveHistoryInfo({
               : historyInfo?.status} 
           </p>
           {historyInfo.name === "call" && (
-            <div className="flex justify-between rounded-md my-2 items-center px-2 py-1">
+            <div className="flex justify-between rounded-md items-center px-2 py-1">
               <div className="flex items-center gap-1 capitalize">
                 <p className="text-sm font-bold">{getText('durationTxt', texts[language]) + duration}</p>
               </div>
