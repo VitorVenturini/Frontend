@@ -218,7 +218,7 @@ export default function ResponsiveHistoryInfo({
               ? getText(historyInfo?.name, texts[language])
               : historyInfo?.name}
           </span>
-          {historyInfo.name !== 'call' && (
+          {historyInfo.name !== 'call' && historyInfo.name !== 'action' && (
             <p className="text-sm font-black ">
               {truncatedPrt
                 ? createHistoryContent(

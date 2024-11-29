@@ -1,7 +1,7 @@
 import { createContext, useState, useContext, ReactNode } from "react";
 import { SetStateAction } from "react";
 
-export interface CallDetails {
+export interface historyDetails {
   id: string;
   guid: string;
   number: string;
@@ -16,6 +16,19 @@ export interface CallDetails {
   call_innovaphone: string;
   device: string;
   record_link: string;
+  action_name: string;
+  action_exec_device: string;
+  action_exec_prt: string;
+  action_exec_type: string;
+  action_exec_type_command_mode: string;
+  action_exec_user: string;
+  action_start_device: string;
+  action_start_device_parameter: string;
+  action_start_prt: string;
+  action_start_type: string;
+  create_user: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface HistoryInterface {
@@ -27,46 +40,45 @@ export interface HistoryInterface {
   status: string;
   value?: string;
   prt: string;
-  details: CallDetails; // Alterado de string para o tipo correto
+  details: historyDetails; // Alterado de string para o tipo correto
 }
 
 interface HistoryContextType {
   history: HistoryInterface[];
   addHistory: (newHistory: HistoryInterface) => void;
- // updateHistory: (updatedHistory: HistoryInterface) => void;
+  // updateHistory: (updatedHistory: HistoryInterface) => void;
   clearHistory: () => void;
-  setHistoryComplete: React.Dispatch<SetStateAction<boolean>>
+  setHistoryComplete: React.Dispatch<SetStateAction<boolean>>;
   historyComplete: boolean;
 }
 
 const HistoryContext = createContext<HistoryContextType | undefined>(undefined);
 
 export const HistoryProvider = ({ children }: { children: ReactNode }) => {
-    const [history, setHistoryState] = useState<HistoryInterface[]>([]);
-    const [historyComplete, setHistoryComplete] = useState<boolean>(false);
+  const [history, setHistoryState] = useState<HistoryInterface[]>([]);
+  const [historyComplete, setHistoryComplete] = useState<boolean>(false);
 
-    const addHistory = (newHistory: HistoryInterface) => {
-      // Verifica se já existe uma entrada com o mesmo id
-      const isDuplicate = history.some((hist) => hist.id === newHistory.id);
-    
-      console.log("histContext newHistory", newHistory);
-      console.log("histContext history", history);
-    
-      if (!isDuplicate) {
-        // Se não for duplicado, adiciona ao histórico
-        setHistoryState((prevHistory) => [newHistory, ...prevHistory]);
-      } else {
-        // Se for duplicado, atualiza o item correspondente
-        setHistoryState((prevHistory) =>
-          prevHistory.map((hist) =>
-            hist.id === newHistory.id ? { ...hist, ...newHistory } : hist
-          )
-        );
-        console.log("//////////////  NEW History /////////////", newHistory);
-        console.log("///////////// histContext history /////////////", history);
-      }
-    };
+  const addHistory = (newHistory: HistoryInterface) => {
+    // Verifica se já existe uma entrada com o mesmo id
+    const isDuplicate = history.some((hist) => hist.id === newHistory.id);
 
+    console.log("histContext newHistory", newHistory);
+    console.log("histContext history", history);
+
+    if (!isDuplicate) {
+      // Se não for duplicado, adiciona ao histórico
+      setHistoryState((prevHistory) => [newHistory, ...prevHistory]);
+    } else {
+      // Se for duplicado, atualiza o item correspondente
+      setHistoryState((prevHistory) =>
+        prevHistory.map((hist) =>
+          hist.id === newHistory.id ? { ...hist, ...newHistory } : hist
+        )
+      );
+      console.log("//////////////  NEW History /////////////", newHistory);
+      console.log("///////////// histContext history /////////////", history);
+    }
+  };
 
   const clearHistory = () => {
     setHistoryState([]);
@@ -79,7 +91,7 @@ export const HistoryProvider = ({ children }: { children: ReactNode }) => {
         addHistory,
         setHistoryComplete,
         historyComplete,
-       // updateHistory,
+        // updateHistory,
         clearHistory,
       }}
     >

@@ -37,6 +37,7 @@ export interface OpenAIApiKeyInterface {
     value: string;
     createdAt: string | null;
     updatedAt: string | null;
+    status: boolean | false;
   }
   openaiOrg:{
     entry: string;
@@ -216,6 +217,7 @@ interface AppConfigContextType {
   clearBackupConfig: () => void;
   addSmtpConfig: (smtpConfig: SmtpConfig) => void;
   clearSmtpConfig: () => void;
+  updateOpenAIKeyStatus: (newStatus: boolean) => void;
 }
 
 const AppConfigContext = createContext<AppConfigContextType | undefined>(
@@ -229,10 +231,12 @@ export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
   const [flicSecretApi, setFlicSecretApiState] = useState<ConfigInterface | null>(null);
 
   const [openAIApiConfig, setOpenAIApi] = useState<OpenAIApiKeyInterface>({
-    openaiKey: { entry: "", value: "", createdAt: null, updatedAt: null },
+    openaiKey: { entry: "", value: "", createdAt: null, updatedAt: null, status: false },
     openaiOrg: { entry: "", value: "", createdAt: null, updatedAt: null },
     openaiProj: { entry: "", value: "", createdAt: null, updatedAt: null },
   });
+
+  console.log("OpenAI COntext", openAIApiConfig)
   const [notification, setNotifications] = useState<NotificationsInterface[]>([]);
   const [backupConfig, setBackupConfig] = useState<BackupConfig>({
     backupUsername: { entry: "", value: "", createdAt: null, updatedAt: null },
@@ -352,7 +356,15 @@ export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
       ...newConfig,
     }));
   };
-
+  const updateOpenAIKeyStatus = (newStatus: boolean) => {
+    setOpenAIApi((prevConfig) => ({
+      ...prevConfig,
+      openaiKey: {
+        ...prevConfig.openaiKey,
+        status: newStatus,
+      },
+    }));
+  };
   const addBackupConfig = (newBackupConfig: BackupConfig) => {
     setBackupConfig((prevBackupConfig) => ({
       ...prevBackupConfig,
@@ -421,6 +433,7 @@ export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
         setOpenAiApiConfig,
         addSmtpConfig,
         clearSmtpConfig,
+        updateOpenAIKeyStatus,
       }}
     >
       {children}

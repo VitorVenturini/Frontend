@@ -42,9 +42,10 @@ const HistoryCell: React.FC<HistoryCellProps> = ({ historyInfo }) => {
             {historyInfo.name === 'call' ? replaceSipForName(users, historyInfo.prt) : replaceDataForName(users, historyInfo.guid, sensors)}
           </p>
         </div>
+        
         <div className="flex items-center gap-1">
           <p className="text-sm ">
-            {filterButtonByID(details.id, buttons)}
+            {historyInfo.name === 'action' ?  historyInfo.details.action_name : filterButtonByID(details.id, buttons)}
           </p>
         </div>
 

@@ -65,6 +65,7 @@ import { isMobile } from "react-device-detect";
 import texts from "@/_data/texts.json";
 import { useLanguage } from "@/components/language/LanguageContext";
 
+
 function AdminLayout() {
   const { setTheme } = useTheme()
   const account = useAccount();
@@ -101,6 +102,7 @@ function AdminLayout() {
     addSmtpConfig,
     updateLicense,
     addNotifications,
+    updateOpenAIKeyStatus,
   } = useAppConfig();
   var allBtn: ButtonInterface[];
   const { language } = useLanguage();
@@ -687,7 +689,17 @@ function AdminLayout() {
           description: "Usuário foi desconectado de sua sessão",
         });
         break;
-
+        case "getOpenAiStatusResult":
+          
+          if (message.result === "[]") {
+            updateOpenAIKeyStatus(false)
+            toast({
+              description: "Falha de conexão com o servidor",
+            });
+          } else {
+            updateOpenAIKeyStatus(true)
+          }
+          break;
       default:
         console.log("Unknown message type:", message);
         break;

@@ -104,8 +104,8 @@ const HistoryCell: React.FC<HistoryCellProps> = ({ historyInfo }) => {
               ).content
             : truncatedPrt}
         </p>
-        <p className="text-sm capitalize ">
-          {historyInfo?.status
+        <p className="text-sm capitalize "> 
+          {historyInfo?.name !== 'action' && historyInfo?.status
             ? createHistoryContent(
                 historyInfo?.name,
                 historyInfo?.status,

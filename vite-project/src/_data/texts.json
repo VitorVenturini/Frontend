@@ -383,6 +383,11 @@
     "noAudio": "Audio não disponível",
     "durationTxt": "Duração: ",
     "connected": "Atendida",
-    "not_connected": "Não atendida"
+    "not_connected": "Não atendida",
+    "checking": "Verificar",
+    "yes": "Sim",
+    "no": "Não",
+    "costWarning": "Esta solicitação poderá acarretar em custos",
+    "areYouSure": "Deseja Continuar?"
   }
 }
