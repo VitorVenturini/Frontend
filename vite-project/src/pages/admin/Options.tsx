@@ -62,8 +62,8 @@ export default function MenuOptions() {
   };
 
   return (
-    <div className="flex w-full h-full justify-between">
-      <div className="flex flex-col justify-start p-2 gap-4 h-[calc(100vh-92px)] bg-card">
+    <div className="flex w-full h-full">
+      <div className="flex flex-col justify-start p-2 gap-4 h-[calc(100vh-92px)] bg-card fixed">
         <Button
           className={ `${activeButton === "License" ? "bg-accent" : ""} focus:bg-accent`} 
           variant={"ghost"}
@@ -130,7 +130,7 @@ export default function MenuOptions() {
 
         </Button>
       </div>
-      <div className="flex justify-center items-start w-full">
+      <div className="flex flex-grow p-4 justify-center items-start w-full ml-20 pl-20">
         {renderActiveComponent()}
       </div>
     </div>

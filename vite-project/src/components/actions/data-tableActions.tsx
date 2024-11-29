@@ -173,7 +173,7 @@ export function DataTable<TData extends TableData, TValue>({
                         cellValue = dev.sensor_name;
                       } else {
                         const dev = cameras.find((c) => c.mac === startDevice);
-                        cellValue = dev.nickname;
+                        cellValue = dev ? dev.nickname : startDevice;
                       }
                     } else {
                       cellValue = startDevice;

@@ -2,7 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import ValidadeToken from "@/components/validateToken/ValidateToken";
 import Account from "./Account";
 import ButtonsPage from "./ButtonsPage";
-import { useTheme } from "@/components/theme-provider"
+import { useTheme } from "@/components/theme-provider";
 import HeaderApp from "@/components/header/HeaderAdmin";
 import { useAccount } from "@/components/account/AccountContext";
 import { useNavigate } from "react-router-dom";
@@ -67,7 +67,7 @@ import { useLanguage } from "@/components/language/LanguageContext";
 
 
 function AdminLayout() {
-  const { setTheme } = useTheme()
+  const { setTheme } = useTheme();
   const account = useAccount();
   const { setUsers, updateUserStauts, setUserPreferences } = useUsers();
   const { updateUserPbxStauts } = useUsersPbx();
@@ -399,9 +399,9 @@ function AdminLayout() {
             value: "",
             createdAt: null,
             updatedAt: null,
-          }
+          },
         };
-        console.log('OpenAiConfig',JSON.stringify(allOpenAIInfo));
+        console.log("OpenAiConfig", JSON.stringify(allOpenAIInfo));
         setOpenAiApiConfig(allOpenAIInfo);
 
         const sensorNotification = message.result.find(
@@ -499,8 +499,8 @@ function AdminLayout() {
         break;
       case "UpdateConfig":
         console.log("UpdateConfig", message);
-        setTheme (message.vl); 
-        
+        setTheme(message.vl);
+
         break;
       case "DeleteCameraSuccess":
         deleteCamera(message.id_deleted);
@@ -717,16 +717,18 @@ function AdminLayout() {
         ) : (
           <>
             <DndProvider backend={isMobile ? TouchBackend : HTML5Backend}>
-              <HeaderApp />
-              {/* Your admin layout here */}
-              <Routes>
-                <Route path="account" element={<Account />} />
-                <Route path="buttons" element={<ButtonsPage />} />
-                <Route path="actions" element={<ActionsPage />} />
-                <Route path="options" element={<Options />} />
-                <Route path="reports" element={<Reports />} />
-                {/* Add more admin routes as needed */}
-              </Routes>
+              <div className="fixed top-0 left-0 w-full z-50">
+                <HeaderApp />
+              </div>
+              <div className="pt-20">
+                <Routes>
+                  <Route path="account" element={<Account />} />
+                  <Route path="buttons" element={<ButtonsPage />} />
+                  <Route path="actions" element={<ActionsPage />} />
+                  <Route path="options" element={<Options />} />
+                  <Route path="reports" element={<Reports />} />
+                </Routes>
+              </div>
             </DndProvider>
           </>
         )}
