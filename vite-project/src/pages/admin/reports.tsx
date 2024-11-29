@@ -586,7 +586,7 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
                 </TabsContent>
               </div>
             </div>
-            <ScrollArea className="w-full lg:h-[300px] xl:h-[500px] xl2:h-[600px] xl3:h-[700px]">
+            <div className="w-full lg:h-[300px] xl:h-[500px] xl2:h-[600px] xl3:h-[700px] overflow-auto">
               <TabsContent value="RptSensors" className="gap-4 py-4">
                 {dataReport.chart.length == 0 && loadBarData.unitValue > 0 ? (
                   <div className="w-full align-middle items-center justify-center lg:h-[100px] xl:h-[100px] xl2:h-[100px] xl3:h-[100px] flex">
@@ -750,7 +750,7 @@ export default function Reports({}: React.HTMLAttributes<HTMLDivElement>) {
                   </div>
                 )}
               </TabsContent>
-            </ScrollArea>
+            </div>
           </Tabs>
         </div>
       </Card>

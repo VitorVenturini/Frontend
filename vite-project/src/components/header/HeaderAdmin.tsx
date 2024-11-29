@@ -56,7 +56,7 @@ export default function HeaderApp() {
   };
 
   return (
-    <header className="flex justify-between items-center p-2">
+    <header className="flex justify-between items-center p-2 bg-background">
       {wss?.isReconnecting && <Loader2 />}
       <div className="flex items-center gap-5">
         <Button className="h-16" variant="ghost" onClick={handleUserViewClick}>
