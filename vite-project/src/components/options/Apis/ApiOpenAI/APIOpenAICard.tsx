@@ -157,6 +157,8 @@ export default function APIOpenAICard() {
           </Label>
           {apiOpenAI ? (
             <span className="relative inline-flex rounded-full h-4 w-4 bg-green-500"></span>
+          ) : !isChecking ? (
+            <span className="relative inline-flex rounded-full h-4 w-4 bg-gray-500"></span>
           ) : (
             <span className="relative inline-flex rounded-full h-4 w-4 bg-red-500"></span>
           )}
