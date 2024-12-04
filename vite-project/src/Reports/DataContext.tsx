@@ -13,6 +13,7 @@ interface DataContextProps {
   addDataReport: (newData: any, reportType: string, keys: any, src: any[] ) => void;
   addTsData: (chunk: Blob) => void; // Função para adicionar pacotes ts
   clearDataReport: () => void;
+  updateDataReport: (newData: any) => void;
 }
 
 const DataContext = createContext<DataContextProps | undefined>(undefined);
@@ -34,6 +35,17 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
     src: [],
     ts: [], // Inicializa ts como um array vazio
   });
+  
+  const updateDataReport = (newData: any) => {
+    setDataReport((prevData) => {
+      const updatedTable = prevData.table.map((report) =>
+        report.id === newData.id ? { ...report, ...newData } : report
+      );
+      console.log("UpdataData", newData)
+      console.log('NEW DATATABLE', updatedTable)
+      return { ...prevData, table: updatedTable };
+    });
+  };
 
   // Função para adicionar pacotes de dados gerais
   const addDataReport = (newData: any[], reportType: string, keys: any[], src: any[]) => {
@@ -65,7 +77,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <DataContext.Provider
-      value={{ dataReport, addDataReport, addTsData, clearDataReport }}
+      value={{ dataReport, addDataReport, addTsData, clearDataReport, updateDataReport }}
     >
       {children}
     </DataContext.Provider>

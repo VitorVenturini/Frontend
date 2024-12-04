@@ -236,7 +236,6 @@ export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
     openaiProj: { entry: "", value: "", createdAt: null, updatedAt: null },
   });
 
-  console.log("OpenAI COntext", openAIApiConfig)
   const [notification, setNotifications] = useState<NotificationsInterface[]>([]);
   const [backupConfig, setBackupConfig] = useState<BackupConfig>({
     backupUsername: { entry: "", value: "", createdAt: null, updatedAt: null },

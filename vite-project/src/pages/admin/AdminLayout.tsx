@@ -87,7 +87,7 @@ function AdminLayout() {
   const { cameras, setCameras, updateCamera, deleteCamera, addCamera } =
     useCameras();
   const [receivedFragments, setReceivedFragments] = useState<any[]>([]);
-  const { addDataReport, clearDataReport } = useData();
+  const { addDataReport, clearDataReport, updateDataReport } = useData();
   const myAccountInfo = JSON.parse(localStorage.getItem("Account") || "{}");
   const [isLoading, setIsLoading] = useState(true);
   var pbxUser: UserPbxInterface[];
@@ -689,7 +689,7 @@ function AdminLayout() {
           description: "Usuário foi desconectado de sua sessão",
         });
         break;
-        case "getOpenAiStatusResult":
+        case "GetOpenAiStatusResult":
           
           if (message.result === "[]") {
             updateOpenAIKeyStatus(false)
@@ -698,6 +698,18 @@ function AdminLayout() {
             });
           } else {
             updateOpenAIKeyStatus(true)
+          }
+          break;
+          case "GetTranscriptionResult":
+          
+          if (message.result === "[]") {
+            
+            toast({
+              description: "Falha na transcrição da chamada",
+            });
+          } else {
+            updateDataReport(message.result)
+            console.log("ADMIN LAYOUT", message.result)
           }
           break;
       default:

@@ -74,7 +74,7 @@ export default function APIOpenAICard() {
     setApiOpenAI(false);
     wss?.sendMessage({
       api: "admin",
-      mt: "getOpenAiStatus",
+      mt: "GetOpenAiStatus",
     });
   };
 
@@ -156,7 +156,7 @@ export default function APIOpenAICard() {
             {texts[language].status}
           </Label>
           {apiOpenAI ? (
-            <span className="relative inline-flex rounded-full h-4 w-4 bg-green-500"></span>
+            <span className="relative inline-flex rounded-full h-4 w-4 bg-green-500" title=""></span>
           ) : !isChecking ? (
             <span className="relative inline-flex rounded-full h-4 w-4 bg-gray-500"></span>
           ) : (
