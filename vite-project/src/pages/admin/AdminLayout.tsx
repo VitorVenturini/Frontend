@@ -69,7 +69,7 @@ import { useLanguage } from "@/components/language/LanguageContext";
 function AdminLayout() {
   const { setTheme } = useTheme();
   const account = useAccount();
-  const { setUsers, updateUserStauts, setUserPreferences } = useUsers();
+  const { setUsers, updateUserStauts, setUserPreferences, setUserPages } = useUsers();
   const { updateUserPbxStauts } = useUsersPbx();
   const wss = useWebSocketData();
   const { buttons, setButtons, addButton, updateButton, deleteButton } =
@@ -110,7 +110,18 @@ function AdminLayout() {
   const handleWebSocketMessage = (message: any) => {
     switch (message.mt) {
       case "SelectUserPreferencesResult":
-        setUserPreferences(message.result[0]);
+        if (message.result && Array.isArray(message.result) && message.result.length > 0) {
+          const pages = message.result.map((page: { pageNumber: number; pageName: string | null }) => ({
+            pageNumber: page.pageNumber,
+            pageName: page.pageName ?? page.pageNumber, // Nome padrão se `pageName` for `null`
+          }));
+      
+          console.log("UserPreferences Pages:", pages);
+      
+          setUserPages(message.guid, pages); // Atualiza o contexto com o GUID e as páginas
+        } else {
+          console.log("No pages found in result:", message.result);
+        }
         break;
       case "SelectButtonsSuccess":
         const firstButtons: ButtonInterface[] = JSON.parse(message.result);

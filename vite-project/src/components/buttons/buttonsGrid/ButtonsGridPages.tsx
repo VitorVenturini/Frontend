@@ -56,6 +56,7 @@ export default function ButtonsGridPages({
       return u.guid === guid;
     }
   })[0];
+  const userPages = filteredUser?.userPreferences?.pages || [];
 
   const handlePageChange = (newPage: string) => {
     setSelectedPage(newPage); // Atualizar a página selecionada quando o usuário seleciona uma nova página.
@@ -74,7 +75,7 @@ export default function ButtonsGridPages({
         variant: "destructive",
         description: "Por Favor escolha um nome para a página",
       });
-      setPageName("")
+      setPageName("");
       return;
     }
     wss.sendMessage({
@@ -82,9 +83,9 @@ export default function ButtonsGridPages({
       mt: "SetPageName",
       guid: selectedUser?.guid,
       pageName: pageName,
-      pageNumber: pageNumber,
+      pageNumber: parseInt(pageNumber),
     });
-    setPageName("")
+    setPageName("");
   };
 
   const handleTypePageName = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -131,6 +132,8 @@ export default function ButtonsGridPages({
       return button.page.toString() === pageNumber && button.triggered;
     });
   };
+  console.log("UserPreferences user", filteredUser.name);
+  console.log("UserPreferences pages", userPages);
 
   return (
     <Card className="p-1 flex flex-col gap-1 justify-between">
@@ -147,19 +150,19 @@ export default function ButtonsGridPages({
         className="w-full "
       >
         <TabsList className="w-full flex justify-center ">
-          {["1", "2", "3", "4", "5"].map((pageNumber, index) => (
+          {userPages?.map(({ pageNumber, pageName }, index) => (
             <TabsTrigger
-              key={pageNumber}
-              value={pageNumber}
+              key={String(pageNumber)} // Garante que cada chave seja única
+              value={String(pageNumber)}
               className="w-full gap-2"
             >
-            {truncateText(
-                filteredUser?.userPreferences?.[`page${pageNumber}`]
-                  ? filteredUser?.userPreferences?.[`page${pageNumber}`]
-                  : texts[language].page + " " + pageNumber,
-                8
+              {truncateText(
+                pageName
+                  ? pageName
+                  : texts[language].page + " " + String(pageNumber),
+                20
               )}
-              {isPageWarning(pageNumber) && !isAdmin ? (
+              {isPageWarning(String(pageNumber)) && !isAdmin ? (
                 <span className="relative flex h-3 w-3 m-1 ">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
@@ -167,41 +170,35 @@ export default function ButtonsGridPages({
               ) : isAdmin ? (
                 <div className="flex items-center justify-center">
                   <Popover
-                    open={openEditPageIndex === index} // Abrir popover apenas para o índice correspondente
+                    open={openEditPageIndex === index}
                     onOpenChange={(open) =>
                       open ? handleOpenPopover(index) : handleClosePopover()
-                    } // Definir qual popover abrir/fechar
+                    }
                   >
                     <PopoverTrigger>
                       <Pencil size="15px" />
                     </PopoverTrigger>
                     <PopoverContent>
                       <div className="relative flex flex-col items-left">
-                        {/* <button
-                          className="absolute top-0 right-0 -mt-5 -mr-5 h-6 w-6 rounded-full bg-card-foreground text-gray-600 hover:bg-gray-300 hover:text-black flex items-center justify-center"
-                          onClick={handleClosePopover}
-                        >
-                          X
-                      </button> */}
-                        {/*  <div className="mb-2">Editar nome da Página</div> */}
                         <div className="flex flex-row items-center gap-3">
                           <div>
                             <Input
-                              placeholder=
-                                {truncateText(
-                                  filteredUser?.userPreferences?.[`page${pageNumber}`]
-                                    ? filteredUser?.userPreferences?.[`page${pageNumber}`]
-                                    : texts[language].page + " " + pageNumber,
-                                  20
-                                )}
-                              maxLength={8}
+                              placeholder={truncateText(
+                                pageName
+                                  ? pageName
+                                  : texts[language].page +
+                                      " " +
+                                      String(pageNumber),
+                                20
+                              )}
+                              maxLength={20}
                               onChange={handleTypePageName}
                               type="text"
                             />
                           </div>
                           <div
                             onClick={() => {
-                              handleSetPageName(pageNumber);
+                              handleSetPageName(String(pageNumber));
                             }}
                           >
                             <Check />

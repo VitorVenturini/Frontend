@@ -129,7 +129,7 @@ function UserLayout() {
   const navigate = useNavigate();
   const { guid } = useContext(AccountContext);
   const [comboStart, setComboStart] = useState(false);
-  const { users, setUserPreferences } = useUsers();
+  const { users, setUserPreferences, setUserPages } = useUsers();
   const [sensorNotificationSound, setSensorNotificationSound] = useState("");
   const [chatNotificationSound, setChatNotificationSound] = useState("");
   const [alarmNotificationSound, setAlarmNotificationSound] = useState("");
@@ -176,15 +176,17 @@ function UserLayout() {
   const handleWebSocketMessage = (message: any) => {
     switch (message.mt) {
       case "SelectUserPreferencesResult":
-        if (message.result && message.result[0]) {
-          setUserPreferences({
-            guid: message.result[0].guid,
-            page1: message.result[0].page1 || "",
-            page2: message.result[0].page2 || "",
-            page3: message.result[0].page3 || "",
-            page4: message.result[0].page4 || "",
-            page5: message.result[0].page5 || "",
-          });
+        if (message.result && Array.isArray(message.result) && message.result.length > 0) {
+          const pages = message.result.map((page: { pageNumber: number; pageName: string | null }) => ({
+            pageNumber: page.pageNumber,
+            pageName: page.pageName ?? page.pageNumber, // Nome padrão se `pageName` for `null`
+          }));
+      
+          console.log("UserPreferences Pages:", pages);
+      
+          setUserPages(message.guid, pages); // Atualiza o contexto com o GUID e as páginas
+        } else {
+          console.log("No pages found in result:", message.result);
         }
         break;
       case "SelectButtonsSuccess":

@@ -67,6 +67,7 @@ export const HistoryProvider = ({ children }: { children: ReactNode }) => {
 
     if (!isDuplicate) {
       // Se não for duplicado, adiciona ao histórico
+      console.log("//////////////  NEW History /////////////", newHistory);
       setHistoryState((prevHistory) => [newHistory, ...prevHistory]);
     } else {
       // Se for duplicado, atualiza o item correspondente
@@ -75,7 +76,7 @@ export const HistoryProvider = ({ children }: { children: ReactNode }) => {
           hist.id === newHistory.id ? { ...hist, ...newHistory } : hist
         )
       );
-      console.log("//////////////  NEW History /////////////", newHistory);
+      console.log("//////////////  UPDATE History /////////////", newHistory);
       console.log("///////////// histContext history /////////////", history);
     }
   };
