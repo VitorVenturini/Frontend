@@ -224,7 +224,8 @@ function AdminLayout() {
         case "RequestGoogleOAuthStatusResult":
           setGoogleApiStatus(message.result);
           toast({
-            description: "Google Status "
+            variant: `${message.result ? "default" : "destructive"}`,
+            description: `Google Status ${message.result? "Ok" : "Fora"}`,
           });
           break;
       case "ConfigResult":
