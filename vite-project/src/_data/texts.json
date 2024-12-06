@@ -365,8 +365,8 @@
     "key": "Chave",
     "organization": "Organização",
     "project": "Projeto",
-    "googleCardTitle": "Google API",
-    "googleCardLabel": "Chave da API do google",
+    "googleMapsTitle": "Google Maps API",
+    "googleMapsLabel": "Chave da API do Google Maps",
     "configApisLabel": "API's",
     "configCamerasLabel": "Iot Câmeras",
     "configGatewaysLabel": "Iot Gateways",
@@ -388,6 +388,10 @@
     "yes": "Sim",
     "no": "Não",
     "costWarning": "Esta solicitação poderá acarretar em custos",
-    "areYouSure": "Deseja Continuar?"
+    "areYouSure": "Deseja Continuar?",
+    "keyID": "Client ID",
+    "keySecret": "Client Secret",
+    "googleCalendarTitle": "Google Calendario API",
+    "googleCalendarLabel": "Chave da API do Google Calendario"
   }
 }

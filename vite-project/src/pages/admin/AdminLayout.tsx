@@ -51,6 +51,7 @@ import {
   NotificationsInterface,
   OpenAIApiKeyInterface,
   SmtpConfig,
+  GoogleApiKeyInterface,
   useAppConfig,
 } from "@/components/options/ConfigContext";
 import Loader from "@/components/Loader";
@@ -65,11 +66,11 @@ import { isMobile } from "react-device-detect";
 import texts from "@/_data/texts.json";
 import { useLanguage } from "@/components/language/LanguageContext";
 
-
 function AdminLayout() {
   const { setTheme } = useTheme();
   const account = useAccount();
-  const { setUsers, updateUserStauts, setUserPreferences, setUserPages } = useUsers();
+  const { setUsers, updateUserStauts, setUserPreferences, setUserPages } =
+    useUsers();
   const { updateUserPbxStauts } = useUsersPbx();
   const wss = useWebSocketData();
   const { buttons, setButtons, addButton, updateButton, deleteButton } =
@@ -105,19 +106,26 @@ function AdminLayout() {
     updateOpenAIKeyStatus,
   } = useAppConfig();
   var allBtn: ButtonInterface[];
+  const [googleAPIStatus, setGoogleApiStatus] = useState<boolean>(false)
   const { language } = useLanguage();
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
     switch (message.mt) {
       case "SelectUserPreferencesResult":
-        if (message.result && Array.isArray(message.result) && message.result.length > 0) {
-          const pages = message.result.map((page: { pageNumber: number; pageName: string | null }) => ({
-            pageNumber: page.pageNumber,
-            pageName: page.pageName ?? page.pageNumber, // Nome padrão se `pageName` for `null`
-          }));
-      
+        if (
+          message.result &&
+          Array.isArray(message.result) &&
+          message.result.length > 0
+        ) {
+          const pages = message.result.map(
+            (page: { pageNumber: number; pageName: string | null }) => ({
+              pageNumber: page.pageNumber,
+              pageName: page.pageName ?? page.pageNumber, // Nome padrão se `pageName` for `null`
+            })
+          );
+
           console.log("UserPreferences Pages:", pages);
-      
+
           setUserPages(message.guid, pages); // Atualiza o contexto com o GUID e as páginas
         } else {
           console.log("No pages found in result:", message.result);
@@ -213,12 +221,57 @@ function AdminLayout() {
           description: "Ação Deletada com sucesso",
         });
         break;
+        case "RequestGoogleOAuthStatusResult":
+          setGoogleApiStatus(message.result);
+          toast({
+            description: "Google Status "
+          });
+          break;
       case "ConfigResult":
         // Filtra as entradas para a Google API Key
-        const apiKeyEntries = message.result.filter(
-          (item: any) => item.entry === "googleApiKey"
+        // const apiKeyEntries = message.result.filter(
+        //   (item: any) => item.entry === "googleApiKey"
+        // );
+        // setGoogleApiKeyInfo(apiKeyEntries);
+        //Google API
+        
+        const googleEntries = message.result.filter(
+          (item: any) =>
+            item.entry === "googleApiKey" ||
+            item.entry === "googleClientId" ||
+            item.entry === "googleClientSecret"
         );
-        setGoogleApiKeyInfo(apiKeyEntries);
+        const allGooleInfo: GoogleApiKeyInterface = {
+          googleAPIMapsKey: googleEntries.find(
+            (item: any) => item.entry === "googleApiKey"
+          ) || {
+            id: '',
+            entry: 'googleApiKey',
+            value: '',
+            createdAt: null,
+            updatedAt: null,
+          },
+          googleAPICalendarKey: googleEntries.find(
+            (item: any) => item.entry === "googleClientId"
+          ) || {
+            id: '',
+            entry: 'googleClientId',
+            value: '',
+            createdAt: null,
+            updatedAt: null,
+          },
+          googleAPICalendarSecret: googleEntries.find(
+            (item: any) => item.entry === "googleClientSecret"
+          ) || {
+            id: '',
+            entry: 'googleClientSecret',
+            value: '',
+            createdAt: null,
+            updatedAt: null,
+          },
+          googleApiStatus: googleAPIStatus
+        };
+        setGoogleApiKeyInfo(allGooleInfo);
 
         const flicSecretApiEntries = message.result.filter(
           (item: any) => item.entry === "flicSecretApi"
@@ -700,29 +753,26 @@ function AdminLayout() {
           description: "Usuário foi desconectado de sua sessão",
         });
         break;
-        case "GetOpenAiStatusResult":
-          
-          if (message.result === "[]") {
-            updateOpenAIKeyStatus(false)
-            toast({
-              description: "Falha de conexão com o servidor",
-            });
-          } else {
-            updateOpenAIKeyStatus(true)
-          }
-          break;
-          case "GetTranscriptionResult":
-          
-          if (message.result === "[]") {
-            
-            toast({
-              description: "Falha na transcrição da chamada",
-            });
-          } else {
-            updateDataReport(message.result)
-            console.log("ADMIN LAYOUT", message.result)
-          }
-          break;
+      case "GetOpenAiStatusResult":
+        if (message.result === "[]") {
+          updateOpenAIKeyStatus(false);
+          toast({
+            description: "Falha de conexão com o servidor",
+          });
+        } else {
+          updateOpenAIKeyStatus(true);
+        }
+        break;
+      case "GetTranscriptionResult":
+        if (message.result === "[]") {
+          toast({
+            description: "Falha na transcrição da chamada",
+          });
+        } else {
+          updateDataReport(message.result);
+          console.log("ADMIN LAYOUT", message.result);
+        }
+        break;
       default:
         console.log("Unknown message type:", message);
         break;

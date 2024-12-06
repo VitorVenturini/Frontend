@@ -122,9 +122,9 @@ export default function APIOpenAICard() {
       </CardHeader>
       <CardContent className="grid gap-4 py-9">
         <div className="grid grid-cols-4 items-center gap-4">
-          <Label className="text-end" htmlFor="path">
+          <h4 className="scroll-m-20 columns-1 text-end text-xl font-semibold tracking-tight">
             {texts[language].key}
-          </Label>
+          </h4>
           <Input
             className="col-span-3"
             onChange={handleApiKey}
@@ -132,9 +132,9 @@ export default function APIOpenAICard() {
           />
         </div>
         <div className="grid grid-cols-4 items-center gap-4">
-          <Label className="text-end" htmlFor="path">
+          <h4 className="scroll-m-20 columns-1 text-end text-xl font-semibold tracking-tight">
             {texts[language].organization}
-          </Label>
+          </h4>
           <Input
             className="col-span-3"
             onChange={handleApiOrg}
@@ -142,9 +142,9 @@ export default function APIOpenAICard() {
           />
         </div>
         <div className="grid grid-cols-4 items-center gap-4">
-          <Label className="text-end" htmlFor="path">
+          <h4 className="scroll-m-20 columns-1 text-end text-xl font-semibold tracking-tight">
             {texts[language].project}
-          </Label>
+          </h4>
           <Input
             className="col-span-3"
             onChange={handleApiProj}
@@ -152,9 +152,9 @@ export default function APIOpenAICard() {
           />
         </div>
         <div className="grid grid-cols-4 items-center gap-4">
-          <Label className="text-end" htmlFor="path">
+          <h4 className="scroll-m-20 columns-1 text-end text-xl font-semibold tracking-tight">
             {texts[language].status}
-          </Label>
+          </h4>
           {apiOpenAI ? (
             <span className="relative inline-flex rounded-full h-4 w-4 bg-green-500" title=""></span>
           ) : !isChecking ? (
