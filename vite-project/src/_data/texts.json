@@ -392,6 +392,21 @@
     "keyID": "Client ID",
     "keySecret": "Client Secret",
     "googleCalendarTitle": "Google Calendario API",
-    "googleCalendarLabel": "Chave da API do Google Calendario"
+    "googleCalendarLabel": "Chave da API do Google Calendario",
+    "not_authorized": "Conectar",
+    "authorized": "Desconectar",
+    "selectButtonType": "Selecione um tipo de botão",
+    "createButton":"Criar Botão",
+    "flic":"Flic",
+    "googleCalendar": "Calendário do Google",
+    "clock": "Relógio",
+    "cronometer": "Cronometro",
+    "conference": "Conferência",
+    "buttonType": "Tipo de Botão",
+    "buttonName": "Nome do Botão",
+    "updateButton":"Atalizar Botão",
+    "selectIcon": "Selecione um cone",
+    "calendars": "Calendários"
+
   }
 }

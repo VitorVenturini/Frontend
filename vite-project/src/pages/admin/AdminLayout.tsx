@@ -65,6 +65,7 @@ import { isTouchDevice } from "@/components/utils/utilityFunctions";
 import { isMobile } from "react-device-detect";
 import texts from "@/_data/texts.json";
 import { useLanguage } from "@/components/language/LanguageContext";
+import { useGoogleCalendar, GoogleCalendarInterface } from "@/components/googleCalendars/googleCalendarContext";
 
 function AdminLayout() {
   const { setTheme } = useTheme();
@@ -91,11 +92,12 @@ function AdminLayout() {
   const { addDataReport, clearDataReport, updateDataReport } = useData();
   const myAccountInfo = JSON.parse(localStorage.getItem("Account") || "{}");
   const [isLoading, setIsLoading] = useState(true);
+  const { googleCalendars, setGoogleCalendar } = useGoogleCalendar();
   var pbxUser: UserPbxInterface[];
   const {
     setLoadBarData,
     clearLoadBarData,
-    setGoogleApiKeyInfo,
+    setGoogleApiKeyConfig,
     setFlicSecretApi,
     setPbxStatus,
     addBackupConfig,
@@ -106,7 +108,6 @@ function AdminLayout() {
     updateOpenAIKeyStatus,
   } = useAppConfig();
   var allBtn: ButtonInterface[];
-  const [googleAPIStatus, setGoogleApiStatus] = useState<boolean>(false)
   const { language } = useLanguage();
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
@@ -171,6 +172,11 @@ function AdminLayout() {
         setUsersPbx(PbxUsers);
         pbxUser = PbxUsers;
         break;
+        case "RequestGoogleCalendarsResult":
+          const googleCalendars: GoogleCalendarInterface[] = message.result;
+          //set
+          setGoogleCalendar(googleCalendars)
+          break;
       case "SelectSensorsResult":
         const result = message.result;
         const sensorData = result.map((gatewayData: any) => {
@@ -221,12 +227,31 @@ function AdminLayout() {
           description: "Ação Deletada com sucesso",
         });
         break;
-        case "RequestGoogleOAuthStatusResult":
-          setGoogleApiStatus(message.result);
-          toast({
-            variant: `${message.result ? "default" : "destructive"}`,
-            description: `Google Status ${message.result? "Ok" : "Fora"}`,
+      case "RequestGoogleOAuthStatusResult":
+        setGoogleApiKeyConfig({
+          googleApiStatus: message.result,
+        });
+        toast({
+          variant: `${message.result ? "default" : "destructive"}`,
+          description: `Google Calendar Status ${message.result? "Ok" : "Desonetado"}`,
+        });
+        break;
+      case "RequestGoogleOAuthRemoveResult":
+
+        if(message.result == 'ok'){
+          setGoogleApiKeyConfig({
+            googleApiStatus: false,
           });
+        }else{
+          toast({
+            variant: "destructive",
+            description: `Google Calendar Status ${message.message}`,
+          });
+        }
+        break;
+      case "GoogleOAuthAuthorizationRequest":
+          console.log(`URL OAuth Google: ${message.url}`);
+          window.open(message.url,'','popup').focus();
           break;
       case "ConfigResult":
         // Filtra as entradas para a Google API Key
@@ -242,7 +267,7 @@ function AdminLayout() {
             item.entry === "googleClientId" ||
             item.entry === "googleClientSecret"
         );
-        const allGooleInfo: GoogleApiKeyInterface = {
+        const allGooleInfo: Partial<GoogleApiKeyInterface> = {
           googleAPIMapsKey: googleEntries.find(
             (item: any) => item.entry === "googleApiKey"
           ) || {
@@ -269,10 +294,9 @@ function AdminLayout() {
             value: '',
             createdAt: null,
             updatedAt: null,
-          },
-          googleApiStatus: googleAPIStatus
+          }
         };
-        setGoogleApiKeyInfo(allGooleInfo);
+        setGoogleApiKeyConfig(allGooleInfo);
 
         const flicSecretApiEntries = message.result.filter(
           (item: any) => item.entry === "flicSecretApi"
@@ -489,7 +513,6 @@ function AdminLayout() {
 
         soundsInfo.forEach((sound) => addNotifications(sound));
         break;
-
       case "PbxStatusResult":
         if (message.result) {
           const status = String(message.result);
@@ -739,7 +762,6 @@ function AdminLayout() {
           });
         }
         break;
-
       case "AddGatewayError":
         toast({
           variant: "destructive",

@@ -200,7 +200,7 @@ export interface SmtpConfig {
 
 interface AppConfigContextType {
   pbxStatus: PbxInterface[];
-  googleApiKeyInfo: GoogleApiKeyInterface;
+  googleApiKeyInfo: Partial<GoogleApiKeyInterface>;
   flicSecretApi: ConfigInterface;
   openAIApiConfig: OpenAIApiKeyInterface;
   licenseApi: License;
@@ -211,7 +211,7 @@ interface AppConfigContextType {
   addNotifications: (notification: NotificationsInterface) => void;
   updateNotification: (entry: string, newValue: string) => void;
   setPbxStatus: React.Dispatch<React.SetStateAction<PbxInterface[]>>;
-  setGoogleApiKeyInfo: (googleApiKeyInfo: GoogleApiKeyInterface) => void;
+  setGoogleApiKeyConfig: (googleApiKeyInfo: Partial<GoogleApiKeyInterface>) => void;
   setOpenAiApiConfig: (openAIApiConfig: OpenAIApiKeyInterface) => void;
   setFlicSecretApi: React.Dispatch<React.SetStateAction<ConfigInterface>>;
   setLicense: React.Dispatch<React.SetStateAction<License>>;
@@ -242,8 +242,7 @@ const AppConfigContext = createContext<AppConfigContextType | undefined>(
 
 export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
   const [pbxStatus, setPbxStatus] = useState<PbxInterface[]>([]);
-  const [googleApiKeyInfo, setGoogleApiKeyInfo] =
-    useState<GoogleApiKeyInterface>({
+  const [googleApiKeyInfo, setGoogleKeyState] = useState<Partial<GoogleApiKeyInterface>>({
       googleAPIMapsKey: {
         id: "",
         entry: "",
@@ -330,7 +329,7 @@ export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
 
   const clearPbxStatus = () => setPbxStatus([]);
   const clearApiKeyInfo = () =>
-    setGoogleApiKeyInfo({
+    setGoogleKeyState({
       googleAPIMapsKey: {
         id: "",
         entry: "",
@@ -420,11 +419,18 @@ export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const addApiKey = (apiKey: GoogleApiKeyInterface) => {
-    setGoogleApiKeyInfo((prevApiKeys) => ({ ...prevApiKeys, apiKey }));
+    setGoogleKeyState((prevApiKeys) => ({ ...prevApiKeys, apiKey }));
   };
 
   const setOpenAiApiConfig = (newConfig: OpenAIApiKeyInterface) => {
     setOpenAIApi((prevConfig) => ({
+      ...prevConfig,
+      ...newConfig,
+    }));
+  };
+
+  const setGoogleApiKeyConfig = (newConfig: Partial<GoogleApiKeyInterface>) => {
+    setGoogleKeyState((prevConfig) => ({
       ...prevConfig,
       ...newConfig,
     }));
@@ -555,7 +561,7 @@ export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
         setPbxStatus,
         addNotifications,
         updateNotification,
-        setGoogleApiKeyInfo,
+        setGoogleApiKeyConfig,
         setFlicSecretApi,
         setLicense,
         setLoadBarData,
