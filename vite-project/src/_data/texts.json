@@ -74,6 +74,7 @@
     "headerActions": "Ações",
     "headerOptions": "Opções",
     "headerReports": "Relatórios",
+    "headerDashboard": "Dashboard",
     "updateAction": "Atualizar Ação",
     "createAction": "Criar Ação",
     "updateActionDescription": "Atualize a ação com as mudanças necessárias",

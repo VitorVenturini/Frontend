@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router-dom";
+import { Dashboard } from "./Dashboard";
 import ValidadeToken from "@/components/validateToken/ValidateToken";
 import Account from "./Account";
 import ButtonsPage from "./ButtonsPage";
@@ -823,6 +824,7 @@ function AdminLayout() {
                   <Route path="actions" element={<ActionsPage />} />
                   <Route path="options" element={<Options />} />
                   <Route path="reports" element={<Reports />} />
+                  <Route path="dashboard" element={<Dashboard/>} />
                 </Routes>
               </div>
             </DndProvider>

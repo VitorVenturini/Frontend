@@ -54,6 +54,9 @@ export default function HeaderApp() {
     updateAccount({ isAdmin: false });
     navigate("/user/buttons");
   };
+  const handleDashboardClick = () => {
+    navigate("/admin/dashboard");
+  }
 
   return (
     <header className="flex justify-between items-center p-2 bg-background">
@@ -90,6 +93,9 @@ export default function HeaderApp() {
           </Button>
           <Button variant="ghost" onClick={handleReportsClick}>
             {texts[language].headerReports}
+          </Button>
+          <Button variant="ghost" onClick={handleDashboardClick}>
+            {texts[language].headerDashboard}
           </Button>
           <Logout />
 
