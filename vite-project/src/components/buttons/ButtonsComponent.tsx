@@ -117,7 +117,7 @@ export default function ButtonsComponent({
   const handleClick = () => {
     if (isAdmin) {
       onClickPosition();
-      setSelectedType(""); // limpeza q faltava
+      setSelectedType(""); //limpeza q faltava
     }
     setIsClicked(!isClicked);
   };
@@ -192,14 +192,6 @@ export default function ButtonsComponent({
           />
         );
         case "google_calendar":
-          if (!isCalendarRequested) {
-            console.warn("Passou aqui !!!!!!!!");
-            wss?.sendMessage({
-              api: "admin",
-              mt: "RequestGoogleCalendars"
-            });
-            setIsCalendarRequested(true); // Atualiza o estado para evitar reenvio
-          }
           return (
             <ModalGoogleCalendar
               selectedPage={selectedPage}
@@ -207,7 +199,6 @@ export default function ButtonsComponent({
               clickedPosition={clickedPosition}
               onClose={() => {
                 setIsDialogOpen(false);
-                setIsCalendarRequested(false);
               }}
             />
           );
@@ -421,7 +412,7 @@ export default function ButtonsComponent({
                 {isAdmin && (
                   <DialogContent className="space-y-6 min-h-[250px] flex flex-col content-between p-0 min-w-[900px]">
                     {
-                      <ModalNumber
+                      <ModalGoogleCalendar
                         selectedPage={selectedPage}
                         selectedUser={selectedUser}
                         clickedPosition={clickedPosition}

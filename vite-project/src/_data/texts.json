@@ -406,7 +406,11 @@
     "buttonName": "Nome do Botão",
     "updateButton":"Atalizar Botão",
     "selectIcon": "Selecione um cone",
-    "calendars": "Calendários"
+    "calendars": "Calendários",
+    "createOfButtonCall": "Criação de Botões de Ligação",
+    "updateOfButtonCall": "Atualização de Botões de Ligação",
+    "fillAllFieldsForUpdateCall":"Para atualizar um botão de ligação complete os campos abaixo",
+    "fillAllFieldsForCreateCall":"Para criar um botão de ligação complete os campos abaixo"
 
   }
 }

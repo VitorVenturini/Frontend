@@ -16,6 +16,8 @@ export interface ButtonInterface {
   sensor_max_threshold?: string;
   sensor_type?: string | null;
   create_user: string;
+  gateway_id?: number;
+  calendar_id?: string;
   page: string;
   position_x: string;
   position_y: string;
@@ -88,6 +90,7 @@ interface ButtonContextType {
     note: string
   ) => void;
   setStopButtonTriggered: (alarm: string, triggered: boolean) => void;
+  setButtonGoogleCalendarStatus: (id: number, note: string) => void;
   setClickedStatusClass: (id: number, className: string) => void;
   setStopWarningTreshold: (id: number, triggered: boolean) => void;
   setCommandValue: (btn_id: number, prt: string, value: string) => void;
@@ -257,6 +260,18 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
       )
     );
   };
+  const setButtonGoogleCalendarStatus = (
+    id: number,
+    note: string
+  ) => {
+    setButtons((prevButtons) =>
+      prevButtons.map((button) =>
+        button.id === id
+          ? { ...button, note }
+          : button
+      )
+    );
+  };
 
   const setButtonTriggered = (id: number, triggered: boolean) => {
     setButtons((prevButtons) =>
@@ -321,6 +336,7 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
         removeClickedButton,
         setButtonTriggered,
         setButtonClickedStatus,
+        setButtonGoogleCalendarStatus,
         setButtonNumberCallStatus,
         setStopButtonTriggered,
         setStopWarningTreshold,
