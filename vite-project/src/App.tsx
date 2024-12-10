@@ -30,6 +30,7 @@ import Loader from "./components/Loader";
 import TokenRenewer from "./components/validateToken/TokenRenewer";
 import CardResetPassword from "./components/resetPassword/CardResetPassword";
 import { GoogleCalendarProvider } from "./components/googleCalendars/googleCalendarContext";
+import { WebSocketProvider } from "./components/websocket/WebSocketProvider";
 
 const host_name_api = String(import.meta.env.VITE_API_HOSTNAME);
 const host_port_api = String(import.meta.env.VITE_API_PORT);

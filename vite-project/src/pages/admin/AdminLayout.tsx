@@ -133,7 +133,7 @@ function AdminLayout() {
         }
         break;
       case "SelectButtonsSuccess":
-        const firstButtons: ButtonInterface[] = JSON.parse(message.result);
+        const firstButtons: ButtonInterface[] = message.result;
         setButtons(firstButtons);
         allBtn = firstButtons;
         setIsLoading(false);

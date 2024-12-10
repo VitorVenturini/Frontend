@@ -52,6 +52,7 @@ import ModalFlic from "./flic/ModalFlic";
 import FlicButton from "./flic/FlicButton";
 import { useLanguage } from "@/components/language/LanguageContext";
 import texts from "@/_data/texts.json";
+import GoogleCalendarButton from "./googleCalendar/GoogleCalendarButton";
 
 
 interface ButtonProps {
@@ -406,7 +407,7 @@ export default function ButtonsComponent({
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
                   <div>
-                    <NumberButton button={button} onClick={handleClick} />
+                    <GoogleCalendarButton button={button} onClick={handleClick} />
                   </div>
                 </DialogTrigger>
                 {isAdmin && (

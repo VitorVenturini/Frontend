@@ -787,7 +787,7 @@ function UserLayout() {
         ];
 
         soundsInfo.forEach((sound) => addNotifications(sound));
-        setGoogleApiKeyInfo(apiKeyEntries);
+        setGoogleApiKeyConfig(apiKeyEntries);
 
         break;
 

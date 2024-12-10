@@ -1,7 +1,7 @@
 import { Separator } from "@/components/ui/separator";
 import { ButtonInterface, useButtons } from "@/components/buttons/buttonContext/ButtonsContext";
 import ButtonsComponent from "@/components/buttons/ButtonsComponent"
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { UserInterface } from "@/components/users/usersCore/UserContext";
 
 
@@ -16,6 +16,8 @@ export default function ButtonsGrid({
   selectedUser,
   selectedPage,
 }: ButtonsGridProps) {
+  //const { buttons } = useButtons();
+  const filteredBttons = buttons.filter((b)=>{return b.page == selectedPage && b.button_user == selectedUser.guid})
   const [clickedPosition, setClickedPosition] = useState<{
     i: number;
     j: number;
@@ -27,7 +29,7 @@ export default function ButtonsGrid({
     .map(() => Array(5).fill({ variant: "default" }));
 
   // Substitua os botões padrão pelos botões reais
-  buttons.forEach((button) => {
+  filteredBttons.forEach((button) => {
     const x = Number(button.position_x);
     const y = Number(button.position_y);
 
