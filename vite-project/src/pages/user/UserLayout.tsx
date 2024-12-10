@@ -124,7 +124,7 @@ function UserLayout() {
     null
   );
   const [openDialog, setOpenDialog] = useState(false);
-  const { setGoogleApiKeyInfo, addNotifications } = useAppConfig();
+  const { setGoogleApiKeyConfig, addNotifications } = useAppConfig();
   //const [clickedUser , setClickedUser] = useState<UserInterface[]>([])
   const navigate = useNavigate();
   const { guid } = useContext(AccountContext);
@@ -779,7 +779,7 @@ function UserLayout() {
         ];
 
         soundsInfo.forEach((sound) => addNotifications(sound));
-        setGoogleApiKeyInfo(apiKeyEntries);
+        setGoogleApiKeyConfig(apiKeyEntries);
 
         break;
 

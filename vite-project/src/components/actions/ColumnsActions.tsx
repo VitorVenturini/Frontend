@@ -129,7 +129,14 @@ export const columnsActions: ColumnDef<ActionsInteface>[] = [
 
       return (
         <div className="flex justify-center gap-2 items-center">
-          <NotifyActions id={actions.id} />
+          <Dialog>
+            <DialogTrigger>
+              <MessageCircleWarning/>
+            </DialogTrigger>
+            <DialogContent>
+            <NotifyActions id={actions.id} />  
+            </DialogContent>
+          </Dialog>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger>
               <Button variant="ghost" size="icon">
