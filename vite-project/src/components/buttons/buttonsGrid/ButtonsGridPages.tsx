@@ -168,8 +168,6 @@ export default function ButtonsGridPages({
       return button.page.toString() === pageNumber && button.triggered;
     });
   };
-  console.log("UserPreferences user", filteredUser.name);
-  console.log("UserPreferences pages", userPages);
 
   return (
     <Card className="p-1 flex flex-col gap-1 justify-between">

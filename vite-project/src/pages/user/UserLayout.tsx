@@ -59,6 +59,7 @@ import {
   setBusyLightColor,
   stopBusyLightColor,
 } from "@/components/api/ApiFunctions";
+import { useGoogleCalendar } from "@/components/googleCalendars/googleCalendarContext";
 interface User {
   id: string;
   name: string;
@@ -88,6 +89,7 @@ function UserLayout() {
     comboStarted,
     setHeldCall,
     setHeldCallByUser,
+    setButtonGoogleCalendarStatus,
     buttons,
   } = useButtons();
   const {
@@ -190,7 +192,7 @@ function UserLayout() {
         }
         break;
       case "SelectButtonsSuccess":
-        const buttons: ButtonInterface[] = message.result;
+        const buttons: ButtonInterface[] = JSON.parse(message.result);
         setButtons(buttons);
         allBtn = buttons;
         setSensors([]);
@@ -709,6 +711,12 @@ function UserLayout() {
       case "CoreUserOffline":
         updateUserStauts(message.guid, "offline");
         break;
+      case "GoogleCalendarVacant":
+        setButtonGoogleCalendarStatus(message.btn_id, "offline");
+        break;
+      case "GoogleCalendarOnline":
+        setButtonGoogleCalendarStatus(message.btn_id, "online");
+        break;
       case "UserOnline":
         if (pbxUser?.length > 0) {
           updateUserPbxStauts(message.guid, message.color, message.note);
@@ -779,7 +787,7 @@ function UserLayout() {
         ];
 
         soundsInfo.forEach((sound) => addNotifications(sound));
-        setGoogleApiKeyConfig(apiKeyEntries);
+        setGoogleApiKeyInfo(apiKeyEntries);
 
         break;
 

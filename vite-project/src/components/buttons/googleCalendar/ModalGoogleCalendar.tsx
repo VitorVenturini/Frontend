@@ -77,6 +77,9 @@ export default function ModalGoogleCalendar({
   const [paramButton, setParamButton] = useState(
     existingButton?.button_prt || ""
   );
+  const [calendarButton, setCalendarButton] = useState(
+    existingButton?.calendar_id || ""
+  );
   const [iconButton, setIconButton] = useState(existingButton?.img || "Phone");
   const [deviceButton, setDeviceButton] = useState(
     existingButton?.button_device || ""
@@ -87,9 +90,15 @@ export default function ModalGoogleCalendar({
   const { usersPbx } = useUsersPbx();
   const { googleCalendars } = useGoogleCalendar();
   const { language } = useLanguage();
+  const [isCalendarRequested, setIsCalendarRequested] = useState(false);
 
   const handleNameButton = (value: string) => {
     setNameButton(value);
+  };
+  const handleCalendarButton = (value: string) => {
+    const name = googleCalendars.find((c)=>{return c.id == value}).summary
+    setCalendarButton(value);
+    setNameButton(name);
   };
 
   const handleDeviceButton = (value: string) => {
@@ -111,10 +120,11 @@ export default function ModalGoogleCalendar({
         mt: isUpdate ? "UpdateButton" : "InsertButton",
         ...(isUpdate && { id: existingButton?.id }),
         name: nameButton,
-        value: "",
+        calendar_id: calendarButton,
         guid: selectedUser?.guid,
         type: "google_calendar",
         device: deviceButton,
+        value: "",
         img: iconButton,
         page: selectedPage,
         x: clickedPosition?.j,
@@ -150,16 +160,30 @@ export default function ModalGoogleCalendar({
     // setIsUpdate(false);
   };
   const iconSize = 18;
+
+  const handleGoogleCalendarsList = () => {
+    if (!isCalendarRequested) {
+      console.warn("Passou aqui !!!!!!!!");
+      wss?.sendMessage({
+        api: "admin",
+        mt: "RequestGoogleCalendars"
+      });
+      setIsCalendarRequested(true); // Atualiza o estado para evitar reenvio
+    }
+  }
+  // Chamada automática do `handleGoogleApiStatus` ao carregar o componente
+  useEffect(() => {
+    handleGoogleCalendarsList();
+  }, []);
   return (
     <>
       {isUpdate && (
         <CardHeader>
           <CardTitle>
-            {isUpdate ? "Atualização" : "Criação"} de Botões de Ligação
+            {isUpdate ? texts[language].updateOfButtonCall : texts[language].createOfButtonCall} 
           </CardTitle>
           <CardDescription>
-            Para {isUpdate ? "atualizar" : "criar"} um botão de ligação complete
-            os campos abaixo
+            {isUpdate ? texts[language].fillAllFieldsForUpdateCall : texts[language].fillAllFieldsForCreateCall}
           </CardDescription>
         </CardHeader>
       )}
@@ -171,7 +195,7 @@ export default function ModalGoogleCalendar({
             </Label>
           </div>
           <div className="col-span-2">
-          <Select value={nameButton} onValueChange={handleNameButton}>
+          <Select value={calendarButton} onValueChange={handleCalendarButton}>
               <SelectTrigger className="col-span-3">
                 <SelectValue placeholder="Selecione um calendário" />
               </SelectTrigger>
