@@ -2,7 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import ValidadeToken from "@/components/validateToken/ValidateToken";
 import Account from "./Account";
 import ButtonsPage from "./ButtonsPage";
-import { useTheme } from "@/components/theme-provider"
+import { useTheme } from "@/components/theme-provider";
 import HeaderApp from "@/components/header/HeaderAdmin";
 import { useAccount } from "@/components/account/AccountContext";
 import { useNavigate } from "react-router-dom";
@@ -51,6 +51,7 @@ import {
   NotificationsInterface,
   OpenAIApiKeyInterface,
   SmtpConfig,
+  GoogleApiKeyInterface,
   useAppConfig,
 } from "@/components/options/ConfigContext";
 import Loader from "@/components/Loader";
@@ -64,11 +65,13 @@ import { isTouchDevice } from "@/components/utils/utilityFunctions";
 import { isMobile } from "react-device-detect";
 import texts from "@/_data/texts.json";
 import { useLanguage } from "@/components/language/LanguageContext";
+import { useGoogleCalendar, GoogleCalendarInterface } from "@/components/googleCalendars/googleCalendarContext";
 
 function AdminLayout() {
-  const { setTheme } = useTheme()
+  const { setTheme } = useTheme();
   const account = useAccount();
-  const { setUsers, updateUserStauts, setUserPreferences } = useUsers();
+  const { setUsers, updateUserStauts, setUserPreferences, setUserPages } =
+    useUsers();
   const { updateUserPbxStauts } = useUsersPbx();
   const wss = useWebSocketData();
   const { buttons, setButtons, addButton, updateButton, deleteButton } =
@@ -86,14 +89,15 @@ function AdminLayout() {
   const { cameras, setCameras, updateCamera, deleteCamera, addCamera } =
     useCameras();
   const [receivedFragments, setReceivedFragments] = useState<any[]>([]);
-  const { addDataReport, clearDataReport } = useData();
+  const { addDataReport, clearDataReport, updateDataReport } = useData();
   const myAccountInfo = JSON.parse(localStorage.getItem("Account") || "{}");
   const [isLoading, setIsLoading] = useState(true);
+  const { googleCalendars, setGoogleCalendar } = useGoogleCalendar();
   var pbxUser: UserPbxInterface[];
   const {
     setLoadBarData,
     clearLoadBarData,
-    setGoogleApiKeyInfo,
+    setGoogleApiKeyConfig,
     setFlicSecretApi,
     setPbxStatus,
     addBackupConfig,
@@ -101,6 +105,7 @@ function AdminLayout() {
     addSmtpConfig,
     updateLicense,
     addNotifications,
+    updateOpenAIKeyStatus,
   } = useAppConfig();
   var allBtn: ButtonInterface[];
   const { language } = useLanguage();
@@ -108,10 +113,27 @@ function AdminLayout() {
   const handleWebSocketMessage = (message: any) => {
     switch (message.mt) {
       case "SelectUserPreferencesResult":
-        setUserPreferences(message.result[0]);
+        if (
+          message.result &&
+          Array.isArray(message.result) &&
+          message.result.length > 0
+        ) {
+          const pages = message.result.map(
+            (page: { pageNumber: number; pageName: string | null }) => ({
+              pageNumber: page.pageNumber,
+              pageName: page.pageName ?? page.pageNumber, // Nome padrão se `pageName` for `null`
+            })
+          );
+
+          console.log("UserPreferences Pages:", pages);
+
+          setUserPages(message.guid, pages); // Atualiza o contexto com o GUID e as páginas
+        } else {
+          console.log("No pages found in result:", message.result);
+        }
         break;
       case "SelectButtonsSuccess":
-        const firstButtons: ButtonInterface[] = JSON.parse(message.result);
+        const firstButtons: ButtonInterface[] = message.result;
         setButtons(firstButtons);
         allBtn = firstButtons;
         setIsLoading(false);
@@ -150,6 +172,11 @@ function AdminLayout() {
         setUsersPbx(PbxUsers);
         pbxUser = PbxUsers;
         break;
+        case "RequestGoogleCalendarsResult":
+          const googleCalendars: GoogleCalendarInterface[] = message.result;
+          //set
+          setGoogleCalendar(googleCalendars)
+          break;
       case "SelectSensorsResult":
         const result = message.result;
         const sensorData = result.map((gatewayData: any) => {
@@ -200,12 +227,76 @@ function AdminLayout() {
           description: "Ação Deletada com sucesso",
         });
         break;
+      case "RequestGoogleOAuthStatusResult":
+        setGoogleApiKeyConfig({
+          googleApiStatus: message.result,
+        });
+        toast({
+          variant: `${message.result ? "default" : "destructive"}`,
+          description: `Google Calendar Status ${message.result? "Ok" : "Desonetado"}`,
+        });
+        break;
+      case "RequestGoogleOAuthRemoveResult":
+
+        if(message.result == 'ok'){
+          setGoogleApiKeyConfig({
+            googleApiStatus: false,
+          });
+        }else{
+          toast({
+            variant: "destructive",
+            description: `Google Calendar Status ${message.message}`,
+          });
+        }
+        break;
+      case "GoogleOAuthAuthorizationRequest":
+          console.log(`URL OAuth Google: ${message.url}`);
+          window.open(message.url,'','popup').focus();
+          break;
       case "ConfigResult":
         // Filtra as entradas para a Google API Key
-        const apiKeyEntries = message.result.filter(
-          (item: any) => item.entry === "googleApiKey"
+        // const apiKeyEntries = message.result.filter(
+        //   (item: any) => item.entry === "googleApiKey"
+        // );
+        // setGoogleApiKeyInfo(apiKeyEntries);
+        //Google API
+        
+        const googleEntries = message.result.filter(
+          (item: any) =>
+            item.entry === "googleApiKey" ||
+            item.entry === "googleClientId" ||
+            item.entry === "googleClientSecret"
         );
-        setGoogleApiKeyInfo(apiKeyEntries);
+        const allGooleInfo: Partial<GoogleApiKeyInterface> = {
+          googleAPIMapsKey: googleEntries.find(
+            (item: any) => item.entry === "googleApiKey"
+          ) || {
+            id: '',
+            entry: 'googleApiKey',
+            value: '',
+            createdAt: null,
+            updatedAt: null,
+          },
+          googleAPICalendarKey: googleEntries.find(
+            (item: any) => item.entry === "googleClientId"
+          ) || {
+            id: '',
+            entry: 'googleClientId',
+            value: '',
+            createdAt: null,
+            updatedAt: null,
+          },
+          googleAPICalendarSecret: googleEntries.find(
+            (item: any) => item.entry === "googleClientSecret"
+          ) || {
+            id: '',
+            entry: 'googleClientSecret',
+            value: '',
+            createdAt: null,
+            updatedAt: null,
+          }
+        };
+        setGoogleApiKeyConfig(allGooleInfo);
 
         const flicSecretApiEntries = message.result.filter(
           (item: any) => item.entry === "flicSecretApi"
@@ -397,9 +488,9 @@ function AdminLayout() {
             value: "",
             createdAt: null,
             updatedAt: null,
-          }
+          },
         };
-        console.log('OpenAiConfig',JSON.stringify(allOpenAIInfo));
+        console.log("OpenAiConfig", JSON.stringify(allOpenAIInfo));
         setOpenAiApiConfig(allOpenAIInfo);
 
         const sensorNotification = message.result.find(
@@ -422,7 +513,6 @@ function AdminLayout() {
 
         soundsInfo.forEach((sound) => addNotifications(sound));
         break;
-
       case "PbxStatusResult":
         if (message.result) {
           const status = String(message.result);
@@ -497,8 +587,8 @@ function AdminLayout() {
         break;
       case "UpdateConfig":
         console.log("UpdateConfig", message);
-        setTheme (message.vl); 
-        
+        setTheme(message.vl);
+
         break;
       case "DeleteCameraSuccess":
         deleteCamera(message.id_deleted);
@@ -672,7 +762,6 @@ function AdminLayout() {
           });
         }
         break;
-
       case "AddGatewayError":
         toast({
           variant: "destructive",
@@ -687,7 +776,26 @@ function AdminLayout() {
           description: "Usuário foi desconectado de sua sessão",
         });
         break;
-
+      case "GetOpenAiStatusResult":
+        if (message.result === "[]") {
+          updateOpenAIKeyStatus(false);
+          toast({
+            description: "Falha de conexão com o servidor",
+          });
+        } else {
+          updateOpenAIKeyStatus(true);
+        }
+        break;
+      case "GetTranscriptionResult":
+        if (message.result === "[]") {
+          toast({
+            description: "Falha na transcrição da chamada",
+          });
+        } else {
+          updateDataReport(message.result);
+          console.log("ADMIN LAYOUT", message.result);
+        }
+        break;
       default:
         console.log("Unknown message type:", message);
         break;
@@ -705,16 +813,18 @@ function AdminLayout() {
         ) : (
           <>
             <DndProvider backend={isMobile ? TouchBackend : HTML5Backend}>
-              <HeaderApp />
-              {/* Your admin layout here */}
-              <Routes>
-                <Route path="account" element={<Account />} />
-                <Route path="buttons" element={<ButtonsPage />} />
-                <Route path="actions" element={<ActionsPage />} />
-                <Route path="options" element={<Options />} />
-                <Route path="reports" element={<Reports />} />
-                {/* Add more admin routes as needed */}
-              </Routes>
+              <div className="fixed top-0 left-0 w-full z-50">
+                <HeaderApp />
+              </div>
+              <div className="pt-20">
+                <Routes>
+                  <Route path="account" element={<Account />} />
+                  <Route path="buttons" element={<ButtonsPage />} />
+                  <Route path="actions" element={<ActionsPage />} />
+                  <Route path="options" element={<Options />} />
+                  <Route path="reports" element={<Reports />} />
+                </Routes>
+              </div>
             </DndProvider>
           </>
         )}

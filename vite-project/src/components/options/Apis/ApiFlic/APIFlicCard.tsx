@@ -50,12 +50,12 @@ import {
               </CardHeader>
               <CardContent>
                 <div className="w-full flex flex-col gap-5">
-                  <div className="flex items-center justify-between gap-3 w-full">
-                    <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
+                  <div className="grid grid-cols-4 items-center justify-between gap-3 w-full">
+                    <h4 className="scroll-m-20 columns-1 text-end text-xl font-semibold tracking-tight">
                     {texts[language].key}
                     </h4>
                     <Input
-                      className="w-full"
+                      className="w-full col-span-3"
                       onChange={handleApiKey}
                       value={key}
                     />

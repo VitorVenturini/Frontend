@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { parse } from "date-fns";
 import { useWebSocketData } from "../websocket/WebSocketProvider";
 import { Loader2 } from "lucide-react";
-import { replaceDataForName } from "../utils/utilityFunctions";
+import { replaceDataForName, replaceSipForName } from "../utils/utilityFunctions";
 import { useUsers } from "../users/usersCore/UserContext";
 import { useButtons } from "../buttons/buttonContext/ButtonsContext";
 import { filterButtonByID } from "../utils/utilityFunctions";
@@ -26,23 +26,26 @@ const HistoryCell: React.FC<HistoryCellProps> = ({ historyInfo }) => {
   const { buttons } = useButtons();
   const { language } = useLanguage();
   const details = historyInfo.details;
+  
   return (
     <div className="flex flex-col bg-muted w-[500px] xl2:w-[700px] xl4:w-[1000px] mt-2 ">
       <div className="flex gap-1 bg-card/50 px-2 py-1 justify-between items-center">
         <div className="flex gap-1 ">
           <p className="text-sm  font-black">
-            {replaceDataForName(users, historyInfo.from, sensors)}
+            {historyInfo.name === 'call' ? replaceSipForName(users, historyInfo.from) :
+            replaceDataForName(users, historyInfo.from, sensors)}
           </p>
           <p className="text-sm text-muted-foreground">
             {getText("to", texts[language])}
           </p>
           <p className="text-sm text-fuchsia">
-            {replaceDataForName(users, historyInfo.guid, sensors)}
+            {historyInfo.name === 'call' ? replaceSipForName(users, historyInfo.prt) : replaceDataForName(users, historyInfo.guid, sensors)}
           </p>
         </div>
+        
         <div className="flex items-center gap-1">
           <p className="text-sm ">
-            {filterButtonByID(historyInfo.details as any, buttons)}
+            {historyInfo.name === 'action' ?  historyInfo.details.action_name : filterButtonByID(details.id, buttons)}
           </p>
         </div>
 
@@ -101,14 +104,14 @@ const OptHistory: React.FC = () => {
       return;
     }
   };
-
+  console.log("itens", items)
   // Função para adicionar mais itens manualmente
   const addMoreItems = () => {
     setIsLoading(true);
     wss?.sendMessage({
       api: "user",
       mt: "getHistory",
-      startId: items[0].id,
+      startId: items[0] === null ? items[1].id : items[0].id,
     });
     setIsLoading(false);
   };

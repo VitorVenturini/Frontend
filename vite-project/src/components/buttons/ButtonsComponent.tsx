@@ -40,6 +40,7 @@ import ModalNumber from "./number/ModalNumber";
 import NumberButton from "./number/NumberButton";
 import ModalClock from "./Clock/ModalClock";
 import ClockButton from "./Clock/ClockButton";
+import ModalGoogleCalendar from "./googleCalendar/ModalGoogleCalendar"
 import { useSearchParams } from "react-router-dom";
 import { useSensors } from "../sensor/SensorContext";
 import { UserInterface } from "../users/usersCore/UserContext";
@@ -49,6 +50,10 @@ import { useWebSocketData } from "../websocket/WebSocketProvider";
 import { useDrop } from "react-dnd";
 import ModalFlic from "./flic/ModalFlic";
 import FlicButton from "./flic/FlicButton";
+import { useLanguage } from "@/components/language/LanguageContext";
+import texts from "@/_data/texts.json";
+import GoogleCalendarButton from "./googleCalendar/GoogleCalendarButton";
+
 
 interface ButtonProps {
   button: ButtonInterface;
@@ -63,7 +68,7 @@ interface DraggedItem {
 }
 
 export const commonClasses =
-  "w-[128px] h-[70px] xl:w-[128px] xl:h-[77px] xl2:w-[150px] xl2:h-[90px] xl3:w-[190px] xl3:h-[112px] xl4:w-[230px] xl4:h-[139px] text-white rounded-lg border bg-border shadow-sm p-1 justify-between";
+  "w-[128px] h-[70px] xl:w-[128px] xl:h-[77px] xl2:w-[150px] xl2:h-[90px] xl3:w-[190px] xl3:h-[112px] xl4:w-[230px] xl4:h-[139px] text-white rounded-lg border bg-border shadow-sm p-1 justify-between  ";
 
 export default function ButtonsComponent({
   button,
@@ -72,12 +77,13 @@ export default function ButtonsComponent({
   selectedUser,
   selectedPage,
 }: ButtonProps) {
+  const [isCalendarRequested, setIsCalendarRequested] = useState(false);
   const { isAdmin } = useContext(AccountContext);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
   const [selectedType, setSelectedType] = useState<string>("");
   const wss = useWebSocketData();
-
+  const { language } = useLanguage();
   //drop
   const useDropWithButtonId = (btn_id: number | null, isEnabled: boolean) => {
     return useDrop(
@@ -112,7 +118,7 @@ export default function ButtonsComponent({
   const handleClick = () => {
     if (isAdmin) {
       onClickPosition();
-      setSelectedType(""); // limpeza q faltava
+      setSelectedType(""); //limpeza q faltava
     }
     setIsClicked(!isClicked);
   };
@@ -186,6 +192,17 @@ export default function ButtonsComponent({
             onClose={() => setIsDialogOpen(false)}
           />
         );
+        case "google_calendar":
+          return (
+            <ModalGoogleCalendar
+              selectedPage={selectedPage}
+              selectedUser={selectedUser}
+              clickedPosition={clickedPosition}
+              onClose={() => {
+                setIsDialogOpen(false);
+              }}
+            />
+          );
       case "clock":
         return (
           <ModalClock
@@ -208,7 +225,7 @@ export default function ButtonsComponent({
       default:
         return (
           <div className="flex justify-center items-center h-full w-full min-h-[200px]">
-            <p className="">selecione um tipo de botão</p>
+            <p className="">{texts[language].selectButtonType}</p>
           </div>
         );
     }
@@ -237,8 +254,8 @@ export default function ButtonsComponent({
           <div className="">
             <Card className="border-none bg-transparent min-w-[500px]">
               <CardHeader>
-                <CardTitle>Criar Botão</CardTitle>
-                <CardDescription>Selecione um tipo de botão</CardDescription>
+                <CardTitle>{texts[language].createButton}</CardTitle>
+                <CardDescription>{texts[language].selectButtonType}</CardDescription>
               </CardHeader>
               <CardContent className="gap-4">
                 <div className=" grid grid-cols-5 items-center gap-4 mt-3 mb-6">
@@ -246,23 +263,23 @@ export default function ButtonsComponent({
                     className="text-end"
                     htmlFor="framework"
                     id="typeButton"
-                  >
-                    Tipo de botão
+                  >{texts[language].buttonType}
                   </Label>
                   <Select onValueChange={handleTypeSelected}>
                     <SelectTrigger className="col-span-4" id="SelectTypeButton">
                       <SelectValue placeholder="Selecione o tipo de Botão" />
                     </SelectTrigger>
                     <SelectContent position="popper">
-                      <SelectItem value="alarm">Alarme</SelectItem>
-                      <SelectItem value="flic">Flic</SelectItem>
-                      <SelectItem value="number">Número</SelectItem>
-                      <SelectItem value="user">Usuário</SelectItem>
-                      <SelectItem value="sensor">Sensor</SelectItem>
-                      <SelectItem value="command">Comando</SelectItem>
-                      <SelectItem value="clock">Relógio</SelectItem>
-                      <SelectItem value="cronometer">Cronometro</SelectItem>
-                      <SelectItem value="conference">Conferência</SelectItem>
+                      <SelectItem value="alarm">{texts[language].alarm}</SelectItem>
+                      <SelectItem value="flic">{texts[language].flic}</SelectItem>
+                      <SelectItem value="google_calendar">{texts[language].googleCalendar}</SelectItem>
+                      <SelectItem value="number">{texts[language].number}</SelectItem>
+                      <SelectItem value="user">{texts[language].user}</SelectItem>
+                      <SelectItem value="sensor">{texts[language].sensor}</SelectItem>
+                      <SelectItem value="command">{texts[language].command}</SelectItem>
+                      <SelectItem value="clock">{texts[language].clock}</SelectItem>
+                      <SelectItem value="cronometer">{texts[language].cronometer}</SelectItem>
+                      <SelectItem value="conference">{texts[language].conference}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -384,6 +401,32 @@ export default function ButtonsComponent({
             </Dialog>
           </div>
         );
+      case "google_calendar":
+          return (
+            <div>
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogTrigger asChild>
+                  <div>
+                    <GoogleCalendarButton button={button} onClick={handleClick} />
+                  </div>
+                </DialogTrigger>
+                {isAdmin && (
+                  <DialogContent className="space-y-6 min-h-[250px] flex flex-col content-between p-0 min-w-[900px]">
+                    {
+                      <ModalGoogleCalendar
+                        selectedPage={selectedPage}
+                        selectedUser={selectedUser}
+                        clickedPosition={clickedPosition}
+                        existingButton={button}
+                        isUpdate={true}
+                        onClose={() => setIsDialogOpen(false)}
+                      />
+                    }
+                  </DialogContent>
+                )}
+              </Dialog>
+            </div>
+          );  
       case "combo":
         return (
           <div>

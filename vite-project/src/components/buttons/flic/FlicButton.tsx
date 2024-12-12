@@ -23,6 +23,10 @@ export default function FlicButton({ button, handleClick }: ButtonProps) {
   const account = useAccount();
   const wss = useWebSocketData();
   const [initiatedByUser, setInitiatedByUser] = useState(false);
+  const buttonClass =
+    button.button_name.length < 10
+      ? "text-md xl3:text-xl xl4:text-3xl"
+      : "text-[9px] xl3:text-sm xl4:text-md";
 
   useEffect(() => {
     if (!initiatedByUser) {
@@ -72,7 +76,7 @@ export default function FlicButton({ button, handleClick }: ButtonProps) {
     >
       <div className="flex items-center gap-1 cursor-pointer ">
         <CircleDot size={17} color="white" />
-        <p className="text-sm font-medium leading-none  xl3:text-xl xl4:text-2xl">
+        <p className={`font-medium leading-none ${buttonClass}`}>
           {button.button_name}
         </p>
       </div>

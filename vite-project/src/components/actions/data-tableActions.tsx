@@ -11,6 +11,12 @@ import {
   getSortedRowModel,
   getFilteredRowModel,
 } from "@tanstack/react-table";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+import { EyeIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import {
@@ -32,8 +38,6 @@ import { useButtons } from "../buttons/buttonContext/ButtonsContext";
 import { useSensors } from "../sensor/SensorContext";
 import { useCameras } from "../cameras/CameraContext";
 
-
-
 interface User {
   id: string;
   name: string;
@@ -41,8 +45,9 @@ interface User {
 }
 
 interface TableData {
-  action_exec_user: string; 
-  create_user: string; 
+  action_exec_user: string;
+  create_user: string;
+  action_start_prt: string;
   action_start_type: string;
   action_start_device: string;
   action_exec_type: string;
@@ -66,7 +71,7 @@ export function DataTable<TData extends TableData, TValue>({
   );
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [loading, setLoading] = useState<boolean>(true);
-  const {users} = useUsers();
+  const { users } = useUsers();
   const { buttons } = useButtons();
   const { sensors } = useSensors();
   const { cameras } = useCameras();
@@ -110,10 +115,11 @@ export function DataTable<TData extends TableData, TValue>({
           }
           className="max-w-sm"
         />
-        
+
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger>
-            <Button>{texts[language].createAction}</Button> {/* Texto de tradução */}
+            <Button>{texts[language].createAction}</Button>{" "}
+            {/* Texto de tradução */}
           </DialogTrigger>
           <DialogContent className="max-w-5xl">
             <CardCreateAction onSuccess={() => setIsDialogOpen(false)} />
@@ -152,37 +158,88 @@ export function DataTable<TData extends TableData, TValue>({
                     cell.getContext()
                   );
                   if (cell.column.id === "action_start_type") {
-                    const startType = (cell.row.original as TableData).action_start_type;
-                    cellValue = startType ? texts[language][startType] : startType; // Texto de tradução
+                    const startType = (cell.row.original as TableData)
+                      .action_start_type;
+                    cellValue = startType
+                      ? texts[language][startType]
+                      : startType; // Texto de tradução
                   }
                   if (cell.column.id === "action_start_device") {
-                    const startDevice = (cell.row.original as TableData).action_start_device;
-                    if(startDevice != ''){
+                    const startDevice = (cell.row.original as TableData)
+                      .action_start_device;
+                    if (startDevice != "") {
                       const dev = sensors.find((s) => s.deveui === startDevice);
-                      if(dev){
-                        cellValue = dev.sensor_name
-                      }else{
+                      if (dev) {
+                        cellValue = dev.sensor_name;
+                      } else {
                         const dev = cameras.find((c) => c.mac === startDevice);
-                        cellValue = dev.nickname
+                        cellValue = dev ? dev.nickname : startDevice;
                       }
-                    }else{
-                      cellValue = startDevice
+                    } else {
+                      cellValue = startDevice;
                     }
                   }
+                  if (cell.column.id === "action_start_prt") {
+                    const startPrt = (cell.row.original as TableData)
+                      .action_start_prt;
+                    if (startPrt.length > 20) {
+                      // Função para cortar o texto em 50 caracteres no último espaço
+                      const truncateText = (
+                        text: string,
+                        limit: number
+                      ): string => {
+                        if (text.length <= limit) return text;
+
+                        const truncated = text.slice(0, limit);
+                        const lastSpaceIndex = truncated.lastIndexOf(" ");
+                        return lastSpaceIndex !== -1
+                          ? truncated.slice(0, lastSpaceIndex) + " ..."
+                          : truncated + " ...";
+                      };
+
+                      const truncatedPrt = truncateText(startPrt, 60);
+
+                      // Renderizar o valor da célula com o texto truncado e o HoverCard
+                      cellValue = (
+                        <>
+                          <span>{truncatedPrt}</span>
+                          <HoverCard>
+                            <HoverCardTrigger>
+                              <Button size="icon" variant="ghost">
+                                <EyeIcon />
+                              </Button>
+                            </HoverCardTrigger>
+                            <HoverCardContent>
+                              <p>{startPrt}</p>
+                            </HoverCardContent>
+                          </HoverCard>
+                        </>
+                      );
+                    } else {
+                      cellValue = startPrt;
+                    }
+                  }
+
                   if (cell.column.id === "action_exec_user") {
-                    const userId = (cell.row.original as TableData).action_exec_user;
+                    const userId = (cell.row.original as TableData)
+                      .action_exec_user;
                     const user = users.find((u) => u.guid === userId);
                     cellValue = user ? user.name : texts[language].unknownUser; // Texto de tradução
                   }
-                  if ((cell.row.original as TableData).action_exec_type == "command" && cell.column.id === "action_exec_device") {
-                    const execDevice = (cell.row.original as TableData).action_exec_device;
-                    if(execDevice != ''){
+                  if (
+                    (cell.row.original as TableData).action_exec_type ==
+                      "command" &&
+                    cell.column.id === "action_exec_device"
+                  ) {
+                    const execDevice = (cell.row.original as TableData)
+                      .action_exec_device;
+                    if (execDevice != "") {
                       const dev = sensors.find((s) => s.deveui === execDevice);
-                      if(dev){
-                        cellValue = dev.sensor_name
+                      if (dev) {
+                        cellValue = dev.sensor_name;
                       }
-                    }else{
-                      cellValue = execDevice
+                    } else {
+                      cellValue = execDevice;
                     }
                   }
                   if (cell.column.id === "create_user") {
@@ -191,11 +248,17 @@ export function DataTable<TData extends TableData, TValue>({
                     cellValue = user ? user.name : texts[language].unknownUser; // Texto de tradução
                   }
                   if (cell.column.id === "action_exec_type") {
-                    const execType = (cell.row.original as TableData).action_exec_type;
+                    const execType = (cell.row.original as TableData)
+                      .action_exec_type;
                     cellValue = execType ? texts[language][execType] : execType; // Texto de tradução
                   }
-                  if ((cell.row.original as TableData).action_exec_type == "button" && cell.column.id === "action_exec_prt") {
-                    const btnId = (cell.row.original as TableData).action_exec_prt;
+                  if (
+                    (cell.row.original as TableData).action_exec_type ==
+                      "button" &&
+                    cell.column.id === "action_exec_prt"
+                  ) {
+                    const btnId = (cell.row.original as TableData)
+                      .action_exec_prt;
                     const btn = buttons.find((b) => b.id == parseInt(btnId));
                     cellValue = btn ? btn.button_name : btnId; // Texto de tradução
                   }
@@ -211,7 +274,8 @@ export function DataTable<TData extends TableData, TValue>({
                     <img src={LogoCore} className="p-6 h-64 animate-spin" />
                   </div>
                 )}
-                <h1 className="m-4">{texts[language].noResult}</h1> {/* Texto de tradução */}
+                <h1 className="m-4">{texts[language].noResult}</h1>{" "}
+                {/* Texto de tradução */}
               </TableCell>
             </TableRow>
           )}

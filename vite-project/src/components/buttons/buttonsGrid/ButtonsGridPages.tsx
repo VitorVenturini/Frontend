@@ -12,7 +12,7 @@ import {
   UserInterface,
   useUsers,
 } from "@/components/users/usersCore/UserContext";
-import { Check, Pencil } from "lucide-react";
+import { ChevronLeft, ChevronRight, Check, Pencil, Plus } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -42,6 +42,8 @@ export default function ButtonsGridPages({
   const { buttonSensors } = useSensors();
   const [pageName, setPageName] = useState("");
   const { users } = useUsers();
+  const [currentPage, setCurrentPage] = useState(0);
+  const pagesPerPage = 5;
   const buttonsInSelectedPage = buttonsGrid.filter(
     (buttonsGrid) => buttonsGrid.page.toString() === selectedPage
   ); // Filtrar botões com base na página selecionada.
@@ -56,13 +58,68 @@ export default function ButtonsGridPages({
       return u.guid === guid;
     }
   })[0];
+  const userPages = filteredUser?.userPreferences?.pages || [];
 
+  const displayedPages = userPages.slice(
+    currentPage * pagesPerPage,
+    (currentPage + 1) * pagesPerPage
+  );
+  console.log(
+    "%cDISPLAYPAGES",
+    "font-size: 35px; color: red; font-weight: bold;",
+    displayedPages
+  );
+  const buttonTrigged = buttons.filter((button) => {
+    if (button.triggered) {
+      return button.page;
+    } else {
+      return null;
+    }
+  });
+  const triggeredPages = buttonTrigged.map((btn) => {
+    if(!btn.muted){
+      return btn.page;
+    }
+    
+  });
+  const currentPages = displayedPages.map(({ pageNumber, pageName }, index) => {
+    return pageNumber;
+  });
+  // Encontrar o menor e maior valor de currentPages
+  const minCurrentPage = Math.min(...currentPages);
+  const maxCurrentPage = Math.max(...currentPages);
+
+  // Verificar se existe triggeredPage maior ou menor
+  const hasGreaterThan = triggeredPages.some((page) => Number(page) > maxCurrentPage);
+  const hasLessThan = triggeredPages.some((page) => Number(page) < minCurrentPage);
+
+  console.log(
+    "%cbuttonTrigged",
+    "font-size: 35px; color: pink; font-weight: bold;",
+    buttonTrigged
+  );
+  console.log(
+    "%ctriggeredPages",
+    "font-size: 35px; color: lightblue; font-weight: bold;",
+    triggeredPages
+  );
   const handlePageChange = (newPage: string) => {
     setSelectedPage(newPage); // Atualizar a página selecionada quando o usuário seleciona uma nova página.
   };
 
   const handleOpenPopover = (index: number) => {
     setOpenEditPageIndex(index); // Definir qual popover será aberto
+  };
+  const handleNextPage = () => {
+    if ((currentPage + 1) * pagesPerPage < userPages.length) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 0) {
+      setCurrentPage(currentPage - 1);
+    }
   };
 
   const handleClosePopover = () => {
@@ -74,7 +131,7 @@ export default function ButtonsGridPages({
         variant: "destructive",
         description: "Por Favor escolha um nome para a página",
       });
-      setPageName("")
+      setPageName("");
       return;
     }
     wss.sendMessage({
@@ -82,9 +139,27 @@ export default function ButtonsGridPages({
       mt: "SetPageName",
       guid: selectedUser?.guid,
       pageName: pageName,
-      pageNumber: pageNumber,
+      pageNumber: parseInt(pageNumber),
     });
-    setPageName("")
+    setPageName("");
+  };
+  const handleAddPage = (pageNumber: string, pageName: string) => {
+    if (!pageName) {
+      toast({
+        variant: "destructive",
+        description: "Por Favor escolha um nome para a página",
+      });
+      setPageName("");
+      return;
+    }
+    wss.sendMessage({
+      api: "admin",
+      mt: "SetPageName",
+      guid: selectedUser?.guid,
+      pageName: pageName,
+      pageNumber: parseInt(pageNumber),
+    });
+    setPageName("");
   };
 
   const handleTypePageName = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -141,83 +216,130 @@ export default function ButtonsGridPages({
           selectedPage={selectedPage}
         />
       </div>
-      <Tabs
-        defaultValue="1"
-        onValueChange={handlePageChange}
-        className="w-full "
-      >
-        <TabsList className="w-full flex justify-center ">
-          {["1", "2", "3", "4", "5"].map((pageNumber, index) => (
-            <TabsTrigger
-              key={pageNumber}
-              value={pageNumber}
-              className="w-full gap-2"
-            >
-            {truncateText(
-                filteredUser?.userPreferences?.[`page${pageNumber}`]
-                  ? filteredUser?.userPreferences?.[`page${pageNumber}`]
-                  : texts[language].page + " " + pageNumber,
-                8
-              )}
-              {isPageWarning(pageNumber) && !isAdmin ? (
-                <span className="relative flex h-3 w-3 m-1 ">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
-                </span>
-              ) : isAdmin ? (
-                <div className="flex items-center justify-center">
-                  <Popover
-                    open={openEditPageIndex === index} // Abrir popover apenas para o índice correspondente
-                    onOpenChange={(open) =>
-                      open ? handleOpenPopover(index) : handleClosePopover()
-                    } // Definir qual popover abrir/fechar
-                  >
-                    <PopoverTrigger>
-                      <Pencil size="15px" />
-                    </PopoverTrigger>
-                    <PopoverContent>
-                      <div className="relative flex flex-col items-left">
-                        {/* <button
-                          className="absolute top-0 right-0 -mt-5 -mr-5 h-6 w-6 rounded-full bg-card-foreground text-gray-600 hover:bg-gray-300 hover:text-black flex items-center justify-center"
-                          onClick={handleClosePopover}
-                        >
-                          X
-                      </button> */}
-                        {/*  <div className="mb-2">Editar nome da Página</div> */}
-                        <div className="flex flex-row items-center gap-3">
-                          <div>
-                            <Input
-                              placeholder=
-                                {truncateText(
-                                  filteredUser?.userPreferences?.[`page${pageNumber}`]
-                                    ? filteredUser?.userPreferences?.[`page${pageNumber}`]
-                                    : texts[language].page + " " + pageNumber,
+      <div className="flex gap-1">
+        <Button size="icon" variant="ghost" onClick={handlePreviousPage}>
+        {hasLessThan && (
+            <span className="relative flex h-3 w-3 m-1 ">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+            </span>)
+          }
+          <ChevronLeft size="15px" />
+        </Button>
+        <Tabs
+          defaultValue="1"
+          onValueChange={handlePageChange}
+          className="w-full "
+        >
+          <TabsList className="w-full flex justify-center ">
+            {displayedPages.map(({ pageNumber, pageName }, index) => (
+              <TabsTrigger
+                key={String(pageNumber)} // Garante que cada chave seja única
+                value={String(pageNumber)}
+                className="w-full gap-2"
+              >
+                {truncateText(
+                  pageName
+                    ? pageName
+                    : texts[language].page + " " + String(pageNumber),
+                  20
+                )}
+                {isPageWarning(String(pageNumber)) && !isAdmin ? (
+                  <span className="relative flex h-3 w-3 m-1 ">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                  </span>
+                ) : isAdmin ? (
+                  <div className="flex items-center justify-center">
+                    <Popover
+                      open={openEditPageIndex === index}
+                      onOpenChange={(open) =>
+                        open ? handleOpenPopover(index) : handleClosePopover()
+                      }
+                    >
+                      <PopoverTrigger>
+                        <Pencil size="15px" />
+                      </PopoverTrigger>
+                      <PopoverContent>
+                        <div className="relative flex flex-col items-left">
+                          <div className="flex flex-row items-center gap-3">
+                            <div>
+                              <Input
+                                placeholder={truncateText(
+                                  pageName
+                                    ? pageName
+                                    : texts[language].page +
+                                        " " +
+                                        String(pageNumber),
                                   20
                                 )}
-                              maxLength={8}
-                              onChange={handleTypePageName}
-                              type="text"
-                            />
-                          </div>
-                          <div
-                            onClick={() => {
-                              handleSetPageName(pageNumber);
-                            }}
-                          >
-                            <Check />
+                                maxLength={20}
+                                onChange={handleTypePageName}
+                                type="text"
+                              />
+                            </div>
+                            <div
+                              onClick={() => {
+                                handleSetPageName(String(pageNumber));
+                              }}
+                            >
+                              <Check />
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </PopoverContent>
-                  </Popover>
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                ) : (
+                  ""
+                )}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+        <Button size="icon" variant="ghost"  onClick={handleNextPage}>
+          <ChevronRight size="15px" />
+          {hasGreaterThan && (
+            <span className="relative flex h-3 w-3 m-1 ">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+            </span>)
+          }
+        </Button>
+        {isAdmin ? (
+          <Popover>
+            <PopoverTrigger>
+              <Button size="icon" variant="ghost">
+                <Plus size="15px" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent>
+              <div className="relative flex flex-col items-left">
+                <div className="flex flex-row items-center gap-3">
+                  <div>
+                    <Input
+                      placeholder={pageName}
+                      maxLength={20}
+                      onChange={handleTypePageName}
+                      type="text"
+                    />
+                  </div>
+                  <Button
+                    size="icon"
+                    onClick={() => {
+                      handleAddPage(String(userPages.length + 1), pageName);
+                    }}
+                  >
+                    <Check />
+                  </Button>
                 </div>
-              ) : (
-                ""
-              )}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-      </Tabs>
+              </div>
+            </PopoverContent>
+          </Popover>
+        ) : (
+          ""
+        )}
+      </div>
     </Card>
   );
 }

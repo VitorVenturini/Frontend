@@ -18,6 +18,10 @@ export default function CronometerButton({ button, handleClick }: ButtonProps) {
   const [isRunning, setIsRunning] = useState(button.isRunning || false);
   const [time, setTime] = useState(button.time || 0); // O tempo que já passou
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
+  const buttonClass =
+    button.button_name.length < 10
+      ? "text-md xl3:text-xl xl4:text-3xl"
+      : "text-[9px] xl3:text-sm xl4:text-md";
 
   useEffect(() => {
     if (isRunning && button.startTime) {
@@ -43,7 +47,7 @@ export default function CronometerButton({ button, handleClick }: ButtonProps) {
     if (button.comboStart) {
       const startTime = Date.now();
       setIsRunning(true);
-      updateButton({ ...button, isRunning: true, startTime }); 
+      updateButton({ ...button, isRunning: true, startTime });
       setStopCombo(button.id);
     }
   }, [button]);
@@ -53,7 +57,7 @@ export default function CronometerButton({ button, handleClick }: ButtonProps) {
     if (!isAdmin && !isRunning) {
       const startTime = Date.now();
       setIsRunning(true);
-      updateButton({ ...button, isRunning: true, startTime }); 
+      updateButton({ ...button, isRunning: true, startTime });
     }
   };
 
@@ -65,7 +69,7 @@ export default function CronometerButton({ button, handleClick }: ButtonProps) {
   const handleRestoreClick = () => {
     setTime(0);
     setIsRunning(false);
-    updateButton({ ...button, isRunning: false, time: 0, startTime: null }); 
+    updateButton({ ...button, isRunning: false, time: 0, startTime: null });
   };
 
   const handleResumeClick = () => {
@@ -90,7 +94,7 @@ export default function CronometerButton({ button, handleClick }: ButtonProps) {
     <div
       className={`${commonClasses} flex flex-col justify-between cursor-pointer ${clickedClass}`}
     >
-      <p className="text-sm font-medium leading-none text-white xl3:text-lg xl4:text-xl">
+      <p className={`font-medium leading-none text-white ${buttonClass}`}>
         {button.button_name}
       </p>
       <div className="font-extrabold xl3:text-2xl xl4:text-3xl font-mono w-[10ch] text-center">

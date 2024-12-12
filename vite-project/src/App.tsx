@@ -29,6 +29,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Loader from "./components/Loader";
 import TokenRenewer from "./components/validateToken/TokenRenewer";
 import CardResetPassword from "./components/resetPassword/CardResetPassword";
+import { GoogleCalendarProvider } from "./components/googleCalendars/googleCalendarContext";
+import { WebSocketProvider } from "./components/websocket/WebSocketProvider";
 
 const host_name_api = String(import.meta.env.VITE_API_HOSTNAME);
 const host_port_api = String(import.meta.env.VITE_API_PORT);
@@ -85,35 +87,37 @@ function App() {
                                 <CallProvider>
                                   <SensorProvider>
                                     <CameraProvider>
-                                      <Routes>
-                                        <Route
-                                          path="/"
-                                          element={<RootRoute />}
-                                        />
-                                        <Route
-                                          path="/login"
-                                          element={<RootRoute />}
-                                        />
-                                        <Route
-                                          path="/reset-password/*"
-                                          element={<CardResetPassword />}
-                                        />
-                                        <Route
-                                          path="/reports/*"
-                                          element={<ReportRoute />}
-                                        />
-                                        <Route
-                                          path="/admin/*"
-                                          element={<AdminRoute />}
-                                        />
-                                        <Route
-                                          path="/user/*"
-                                          element={<UserRoute />}
-                                        />
-                                        <Route path="*" element={<NoPage />} />
-                                      </Routes>
-                                      <Toaster />
-                                      <TokenRenewer />
+                                      <GoogleCalendarProvider>
+                                        <Routes>
+                                          <Route
+                                            path="/"
+                                            element={<RootRoute />}
+                                          />
+                                          <Route
+                                            path="/login"
+                                            element={<RootRoute />}
+                                          />
+                                          <Route
+                                            path="/reset-password/*"
+                                            element={<CardResetPassword />}
+                                          />
+                                          <Route
+                                            path="/reports/*"
+                                            element={<ReportRoute />}
+                                          />
+                                          <Route
+                                            path="/admin/*"
+                                            element={<AdminRoute />}
+                                          />
+                                          <Route
+                                            path="/user/*"
+                                            element={<UserRoute />}
+                                          />
+                                          <Route path="*" element={<NoPage />} />
+                                        </Routes>
+                                        <Toaster />
+                                        <TokenRenewer />
+                                      </GoogleCalendarProvider>
                                     </CameraProvider>
                                   </SensorProvider>
                                 </CallProvider>

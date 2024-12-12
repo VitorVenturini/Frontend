@@ -2,13 +2,12 @@ import React, { createContext, useState, useContext, ReactNode } from "react";
 
 export interface UserPreferencesInterface {
   guid: string;
-  page1: string;
-  page2: string;
-  page3: string;
-  page4: string;
-  page5: string;
+  pages: userPages[];
 }
-
+export interface userPages {
+  pageNumber: number;
+  pageName: string | null;
+}
 export interface UserInterface {
   id: number;
   name: string;
@@ -29,6 +28,7 @@ export interface UserInterface {
 interface UserContextType {
   users: UserInterface[];
   setUserPreferences: (preferences: UserPreferencesInterface) => void;
+  setUserPages: (guid: string, pages: userPages[]) => void;
   setUsers: React.Dispatch<React.SetStateAction<UserInterface[]>>;
   addUsers: (user: UserInterface) => void;
   updateUser: (user: UserInterface) => void;
@@ -50,12 +50,27 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     setUsers((prevUsers) =>
       prevUsers.map((user) =>
         String(user.guid) === String(preferences.guid)
-          ? { ...user, userPreferences: {...preferences} }
+          ? { ...user, userPreferences: { ...preferences } }
           : user
       )
     );
   };
-
+  const setUserPages = (guid: string, pages: userPages[]) => {
+    setUsers((prevUsers) =>
+      prevUsers.map((user) =>
+        user.guid === guid
+          ? {
+              ...user,
+              userPreferences: {
+                ...user.userPreferences, // Preserva outras propriedades de userPreferences
+                pages,
+              },
+            }
+          : user
+      )
+    );
+  };
+  console.log("contextUserPreferences", users);
   const updateUser = (updatedUser: UserInterface) => {
     setUsers((prevUsers) =>
       prevUsers.map((user) =>
@@ -83,6 +98,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         setUsers,
         setUserPreferences,
         addUsers,
+        setUserPages,
         updateUser,
         updateUserStauts,
         //onlineUsers,

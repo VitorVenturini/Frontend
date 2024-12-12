@@ -16,6 +16,8 @@ export interface ButtonInterface {
   sensor_max_threshold?: string;
   sensor_type?: string | null;
   create_user: string;
+  gateway_id?: number;
+  calendar_id?: string;
   page: string;
   position_x: string;
   position_y: string;
@@ -107,14 +109,18 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const updateButton = (updatedButton: ButtonInterface) => {
-    setButtons((prevButtons) =>
-      prevButtons.map((button) =>
-        button.id === updatedButton.id
+    console.log("Updating button:", updatedButton); // Log do botão atualizado
+    setButtons((prevButtons) => {
+      const updatedButtons = prevButtons.map((button) =>
+        button.id == updatedButton.id
           ? { ...button, ...updatedButton }
           : button
-      )
-    );
+      );
+      console.log("Updated buttons state:", updatedButtons); // Verificar o estado atualizado
+      return updatedButtons;
+    });
   };
+  
 
   const deleteButton = (id: number) => {
     setButtons((prevButtons) =>
@@ -257,6 +263,27 @@ export const ButtonProvider = ({ children }: { children: ReactNode }) => {
       )
     );
   };
+  const setButtonGoogleCalendarStatus = (id: number, callStatus: string, colorClass: string, note: string) => {
+    console.log(`Updating Google Calendar status for button with ID: ${id}, new note: ${note}`);
+  
+    setButtons((prevButtons) => {
+      console.log("Previous buttons state:", prevButtons);
+  
+      const updatedButtons = prevButtons.map((button) => {
+        const isMatching = button.id === id; // Verifica se o ID corresponde
+        console.log(
+          `Checking button ID: ${button.id} === ${id} -> ${isMatching}`
+        );
+  
+        // Atualiza apenas o botão correspondente
+        return isMatching ? { ...button, callStatus, colorClass, note } : button;
+      });
+  
+      console.log("Updated buttons state:", updatedButtons);
+      return updatedButtons; // Retorna o estado atualizado
+    });
+  };
+  
 
   const setButtonTriggered = (id: number, triggered: boolean) => {
     setButtons((prevButtons) =>

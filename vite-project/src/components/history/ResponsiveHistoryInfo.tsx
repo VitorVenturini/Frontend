@@ -13,7 +13,7 @@ import {
 import { SensorInterface, useSensors } from "../sensor/SensorContext";
 import { handleSensorSpecificValue } from "../sensor/SensorResponsiveInfo";
 import { PlayIcon, DownloadIcon, PauseIcon } from "lucide-react";
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Button } from "../ui/button";
 import { host } from "@/App";
 import { AudioPlayer } from "react-audio-player-component"; // Substitua pela biblioteca de áudio que você está usando
@@ -85,6 +85,7 @@ export const createHistoryContent = (
   let statusValue: any;
   const translatedPrt = prt ? getText(prt, texts[language]) : "";
   const translatedStatus = status ? getText(status, texts[language]) : "";
+
   switch (name) {
     case "message":
       badgeVariant +=
@@ -124,6 +125,18 @@ export const createHistoryContent = (
         statusValue = translatedStatus;
       }
       break;
+      case "call":
+        badgeVariant +=
+          "border-transparent bg-green-900 text-green-100 hover:bg-green-800";
+        content = translatedPrt;
+        statusValue = translatedStatus;
+        break
+      case "opt":
+        badgeVariant +=
+          "border-transparent bg-gray-900 text-gray-100 hover:bg-gray-800";
+        content = details?.button_type;
+        statusValue = translatedStatus;
+        break 
     default:
       badgeVariant +=
         "border-transparent bg-gray-900 text-gray-100 hover:bg-gray-800";
@@ -186,7 +199,7 @@ export default function ResponsiveHistoryInfo({
       </div>
     );
   };
-  console.log("Link available", host + recordLink);
+
   const truncatedPrt =
     historyInfo?.prt?.length > 20
       ? `${historyInfo?.prt.slice(0, 20)}...`
@@ -196,6 +209,11 @@ export default function ResponsiveHistoryInfo({
   if (historyInfo.date) {
     formattedDate = format(new Date(historyInfo.date), "dd/MM HH:mm");
   }
+
+  // Atualiza a lista
+  useEffect(() => {
+    console.warn("PORRA TA AQUI ",historyInfo )
+  });
 
   return (
     <>
@@ -211,7 +229,7 @@ export default function ResponsiveHistoryInfo({
               ? getText(historyInfo?.name, texts[language])
               : historyInfo?.name}
           </span>
-          {!recordLink && (
+          {historyInfo.name !== 'call' && historyInfo.name !== 'action' && (
             <p className="text-sm font-black ">
               {truncatedPrt
                 ? createHistoryContent(
@@ -234,12 +252,12 @@ export default function ResponsiveHistoryInfo({
                   language,
                   historyInfo?.details
                 ).statusValue
-              : historyInfo?.status}
+              : historyInfo?.status} 
           </p>
           {historyInfo.name === "call" && (
-            <div className="flex justify-between rounded-md my-2 items-center px-2 py-1">
+            <div className="flex justify-between rounded-md items-center px-2 py-1">
               <div className="flex items-center gap-1 capitalize">
-                <p className="text-sm font-bold">Duração: {duration}</p>
+                <p className="text-sm font-bold">{getText('durationTxt', texts[language]) + duration}</p>
               </div>
             </div>
           )}
@@ -251,9 +269,6 @@ export default function ResponsiveHistoryInfo({
                 <Button
                 variant="ghost"
                 size="icon"
-                onClick={(e) => {
-                  console.log("link", host + recordLink);
-                }}
               >
                 <a
                   href={`${host}${recordLink}`}
@@ -270,7 +285,7 @@ export default function ResponsiveHistoryInfo({
               </Button>
               </div>
               ) : (
-                <p>Áudio não disponível</p>
+                getText('noAudio', texts[language])
               )}
               
             </div>
