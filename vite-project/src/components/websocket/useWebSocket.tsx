@@ -88,15 +88,15 @@ const useWebSocket = (
             })
           );
         }
-        // else if (parsedMessage.mt === "TableUsersResult") {
-        //   ws.current?.send(
-        //     JSON.stringify({
-        //       api: "user",
-        //       mt: "SelectUserPreferences",
-        //       guid: account.guid,
-        //     })
-        //   );
-        // }
+        else if (parsedMessage.mt === "SelectButtonsSuccess") {
+          ws.current?.send(
+            JSON.stringify({
+              api: "user",
+              mt: "getHistory", 
+              startId: null
+            })
+          );
+        }
         if (onMessage) {
           onMessage(parsedMessage);
         }
@@ -141,9 +141,9 @@ const useWebSocket = (
         JSON.stringify({ api: apiType, mt: "SelectAllSensorInfoSrc" })
       );
 
-      ws.current?.send(
-        JSON.stringify({ api: apiType, mt: "getHistory", startId: null })
-      );
+      // ws.current?.send(
+      //   JSON.stringify({ api: apiType, mt: "getHistory", startId: null })
+      // );
     }
 
     // Reset the flag to avoid sending messages again unless UserSessionResult is received again

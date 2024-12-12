@@ -13,7 +13,7 @@ import {
 import { SensorInterface, useSensors } from "../sensor/SensorContext";
 import { handleSensorSpecificValue } from "../sensor/SensorResponsiveInfo";
 import { PlayIcon, DownloadIcon, PauseIcon } from "lucide-react";
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Button } from "../ui/button";
 import { host } from "@/App";
 import { AudioPlayer } from "react-audio-player-component"; // Substitua pela biblioteca de áudio que você está usando
@@ -131,6 +131,12 @@ export const createHistoryContent = (
         content = translatedPrt;
         statusValue = translatedStatus;
         break
+      case "opt":
+        badgeVariant +=
+          "border-transparent bg-gray-900 text-gray-100 hover:bg-gray-800";
+        content = details?.button_type;
+        statusValue = translatedStatus;
+        break 
     default:
       badgeVariant +=
         "border-transparent bg-gray-900 text-gray-100 hover:bg-gray-800";
@@ -203,6 +209,11 @@ export default function ResponsiveHistoryInfo({
   if (historyInfo.date) {
     formattedDate = format(new Date(historyInfo.date), "dd/MM HH:mm");
   }
+
+  // Atualiza a lista
+  useEffect(() => {
+    console.warn("PORRA TA AQUI ",historyInfo )
+  });
 
   return (
     <>

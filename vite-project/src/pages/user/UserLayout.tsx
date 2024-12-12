@@ -59,7 +59,6 @@ import {
   setBusyLightColor,
   stopBusyLightColor,
 } from "@/components/api/ApiFunctions";
-import { useGoogleCalendar } from "@/components/googleCalendars/googleCalendarContext";
 interface User {
   id: string;
   name: string;
@@ -194,7 +193,7 @@ function UserLayout() {
         const buttons: ButtonInterface[] = message.result;
         setButtons(buttons);
         allBtn = buttons;
-        setSensors([]);
+        //setSensors([]);
         break;
       case "SelectAllMessagesSrcResult":
         const latestMessage = JSON.parse(message.result);
