@@ -192,7 +192,7 @@ function UserLayout() {
         }
         break;
       case "SelectButtonsSuccess":
-        const buttons: ButtonInterface[] = JSON.parse(message.result);
+        const buttons: ButtonInterface[] = message.result;
         setButtons(buttons);
         allBtn = buttons;
         setSensors([]);

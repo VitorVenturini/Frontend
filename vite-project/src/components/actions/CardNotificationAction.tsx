@@ -18,74 +18,59 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { getCountryCallingCode, CountryCode } from "libphonenumber-js";
+
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 
 interface NotifyActionsProps {
   id: string;
 }
 
-const countryList = [
-  { name: "Brasil", code: "BR", ddi: "55" },
-  { name: "Estados Unidos", code: "US", ddi: "1" },
-  { name: "Reino Unido", code: "GB", ddi: "44" },
-  // Adicione outros países conforme necessário
+
+const countryDDIList = [
+  { name: "Brasil", ddi: "55", flag: "🇧🇷" },
+  { name: "USA", ddi: "1", flag: "🇺🇸" },
+  { name: "Alemanha", ddi: "49", flag: "🇩🇪" },
+  { name: "Espanha", ddi: "34", flag: "🇪🇸" },
+  { name: "Itália", ddi: "39", flag: "🇮🇹" },
+  { name: "Suécia", ddi: "46", flag: "🇸🇪" },
+  { name: "União Europeia", ddi: "30", flag: "🇪🇺" },
+  { name: "Japão", ddi: "81", flag: "🇯🇵" },
 ];
 
 export default function NotifyActions({ id }: NotifyActionsProps) {
-  const [emails, setEmails] = useState<string[]>(["", "", ""]);
+  const [emails, setEmails] = useState<string[]>([""]);
   const [phones, setPhones] = useState<{ ddi: string; number: string }[]>([
     { ddi: "55", number: "" },
   ]);
+
   const [locationDDI, setLocationDDI] = useState<string>("55");
-  
+
   const wss = useWebSocketData();
   // Detecta o DDI com base na localização
-  useEffect(() => {
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          const latitude = position.coords.latitude;
-          const longitude = position.coords.longitude;
 
-          // Use uma API externa para determinar o país com base na localização
-          const response = await fetch(
-            `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
-          );
-          const data = await response.json();
-
-          const countryCode = data.countryCode as CountryCode;
-          const ddi = getCountryCallingCode(countryCode);
-          setLocationDDI(ddi);
-          setPhones([{ ddi: ddi, number: "" }]);
-        },
-        () => {
-          console.warn("Geolocalização não permitida, usando valor padrão");
-        }
-      );
-    }
-  }, []);
-
-  // Atualiza o valor do telefone
   const handlePhoneChange = (index: number, value: string) => {
+    // Remove todos os caracteres que não são números
+    const cleanedValue = value.replace(/\D/g, "");
+
+    // Garante que o número tenha no máximo 11 dígitos
+    const validNumber = cleanedValue.slice(0, 11);
+
+    // Atualiza o estado apenas se tiver 11 dígitos
     const updatedPhones = [...phones];
-    updatedPhones[index].number = value;
+    updatedPhones[index].number = validNumber;
     setPhones(updatedPhones);
   };
 
-  // Atualiza o DDI selecionado
   const handleDDIChange = (index: number, ddi: string) => {
     const updatedPhones = [...phones];
     updatedPhones[index].ddi = ddi;
     setPhones(updatedPhones);
   };
 
-  // Adiciona novo input
   const addPhoneInput = () => {
-    setPhones([...phones, { ddi: locationDDI, number: "" }]);
+    setPhones([...phones, { ddi: "55", number: "" }]);
   };
 
-  // Remove um input
   const removePhoneInput = (index: number) => {
     const updatedPhones = phones.filter((_, i) => i !== index);
     setPhones(updatedPhones);
@@ -98,8 +83,6 @@ export default function NotifyActions({ id }: NotifyActionsProps) {
     setEmails(updatedEmails);
   };
 
-  console.log(`Action ID ${id}`);
-  console.log(`Actions Notify e-mails ${emails}`);
   // Adicionar um novo input
   const addEmailInput = () => {
     setEmails([...emails, ""]);
@@ -113,37 +96,62 @@ export default function NotifyActions({ id }: NotifyActionsProps) {
 
   // Simulação de envio ao backend
   const handleSave = () => {
+    // Validação simples de e-mail usando Regex
+    const isValidEmail = (email: string): boolean => {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+    };
+
+    // Valida e-mails e converte para lowercase
+    const formattedEmails = emails
+      .filter((email) => email.trim() !== "") // Remove campos vazios
+      .map((email) => email.toLowerCase()) // Converte para lowercase
+      .filter((email) => isValidEmail(email)); // Filtra apenas e-mails válidos
+
+    if (formattedEmails.length !== emails.length) {
+      alert("Existem e-mails inválidos! Verifique os campos.");
+      return;
+    }
+
+    // Validação e formatação dos números de telefone
+    const formattedPhones = phones
+      .filter((phone) => phone.number.length === 11) // Garante que o número tenha 11 dígitos
+      .map((phone) => `+${phone.ddi}${phone.number}`);
+
+    if (formattedPhones.length !== phones.length) {
+      alert("Existem números de telefone inválidos! Verifique os campos.");
+      return;
+    }
+
+    // Envio ao backend
+    console.log("Emails a serem enviados:", formattedEmails);
+    console.log("Telefones a serem enviados:", formattedPhones);
     console.log(
-      "Emails a serem enviados:",
-      emails.filter((email) => email.trim() !== "")
+      "%cMensagem Secreta! 🕵️‍♂️\nEu sei o que você fez no debbug passado",
+      "font-size: 50px; color: red; font-weight: bold;"
     );
     wss?.sendMessage({
       api: "admin",
-      mt: 'InsertActionNotify',
+      mt: "UpdateActionUserNotification",
       id: id,
-      emails: emails,
-      smsPhones: phones,
-
-
+      emails: formattedEmails,
+      smsPhones: formattedPhones,
     });
-
   };
 
   return (
-    <Card className="w-full">
+    <Card className=" border-none">
       <CardHeader>
         <CardTitle>Notificação via e-mails/SMS</CardTitle>
       </CardHeader>
-
       <CardContent>
         <Tabs defaultValue="email" className="w-full">
           <TabsList className="grid grid-cols-2 w-full mb-4">
             <TabsTrigger value="email">Email</TabsTrigger>
             <TabsTrigger value="sms">SMS</TabsTrigger>
           </TabsList>
-
           <TabsContent value="email">
-            <ScrollArea className="w-full h-[300px]">
+            <ScrollArea className="w-[103%] h-[300px] pr-4">
               <div className="flex flex-col gap-3">
                 {emails.map((email, index) => (
                   <div key={index} className="flex items-center gap-2">
@@ -159,7 +167,7 @@ export default function NotifyActions({ id }: NotifyActionsProps) {
                       size="icon"
                       onClick={() => removeEmailInput(index)}
                     >
-                      <Trash size={20} />
+                      <Trash />
                     </Button>
                   </div>
                 ))}
@@ -174,48 +182,58 @@ export default function NotifyActions({ id }: NotifyActionsProps) {
               </div>
             </ScrollArea>
           </TabsContent>
-
           <TabsContent value="sms">
-            <ScrollArea className="w-full h-[300px]">
+            <ScrollArea className="w-[103%] h-[300px] pr-4">
               <CardContent className="w-full p-0">
                 <div className="flex flex-col gap-3">
                   {phones.map((phone, index) => (
-                    <div key={index} className="flex items-center gap-2">
-                      {/* Select para DDI */}
-                      <Select
-                        defaultValue={phone.ddi}
-                        onValueChange={(value) => handleDDIChange(index, value)}
-                      >
-                        <SelectTrigger className="w-24">
-                          <SelectValue placeholder="DDI" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {countryList.map((country) => (
-                            <SelectItem key={country.code} value={country.ddi}>
-                              +{country.ddi} ({country.name})
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                    <div
+                      key={index}
+                      className="flex justify-between items-center gap-2"
+                    >
+                      <div className="flex gap-4 w-full">
+                        {/* Select com bandeiras */}
+                        <Select
+                          value={phone.ddi}
+                          onValueChange={(value) =>
+                            handleDDIChange(index, value)
+                          }
+                        >
+                          <SelectTrigger className="w-36">
+                            <SelectValue placeholder="DDI" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {countryDDIList.map((country) => (
+                              <SelectItem key={country.ddi} value={country.ddi}>
+                                <span className="flex items-center gap-2 justify-center align-middle">
+                                  <span>{`+${country.ddi}`}</span>
+                                  <span className="flex items-center justify-center">
+                                    {country.flag}
+                                  </span>
+                                </span>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
 
-                      {/* Input para Número */}
-                      <Input
-                        type="tel"
-                        placeholder="Digite o telefone"
-                        value={phone.number}
-                        onChange={(e) =>
-                          handlePhoneChange(index, e.target.value)
-                        }
-                        className="w-full p-2 border rounded-md"
-                      />
-
+                        {/* Input para número */}
+                        <Input
+                          type="tel"
+                          placeholder="Digite o DDD + telefone 51999999999"
+                          value={phone.number}
+                          onChange={(e) =>
+                            handlePhoneChange(index, e.target.value)
+                          }
+                          className="w-full p-2 border rounded-md"
+                        />
+                      </div>
                       {/* Botão de Remover */}
                       <Button
                         variant="destructive"
                         size="icon"
                         onClick={() => removePhoneInput(index)}
                       >
-                        <Trash size={20} />
+                        <Trash />
                       </Button>
                     </div>
                   ))}

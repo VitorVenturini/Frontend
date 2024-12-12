@@ -66,7 +66,6 @@
     "hls.js": "^1.5.11",
     "input-otp": "^1.2.4",
     "jszip": "^3.10.1",
-    "libphonenumber-js": "^1.11.16",
     "lucide-react": "^0.378.0",
     "next-themes": "^0.3.0",
     "os": "^0.1.2",

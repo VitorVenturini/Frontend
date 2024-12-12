@@ -64,7 +64,45 @@ export default function ButtonsGridPages({
     currentPage * pagesPerPage,
     (currentPage + 1) * pagesPerPage
   );
+  console.log(
+    "%cDISPLAYPAGES",
+    "font-size: 35px; color: red; font-weight: bold;",
+    displayedPages
+  );
+  const buttonTrigged = buttons.filter((button) => {
+    if (button.triggered) {
+      return button.page;
+    } else {
+      return null;
+    }
+  });
+  const triggeredPages = buttonTrigged.map((btn) => {
+    if(!btn.muted){
+      return btn.page;
+    }
+    
+  });
+  const currentPages = displayedPages.map(({ pageNumber, pageName }, index) => {
+    return pageNumber;
+  });
+  // Encontrar o menor e maior valor de currentPages
+  const minCurrentPage = Math.min(...currentPages);
+  const maxCurrentPage = Math.max(...currentPages);
 
+  // Verificar se existe triggeredPage maior ou menor
+  const hasGreaterThan = triggeredPages.some((page) => Number(page) > maxCurrentPage);
+  const hasLessThan = triggeredPages.some((page) => Number(page) < minCurrentPage);
+
+  console.log(
+    "%cbuttonTrigged",
+    "font-size: 35px; color: pink; font-weight: bold;",
+    buttonTrigged
+  );
+  console.log(
+    "%ctriggeredPages",
+    "font-size: 35px; color: lightblue; font-weight: bold;",
+    triggeredPages
+  );
   const handlePageChange = (newPage: string) => {
     setSelectedPage(newPage); // Atualizar a página selecionada quando o usuário seleciona uma nova página.
   };
@@ -77,7 +115,7 @@ export default function ButtonsGridPages({
       setCurrentPage(currentPage + 1);
     }
   };
-  
+
   const handlePreviousPage = () => {
     if (currentPage > 0) {
       setCurrentPage(currentPage - 1);
@@ -180,6 +218,12 @@ export default function ButtonsGridPages({
       </div>
       <div className="flex gap-1">
         <Button size="icon" variant="ghost" onClick={handlePreviousPage}>
+        {hasLessThan && (
+            <span className="relative flex h-3 w-3 m-1 ">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+            </span>)
+          }
           <ChevronLeft size="15px" />
         </Button>
         <Tabs
@@ -188,7 +232,7 @@ export default function ButtonsGridPages({
           className="w-full "
         >
           <TabsList className="w-full flex justify-center ">
-          {displayedPages.map(({ pageNumber, pageName }, index) => (
+            {displayedPages.map(({ pageNumber, pageName }, index) => (
               <TabsTrigger
                 key={String(pageNumber)} // Garante que cada chave seja única
                 value={String(pageNumber)}
@@ -253,8 +297,14 @@ export default function ButtonsGridPages({
             ))}
           </TabsList>
         </Tabs>
-        <Button size="icon" variant="ghost" onClick={handleNextPage}>
+        <Button size="icon" variant="ghost"  onClick={handleNextPage}>
           <ChevronRight size="15px" />
+          {hasGreaterThan && (
+            <span className="relative flex h-3 w-3 m-1 ">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+            </span>)
+          }
         </Button>
         {isAdmin ? (
           <Popover>
@@ -268,10 +318,7 @@ export default function ButtonsGridPages({
                 <div className="flex flex-row items-center gap-3">
                   <div>
                     <Input
-                      placeholder= {pageName}
-                         
-                    
-        
+                      placeholder={pageName}
                       maxLength={20}
                       onChange={handleTypePageName}
                       type="text"

@@ -130,10 +130,10 @@ export const columnsActions: ColumnDef<ActionsInteface>[] = [
       return (
         <div className="flex justify-center gap-2 items-center">
           <Dialog>
-            <DialogTrigger>
+            <DialogTrigger >
               <MessageCircleWarning/>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="max-w-2xl">
             <NotifyActions id={actions.id} />  
             </DialogContent>
           </Dialog>
