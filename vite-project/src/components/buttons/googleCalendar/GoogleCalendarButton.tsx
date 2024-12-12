@@ -3,13 +3,14 @@ import {
   useButtons,
 } from "@/components/buttons/buttonContext/ButtonsContext";
 import * as Icons from "lucide-react";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { commonClasses } from "../ButtonsComponent";
 import { useAccount } from "@/components/account/AccountContext";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { getText } from "@/components/utils/utilityFunctions";
 import texts from "@/_data/texts.json";
 import { useLanguage } from "@/components/language/LanguageContext";
+import { useUsersPbx } from "@/components/users/usersPbx/UsersPbxContext";
 
 interface NumberProps {
   button: ButtonInterface;
@@ -22,100 +23,130 @@ export default function GoogleCalendarButton({ button, onClick }: NumberProps) {
     IconComponent = Icons[button.img as keyof typeof Icons] as React.ElementType;
   }
 
+  const { usersPbx } = useUsersPbx();
+
+  const filteredUser = usersPbx?.filter((user) => {
+    return user.guid === button.button_prt;
+  })[0];
+
   const account = useAccount();
   const { language } = useLanguage();
   const wss = useWebSocketData();
-  const { setStopCombo, setClickedButton, removeClickedButton } = useButtons();
+  const { setStopCombo, 
+    setClickedButton, 
+    removeClickedButton
+  } = useButtons();
+  const [callStatusClass, setCallStatusClass] = useState(
+    button.colorClass || ""
+  );
+  const [clickedStatusClass, setClickedStatusClass] = useState(
+    button.colorClass || ""
+  );
 
-  // Log para debuggar a atualização do botão
+  // Atualiza a classe de status ao alterar o clickedStatus
   useEffect(() => {
-    console.log("button updated:", button);
-  }, [button]);
-
-  const buttonClass =
-    button.button_name.length < 10
-      ? "text-md xl3:text-xl xl4:text-3xl"
-      : "text-[9px] xl3:text-sm xl4:text-md";
-
-  const callStatusClass = (() => {
-    switch (button.callStatus) {
-      case "online":
-        return "bg-green-600";
-      case "busy":
-        return "bg-red-600";
-      case "ringing":
-        return "bg-orange-500";
-      case "vacant":
-        return "bg-grey-600";
-      default:
-        return "bg-neutral-600";
-    }
-  })();
-
-  const clickedStatusClass = (() => {
     switch (button.clickedStatus) {
       case "callConnected":
-        return "bg-red-600";
+        setClickedStatusClass("bg-red-800");
+        break;
       case "incomingCallConnected":
       case "callInCurse":
         setClickedButton(button.id);
-        return "bg-red-900";
+        setClickedStatusClass("bg-red-900");
+        break;
       case "callRinging":
-        return "bg-orange-700";
+        setClickedStatusClass("bg-orange-700");
+        break;
       case "callDisconnected":
         removeClickedButton(button.id);
-        return "bg-green-800";
+        setClickedStatusClass("bg-green-800");
+        break;
       case "userCallHeld":
-        return "!bg-blue-800";
+        setClickedStatusClass("!bg-blue-800");
+        break;
       case "userCallRetrieved":
       case "callRetrieved":
-        return "bg-red-900";
+        setClickedStatusClass("bg-red-900");
+        break;
       case "callHeld":
-        return "bg-purple-900";
-      default:
-        return "bg-neutral-800";
+        setClickedStatusClass("bg-purple-900");
+        break;
     }
-  })();
+  }, [button.clickedStatus]);
 
-  const noteStatusClass = (() => {
-    switch (button.note) {
-      case "offline":
-      case "vacant":
-        return "bg-neutral-900";
+  // Atualiza a classe de status ao alterar o callStatus
+  // useEffect(() => {
+  //   switch (button.callStatus) {
+  //     case "online":
+  //       setLocalCallStatusClass("bg-green-600");
+  //       break;
+  //     case "busy":
+  //       setLocalCallStatusClass("bg-red-600");
+  //       break;
+  //     case "ringing":
+  //       setLocalCallStatusClass("bg-orange-500");
+  //       break;
+  //     case "offline":
+  //       setLocalCallStatusClass("bg-neutral-600");
+  //       break;
+  //     default:
+  //       setLocalCallStatusClass("bg-neutral-600");
+  //       break;
+  //   }
+  // }, [button.callStatus]);
+
+  //Chamado para atualizar a cor do note
+  useEffect(() => {
+    switch (button.button_prt) {
+      case "":
+        setCallStatusClass("bg-neutral-600");
+        break;
       default:
-        return "";
+        setCallStatusClass("bg-green-600");
+        break;
     }
-  })();
+  }, [button.button_prt]);
+
+  console.log("button updated:", button);
 
   const handleClick = () => {
     onClick?.();
     if (!account.isAdmin) {
-      if (button.note !== "offline" && button.note !== "vacant") {
+      if (button.button_prt && button.button_prt != "") {
         if (!button.clicked) {
           wss?.sendMessage({
             api: "user",
-            mt: "TriggerCall",
+            mt: "TriggerGoogleCalendarCall",
             btn_id: button.id,
           });
           setClickedButton(button.id);
+          setClickedStatusClass("bg-red-800");
         } else {
           wss?.sendMessage({
             api: "user",
             mt: "EndCall",
             btn_id: button.id,
           });
-          setClickedButton(button.id);
+          removeClickedButton(button.id);
+          setClickedStatusClass("bg-green-800");
           setStopCombo(button.id);
         }
       }
     }
   };
 
+  const buttonClass =
+    button.button_name.length < 10
+      ? "text-md xl3:text-xl xl4:text-3xl"
+      : "text-[9px] xl3:text-sm xl4:text-md";
+
+  const buttonPrtClass = button.button_prt ? "bg-green-800" : "bg-neutral-900";
+
   return (
     <div
       key={button.id + button.button_prt} // Força o re-render
       className={`${commonClasses} flex flex-col cursor-pointer ${
-        button.clicked ? clickedStatusClass : "bg-green-800"
+        button.clicked ? clickedStatusClass : buttonPrtClass
       }`}
       onClick={handleClick}
     >
@@ -124,14 +155,14 @@ export default function GoogleCalendarButton({ button, onClick }: NumberProps) {
         <p className={`leading-none ${buttonClass}`}>{button.button_name}</p>
       </div>
       <div className="text-sm flex justify-end font-extrabold">
-        <p className="xl3:text-2xl">{button.button_prt}</p>
+        <p className="xl3:text-2xl">{filteredUser?.cn}</p>
       </div>
       <div
         className={`text-[10px] xl2:text-sm flex justify-center text-white/55 mt-auto w-full ${
-          noteStatusClass || callStatusClass
+          callStatusClass
         }`}
       >
-        {button.note ? getText(button?.note, texts[language]) : "Disponível"}
+        {button.button_prt ? texts[language].online : texts[language].offline}
       </div>
     </div>
   );

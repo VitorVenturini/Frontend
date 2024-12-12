@@ -89,7 +89,6 @@ function UserLayout() {
     comboStarted,
     setHeldCall,
     setHeldCallByUser,
-    setButtonGoogleCalendarStatus,
     buttons,
   } = useButtons();
   const {
@@ -192,7 +191,7 @@ function UserLayout() {
         }
         break;
       case "SelectButtonsSuccess":
-        const buttons: ButtonInterface[] = JSON.parse(message.result);
+        const buttons: ButtonInterface[] = message.result;
         setButtons(buttons);
         allBtn = buttons;
         setSensors([]);
@@ -492,6 +491,29 @@ function UserLayout() {
         break;
       case "CallConnecting":
         //tratar chamadas conectando aqui
+        if (message.btn_id) {
+          setButtonClickedStatus(
+            message.btn_id,
+            "callInCurse",
+            "bg-red-900",
+            false,
+            false,
+            true,
+            message.btn_id
+          );
+          addCall({
+            callId: message.call as number,
+            num: message.num as string,
+            connected: true,
+            ringing: false,
+            startTime: Date.now(),
+            device: message.device,
+            btn_id: message.btn_id,
+            type: "buttonCall",
+            held: false,
+            heldByUser: false,
+          });
+        }
         break;
       case "CallRinging":
         if (message.btn_id) {
@@ -710,12 +732,6 @@ function UserLayout() {
         break;
       case "CoreUserOffline":
         updateUserStauts(message.guid, "offline");
-        break;
-      case "GoogleCalendarVacant":
-        setButtonGoogleCalendarStatus(message.btn_id, "offline");
-        break;
-      case "GoogleCalendarOnline":
-        setButtonGoogleCalendarStatus(message.btn_id, "online");
         break;
       case "UserOnline":
         if (pbxUser?.length > 0) {
