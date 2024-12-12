@@ -74,7 +74,7 @@ export default function NumberButton({ button, onClick }: NumberProps) {
           btn_id: button.id,
         });
         setClickedStatusClass("bg-green-800");
-        setClickedButton(button.id);
+        removeClickedButton(button.id);
         setStopCombo(button.id);
       }
     }
