@@ -50,7 +50,12 @@ export default function CallComponent({ call }: CallComponentProps) {
   const [openKeyboard, setOpenKeyboard] = useState(false);
 
   const filteredUser = usersPbx?.filter((user) => {
-    return user.e164 === call.num;
+    if(call.type == 'buttonCall'){
+      return user.guid === call.num;
+    }
+    if(call.type == 'incoming'){
+      return user.e164 === call.num;
+    }
   })[0];
 
   const initials = getInitials(filteredUser?.cn);

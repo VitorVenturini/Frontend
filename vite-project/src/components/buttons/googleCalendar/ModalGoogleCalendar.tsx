@@ -163,7 +163,6 @@ export default function ModalGoogleCalendar({
 
   const handleGoogleCalendarsList = () => {
     if (!isCalendarRequested) {
-      console.warn("Passou aqui !!!!!!!!");
       wss?.sendMessage({
         api: "admin",
         mt: "RequestGoogleCalendars"
