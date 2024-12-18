@@ -212,7 +212,7 @@ export default function ResponsiveHistoryInfo({
 
   // Atualiza a lista
   useEffect(() => {
-    console.warn("PORRA TA AQUI ",historyInfo )
+    //console.log("PORRA TA AQUI ",historyInfo )
   });
 
   return (
