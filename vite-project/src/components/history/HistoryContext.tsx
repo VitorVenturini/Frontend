@@ -1,4 +1,4 @@
-import { createContext, useState, useContext, ReactNode } from "react";
+import { createContext, useState, useEffect, useContext, ReactNode } from "react";
 import { SetStateAction } from "react";
 
 export interface historyDetails {
@@ -54,31 +54,52 @@ interface HistoryContextType {
 
 const HistoryContext = createContext<HistoryContextType | undefined>(undefined);
 
+
 export const HistoryProvider = ({ children }: { children: ReactNode }) => {
   const [history, setHistoryState] = useState<HistoryInterface[]>([]);
   const [historyComplete, setHistoryComplete] = useState<boolean>(false);
 
+  // const addHistory = (newHistory: HistoryInterface) => {
+  //   // Verifica se já existe uma entrada com o mesmo id
+  //   const isDuplicate = history.some((hist) => hist.id === newHistory.id);
+
+  //   console.log("histContext newHistory", newHistory);
+  //   //console.log("histContext history", history);
+  //   useEffect(() => {
+  //     console.log("History atualizado:", history);
+  //   }, [history]);
+
+  //   if (!isDuplicate) {
+  //     // Se não for duplicado, adiciona ao histórico
+  //     console.log("//////////////  NEW History /////////////", newHistory);
+  //     setHistoryState((prevHistory) => [newHistory, ...prevHistory]);
+  //   } else {
+  //     // Se for duplicado, atualiza o item correspondente
+  //     setHistoryState((prevHistory) =>
+  //       prevHistory.map((hist) =>
+  //         hist.id === newHistory.id ? { ...hist, ...newHistory } : hist
+  //       )
+  //     );
+  //     console.log("//////////////  UPDATE History /////////////", newHistory);
+  //     console.log("///////////// histContext history /////////////", history);
+  //   }
+  // };
   const addHistory = (newHistory: HistoryInterface) => {
-    // Verifica se já existe uma entrada com o mesmo id
-    const isDuplicate = history.some((hist) => hist.id === newHistory.id);
-
-    console.log("histContext newHistory", newHistory);
-    console.log("histContext history", history);
-
-    if (!isDuplicate) {
-      // Se não for duplicado, adiciona ao histórico
-      console.log("//////////////  NEW History /////////////", newHistory);
-      setHistoryState((prevHistory) => [newHistory, ...prevHistory]);
-    } else {
-      // Se for duplicado, atualiza o item correspondente
-      setHistoryState((prevHistory) =>
-        prevHistory.map((hist) =>
-          hist.id === newHistory.id ? { ...hist, ...newHistory } : hist
-        )
-      );
-      console.log("//////////////  UPDATE History /////////////", newHistory);
-      console.log("///////////// histContext history /////////////", history);
-    }
+    setHistoryState((prevHistory) => {
+      const existingIndex = prevHistory.findIndex((hist) => hist.id === newHistory.id);
+  
+      if (existingIndex !== -1) {
+        // Atualiza o item existente
+        const updatedHistory = [...prevHistory];
+        updatedHistory[existingIndex] = { ...prevHistory[existingIndex], ...newHistory };
+        console.log("Atualizando histórico", updatedHistory);
+        return updatedHistory;
+      }
+  
+      // Adiciona um novo item
+      console.log("Adicionando novo histórico", newHistory);
+      return [newHistory, ...prevHistory];
+    });
   };
 
   const clearHistory = () => {

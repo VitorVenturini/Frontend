@@ -410,7 +410,7 @@
     "createOfButtonCall": "Criação de Botões de Ligação",
     "updateOfButtonCall": "Atualização de Botões de Ligação",
     "fillAllFieldsForUpdateCall":"Para atualizar um botão de ligação complete os campos abaixo",
-    "fillAllFieldsForCreateCall":"Para criar um botão de ligação complete os campos abaixo"
-
+    "fillAllFieldsForCreateCall":"Para criar um botão de ligação complete os campos abaixo",
+    "opt": "Interativo"
   }
 }

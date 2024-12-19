@@ -16,9 +16,10 @@ interface OptMapProps {
 export default function OptMap({ clickedButton }: OptMapProps) {
   const { googleApiKeyInfo } = useAppConfig();
 
-  const filteredGoogleAPI = googleApiKeyInfo.filter((key) => {
-    return key.entry === "googleApiKey";
-  })[0];
+  // const filteredGoogleAPI = googleApiKeyInfo.filter((key) => {
+  //   return key.entry === "googleApiKey";
+  // })[0];
+  const filteredGoogleAPI = googleApiKeyInfo.googleAPIMapsKey;
 
   const googleMapsUrl = filteredGoogleAPI
     ? `https://www.google.com/maps/embed/v1/place?key=${filteredGoogleAPI.value}&q=${clickedButton.button_prt}&zoom=14&maptype=roadmap`
