@@ -66,7 +66,7 @@ import { isMobile } from "react-device-detect";
 import texts from "@/_data/texts.json";
 import { useLanguage } from "@/components/language/LanguageContext";
 import { useGoogleCalendar, GoogleCalendarInterface } from "@/components/googleCalendars/googleCalendarContext";
-import { NotifyParameters } from "@/components/actions/ActionsContext";
+
 
 function AdminLayout() {
   const { setTheme } = useTheme();
@@ -79,7 +79,7 @@ function AdminLayout() {
     useButtons();
   const { setSensors, addSensorName, clearSensors } = useSensors();
   const { toast } = useToast();
-  const { actions, setActions, updateActions, deleteAction, addActions, addActionNotify, clearNotifyAction } =
+  const { actions, setActions, updateActions, deleteAction, addActions, updateNotifications } =
     useActions();
   const { setUsersPbx } = useUsersPbx();
   const { updateAccount } = useAccount();
@@ -109,8 +109,6 @@ function AdminLayout() {
     updateOpenAIKeyStatus,
   } = useAppConfig();
   var allBtn: ButtonInterface[];
-  const [notifyParams, setNotifyParams] = useState<NotifyParameters | null>(null);
-
   const { language } = useLanguage();
 
   // vamos trtar todas as mensagens recebidas pelo wss aqui
@@ -801,23 +799,29 @@ function AdminLayout() {
         }
         break;
         case "SelectActionUserNotificationSuccess":
-          if (message.result === "[]") {
-            toast({
-              description: "Relatório não gerado, revise seus parâmetros",
-            });
+          if (!message.result || !message.result.notifications) {
+            console.log("Nenhuma notificação recebida.");
           } else {
-          const { emails, smsPhones } = message.result;
-
-        // 3. Atualiza o estado com a estrutura da interface
-        const updatedData: NotifyParameters = {
-          actionEmails: emails ,
-          actionSmsPhones: smsPhones
-        };
-
-        addActionNotify(updatedData);
-        console.log("Dados recebidos e armazenados:", updatedData);
-        }
-        break;
+            const { action_id, notifications } = message.result;
+        
+            // Atualiza o contexto com as notificações
+            updateNotifications(action_id, notifications);
+        
+            console.log(`Notificações atualizadas para a ação ${action_id}`);
+          }
+          break;
+        case "UpdateActionUserNotificationSuccess":
+          if (!message.result || !message.result.notifications) {
+            console.log("Nenhuma notificação recebida.");
+          } else {
+            const { action_id, notifications } = message.result;
+        
+            // Atualiza o contexto com as notificações
+            updateNotifications(action_id, notifications);
+        
+            console.log(`Notificações atualizadas para a ação ${action_id}`);
+          }
+          break;
       default:
         console.log("Unknown message type:", message);
         break;

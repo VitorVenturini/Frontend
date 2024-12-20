@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, ReactNode } from "react";
-
+import { useWebSocketData } from "../websocket/WebSocketProvider";
 export interface ActionsInteface {
   id: string;
   action_name: string;
@@ -15,38 +15,41 @@ export interface ActionsInteface {
   createdAt: string;
   create_user: string;
   updatedAt: string;
-  notifications: [];
+  notifications: any[];
 }
-export interface NotifyParameters {
-  actionEmails: [];
-  actionSmsPhones: [];
-}
+
 interface ActionsIntefaceType {
   actions: ActionsInteface[];
-  notifyAction: NotifyParameters[];
   setActions: React.Dispatch<React.SetStateAction<ActionsInteface[]>>;
-  setNotifyAction: React.Dispatch<React.SetStateAction<NotifyParameters[]>>;
   addActions: (action: ActionsInteface) => void;
-  addActionNotify: (notifyAction: NotifyParameters) => void;
+  updateNotifications: (actionId: string, notifications: any[]) => void;
   updateActions: (action: ActionsInteface) => void;
   deleteAction: (id: string) => void;
   clearActions: () => void;
-  clearNotifyAction: () => void;
 }
 const ActionsContext = createContext<ActionsIntefaceType | undefined>(
   undefined
 );
 
 export const ActionProvider = ({ children }: { children: ReactNode }) => {
+  const wss = useWebSocketData();
   const [actions, setActions] = useState<ActionsInteface[]>([]);
-  const [notifyAction, setNotifyAction] = useState<NotifyParameters[]>([])
+
   const addActions = (action: ActionsInteface) => {
     setActions((prevActions) => [...prevActions, action]);
   };
-  const addActionNotify = (notify: NotifyParameters) => {
-    setNotifyAction((prevNotify) => [...prevNotify, notify]);
+
+  const updateNotifications = (actionId: string, notifications: any[]) => {
+    setActions((prevActions) =>
+      prevActions.map((action) =>
+        action.id === actionId
+          ? { ...action, notifications: notifications } // Limpa e atualiza
+          : action
+      )
+      
+    );
+    console.log('ActionContext updateNotify', actions)
   };
-  
   const updateActions = (updatedAction: ActionsInteface) => {
     setActions((prevActions) =>
       prevActions.map((action) =>
@@ -60,9 +63,7 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
   const clearActions = () => {
     setActions([]);
   };
-  const clearNotifyAction = () => {
-    setNotifyAction([]);
-  };
+
   const deleteAction = (id: string) => {
     setActions((prevActions) =>
       prevActions.filter((action) => action.id !== id)
@@ -73,15 +74,12 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
     <ActionsContext.Provider
       value={{
         actions,
-        notifyAction,
+        updateNotifications,
         setActions,
-        setNotifyAction,
         addActions,
-        addActionNotify,
         clearActions,
         deleteAction,
         updateActions,
-        clearNotifyAction
       }}
     >
       {children}
@@ -94,6 +92,5 @@ export const useActions = (): ActionsIntefaceType => {
   if (context === undefined) {
     throw new Error("useactions must be used within a actionProvider");
   }
-
   return context;
 };

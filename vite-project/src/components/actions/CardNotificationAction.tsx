@@ -18,7 +18,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useActions } from "./ActionsContext";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import Loader from "../Loader";
 interface NotifyActionsProps {
@@ -42,43 +41,38 @@ export default function NotifyActions({
   isUpdate = false,
   notifications,
 }: NotifyActionsProps) {
-  const { notifyAction, clearNotifyAction } = useActions();
+  const wss = useWebSocketData();
   const [actionSmsPhones] = useState();
-  const [emails, setEmails] = useState<string[]>(
-    notifyAction[0]?.actionEmails || [""]
-  );
-  const [phones, setPhones] = useState<{ ddi: string; number: string }[]>([
-    { ddi: "55", number: "" },
-  ]);
+  const [emails, setEmails] = useState<string[]>([""]);
+  const [phones, setPhones] = useState<{ ddi: string; number: string }[]>([]);
   const [sendMsg, setSendMsg] = useState(false);
   const [reload, setReload] = useState(false);
   const parsePhoneNumber = (phone: string): { ddi: string; number: string } => {
-    const phoneRegex = /^\+(\d{2,3})(\d{8,9})$/;
-    const match = phone.match(phoneRegex);
-
-    if (match) {
-      return { ddi: match[1], number: match[2] };
-    }
-    return { ddi: "55", number: phone };
+    const num1 = phone.slice(1,3);
+    const num2 = phone.slice(3);
+    return { ddi: num1, number: num2 };
   };
-  const notifyEmails = notifications.filter((notify) => {
-    return notify.email_phone == "email";
-  }).map((notify) =>{
-    return notify.parameter;
-  });
+
+  const notifyEmails = notifications
+    .filter((notify) => {
+      return notify.email_phone == "email";
+    })
+    .map((notify) => {
+      return notify.parameter;
+    });
   console.log("notifyEmails", notifyEmails);
-  const notifySms = notifications.filter((notify) => {
-    return notify.email_phone == "sms";
-  }).map((notify) =>{
-    return notify.parameter;
-  });
+  const notifySms = notifications
+    .filter((notify) => {
+      return notify.email_phone == "sms";
+    })
+    .map((notify) => {
+      return notify.parameter;
+    });
   console.log("notifySms", notifySms);
   useEffect(() => {
-    setEmails(notifyEmails)
+    setEmails(notifyEmails);
     if (notifySms.length > 0) {
-      const formattedPhones = notifySms.map((phone) =>
-        parsePhoneNumber(phone)
-      );
+      const formattedPhones = notifySms.map((phone) => parsePhoneNumber(phone));
       setPhones(formattedPhones);
       setReload(true);
     }
@@ -89,16 +83,6 @@ export default function NotifyActions({
     "font-size: 50px; color: red; font-weight: bold;",
     notifications
   );
-  console.log(
-    "%cNotifyAction",
-    "font-size: 35px; color: blue; font-weight: bold;",
-    notifyAction
-  );
-
-  const [locationDDI, setLocationDDI] = useState<string>("55");
-
-  const wss = useWebSocketData();
-  // Detecta o DDI com base na localização
 
   const handlePhoneChange = (index: number, value: string) => {
     // Remove todos os caracteres que não são números
@@ -176,7 +160,22 @@ export default function NotifyActions({
     }
 
     // Envio ao backend
+    const combinedList = [
+      ...formattedPhones.map((phone, index) => ({
+        id: index,
+        action_id: id,
+        email_phone: "sms",
+        parameter: phone,
+      })),
+      ...formattedEmails.map((email, index) => ({
+        id: index + formattedPhones.length, // Garante IDs únicos
+        action_id: id,
+        email_phone: "email",
+        parameter: email,
+      })),
+    ];
 
+    console.log("Ajustado Phone", combinedList);
     wss?.sendMessage({
       api: "admin",
       mt: "UpdateActionUserNotification",
