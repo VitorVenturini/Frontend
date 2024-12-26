@@ -19,7 +19,7 @@ export default function Gateways() {
   console.log("GATEWAYS CARD", gateways);
 
   return (
-    <div className=" w-full max-w-5xl">
+    <div className=" w-full max-w-10xl">
       <ScrollArea className="lg:h-[500px] xl:h-[500px] xl2:h-[500px] xl3:h-[600px] xl4:h-[700px] ">
         <DataTableGateways
           columns={gatewaysCollumns}

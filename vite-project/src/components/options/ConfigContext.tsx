@@ -70,6 +70,27 @@ export interface OpenAIApiKeyInterface {
   };
 }
 
+export interface AwsSNSApiKeyInterface {
+  awsSnsKey: {
+    entry: string;
+    value: string;
+    createdAt: string | null;
+    updatedAt: string | null;
+  };
+  awsSnsSecret: {
+    entry: string;
+    value: string;
+    createdAt: string | null;
+    updatedAt: string | null;
+  };
+  awsSnsRegion: {
+    entry: string;
+    value: string;
+    createdAt: string | null;
+    updatedAt: string | null;
+  };
+}
+
 export interface LicenseDetail {
   value: string;
   createdAt: string | null;
@@ -203,6 +224,7 @@ interface AppConfigContextType {
   googleApiKeyInfo: Partial<GoogleApiKeyInterface>;
   flicSecretApi: ConfigInterface;
   openAIApiConfig: OpenAIApiKeyInterface;
+  awsSNSApiConfig: AwsSNSApiKeyInterface;
   licenseApi: License;
   loadBarData: LoaderBarProps;
   backupConfig: BackupConfig;
@@ -213,6 +235,7 @@ interface AppConfigContextType {
   setPbxStatus: React.Dispatch<React.SetStateAction<PbxInterface[]>>;
   setGoogleApiKeyConfig: (googleApiKeyInfo: Partial<GoogleApiKeyInterface>) => void;
   setOpenAiApiConfig: (openAIApiConfig: OpenAIApiKeyInterface) => void;
+  setAwsSNSApiConfig: (awsSNSApiConfig: AwsSNSApiKeyInterface) => void;
   setFlicSecretApi: React.Dispatch<React.SetStateAction<ConfigInterface>>;
   setLicense: React.Dispatch<React.SetStateAction<License>>;
   setLoadBarData: React.Dispatch<React.SetStateAction<LoaderBarProps>>;
@@ -280,6 +303,17 @@ export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
     },
     openaiOrg: { entry: "", value: "", createdAt: null, updatedAt: null },
     openaiProj: { entry: "", value: "", createdAt: null, updatedAt: null },
+  });
+
+  const [awsSNSApiConfig, setAwsSNSApi] = useState<AwsSNSApiKeyInterface>({
+    awsSnsKey: {
+      entry: "",
+      value: "",
+      createdAt: null,
+      updatedAt: null
+    },
+    awsSnsSecret: { entry: "", value: "", createdAt: null, updatedAt: null },
+    awsSnsRegion: { entry: "", value: "", createdAt: null, updatedAt: null },
   });
 
   const [notification, setNotifications] = useState<NotificationsInterface[]>(
@@ -446,6 +480,13 @@ export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
     }));
   };
 
+  const setAwsSNSApiConfig = (newConfig: AwsSNSApiKeyInterface) => {
+    setAwsSNSApi((prevConfig) => ({
+      ...prevConfig,
+      ...newConfig,
+    }));
+  };
+
   const addBackupConfig = (newBackupConfig: BackupConfig) => {
     setBackupConfig((prevBackupConfig) => ({
       ...prevBackupConfig,
@@ -552,6 +593,7 @@ export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
         pbxStatus,
         googleApiKeyInfo,
         openAIApiConfig,
+        awsSNSApiConfig,
         flicSecretApi,
         licenseApi,
         loadBarData,
@@ -575,6 +617,7 @@ export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
         addBackupConfig,
         clearBackupConfig,
         setOpenAiApiConfig,
+        setAwsSNSApiConfig,
         addSmtpConfig,
         clearSmtpConfig,
         updateOpenAIKeyStatus,

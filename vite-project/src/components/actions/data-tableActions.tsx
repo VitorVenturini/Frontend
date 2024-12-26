@@ -103,7 +103,7 @@ export function DataTable<TData extends TableData, TValue>({
   }, [data]);
 
   return (
-    <div className="rounded-md w-full border">
+    <div className="rounded-md w-full border grid">
       <div className="flex items-center justify-between p-4">
         <Input
           placeholder={texts[language].filterUser} // Usando o texto de tradução
@@ -126,7 +126,7 @@ export function DataTable<TData extends TableData, TValue>({
           </DialogContent>
         </Dialog>
       </div>
-      <Table>
+      <Table className="grid w-ful">
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>

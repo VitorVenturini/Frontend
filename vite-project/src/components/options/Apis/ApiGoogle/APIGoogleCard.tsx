@@ -57,7 +57,7 @@ export default function APIGoogleCard() {
     setIsLoading(false);
   };
   return (
-    <Card className="w-[50%] h-fit">
+    <Card className="w-full h-fit">
       <CardHeader>
         <CardTitle>{texts[language].googleMapsTitle}</CardTitle>
         <CardDescription>{texts[language].googleMapsLabel}</CardDescription>
@@ -153,7 +153,7 @@ export function APIGoogleCalendarCard() {
     }
   };
   return (
-    <Card className="w-[50%] h-fit">
+    <Card className="w-full h-fit">
       <CardHeader>
         <CardTitle>{texts[language].googleCalendarTitle}</CardTitle>
         <CardDescription>{texts[language].googleCalendarLabel}</CardDescription>
@@ -273,7 +273,7 @@ export function APIGoogleCalendarCard2() {
     setIsLoading(false);
   };
   return (
-    <Card className="w-[50%] h-fit">
+    <Card className="w-full h-fit">
       <CardHeader>
         <CardTitle>{texts[language].googleCalendarTitle}</CardTitle>
         <CardDescription>{texts[language].googleCalendarLabel}</CardDescription>

@@ -115,7 +115,7 @@ export default function APIOpenAICard() {
     setIsLoading(false);
   };
   return (
-    <Card className="w-[50%] h-fit">
+    <Card className="w-full h-fit">
       <CardHeader>
         <CardTitle>{texts[language].openAiCardTitle}</CardTitle>
         <CardDescription>{texts[language].openAiCardLabel}</CardDescription>
