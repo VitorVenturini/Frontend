@@ -53,6 +53,7 @@ import {
   SmtpConfig,
   GoogleApiKeyInterface,
   useAppConfig,
+  AwsSNSApiKeyInterface,
 } from "@/components/options/ConfigContext";
 import Loader from "@/components/Loader";
 import useWebSocket from "@/components/websocket/useWebSocket";
@@ -107,6 +108,7 @@ function AdminLayout() {
     updateLicense,
     addNotifications,
     updateOpenAIKeyStatus,
+    setAwsSNSApiConfig
   } = useAppConfig();
   var allBtn: ButtonInterface[];
   const { language } = useLanguage();
@@ -144,15 +146,12 @@ function AdminLayout() {
         const newButton: ButtonInterface = message.result;
         addButton(newButton);
         toast({
-          description: "Botão Criado com sucesso",
+          description: texts[language].insertButtonSuccess,
         });
         break;
       case "UpdateButtonSuccess":
         const updatedButton: ButtonInterface = message.result;
         updateButton(updatedButton);
-        toast({
-          description: "Botão Atualizado com sucesso",
-        });
         break;
       case "UpdateConfigSuccess":
         toast({
@@ -161,7 +160,7 @@ function AdminLayout() {
         break;
       case "DeleteButtonsSuccess":
         toast({
-          description: "Botão excluído com sucesso",
+          description: texts[language].deleteButtonSuccess,
         });
         deleteButton(message.id_deleted);
         break;
@@ -495,6 +494,44 @@ function AdminLayout() {
         console.log("OpenAiConfig", JSON.stringify(allOpenAIInfo));
         setOpenAiApiConfig(allOpenAIInfo);
 
+        //awsSNS
+        const awsSNSEntries = message.result.filter(
+          (item: any) =>
+            item.entry === "awsSnsKey" ||
+            item.entry === "awsSnsSecret" ||
+            item.entry === "awsSnsRegion"
+        );
+
+        const allAwsSNSEntries: AwsSNSApiKeyInterface = {
+          awsSnsKey: awsSNSEntries.find(
+            (item: any) => item.entry === "awsSnsKey"
+          ) || {
+            entry: "awsSnsKey",
+            value: "",
+            createdAt: null,
+            updatedAt: null,
+          },
+          awsSnsSecret: awsSNSEntries.find(
+            (item: any) => item.entry === "awsSnsSecret"
+          ) || {
+            entry: "awsSnsSecret",
+            value: "",
+            createdAt: null,
+            updatedAt: null,
+          },
+          awsSnsRegion: awsSNSEntries.find(
+            (item: any) => item.entry === "awsSnsRegion"
+          ) || {
+            entry: "awsSnsRegion",
+            value: "",
+            createdAt: null,
+            updatedAt: null,
+          },
+        };
+        console.log("AwsSNSConfig", JSON.stringify(allAwsSNSEntries));
+        setAwsSNSApiConfig(allAwsSNSEntries);
+
+        //sons
         const sensorNotification = message.result.find(
           (item: NotificationsInterface) => item.entry === "sensorNotification"
         );
