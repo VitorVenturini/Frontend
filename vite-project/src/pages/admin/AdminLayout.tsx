@@ -67,6 +67,7 @@ import texts from "@/_data/texts.json";
 import { useLanguage } from "@/components/language/LanguageContext";
 import { useGoogleCalendar, GoogleCalendarInterface } from "@/components/googleCalendars/googleCalendarContext";
 
+
 function AdminLayout() {
   const { setTheme } = useTheme();
   const account = useAccount();
@@ -78,7 +79,7 @@ function AdminLayout() {
     useButtons();
   const { setSensors, addSensorName, clearSensors } = useSensors();
   const { toast } = useToast();
-  const { actions, setActions, updateActions, deleteAction, addActions } =
+  const { actions, setActions, updateActions, deleteAction, addActions, updateNotifications } =
     useActions();
   const { setUsersPbx } = useUsersPbx();
   const { updateAccount } = useAccount();
@@ -109,6 +110,7 @@ function AdminLayout() {
   } = useAppConfig();
   var allBtn: ButtonInterface[];
   const { language } = useLanguage();
+
   // vamos trtar todas as mensagens recebidas pelo wss aqui
   const handleWebSocketMessage = (message: any) => {
     switch (message.mt) {
@@ -796,6 +798,30 @@ function AdminLayout() {
           console.log("ADMIN LAYOUT", message.result);
         }
         break;
+        case "SelectActionUserNotificationSuccess":
+          if (!message.result || !message.result.notifications) {
+            console.log("Nenhuma notificação recebida.");
+          } else {
+            const { action_id, notifications } = message.result;
+        
+            // Atualiza o contexto com as notificações
+            updateNotifications(action_id, notifications);
+        
+            console.log(`Notificações atualizadas para a ação ${action_id}`);
+          }
+          break;
+        case "UpdateActionUserNotificationSuccess":
+          if (!message.result || !message.result.notifications) {
+            console.log("Nenhuma notificação recebida.");
+          } else {
+            const { action_id, notifications } = message.result;
+        
+            // Atualiza o contexto com as notificações
+            updateNotifications(action_id, notifications);
+        
+            console.log(`Notificações atualizadas para a ação ${action_id}`);
+          }
+          break;
       default:
         console.log("Unknown message type:", message);
         break;

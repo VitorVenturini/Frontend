@@ -6,6 +6,7 @@ import OptHistory from "./OptHistory";
 import { useWebSocketData } from "../websocket/WebSocketProvider";
 import OptCall from "./OptCall";
 import { UserInterface } from "../users/usersCore/UserContext";
+import OptRadio from "./OptRadio";
 
 
 interface InteractiveOptProps {
@@ -88,6 +89,8 @@ export default function InteractiveOpt({
     return <OptHistory />; // nao carrega o grid 
   }else if(selectedOpt === 'call'){
     return <OptCall/> // nao carrega o grid 
+  }else if(selectedOpt === 'radio'){
+    return <OptRadio/> // nao carrega o grid 
   }
   return (
     <div className="flex flex-col gap-1 justify-start h-full w-[500px] xl2:w-[700px] xl4:w-[1000px] align-top">

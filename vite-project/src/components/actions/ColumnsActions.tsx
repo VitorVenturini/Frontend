@@ -129,20 +129,23 @@ export const columnsActions: ColumnDef<ActionsInteface>[] = [
 
       return (
         <div className="flex justify-center gap-2 items-center">
-          <Dialog>
-            <DialogTrigger >
-              <MessageCircleWarning/>
+          <Dialog >
+            <DialogTrigger>
+              <MessageCircleWarning />
             </DialogTrigger>
             <DialogContent className="max-w-2xl">
-            <NotifyActions id={actions.id} />  
+              <NotifyActions
+                id={actions.id}
+                isUpdate={true}
+                notifications={actions.notifications}
+              />
             </DialogContent>
           </Dialog>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger>
               <Button variant="ghost" size="icon">
-              <Pencil />
+                <Pencil />
               </Button>
-              
             </DialogTrigger>
             <DialogContent className="max-w-5xl">
               <CardCreateAction

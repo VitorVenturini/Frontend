@@ -18,14 +18,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
-
+import Loader from "../Loader";
 interface NotifyActionsProps {
   id: string;
+  isUpdate?: boolean;
+  notifications: any[];
 }
-
-
 const countryDDIList = [
   { name: "Brasil", ddi: "55", flag: "🇧🇷" },
   { name: "USA", ddi: "1", flag: "🇺🇸" },
@@ -37,16 +36,53 @@ const countryDDIList = [
   { name: "Japão", ddi: "81", flag: "🇯🇵" },
 ];
 
-export default function NotifyActions({ id }: NotifyActionsProps) {
-  const [emails, setEmails] = useState<string[]>([""]);
-  const [phones, setPhones] = useState<{ ddi: string; number: string }[]>([
-    { ddi: "55", number: "" },
-  ]);
-
-  const [locationDDI, setLocationDDI] = useState<string>("55");
-
+export default function NotifyActions({
+  id,
+  isUpdate = false,
+  notifications,
+}: NotifyActionsProps) {
   const wss = useWebSocketData();
-  // Detecta o DDI com base na localização
+  const [actionSmsPhones] = useState();
+  const [emails, setEmails] = useState<string[]>([""]);
+  const [phones, setPhones] = useState<{ ddi: string; number: string }[]>([]);
+  const [sendMsg, setSendMsg] = useState(false);
+  const [reload, setReload] = useState(false);
+  const parsePhoneNumber = (phone: string): { ddi: string; number: string } => {
+    const num1 = phone.slice(1,3);
+    const num2 = phone.slice(3);
+    return { ddi: num1, number: num2 };
+  };
+
+  const notifyEmails = notifications
+    .filter((notify) => {
+      return notify.email_phone == "email";
+    })
+    .map((notify) => {
+      return notify.parameter;
+    });
+  console.log("notifyEmails", notifyEmails);
+  const notifySms = notifications
+    .filter((notify) => {
+      return notify.email_phone == "sms";
+    })
+    .map((notify) => {
+      return notify.parameter;
+    });
+  console.log("notifySms", notifySms);
+  useEffect(() => {
+    setEmails(notifyEmails);
+    if (notifySms.length > 0) {
+      const formattedPhones = notifySms.map((phone) => parsePhoneNumber(phone));
+      setPhones(formattedPhones);
+      setReload(true);
+    }
+  }, [actionSmsPhones]);
+
+  console.log(
+    "%c🕵️‍♂️\nNotifications",
+    "font-size: 50px; color: red; font-weight: bold;",
+    notifications
+  );
 
   const handlePhoneChange = (index: number, value: string) => {
     // Remove todos os caracteres que não são números
@@ -124,12 +160,22 @@ export default function NotifyActions({ id }: NotifyActionsProps) {
     }
 
     // Envio ao backend
-    console.log("Emails a serem enviados:", formattedEmails);
-    console.log("Telefones a serem enviados:", formattedPhones);
-    console.log(
-      "%cMensagem Secreta! 🕵️‍♂️\nEu sei o que você fez no debbug passado",
-      "font-size: 50px; color: red; font-weight: bold;"
-    );
+    const combinedList = [
+      ...formattedPhones.map((phone, index) => ({
+        id: index,
+        action_id: id,
+        email_phone: "sms",
+        parameter: phone,
+      })),
+      ...formattedEmails.map((email, index) => ({
+        id: index + formattedPhones.length, // Garante IDs únicos
+        action_id: id,
+        email_phone: "email",
+        parameter: email,
+      })),
+    ];
+
+    console.log("Ajustado Phone", combinedList);
     wss?.sendMessage({
       api: "admin",
       mt: "UpdateActionUserNotification",
@@ -150,6 +196,7 @@ export default function NotifyActions({ id }: NotifyActionsProps) {
             <TabsTrigger value="email">Email</TabsTrigger>
             <TabsTrigger value="sms">SMS</TabsTrigger>
           </TabsList>
+
           <TabsContent value="email">
             <ScrollArea className="w-[103%] h-[300px] pr-4">
               <div className="flex flex-col gap-3">

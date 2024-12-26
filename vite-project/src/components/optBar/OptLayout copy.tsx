@@ -71,7 +71,7 @@ export default function OptLayoutCopy(props: OptLayoutCopyProps) {
         case "maps":
           return <OptMap clickedButton={clickedButton} />;
         case "radio":
-          return <OptRadio clickedButton={clickedButton} />;
+          return <OptRadio clickedButton={clickedButton} /> ;
         case "video":
           return <OptVideo clickedButton={clickedButton} />;
         case "sensor":

@@ -94,14 +94,8 @@ export default function ButtonsGridPages({
   const hasLessThan = triggeredPages.some((page) => Number(page) < minCurrentPage);
 
   console.log(
-    "%cbuttonTrigged",
-    "font-size: 35px; color: pink; font-weight: bold;",
-    buttonTrigged
-  );
-  console.log(
-    "%ctriggeredPages",
-    "font-size: 35px; color: lightblue; font-weight: bold;",
-    triggeredPages
+    "%c🕵️‍♂️\nEu sei o que você fez no debbug passado",
+    "font-size: 50px; color: red; font-weight: bold;"
   );
   const handlePageChange = (newPage: string) => {
     setSelectedPage(newPage); // Atualizar a página selecionada quando o usuário seleciona uma nova página.

@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, ReactNode } from "react";
-import Actions from "@/pages/admin/Actions";
+import { useWebSocketData } from "../websocket/WebSocketProvider";
 export interface ActionsInteface {
   id: string;
   action_name: string;
@@ -15,12 +15,14 @@ export interface ActionsInteface {
   createdAt: string;
   create_user: string;
   updatedAt: string;
+  notifications: any[];
 }
 
 interface ActionsIntefaceType {
   actions: ActionsInteface[];
   setActions: React.Dispatch<React.SetStateAction<ActionsInteface[]>>;
   addActions: (action: ActionsInteface) => void;
+  updateNotifications: (actionId: string, notifications: any[]) => void;
   updateActions: (action: ActionsInteface) => void;
   deleteAction: (id: string) => void;
   clearActions: () => void;
@@ -30,12 +32,24 @@ const ActionsContext = createContext<ActionsIntefaceType | undefined>(
 );
 
 export const ActionProvider = ({ children }: { children: ReactNode }) => {
+  const wss = useWebSocketData();
   const [actions, setActions] = useState<ActionsInteface[]>([]);
 
   const addActions = (action: ActionsInteface) => {
     setActions((prevActions) => [...prevActions, action]);
   };
 
+  const updateNotifications = (actionId: string, notifications: any[]) => {
+    setActions((prevActions) =>
+      prevActions.map((action) =>
+        action.id === actionId
+          ? { ...action, notifications: notifications } // Limpa e atualiza
+          : action
+      )
+      
+    );
+    console.log('ActionContext updateNotify', actions)
+  };
   const updateActions = (updatedAction: ActionsInteface) => {
     setActions((prevActions) =>
       prevActions.map((action) =>
@@ -60,6 +74,7 @@ export const ActionProvider = ({ children }: { children: ReactNode }) => {
     <ActionsContext.Provider
       value={{
         actions,
+        updateNotifications,
         setActions,
         addActions,
         clearActions,
@@ -77,6 +92,5 @@ export const useActions = (): ActionsIntefaceType => {
   if (context === undefined) {
     throw new Error("useactions must be used within a actionProvider");
   }
-
   return context;
 };
