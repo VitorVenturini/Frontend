@@ -393,6 +393,9 @@
     "keySecret": "Client Secret",
     "googleCalendarTitle": "Google Calendario API",
     "googleCalendarLabel": "Chave da API do Google Calendario",
+    "microsoftCalendarTitle": "Microsoft Calendario API",
+    "microsoftCalendarLabel": "Chave da API do Calendario Microsoft",
+    "keyTenant": "Tenant ID",
     "not_authorized": "Conectar",
     "authorized": "Desconectar",
     "selectButtonType": "Selecione um tipo de botão",
@@ -422,6 +425,7 @@
     "awsSmsLabel":"Configuração de envio de SMS usando o SNS AWS",
     "update": "Atualizar",
     "updating": "Atualizando",
-    "awsSmsRegion": "Região"
+    "awsSmsRegion": "Região",
+    "microsoftCalendar": "Calendário Microsoft"
   }
 }

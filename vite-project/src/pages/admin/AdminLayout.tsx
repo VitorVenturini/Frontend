@@ -54,6 +54,7 @@ import {
   GoogleApiKeyInterface,
   useAppConfig,
   AwsSNSApiKeyInterface,
+  MicrosoftApiKeyInterface,
 } from "@/components/options/ConfigContext";
 import Loader from "@/components/Loader";
 import useWebSocket from "@/components/websocket/useWebSocket";
@@ -67,6 +68,7 @@ import { isMobile } from "react-device-detect";
 import texts from "@/_data/texts.json";
 import { useLanguage } from "@/components/language/LanguageContext";
 import { useGoogleCalendar, GoogleCalendarInterface } from "@/components/googleCalendars/googleCalendarContext";
+import { useMicrosoftCalendar, MicrosoftCalendarInterface } from "@/components/microsoftCalendars/microsoftCalendarContext";
 
 
 function AdminLayout() {
@@ -95,11 +97,13 @@ function AdminLayout() {
   const myAccountInfo = JSON.parse(localStorage.getItem("Account") || "{}");
   const [isLoading, setIsLoading] = useState(true);
   const { googleCalendars, setGoogleCalendar } = useGoogleCalendar();
+  const { microsoftCalendars, setMicrosoftCalendar } = useMicrosoftCalendar();
   var pbxUser: UserPbxInterface[];
   const {
     setLoadBarData,
     clearLoadBarData,
     setGoogleApiKeyConfig,
+    setMicrosoftApiKeyConfig,
     setFlicSecretApi,
     setPbxStatus,
     addBackupConfig,
@@ -173,11 +177,16 @@ function AdminLayout() {
         setUsersPbx(PbxUsers);
         pbxUser = PbxUsers;
         break;
-        case "RequestGoogleCalendarsResult":
+      case "RequestGoogleCalendarsResult":
           const googleCalendars: GoogleCalendarInterface[] = message.result;
           //set
           setGoogleCalendar(googleCalendars)
           break;
+      case "RequestMicrosoftCalendarsResult":
+        const microsoftCalendars: MicrosoftCalendarInterface[] = message.result;
+        //set
+        setMicrosoftCalendar(microsoftCalendars)
+        break;
       case "SelectSensorsResult":
         const result = message.result;
         const sensorData = result.map((gatewayData: any) => {
@@ -254,6 +263,32 @@ function AdminLayout() {
           console.log(`URL OAuth Google: ${message.url}`);
           window.open(message.url,'','popup').focus();
           break;
+      case "RequestMicrosoftOAuthStatusResult":
+        setMicrosoftApiKeyConfig({
+          microsoftApiStatus: message.result,
+        });
+        toast({
+          variant: `${message.result ? "default" : "destructive"}`,
+          description: `Microsoft Calendar Status ${message.result? "Ok" : "Desonetado"}`,
+        });
+        break;
+          case "RequestMicrosoftOAuthRemoveResult":
+    
+            if(message.result == 'ok'){
+              setMicrosoftApiKeyConfig({
+                microsoftApiStatus: false,
+              });
+            }else{
+              toast({
+                variant: "destructive",
+                description: `Microsoft Calendar Status ${message.message}`,
+              });
+            }
+            break;
+          case "MicrosoftOAuthAuthorizationRequest":
+              console.log(`URL OAuth Microsoft: ${message.url}`);
+              window.open(message.url,'','popup').focus();
+              break;
       case "ConfigResult":
         // Filtra as entradas para a Google API Key
         // const apiKeyEntries = message.result.filter(
@@ -298,6 +333,46 @@ function AdminLayout() {
           }
         };
         setGoogleApiKeyConfig(allGooleInfo);
+
+
+        //Microsoft API
+        
+        const microsoftEntries = message.result.filter(
+          (item: any) =>
+            item.entry === "microsoftTenantId" ||
+            item.entry === "microsoftClientId" ||
+            item.entry === "microsoftClientSecret"
+        );
+        const allMicrosoftInfo: Partial<MicrosoftApiKeyInterface> = {
+          microsoftAPICalendarTenant: microsoftEntries.find(
+            (item: any) => item.entry === "microsoftTenantId"
+          ) || {
+            id: '',
+            entry: 'microsoftTenantId',
+            value: '',
+            createdAt: null,
+            updatedAt: null,
+          },
+          microsoftAPICalendarKey: microsoftEntries.find(
+            (item: any) => item.entry === "microsoftClientId"
+          ) || {
+            id: '',
+            entry: 'microsoftClientId',
+            value: '',
+            createdAt: null,
+            updatedAt: null,
+          },
+          microsoftAPICalendarSecret: microsoftEntries.find(
+            (item: any) => item.entry === "microsoftClientSecret"
+          ) || {
+            id: '',
+            entry: 'microsoftClientSecret',
+            value: '',
+            createdAt: null,
+            updatedAt: null,
+          }
+        };
+        setMicrosoftApiKeyConfig(allMicrosoftInfo);
 
         const flicSecretApiEntries = message.result.filter(
           (item: any) => item.entry === "flicSecretApi"

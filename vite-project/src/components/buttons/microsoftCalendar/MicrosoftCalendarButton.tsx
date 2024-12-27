@@ -17,7 +17,7 @@ interface NumberProps {
   onClick?: () => void;
 }
 
-export default function GoogleCalendarButton({ button, onClick }: NumberProps) {
+export default function MicrosoftCalendarButton({ button, onClick }: NumberProps) {
   let IconComponent: React.ElementType | null = null;
   if (button.img && Icons[button.img as keyof typeof Icons]) {
     IconComponent = Icons[button.img as keyof typeof Icons] as React.ElementType;

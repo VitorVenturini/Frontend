@@ -13,130 +13,59 @@ import { useWebSocketData } from "../../../websocket/WebSocketProvider";
 import React, { ChangeEvent } from "react";
 import { Loader2 } from "lucide-react";
 import { toast, useToast } from "../../../ui/use-toast";
-import { GoogleApiKeyInterface, useAppConfig } from "../../ConfigContext";
+import { MicrosoftApiKeyInterface, useAppConfig } from "../../ConfigContext";
 import texts from "@/_data/texts.json";
 import { useLanguage } from "@/components/language/LanguageContext";
 // import * from React
 
-export default function APIGoogleCard() {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { language } = useLanguage();
-  const { toast } = useToast();
-  const wss = useWebSocketData();
-  const { setGoogleApiKeyConfig, googleApiKeyInfo } = useAppConfig();
-
-  console.log("APIGoogle", googleApiKeyInfo);
-  const [key, setKey] = useState(
-    googleApiKeyInfo.googleAPIMapsKey?.value || ""
-  );
-
-  const handleApiKey = (event: ChangeEvent<HTMLInputElement>) => {
-    setKey(event.target.value);
-  };
-  const handleSendGoogleApiKey = () => {
-    setIsLoading(true);
-    if (key) {
-      wss?.sendMessage({
-        api: "admin",
-        mt: "UpdateConfig",
-        entry: "googleApiKey",
-        vl: key,
-      });
-
-      // adicionar no contexto caso o admin troca de aba para manter o valor no input
-      // pois so consultamos o valor da chave google quando ele loga no app , nao quando ele fizer alterações
-      toast({
-        description: "Chave cadastrada com Sucesso!",
-      });
-    } else {
-      toast({
-        variant: "destructive",
-        description: "Favor Inserir a chave da API Google",
-      });
-    }
-    setIsLoading(false);
-  };
-  return (
-    <Card className="w-full h-fit">
-      <CardHeader>
-        <CardTitle>{texts[language].googleMapsTitle}</CardTitle>
-        <CardDescription>{texts[language].googleMapsLabel}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="w-full flex flex-col gap-5">
-          <div className="grid grid-cols-4 items-center justify-between gap-3 w-full">
-            <h4 className="scroll-m-20 col-span-1 text-xl text-end font-semibold tracking-tight">
-              {texts[language].key}
-            </h4>
-            <Input
-              className="w-full col-span-3"
-              onChange={handleApiKey}
-              value={key}
-            />
-          </div>
-        </div>
-      </CardContent>
-      <CardFooter className="flex justify-end">
-        {!isLoading && (
-          <Button onClick={handleSendGoogleApiKey}>
-            {texts[language].save}
-          </Button>
-        )}
-        {isLoading && (
-          <Button disabled>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            {texts[language].save}
-          </Button>
-        )}
-      </CardFooter>
-    </Card>
-  );
-}
-export function APIGoogleCalendarCard() {
+export default function APIMicrosoftCalendarCard() {
   const { language } = useLanguage();
   const { toast } = useToast();
   const wss = useWebSocketData();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { setGoogleApiKeyConfig, googleApiKeyInfo } = useAppConfig();
+  const { setMicrosoftApiKeyConfig, microsoftApiKeyInfo } = useAppConfig();
 
-  const [apiGoogleStatus, setGoogleStatus] = useState<boolean>(
-    googleApiKeyInfo?.googleApiStatus || false
+  const [microsoftApiStatus, setMicrosoftStatus] = useState<boolean>(
+    microsoftApiKeyInfo?.microsoftApiStatus || false
   );
 
   const [keyID, setKeyID] = useState(
-    googleApiKeyInfo?.googleAPICalendarKey?.value || ""
+    microsoftApiKeyInfo?.microsoftAPICalendarKey?.value || ""
   );
   const [keySecret, setKeySecret] = useState(
-    googleApiKeyInfo?.googleAPICalendarSecret?.value || ""
+    microsoftApiKeyInfo?.microsoftAPICalendarSecret?.value || ""
+  );
+  const [keyTenant, setKeyTenant] = useState(
+    microsoftApiKeyInfo?.microsoftAPICalendarTenant?.value || ""
   );
 
   // Sincroniza o estado local com o contexto
   useEffect(() => {
-    setGoogleStatus(googleApiKeyInfo?.googleApiStatus || false);
-  }, [googleApiKeyInfo.googleApiStatus]);
+    setMicrosoftStatus(microsoftApiKeyInfo?.microsoftApiStatus || false);
+  }, [microsoftApiKeyInfo.microsoftApiStatus ]);
 
-  const handleGoogleApiOAuthRequest = () => {
+  const handleMicrosoftApiOAuthRequest = () => {
     //setIsChecking(true);
-    if(!apiGoogleStatus){
+    if(!microsoftApiStatus){
       wss?.sendMessage({
         api: "admin",
-        mt: "RequestGoogleOAuth",
+        mt: "RequestMicrosoftOAuth",
       });
     }else{
       wss?.sendMessage({
         api: "admin",
-        mt: "RequestGoogleOAuthRemove",
+        mt: "RequestMicrosoftOAuthRemove",
       });
     }
   };
 
-  const handleSendGoogleApiKey = () => {
+  const handleSendMicrosoftApiKey = () => {
     if (keyID && keySecret) {
       setIsLoading(true);
     if (keySecret && keyID) {
       wss?.sendMessage({
         api: "admin",
-        mt: "UpdateConfigGoogleCalendar",
+        mt: "UpdateConfigMicrosoftCalendar",
         googleClientId: keyID,
         googleClientSecret: keySecret
       });
@@ -146,7 +75,7 @@ export function APIGoogleCalendarCard() {
     } else {
       toast({
         variant: "destructive",
-        description: "Favor Inserir a chave da API Google",
+        description: "Favor Inserir a chave da API",
       });
     }
     setIsLoading(false);
@@ -155,8 +84,8 @@ export function APIGoogleCalendarCard() {
   return (
     <Card className="w-full h-fit">
       <CardHeader>
-        <CardTitle>{texts[language].googleCalendarTitle}</CardTitle>
-        <CardDescription>{texts[language].googleCalendarLabel}</CardDescription>
+        <CardTitle>{texts[language].microsoftCalendarTitle}</CardTitle>
+        <CardDescription>{texts[language].microsoftCalendarLabel}</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="w-full flex flex-col gap-5">
@@ -180,11 +109,21 @@ export function APIGoogleCalendarCard() {
               onChange={(e: ChangeEvent<HTMLInputElement>) => setKeySecret(e.target.value)}
             />
           </div>
+          <div className="grid grid-cols-4 text-end items-center justify-between gap-3 w-full">
+            <h4 className="scroll-m-20 text-xl font-semibold tracking-tight col-span-1">
+              {texts[language].keyTenant}
+            </h4>
+            <Input
+              className="w-full col-span-3"
+              value={keyTenant}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => setKeyTenant(e.target.value)}
+            />
+          </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <h4 className="scroll-m-20 columns-1 text-end text-xl font-semibold tracking-tight">
               {texts[language].status}
             </h4>
-            {apiGoogleStatus ? (
+            {microsoftApiStatus ? (
               <span className="relative inline-flex rounded-full h-4 w-4 bg-green-500"></span>
             ) : (
               <span className="relative inline-flex rounded-full h-4 w-4 bg-red-500"></span>
@@ -195,19 +134,19 @@ export function APIGoogleCalendarCard() {
       <CardFooter className="flex justify-between w-full">
         <div>
           {!isLoading && (
-            <Button onClick={handleGoogleApiOAuthRequest}>
-              {apiGoogleStatus ? texts[language].authorized : texts[language].not_authorized}
+            <Button onClick={handleMicrosoftApiOAuthRequest}>
+              {microsoftApiStatus ? texts[language].authorized : texts[language].not_authorized}
             </Button>
           )}
           {isLoading && (
             <Button disabled>
-              {apiGoogleStatus ? texts[language].authorized : texts[language].not_authorized}
+              {microsoftApiStatus ? texts[language].authorized : texts[language].not_authorized}
             </Button>
           )}
         </div>
         <div>
           {!isLoading && (
-            <Button onClick={handleSendGoogleApiKey}>
+            <Button onClick={handleSendMicrosoftApiKey}>
               {texts[language].save}
             </Button>
           )}

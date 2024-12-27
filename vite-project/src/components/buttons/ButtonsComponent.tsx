@@ -53,6 +53,8 @@ import FlicButton from "./flic/FlicButton";
 import { useLanguage } from "@/components/language/LanguageContext";
 import texts from "@/_data/texts.json";
 import GoogleCalendarButton from "./googleCalendar/GoogleCalendarButton";
+import ModalMicrosoftCalendar from "./microsoftCalendar/ModalMicrosoftCalendar";
+import MicrosoftCalendarButton from "./microsoftCalendar/MicrosoftCalendarButton";
 
 
 interface ButtonProps {
@@ -203,6 +205,17 @@ export default function ButtonsComponent({
               }}
             />
           );
+        case "microsoft_calendar":
+            return (
+              <ModalMicrosoftCalendar
+                selectedPage={selectedPage}
+                selectedUser={selectedUser}
+                clickedPosition={clickedPosition}
+                onClose={() => {
+                  setIsDialogOpen(false);
+                }}
+              />
+            );
       case "clock":
         return (
           <ModalClock
@@ -273,6 +286,7 @@ export default function ButtonsComponent({
                       <SelectItem value="alarm">{texts[language].alarm}</SelectItem>
                       <SelectItem value="flic">{texts[language].flic}</SelectItem>
                       <SelectItem value="google_calendar">{texts[language].googleCalendar}</SelectItem>
+                      <SelectItem value="microsoft_calendar">{texts[language].microsoftCalendar}</SelectItem>
                       <SelectItem value="number">{texts[language].number}</SelectItem>
                       <SelectItem value="user">{texts[language].user}</SelectItem>
                       <SelectItem value="sensor">{texts[language].sensor}</SelectItem>
@@ -427,7 +441,33 @@ export default function ButtonsComponent({
               </Dialog>
             </div>
           );  
-      case "combo":
+      case "microsoft_calendar":
+        return (
+          <div>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <div>
+                  <MicrosoftCalendarButton button={button} onClick={handleClick} />
+                </div>
+              </DialogTrigger>
+              {isAdmin && (
+                <DialogContent className="space-y-6 min-h-[250px] flex flex-col content-between p-0 min-w-[900px]">
+                  {
+                    <ModalMicrosoftCalendar
+                      selectedPage={selectedPage}
+                      selectedUser={selectedUser}
+                      clickedPosition={clickedPosition}
+                      existingButton={button}
+                      isUpdate={true}
+                      onClose={() => setIsDialogOpen(false)}
+                    />
+                  }
+                </DialogContent>
+              )}
+            </Dialog>
+          </div>
+        );  
+        case "combo":
         return (
           <div>
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
