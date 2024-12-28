@@ -61,7 +61,7 @@ const CardNotificationAlarm = () => {
   };
 
   return (
-    <Card className="min-w-[450px] w-fit h-fit p-2">
+    <Card className="min-w-[450px] w-full h-fit p-2">
       <CardHeader className="flex-row items-center align-middle w-full justify-between gap-4">
         <CardTitle>
           <p>Alarmes</p>

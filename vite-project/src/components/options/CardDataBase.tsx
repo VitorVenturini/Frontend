@@ -202,7 +202,7 @@ export default function CardDataBase() {
   };
 
   return (
-    <div className="flex gap-2">
+    <div className="flex w-full gap-2">
       <Card>
         <CardHeader>
           <CardTitle>Agendamento de Backup</CardTitle>
@@ -404,7 +404,7 @@ export default function CardDataBase() {
           </Button>
         </CardFooter>
       </Card>
-      <div className="flec col gap-2 space-y-2">
+      <div className="flec col gap-2 w-full space-y-2">
         <Card>
           <CardHeader>
             <CardTitle>Banco de dados</CardTitle>

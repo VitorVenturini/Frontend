@@ -162,7 +162,7 @@ export function DataTable<TData>({
   };
 
   return (
-    <div className="rounded-md w-full border">
+    <div className="rounded-md w-full border grid">
       {useFilter !== "" && (
         <div className="flex grid-cols-3 items-center gap-4 p-4">
           <Label className="text-end" htmlFor="name">

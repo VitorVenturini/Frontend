@@ -18,7 +18,7 @@ export default function IotCameraCard(){
     console.log("GATEWAYS CARD", cameras);
 
     return(
-        <div className=" w-full max-w-2xl">
+        <div className=" w-full max-w-10xl">
         <ScrollArea className="lg:h-[500px] xl:h-[500px] xl2:h-[500px] xl3:h-[600px] xl4:h-[700px]">
           <DataTableCameras
             columns={camerasCollumns}

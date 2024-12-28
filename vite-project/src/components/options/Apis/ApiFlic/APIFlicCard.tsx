@@ -43,7 +43,7 @@ import {
       setIsLoading(false);
     };
     return (
-        <Card className="w-[50%] h-fit">
+        <Card className="w-full h-fit">
               <CardHeader>
                 <CardTitle>{texts[language].flicCardTitle}</CardTitle>
                 <CardDescription>{texts[language].flicCardLabel}</CardDescription>

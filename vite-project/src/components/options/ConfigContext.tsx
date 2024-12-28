@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, ReactNode } from "react";
+import { MicrosoftCalendarInterface } from "../microsoftCalendars/microsoftCalendarContext";
 
 // Definição de LoaderBarProps para o estado do LoaderBar
 export interface LoaderBarProps {
@@ -48,6 +49,31 @@ export interface GoogleApiKeyInterface {
   googleApiStatus: boolean;
 }
 
+export interface MicrosoftApiKeyInterface {
+  microsoftAPICalendarKey: {
+    id: string;
+    entry: string;
+    value: string;
+    createdAt: string | null;
+    updatedAt: string | null;
+  };
+  microsoftAPICalendarSecret: {
+    id: string;
+    entry: string;
+    value: string;
+    createdAt: string | null;
+    updatedAt: string | null;
+  };
+  microsoftAPICalendarTenant: {
+    id: string;
+    entry: string;
+    value: string;
+    createdAt: string | null;
+    updatedAt: string | null;
+  };
+  microsoftApiStatus: boolean;
+}
+
 export interface OpenAIApiKeyInterface {
   openaiKey: {
     entry: string;
@@ -63,6 +89,27 @@ export interface OpenAIApiKeyInterface {
     updatedAt: string | null;
   };
   openaiProj: {
+    entry: string;
+    value: string;
+    createdAt: string | null;
+    updatedAt: string | null;
+  };
+}
+
+export interface AwsSNSApiKeyInterface {
+  awsSnsKey: {
+    entry: string;
+    value: string;
+    createdAt: string | null;
+    updatedAt: string | null;
+  };
+  awsSnsSecret: {
+    entry: string;
+    value: string;
+    createdAt: string | null;
+    updatedAt: string | null;
+  };
+  awsSnsRegion: {
     entry: string;
     value: string;
     createdAt: string | null;
@@ -201,8 +248,10 @@ export interface SmtpConfig {
 interface AppConfigContextType {
   pbxStatus: PbxInterface[];
   googleApiKeyInfo: Partial<GoogleApiKeyInterface>;
+  microsoftApiKeyInfo: Partial<MicrosoftApiKeyInterface>;
   flicSecretApi: ConfigInterface;
   openAIApiConfig: OpenAIApiKeyInterface;
+  awsSNSApiConfig: AwsSNSApiKeyInterface;
   licenseApi: License;
   loadBarData: LoaderBarProps;
   backupConfig: BackupConfig;
@@ -212,7 +261,9 @@ interface AppConfigContextType {
   updateNotification: (entry: string, newValue: string) => void;
   setPbxStatus: React.Dispatch<React.SetStateAction<PbxInterface[]>>;
   setGoogleApiKeyConfig: (googleApiKeyInfo: Partial<GoogleApiKeyInterface>) => void;
+  setMicrosoftApiKeyConfig: (microsoftApiKeyInfo: Partial<MicrosoftApiKeyInterface>) => void;
   setOpenAiApiConfig: (openAIApiConfig: OpenAIApiKeyInterface) => void;
+  setAwsSNSApiConfig: (awsSNSApiConfig: AwsSNSApiKeyInterface) => void;
   setFlicSecretApi: React.Dispatch<React.SetStateAction<ConfigInterface>>;
   setLicense: React.Dispatch<React.SetStateAction<License>>;
   setLoadBarData: React.Dispatch<React.SetStateAction<LoaderBarProps>>;
@@ -266,6 +317,29 @@ export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
       },
       googleApiStatus: false,
     });
+  const [microsoftApiKeyInfo, setMicrosoftKeyState] = useState<Partial<MicrosoftApiKeyInterface>>({
+    microsoftAPICalendarKey: {
+      id: "",
+      entry: "",
+      value: "",
+      createdAt: null,
+      updatedAt: null,
+    },microsoftAPICalendarTenant: {
+      id: "",
+      entry: "",
+      value: "",
+      createdAt: null,
+      updatedAt: null,
+    },
+    microsoftAPICalendarSecret: {
+      id: "",
+      entry: "",
+      value: "",
+      createdAt: null,
+      updatedAt: null,
+    },
+    microsoftApiStatus: false,
+  });
 
   const [flicSecretApi, setFlicSecretApiState] =
     useState<ConfigInterface | null>(null);
@@ -280,6 +354,17 @@ export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
     },
     openaiOrg: { entry: "", value: "", createdAt: null, updatedAt: null },
     openaiProj: { entry: "", value: "", createdAt: null, updatedAt: null },
+  });
+
+  const [awsSNSApiConfig, setAwsSNSApi] = useState<AwsSNSApiKeyInterface>({
+    awsSnsKey: {
+      entry: "",
+      value: "",
+      createdAt: null,
+      updatedAt: null
+    },
+    awsSnsSecret: { entry: "", value: "", createdAt: null, updatedAt: null },
+    awsSnsRegion: { entry: "", value: "", createdAt: null, updatedAt: null },
   });
 
   const [notification, setNotifications] = useState<NotificationsInterface[]>(
@@ -435,6 +520,12 @@ export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
       ...newConfig,
     }));
   };
+  const setMicrosoftApiKeyConfig = (newConfig: Partial<MicrosoftApiKeyInterface>) => {
+    setMicrosoftKeyState((prevConfig) => ({
+      ...prevConfig,
+      ...newConfig,
+    }));
+  };
 
   const updateOpenAIKeyStatus = (newStatus: boolean) => {
     setOpenAIApi((prevConfig) => ({
@@ -443,6 +534,13 @@ export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
         ...prevConfig.openaiKey,
         status: newStatus,
       },
+    }));
+  };
+
+  const setAwsSNSApiConfig = (newConfig: AwsSNSApiKeyInterface) => {
+    setAwsSNSApi((prevConfig) => ({
+      ...prevConfig,
+      ...newConfig,
     }));
   };
 
@@ -551,7 +649,9 @@ export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
       value={{
         pbxStatus,
         googleApiKeyInfo,
+        microsoftApiKeyInfo,
         openAIApiConfig,
+        awsSNSApiConfig,
         flicSecretApi,
         licenseApi,
         loadBarData,
@@ -562,6 +662,7 @@ export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
         addNotifications,
         updateNotification,
         setGoogleApiKeyConfig,
+        setMicrosoftApiKeyConfig,
         setFlicSecretApi,
         setLicense,
         setLoadBarData,
@@ -575,6 +676,7 @@ export const AppConfigProvider = ({ children }: { children: ReactNode }) => {
         addBackupConfig,
         clearBackupConfig,
         setOpenAiApiConfig,
+        setAwsSNSApiConfig,
         addSmtpConfig,
         clearSmtpConfig,
         updateOpenAIKeyStatus,

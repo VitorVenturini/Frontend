@@ -52,7 +52,7 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div className="rounded-md w-full border">
+    <div className="rounded-md w-full border grid">
       <div className="flex items-center justify-between p-4">
         <Input
           placeholder="Filter Name..."

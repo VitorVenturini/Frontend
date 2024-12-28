@@ -91,7 +91,7 @@ export default function LicenseCard() {
   };
 
   return (
-    <div>
+    <div className="w-full">
       {}
       <Card className="min-w-[900px]">
         <CardHeader className="grid grid-cols-3 justify-between items-center">

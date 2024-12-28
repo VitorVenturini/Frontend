@@ -51,8 +51,6 @@ export default function MenuOptions() {
         return <IotCameraCard />;
       case "Notifications":
         return <Notify />;
-        case "Email":
-          return <SMTPconfig />;
       case "Apparence":
         return <ApparenceCard />;    
       default:
@@ -121,13 +119,6 @@ export default function MenuOptions() {
           onClick={() => handleClick("Notifications")}
         >{texts[language].configNotificationsLabel}
           
-        </Button>
-        <Button
-          className="focus:bg-accent"
-          variant={"ghost"}
-          onClick={() => handleClick("Email")}
-        >{texts[language].configSmtpLabel}
-
         </Button>
       </div>
       <div className="flex flex-grow p-4 justify-center items-start w-full ml-20 pl-20">

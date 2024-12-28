@@ -54,6 +54,8 @@ import {
   SmtpConfig,
   GoogleApiKeyInterface,
   useAppConfig,
+  AwsSNSApiKeyInterface,
+  MicrosoftApiKeyInterface,
 } from "@/components/options/ConfigContext";
 import Loader from "@/components/Loader";
 import useWebSocket from "@/components/websocket/useWebSocket";
@@ -67,6 +69,7 @@ import { isMobile } from "react-device-detect";
 import texts from "@/_data/texts.json";
 import { useLanguage } from "@/components/language/LanguageContext";
 import { useGoogleCalendar, GoogleCalendarInterface } from "@/components/googleCalendars/googleCalendarContext";
+import { useMicrosoftCalendar, MicrosoftCalendarInterface } from "@/components/microsoftCalendars/microsoftCalendarContext";
 
 
 function AdminLayout() {
@@ -95,11 +98,13 @@ function AdminLayout() {
   const myAccountInfo = JSON.parse(localStorage.getItem("Account") || "{}");
   const [isLoading, setIsLoading] = useState(true);
   const { googleCalendars, setGoogleCalendar } = useGoogleCalendar();
+  const { microsoftCalendars, setMicrosoftCalendar } = useMicrosoftCalendar();
   var pbxUser: UserPbxInterface[];
   const {
     setLoadBarData,
     clearLoadBarData,
     setGoogleApiKeyConfig,
+    setMicrosoftApiKeyConfig,
     setFlicSecretApi,
     setPbxStatus,
     addBackupConfig,
@@ -108,6 +113,7 @@ function AdminLayout() {
     updateLicense,
     addNotifications,
     updateOpenAIKeyStatus,
+    setAwsSNSApiConfig
   } = useAppConfig();
   var allBtn: ButtonInterface[];
   const { language } = useLanguage();
@@ -145,15 +151,12 @@ function AdminLayout() {
         const newButton: ButtonInterface = message.result;
         addButton(newButton);
         toast({
-          description: "Botão Criado com sucesso",
+          description: texts[language].insertButtonSuccess,
         });
         break;
       case "UpdateButtonSuccess":
         const updatedButton: ButtonInterface = message.result;
         updateButton(updatedButton);
-        toast({
-          description: "Botão Atualizado com sucesso",
-        });
         break;
       case "UpdateConfigSuccess":
         toast({
@@ -162,7 +165,7 @@ function AdminLayout() {
         break;
       case "DeleteButtonsSuccess":
         toast({
-          description: "Botão excluído com sucesso",
+          description: texts[language].deleteButtonSuccess,
         });
         deleteButton(message.id_deleted);
         break;
@@ -175,11 +178,16 @@ function AdminLayout() {
         setUsersPbx(PbxUsers);
         pbxUser = PbxUsers;
         break;
-        case "RequestGoogleCalendarsResult":
+      case "RequestGoogleCalendarsResult":
           const googleCalendars: GoogleCalendarInterface[] = message.result;
           //set
           setGoogleCalendar(googleCalendars)
           break;
+      case "RequestMicrosoftCalendarsResult":
+        const microsoftCalendars: MicrosoftCalendarInterface[] = message.result;
+        //set
+        setMicrosoftCalendar(microsoftCalendars)
+        break;
       case "SelectSensorsResult":
         const result = message.result;
         const sensorData = result.map((gatewayData: any) => {
@@ -256,6 +264,32 @@ function AdminLayout() {
           console.log(`URL OAuth Google: ${message.url}`);
           window.open(message.url,'','popup').focus();
           break;
+      case "RequestMicrosoftOAuthStatusResult":
+        setMicrosoftApiKeyConfig({
+          microsoftApiStatus: message.result,
+        });
+        toast({
+          variant: `${message.result ? "default" : "destructive"}`,
+          description: `Microsoft Calendar Status ${message.result? "Ok" : "Desonetado"}`,
+        });
+        break;
+          case "RequestMicrosoftOAuthRemoveResult":
+    
+            if(message.result == 'ok'){
+              setMicrosoftApiKeyConfig({
+                microsoftApiStatus: false,
+              });
+            }else{
+              toast({
+                variant: "destructive",
+                description: `Microsoft Calendar Status ${message.message}`,
+              });
+            }
+            break;
+          case "MicrosoftOAuthAuthorizationRequest":
+              console.log(`URL OAuth Microsoft: ${message.url}`);
+              window.open(message.url,'','popup').focus();
+              break;
       case "ConfigResult":
         // Filtra as entradas para a Google API Key
         // const apiKeyEntries = message.result.filter(
@@ -300,6 +334,46 @@ function AdminLayout() {
           }
         };
         setGoogleApiKeyConfig(allGooleInfo);
+
+
+        //Microsoft API
+        
+        const microsoftEntries = message.result.filter(
+          (item: any) =>
+            item.entry === "microsoftTenantId" ||
+            item.entry === "microsoftClientId" ||
+            item.entry === "microsoftClientSecret"
+        );
+        const allMicrosoftInfo: Partial<MicrosoftApiKeyInterface> = {
+          microsoftAPICalendarTenant: microsoftEntries.find(
+            (item: any) => item.entry === "microsoftTenantId"
+          ) || {
+            id: '',
+            entry: 'microsoftTenantId',
+            value: '',
+            createdAt: null,
+            updatedAt: null,
+          },
+          microsoftAPICalendarKey: microsoftEntries.find(
+            (item: any) => item.entry === "microsoftClientId"
+          ) || {
+            id: '',
+            entry: 'microsoftClientId',
+            value: '',
+            createdAt: null,
+            updatedAt: null,
+          },
+          microsoftAPICalendarSecret: microsoftEntries.find(
+            (item: any) => item.entry === "microsoftClientSecret"
+          ) || {
+            id: '',
+            entry: 'microsoftClientSecret',
+            value: '',
+            createdAt: null,
+            updatedAt: null,
+          }
+        };
+        setMicrosoftApiKeyConfig(allMicrosoftInfo);
 
         const flicSecretApiEntries = message.result.filter(
           (item: any) => item.entry === "flicSecretApi"
@@ -496,6 +570,44 @@ function AdminLayout() {
         console.log("OpenAiConfig", JSON.stringify(allOpenAIInfo));
         setOpenAiApiConfig(allOpenAIInfo);
 
+        //awsSNS
+        const awsSNSEntries = message.result.filter(
+          (item: any) =>
+            item.entry === "awsSnsKey" ||
+            item.entry === "awsSnsSecret" ||
+            item.entry === "awsSnsRegion"
+        );
+
+        const allAwsSNSEntries: AwsSNSApiKeyInterface = {
+          awsSnsKey: awsSNSEntries.find(
+            (item: any) => item.entry === "awsSnsKey"
+          ) || {
+            entry: "awsSnsKey",
+            value: "",
+            createdAt: null,
+            updatedAt: null,
+          },
+          awsSnsSecret: awsSNSEntries.find(
+            (item: any) => item.entry === "awsSnsSecret"
+          ) || {
+            entry: "awsSnsSecret",
+            value: "",
+            createdAt: null,
+            updatedAt: null,
+          },
+          awsSnsRegion: awsSNSEntries.find(
+            (item: any) => item.entry === "awsSnsRegion"
+          ) || {
+            entry: "awsSnsRegion",
+            value: "",
+            createdAt: null,
+            updatedAt: null,
+          },
+        };
+        console.log("AwsSNSConfig", JSON.stringify(allAwsSNSEntries));
+        setAwsSNSApiConfig(allAwsSNSEntries);
+
+        //sons
         const sensorNotification = message.result.find(
           (item: NotificationsInterface) => item.entry === "sensorNotification"
         );

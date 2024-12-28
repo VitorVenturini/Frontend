@@ -145,8 +145,8 @@ export default function ApparenceCard() {
   };
 
   return (
-    <div>
-      <Card className="w-[800px]">
+    <div className="w-full">
+      <Card className="w-full">
         <CardHeader>
           <CardTitle>Aparência</CardTitle>
           <CardDescription>
