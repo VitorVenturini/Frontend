@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "./data-tableReports"; // Ajuste o caminho conforme necessário
 import { Play, Download } from "lucide-react";
@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowUpDown } from "lucide-react";
 import { Captions } from "lucide-react";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
+import { useData } from "./DataContext";
 import {
   Popover,
   PopoverContent,
@@ -47,7 +48,9 @@ const ColumnsReports: React.FC<ColumnsReportsProps> = ({
 }) => {
   const { language } = useLanguage();
   const wss = useWebSocketData();
-
+  // Adiciona estado para controlar o carregamento
+  const [isLoading, setIsLoading] = useState(false);
+  const { dataReport } = useData();
   const handleTranscriptionCall = (event: React.HTMLAttributeAnchorTarget) => {
     const parseId = parseInt(event);
     console.log("Transcrição enviada Enviado", parseId);
@@ -57,6 +60,12 @@ const ColumnsReports: React.FC<ColumnsReportsProps> = ({
       call: parseId,
     });
   };
+  console.log("COLLUNS REPORT",dataReport.table)
+  //////////////////////////
+
+  // chamar contexto, armazenar só os id e text criar botão apartir dessa const
+
+  /////////////////////////
 
   const columns: ColumnDef<any, any>[] = useMemo(() => {
     // Filtra as colunas que não devem ser exibidas
@@ -87,11 +96,11 @@ const ColumnsReports: React.FC<ColumnsReportsProps> = ({
         accessorKey: "ACTIONS",
         header: "ACTIONS",
         cell: ({ row }: { row: any }) => {
-          const [isPlaying, setIsPlaying] = useState(false);
           const recordLink = row.original.record_link;
-          const transcript = row.original.text;
+          const transcript = row.original.text
           const isLinkAvailable = recordLink && recordLink.trim() !== "";
-          const isTranscripAvailable = transcript && transcript.trim() !== "";
+          const isTranscripAvailable = transcript !== null && transcript.trim() !== "";
+
           return (
             <div className="flex justify-between">
               <Popover>
@@ -104,7 +113,7 @@ const ColumnsReports: React.FC<ColumnsReportsProps> = ({
                     <Play />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent>
+                <PopoverContent className="w-[380px] flex justify-between align-middle items-center">
                   <AudioPlayer
                     src={`${host}${recordLink}`}
                     minimal={true}
@@ -151,16 +160,26 @@ const ColumnsReports: React.FC<ColumnsReportsProps> = ({
                     Transcrição da Chamada {row.original.id}
                   </DialogHeader>
                   <DialogDescription className="text-8">
-                    {row.original.status === "NOK" ? "Transcrição não disponível" : row.original.text}
+                    {isLinkAvailable
+                      ? transcript == ""
+                        ? getText("callNoTalk", texts[language])
+                        : transcript == "noTranscription"
+                        ? getText("noTranscription", texts[language])
+                        : transcript
+                      : getText("noTranscription", texts[language])}
                   </DialogDescription>
                   <DialogFooter className="flex justify-end ">
-                    {!isTranscripAvailable && (
-                      <Button
-                        onClick={() => handleTranscriptionCall(row.original.id)}
-                      >
-                        Transcript
-                      </Button>
-                    )}
+                    {!isTranscripAvailable &&
+                      isLinkAvailable &&
+                      transcript !== "" && (
+                        <Button
+                          onClick={() =>
+                            handleTranscriptionCall(row.original.id)
+                          }
+                        >
+                          {getText("transcript", texts[language])}
+                        </Button>
+                      )}
                   </DialogFooter>
                 </DialogContent>
               </Dialog>

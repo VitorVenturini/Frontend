@@ -6,6 +6,7 @@ import { useTheme } from "@/components/theme-provider";
 import HeaderApp from "@/components/header/HeaderAdmin";
 import { useAccount } from "@/components/account/AccountContext";
 import { useNavigate } from "react-router-dom";
+import { getText } from "@/components/utils/utilityFunctions";
 import {
   ButtonProvider,
   useButtons,
@@ -791,11 +792,17 @@ function AdminLayout() {
       case "GetTranscriptionResult":
         if (message.result === "[]") {
           toast({
-            description: "Falha na transcrição da chamada",
+            description: getText("noTranscription", texts[language]),
           });
-        } else {
+        } else if(message.result.status == "NOK"){
+          toast({
+            description: getText("noTranscription", texts[language]),
+          });
           updateDataReport(message.result);
-          console.log("ADMIN LAYOUT", message.result);
+        }else {
+          updateDataReport(message.result);
+          console.log("%c\nERROR",
+            "font-size: 50px; color: red; font-weight: bold;", message.result);
         }
         break;
         case "SelectActionUserNotificationSuccess":

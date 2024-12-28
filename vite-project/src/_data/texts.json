@@ -411,6 +411,9 @@
     "updateOfButtonCall": "Atualização de Botões de Ligação",
     "fillAllFieldsForUpdateCall":"Para atualizar um botão de ligação complete os campos abaixo",
     "fillAllFieldsForCreateCall":"Para criar um botão de ligação complete os campos abaixo",
-    "opt": "Interativo"
+    "opt": "Interativo",
+    "noTranscription": "Não foi possível transcrever essa chamada",
+    "transcript": "Transcrever",
+    "callNoTalk": "Chamada sem diálogo ou inaudível"
   }
 }

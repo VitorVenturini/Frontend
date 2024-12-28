@@ -37,14 +37,16 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
   });
   
   const updateDataReport = (newData: any) => {
+    if(newData.status == 'OK'){
     setDataReport((prevData) => {
       const updatedTable = prevData.table.map((report) =>
         report.id === newData.id ? { ...report, ...newData } : report
       );
-      console.log("UpdataData", newData)
-      console.log('NEW DATATABLE', updatedTable)
+      console.log("UpdataData", updatedTable)
       return { ...prevData, table: updatedTable };
-    });
+      
+    })
+   };
   };
 
   // Função para adicionar pacotes de dados gerais
