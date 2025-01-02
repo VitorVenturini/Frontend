@@ -913,8 +913,8 @@ function AdminLayout() {
           updateDataReport(message.result);
         }else {
           updateDataReport(message.result);
-          console.log("%c\nERROR",
-            "font-size: 50px; color: red; font-weight: bold;", message.result);
+          console.log("%c\nOK",
+            "font-size: 50px; color: blue; font-weight: bold;", message.result);
         }
         break;
         case "SelectActionUserNotificationSuccess":

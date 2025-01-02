@@ -59,14 +59,11 @@ const ColumnsReports: React.FC<ColumnsReportsProps> = ({
       mt: "GetTranscription",
       call: parseId,
     });
+    setIsLoading(true)
   };
-  console.log("COLLUNS REPORT",dataReport.table)
-  //////////////////////////
-
-  // chamar contexto, armazenar só os id e text criar botão apartir dessa const
-
-  /////////////////////////
-
+  useEffect(()=>{
+    setIsLoading(false)
+  },[data])
   const columns: ColumnDef<any, any>[] = useMemo(() => {
     // Filtra as colunas que não devem ser exibidas
     const baseColumns: ColumnDef<any, any>[] = keys
@@ -100,7 +97,6 @@ const ColumnsReports: React.FC<ColumnsReportsProps> = ({
           const transcript = row.original.text
           const isLinkAvailable = recordLink && recordLink.trim() !== "";
           const isTranscripAvailable = transcript !== null && transcript.trim() !== "";
-
           return (
             <div className="flex justify-between">
               <Popover>
@@ -171,7 +167,7 @@ const ColumnsReports: React.FC<ColumnsReportsProps> = ({
                   <DialogFooter className="flex justify-end ">
                     {!isTranscripAvailable &&
                       isLinkAvailable &&
-                      transcript !== "" && (
+                      transcript !== "" && !isLoading && (
                         <Button
                           onClick={() =>
                             handleTranscriptionCall(row.original.id)
