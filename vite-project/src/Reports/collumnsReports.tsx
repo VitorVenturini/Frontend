@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowUpDown } from "lucide-react";
 import { Captions } from "lucide-react";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
-import { useData } from "./DataContext";
+import LogoCore from "../assets/Vector.svg";
 import {
   Popover,
   PopoverContent,
@@ -24,15 +24,9 @@ import {
   DialogHeader,
   DialogFooter,
   DialogDescription,
+  DialogClose,
 } from "@/components/ui/dialog";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
+
 interface ColumnsReportsProps {
   report: string;
   data: any[];
@@ -49,21 +43,16 @@ const ColumnsReports: React.FC<ColumnsReportsProps> = ({
   const { language } = useLanguage();
   const wss = useWebSocketData();
   // Adiciona estado para controlar o carregamento
-  const [isLoading, setIsLoading] = useState(false);
-  const { dataReport } = useData();
-  const handleTranscriptionCall = (event: React.HTMLAttributeAnchorTarget) => {
-    const parseId = parseInt(event);
-    console.log("Transcrição enviada Enviado", parseId);
+  const handleTranscriptionCall = (id: number) => {
+    //setLoading(true)
+    console.log("Transcrição enviada:", id);
     wss?.sendMessage({
       api: "admin",
       mt: "GetTranscription",
-      call: parseId,
+      call: id,
     });
-    setIsLoading(true)
   };
-  useEffect(()=>{
-    setIsLoading(false)
-  },[data])
+
   const columns: ColumnDef<any, any>[] = useMemo(() => {
     // Filtra as colunas que não devem ser exibidas
     const baseColumns: ColumnDef<any, any>[] = keys
@@ -94,9 +83,11 @@ const ColumnsReports: React.FC<ColumnsReportsProps> = ({
         header: "ACTIONS",
         cell: ({ row }: { row: any }) => {
           const recordLink = row.original.record_link;
-          const transcript = row.original.text
+          const transcript = row.original.text;
           const isLinkAvailable = recordLink && recordLink.trim() !== "";
-          const isTranscripAvailable = transcript !== null && transcript.trim() !== "";
+          const isTranscripAvailable =
+            transcript !== null && transcript.trim() !== "";
+          const [loading, setLoading] = useState(false);
           return (
             <div className="flex justify-between">
               <Popover>
@@ -140,7 +131,6 @@ const ColumnsReports: React.FC<ColumnsReportsProps> = ({
                   </Button>
                 </PopoverContent>
               </Popover>
-
               <Dialog>
                 <DialogTrigger disabled={!isLinkAvailable}>
                   <Button
@@ -157,29 +147,36 @@ const ColumnsReports: React.FC<ColumnsReportsProps> = ({
                   </DialogHeader>
                   <DialogDescription className="text-8">
                     {isLinkAvailable
-                      ? transcript == ""
+                      ? transcript === ""
                         ? getText("callNoTalk", texts[language])
-                        : transcript == "noTranscription"
+                        : transcript === "noTranscription"
                         ? getText("noTranscription", texts[language])
                         : transcript
                       : getText("noTranscription", texts[language])}
                   </DialogDescription>
-                  <DialogFooter className="flex justify-end ">
+                  <DialogFooter className="flex justify-end">
                     {!isTranscripAvailable &&
                       isLinkAvailable &&
-                      transcript !== "" && !isLoading && (
+                      transcript !== "" &&
+                      (
                         <Button
-                          onClick={() =>
-                            handleTranscriptionCall(row.original.id)
-                          }
+                          disabled={loading}
+                          onClick={() => {
+                            handleTranscriptionCall(row.original.id);
+                            setLoading(true)
+                          }}
                         >
-                          {getText("transcript", texts[language])}
+                            
+                          {loading ? (<img src={LogoCore} className="h-6 animate-spin" />)
+                          : (getText("transcript", texts[language]))}
                         </Button>
                       )}
                   </DialogFooter>
+                  <DialogClose>
+                    
+                  </DialogClose>
                 </DialogContent>
               </Dialog>
-
               <Popover>
                 <PopoverTrigger disabled={!isLinkAvailable}></PopoverTrigger>
                 <PopoverContent></PopoverContent>
