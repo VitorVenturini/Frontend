@@ -113,7 +113,7 @@ export default function MicrosoftCalendarButton({ button, onClick }: NumberProps
         if (!button.clicked) {
           wss?.sendMessage({
             api: "user",
-            mt: "TriggerGoogleCalendarCall",
+            mt: "TriggerMicrosoftCalendarCall",
             btn_id: button.id,
           });
           setClickedButton(button.id);
