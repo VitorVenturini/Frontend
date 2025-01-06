@@ -59,6 +59,7 @@ import MicrosoftCalendarButton from "./microsoftCalendar/MicrosoftCalendarButton
 
 interface ButtonProps {
   button: ButtonInterface;
+  mobile: boolean
   onClickPosition: () => void; // Adicione esta linha
   clickedPosition: { i: number; j: number } | null;
   selectedUser: UserInterface | null;
@@ -74,6 +75,7 @@ export const commonClasses =
 
 export default function ButtonsComponent({
   button,
+  mobile,
   onClickPosition,
   clickedPosition,
   selectedUser,
@@ -124,7 +126,7 @@ export default function ButtonsComponent({
     }
     setIsClicked(!isClicked);
   };
-
+  
   const handleTypeSelected = (value: string) => {
     setSelectedType(value);
   };

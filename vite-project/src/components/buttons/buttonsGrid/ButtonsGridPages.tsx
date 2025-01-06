@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { ButtonInterface, useButtons } from "../buttonContext/ButtonsContext";
-import ButtonsGrid from "./ButtonsGrid";
+import  ButtonsGridConsole from "./ButtonsGrid";
+import { ButtonsGridMobile } from "./ButtonsGrid";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React, { useContext, useEffect, useState } from "react";
 
@@ -27,11 +28,13 @@ import { truncateText } from "@/components/utils/utilityFunctions";
 interface ButtonsGridPagesProps {
   buttonsGrid: ButtonInterface[];
   selectedUser: UserInterface;
+  mobile: boolean;
 }
 
 export default function ButtonsGridPages({
   buttonsGrid,
   selectedUser,
+  mobile,
 }: ButtonsGridPagesProps) {
   const [openEditPageIndex, setOpenEditPageIndex] = useState<number | null>(
     null
@@ -50,6 +53,7 @@ export default function ButtonsGridPages({
   const { isAdmin, guid } = useContext(AccountContext);
   const wss = useWebSocketData();
   const { toast } = useToast();
+  const isMobile = useState(mobile);
 
   const filteredUser = users.filter((u) => {
     if (isAdmin) {
@@ -77,10 +81,9 @@ export default function ButtonsGridPages({
     }
   });
   const triggeredPages = buttonTrigged.map((btn) => {
-    if(!btn.muted){
+    if (!btn.muted) {
       return btn.page;
     }
-    
   });
   const currentPages = displayedPages.map(({ pageNumber, pageName }, index) => {
     return pageNumber;
@@ -90,8 +93,12 @@ export default function ButtonsGridPages({
   const maxCurrentPage = Math.max(...currentPages);
 
   // Verificar se existe triggeredPage maior ou menor
-  const hasGreaterThan = triggeredPages.some((page) => Number(page) > maxCurrentPage);
-  const hasLessThan = triggeredPages.some((page) => Number(page) < minCurrentPage);
+  const hasGreaterThan = triggeredPages.some(
+    (page) => Number(page) > maxCurrentPage
+  );
+  const hasLessThan = triggeredPages.some(
+    (page) => Number(page) < minCurrentPage
+  );
 
   console.log(
     "%c🕵️‍♂️\nEu sei o que você fez no debbug passado",
@@ -204,20 +211,28 @@ export default function ButtonsGridPages({
   return (
     <Card className="p-1 flex flex-col gap-1 justify-between">
       <div className="w-full space-y-1 ">
-        <ButtonsGrid
-          buttons={buttonsInSelectedPage}
-          selectedUser={selectedUser}
-          selectedPage={selectedPage}
-        />
+        {!isMobile ? (
+          <ButtonsGridMobile
+            buttons={buttonsInSelectedPage}
+            selectedUser={selectedUser}
+            selectedPage={selectedPage}
+          />
+        ) : (
+          <ButtonsGridConsole
+            buttons={buttonsInSelectedPage}
+            selectedUser={selectedUser}
+            selectedPage={selectedPage}
+          />
+        )}
       </div>
       <div className="flex gap-1">
         <Button size="icon" variant="ghost" onClick={handlePreviousPage}>
-        {hasLessThan && (
+          {hasLessThan && (
             <span className="relative flex h-3 w-3 m-1 ">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
-            </span>)
-          }
+            </span>
+          )}
           <ChevronLeft size="15px" />
         </Button>
         <Tabs
@@ -291,14 +306,14 @@ export default function ButtonsGridPages({
             ))}
           </TabsList>
         </Tabs>
-        <Button size="icon" variant="ghost"  onClick={handleNextPage}>
+        <Button size="icon" variant="ghost" onClick={handleNextPage}>
           <ChevronRight size="15px" />
           {hasGreaterThan && (
             <span className="relative flex h-3 w-3 m-1 ">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
-            </span>)
-          }
+            </span>
+          )}
         </Button>
         {isAdmin ? (
           <Popover>

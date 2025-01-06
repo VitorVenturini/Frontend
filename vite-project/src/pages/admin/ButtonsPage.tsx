@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
 import * as React from "react";
 import ButtonsGridPages from "@/components/buttons/buttonsGrid/ButtonsGridPages";
-
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import InteractiveGridCopy from "@/components/optBar/InteractiveGridCopy";
 import {
   ButtonInterface,
@@ -49,7 +49,7 @@ export default function ButtonsPage() {
   const [selectedUser, setSelectedUser] = useState<UserInterface | null>(null); // Inicialmente, o primeiro usuário é selecionado
   const [selectedOptTop, setSelectedOptTop] = useState<string>("floor"); // default for top
   const [selectedOptBottom, setSelectedOptBottom] = useState<string>("floor"); // default for bottom
-
+  const [isMobile, setIsMobile] = useState(false);
   const account = useAccount();
   const { language } = useLanguage();
   const { buttons } = useButtons();
@@ -63,7 +63,14 @@ export default function ButtonsPage() {
       guid: user?.guid,
     });
   };
-
+  const handleMobile = () => {
+    setIsMobile(true);
+    console.log(isMobile);
+  };
+  const handleConsole = () => {
+    setIsMobile(false);
+    console.log(isMobile);
+  };
   const handleOptChangeTop = (newOpt: string) => {
     setSelectedOptTop(newOpt);
   };
@@ -99,6 +106,38 @@ export default function ButtonsPage() {
             </SelectGroup>
           </SelectContent>
         </Select>
+        {selectedUser && (
+          <>
+            {/* {isMobile ? (
+              <Button
+                size="sm"
+                variant={!isMobile ? "default" : "outline"}
+                onClick={handleMobile}
+              >
+                Desktop
+              </Button>
+            ) : (
+              <Button
+                size="sm"
+                variant={isMobile ? "ghost" : "default"}
+                onClick={handleMobile}
+              >
+                Mobile
+              </Button>
+            )} */}
+
+            <Tabs defaultValue="console" className="w-[400px]">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="console" onClick={handleConsole}>
+                  Console
+                </TabsTrigger>
+                <TabsTrigger value="mobile" onClick={handleMobile}>
+                  Mobile
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </>
+        )}
       </div>
       {!selectedUser ? (
         <div className="flex flex-col justify-center items-center gap-5 mt-5 ">
@@ -112,7 +151,7 @@ export default function ButtonsPage() {
         <div></div>
       )}
       <div className="flex item justify-center gap-1">
-        {selectedUser && (
+        {selectedUser && !isMobile && (
           <div>
             {/* DE CIMA  */}
             <InteractiveGridCopy
@@ -140,6 +179,7 @@ export default function ButtonsPage() {
                 <ButtonsGridPages
                   buttonsGrid={filteredButtons}
                   selectedUser={selectedUser}
+                  mobile={isMobile}
                   //onOptChange={handleOptChange}
                 />
               }

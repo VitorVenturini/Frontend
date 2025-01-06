@@ -11,7 +11,7 @@ interface ButtonsGridProps {
   selectedPage: string;
 }
 
-export default function ButtonsGrid({
+export default function ButtonsGridConsole({
   buttons,
   selectedUser,
   selectedPage,
@@ -45,6 +45,60 @@ export default function ButtonsGrid({
           <div key={`${i}-${j}`}>
             <ButtonsComponent
               button={button}
+              mobile={false}
+              selectedUser={selectedUser}
+              selectedPage={selectedPage}
+              clickedPosition={clickedPosition}
+              onClickPosition={() => {
+                setClickedPosition({ i: i + 1, j: j + 1 });
+                // console.log(
+                //   `Clicked position state:`,
+                //   "i: " + clickedPosition?.i + " j: " + clickedPosition?.j
+                // );
+              }}
+            />
+          </div>
+        ))
+      )}
+    </div>
+  );
+}
+
+export function ButtonsGridMobile({
+  buttons,
+  selectedUser,
+  selectedPage,
+}: ButtonsGridProps) {
+  //const { buttons } = useButtons();
+  const filteredBttons = buttons.filter((b)=>{return b.page == selectedPage && b.button_user == selectedUser.guid})
+  const [clickedPosition, setClickedPosition] = useState<{
+    i: number;
+    j: number;
+  } | null>(null);
+
+  // Crie uma matriz 8x5 preenchida com botões padrão
+  const grid = Array(7)
+    .fill(null)
+    .map(() => Array(2).fill({ variant: "default" }));
+
+  // Substitua os botões padrão pelos botões reais
+  filteredBttons.forEach((button) => {
+    const x = Number(button.position_x);
+    const y = Number(button.position_y);
+
+    if (!isNaN(x) && !isNaN(y)) {
+      grid[y - 1][x - 1] = button;
+    }
+  });
+
+  return (
+    <div className="grid grid-rows-7 grid-cols-2 gap-1">
+      {grid.map((row, i) =>
+        row.map((button, j) => (
+          <div key={`${i}-${j}`}>
+            <ButtonsComponent
+              button={button}
+              mobile={true}
               selectedUser={selectedUser}
               selectedPage={selectedPage}
               clickedPosition={clickedPosition}
