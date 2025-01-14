@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { ButtonInterface, useButtons } from "../buttonContext/ButtonsContext";
-import  ButtonsGridConsole from "./ButtonsGrid";
+import ButtonsGridConsole from "./ButtonsGrid";
 import { ButtonsGridMobile } from "./ButtonsGrid";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React, { useContext, useEffect, useState } from "react";
@@ -24,6 +24,7 @@ import { Button } from "@/components/ui/button";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { useToast } from "@/components/ui/use-toast";
 import { truncateText } from "@/components/utils/utilityFunctions";
+import { set } from "date-fns";
 
 interface ButtonsGridPagesProps {
   buttonsGrid: ButtonInterface[];
@@ -46,14 +47,18 @@ export default function ButtonsGridPages({
   const [pageName, setPageName] = useState("");
   const { users } = useUsers();
   const [currentPage, setCurrentPage] = useState(0);
-  const pagesPerPage = 5;
+  const [isMobile, setIsMobile] = useState(mobile);
+  const pagesPerPage = isMobile ? 1 : 5;
   const buttonsInSelectedPage = buttonsGrid.filter(
     (buttonsGrid) => buttonsGrid.page.toString() === selectedPage
   ); // Filtrar botões com base na página selecionada.
   const { isAdmin, guid } = useContext(AccountContext);
   const wss = useWebSocketData();
   const { toast } = useToast();
-  const isMobile = useState(mobile);
+
+  useEffect(() => {
+    console.log(isMobile);
+  }, [isMobile]);
 
   const filteredUser = users.filter((u) => {
     if (isAdmin) {
@@ -67,11 +72,6 @@ export default function ButtonsGridPages({
   const displayedPages = userPages.slice(
     currentPage * pagesPerPage,
     (currentPage + 1) * pagesPerPage
-  );
-  console.log(
-    "%cDISPLAYPAGES",
-    "font-size: 35px; color: red; font-weight: bold;",
-    displayedPages
   );
   const buttonTrigged = buttons.filter((button) => {
     if (button.triggered) {
@@ -100,10 +100,6 @@ export default function ButtonsGridPages({
     (page) => Number(page) < minCurrentPage
   );
 
-  console.log(
-    "%c🕵️‍♂️\nEu sei o que você fez no debbug passado",
-    "font-size: 50px; color: red; font-weight: bold;"
-  );
   const handlePageChange = (newPage: string) => {
     setSelectedPage(newPage); // Atualizar a página selecionada quando o usuário seleciona uma nova página.
   };
@@ -115,10 +111,19 @@ export default function ButtonsGridPages({
     if ((currentPage + 1) * pagesPerPage < userPages.length) {
       setCurrentPage(currentPage + 1);
     }
+    if (isMobile) {
+      //handlePageChange(currentPage + 1 + "");
+      console.log(">", currentPage);
+    }
   };
 
   const handlePreviousPage = () => {
-    if (currentPage > 0) {
+    console.log("<1", currentPage);
+    if (isMobile && currentPage > 0) {
+      //handlePageChange(currentPage - 1 + "");
+      setCurrentPage(currentPage - 1);
+      console.log("<2", currentPage);
+    } else if (currentPage > 0) {
       setCurrentPage(currentPage - 1);
     }
   };
@@ -211,7 +216,7 @@ export default function ButtonsGridPages({
   return (
     <Card className="p-1 flex flex-col gap-1 justify-between">
       <div className="w-full space-y-1 ">
-        {!isMobile ? (
+        {isMobile ? (
           <ButtonsGridMobile
             buttons={buttonsInSelectedPage}
             selectedUser={selectedUser}
@@ -236,7 +241,7 @@ export default function ButtonsGridPages({
           <ChevronLeft size="15px" />
         </Button>
         <Tabs
-          defaultValue="1"
+          defaultValue={isMobile ? currentPage.toString() : "1"}
           onValueChange={handlePageChange}
           className="w-full "
         >

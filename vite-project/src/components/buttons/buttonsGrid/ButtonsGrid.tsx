@@ -92,7 +92,7 @@ export function ButtonsGridMobile({
   });
 
   return (
-    <div className="grid grid-rows-7 grid-cols-2 gap-1">
+    <div className="grid grid-rows-7 grid-cols-2 gap-1 w-full items-center justify-center">
       {grid.map((row, i) =>
         row.map((button, j) => (
           <div key={`${i}-${j}`}>

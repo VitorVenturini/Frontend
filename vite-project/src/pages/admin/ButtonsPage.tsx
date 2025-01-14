@@ -49,7 +49,7 @@ export default function ButtonsPage() {
   const [selectedUser, setSelectedUser] = useState<UserInterface | null>(null); // Inicialmente, o primeiro usuário é selecionado
   const [selectedOptTop, setSelectedOptTop] = useState<string>("floor"); // default for top
   const [selectedOptBottom, setSelectedOptBottom] = useState<string>("floor"); // default for bottom
-  const [isMobile, setIsMobile] = useState(false);
+  
   const account = useAccount();
   const { language } = useLanguage();
   const { buttons } = useButtons();
@@ -63,14 +63,7 @@ export default function ButtonsPage() {
       guid: user?.guid,
     });
   };
-  const handleMobile = () => {
-    setIsMobile(true);
-    console.log(isMobile);
-  };
-  const handleConsole = () => {
-    setIsMobile(false);
-    console.log(isMobile);
-  };
+
   const handleOptChangeTop = (newOpt: string) => {
     setSelectedOptTop(newOpt);
   };
@@ -85,108 +78,101 @@ export default function ButtonsPage() {
     : [];
 
   return (
-    <div className="flex flex-col justify-center gap-3">
-      <div className="flex justify-center gap-3 items-center">
-        <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
-          {texts[language].headerUser}:
-        </h3>
+    <Tabs defaultValue="console" className="w-full">
+      <div className="flex flex-col justify-center gap-3">
+        <div className="flex justify-center gap-3 items-center">
+          <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
+            {texts[language].headerUser}:
+          </h3>
 
-        <Select onValueChange={handleUserSelect}>
-          <SelectTrigger className=" lg:w-[500px] xl:w-[600px] xl2:w-[700px] xl3:w-[800px] xl4:w-[900px]">
-            <SelectValue placeholder={texts[language].selectUserPlaceholder} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>{texts[language].users}</SelectLabel>
-              {users.map((user) => (
-                <SelectItem key={user.id} value={String(user.id)}>
-                  {user.name}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-        {selectedUser && (
-          <>
-            {/* {isMobile ? (
-              <Button
-                size="sm"
-                variant={!isMobile ? "default" : "outline"}
-                onClick={handleMobile}
-              >
-                Desktop
-              </Button>
-            ) : (
-              <Button
-                size="sm"
-                variant={isMobile ? "ghost" : "default"}
-                onClick={handleMobile}
-              >
-                Mobile
-              </Button>
-            )} */}
-
-            <Tabs defaultValue="console" className="w-[400px]">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="console" onClick={handleConsole}>
+          <Select onValueChange={handleUserSelect}>
+            <SelectTrigger className=" lg:w-[500px] xl:w-[600px] xl2:w-[700px] xl3:w-[800px] xl4:w-[900px]">
+              <SelectValue
+                placeholder={texts[language].selectUserPlaceholder}
+              />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>{texts[language].users}</SelectLabel>
+                {users.map((user) => (
+                  <SelectItem key={user.id} value={String(user.id)}>
+                    {user.name}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          {selectedUser && (
+            <>
+              <TabsList className="grid grid-cols-2 w-[400px] gap-1">
+                <TabsTrigger  value="console">
                   Console
                 </TabsTrigger>
-                <TabsTrigger value="mobile" onClick={handleMobile}>
+                <TabsTrigger value="mobile">
                   Mobile
                 </TabsTrigger>
               </TabsList>
-            </Tabs>
-          </>
-        )}
-      </div>
-      {!selectedUser ? (
-        <div className="flex flex-col justify-center items-center gap-5 mt-5 ">
-          <div className="flex align-middle items-center gap-8">
-            <ArrowBigUpDash size={30} className="animate-bounce" />
-            {texts[language].chooseUser}
-            <ArrowBigUpDash size={30} className="animate-bounce" />
-          </div>
-        </div>
-      ) : (
-        <div></div>
-      )}
-      <div className="flex item justify-center gap-1">
-        {selectedUser && !isMobile && (
-          <div>
-            {/* DE CIMA  */}
-            <InteractiveGridCopy
-              interactive="top"
-              onKeyChange={handleOptChangeTop}
-              buttons={filteredButtons}
-              selectedUser={selectedUser}
-              selectedOpt={selectedOptTop}
-            />
-            {/* DE BAIXO  */}
-            <InteractiveGridCopy
-              interactive="bottom"
-              onKeyChange={handleOptChangeBottom}
-              buttons={filteredButtons}
-              selectedUser={selectedUser}
-              selectedOpt={selectedOptBottom}
-            />
-          </div>
-        )}
-        <div className=" flex flex-col min-w-[644px] gap-2">
-          {/* Renderize as informações do usuário selecionado aqui */}
-          {selectedUser && (
-            <div>
-              {
-                <ButtonsGridPages
-                  buttonsGrid={filteredButtons}
-                  selectedUser={selectedUser}
-                  mobile={isMobile}
-                  //onOptChange={handleOptChange}
-                />
-              }
-            </div>
+            </>
           )}
         </div>
+        {!selectedUser ? (
+          <div className="flex flex-col justify-center items-center gap-5 mt-5 ">
+            <div className="flex align-middle items-center gap-8">
+              <ArrowBigUpDash size={30} className="animate-bounce" />
+              {texts[language].chooseUser}
+              <ArrowBigUpDash size={30} className="animate-bounce" />
+            </div>
+          </div>
+        ) : (
+          <div></div>
+        )}
+        <div className="flex item justify-center gap-1">
+          {selectedUser && (
+            <div>
+              <TabsContent value="console">
+                {/* DE CIMA  */}
+                <InteractiveGridCopy
+                  interactive="top"
+                  onKeyChange={handleOptChangeTop}
+                  buttons={filteredButtons}
+                  selectedUser={selectedUser}
+                  selectedOpt={selectedOptTop}
+                />
+                {/* DE BAIXO  */}
+                <InteractiveGridCopy
+                  interactive="bottom"
+                  onKeyChange={handleOptChangeBottom}
+                  buttons={filteredButtons}
+                  selectedUser={selectedUser}
+                  selectedOpt={selectedOptBottom}
+                />
+              </TabsContent>
+            </div>
+          )}
+          <div className=" flex flex-col min-w-[380px] gap-2">
+            {/* Renderize as informações do usuário selecionado aqui */}
+            {selectedUser && (
+              <div>
+                <TabsContent value="console">
+                  <ButtonsGridPages
+                    buttonsGrid={filteredButtons}
+                    selectedUser={selectedUser}
+                    mobile={false}
+                    //onOptChange={handleOptChange}
+                  />
+                </TabsContent>
+                <TabsContent value="mobile">
+                  <ButtonsGridPages
+                    buttonsGrid={filteredButtons}
+                    selectedUser={selectedUser}
+                    mobile={true}
+                  />
+                </TabsContent>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
-    </div>
+    </Tabs>
   );
 }

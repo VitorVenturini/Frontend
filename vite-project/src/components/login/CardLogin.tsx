@@ -44,17 +44,17 @@ import { useToast } from "@/components/ui/use-toast";
 import { set } from "date-fns";
 import { host } from "@/App";
 
-const enterFullScreen = () => {
-  const elem = document.documentElement;
+// const enterFullScreen = () => {
+//   const elem = document.documentElement;
 
-  if (elem.requestFullscreen) {
-    elem.requestFullscreen().catch((err) => {
-      console.error(
-        `Error attempting to enable full-screen mode: ${err.message} (${err.name})`
-      );
-    });
-  }
-};
+//   if (elem.requestFullscreen) {
+//     elem.requestFullscreen().catch((err) => {
+//       console.error(
+//         `Error attempting to enable full-screen mode: ${err.message} (${err.name})`
+//       );
+//     });
+//   }
+// };
 
 export default function CardLogin() {
   const [email, setEmail] = useState("");
@@ -98,10 +98,12 @@ export default function CardLogin() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(formData), 
+
       });
       //{"error":"incorrectPassword"}
       // emailNotFound
+      console.log("LOGIN response", response);
       if (response.ok) {
         const appLanguage = localStorage.getItem("app-language");
         localStorage.clear();
@@ -164,6 +166,7 @@ export default function CardLogin() {
             });
             break;
         }
+        
         setIsLoading(false);
       }
     } catch (error) {
@@ -218,7 +221,7 @@ export default function CardLogin() {
 
     handleLogin(); // Chama a função de login
 
-    enterFullScreen(); // Chama a função de tela cheia
+    //enterFullScreen(); // Chama a função de tela cheia
   };
   const handleCloseAlertDialog = () => {
     setOpen(false);
