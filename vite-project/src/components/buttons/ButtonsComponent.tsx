@@ -15,7 +15,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
 import {
   Card,
   CardContent,
@@ -24,7 +23,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import ModalSensor from "../sensor/ModalSensor";
-
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import ModalAlarm from "@/components/buttons/alarm/ModalAlarm";
 import AlarmButton from "@/components/buttons/alarm/AlarmButton";
@@ -88,7 +86,7 @@ export default function ButtonsComponent({
   const [selectedType, setSelectedType] = useState<string>("");
   const wss = useWebSocketData();
   const { language } = useLanguage();
-  const [isMobile, setIsMobile ] = useState(false)
+  const [isMobile, setIsMobile] = useState(false);
   //drop
 
   useEffect(() => {
@@ -182,6 +180,7 @@ export default function ButtonsComponent({
             selectedPage={selectedPage}
             selectedUser={selectedUser}
             clickedPosition={clickedPosition}
+            mobile={isMobile}
             onClose={() => setIsDialogOpen(false)}
           />
         );
@@ -258,7 +257,8 @@ export default function ButtonsComponent({
     switch (true) {
       case clickedPosition?.i === 1 &&
         clickedPosition.j >= 1 &&
-        clickedPosition.j <= 5:
+        clickedPosition.j <= 5 &&
+        isMobile == false:
         return (
           <ModalCombo
             selectedPage={selectedPage}
@@ -271,7 +271,8 @@ export default function ButtonsComponent({
         clickedPosition?.i >= 2 &&
         clickedPosition?.i <= 8 &&
         clickedPosition?.j >= 1 &&
-        clickedPosition?.j <= 5:
+        clickedPosition?.j <= 5 &&
+        isMobile == false:
         return (
           <div className="">
             <Card className="border-none bg-transparent min-w-[500px]">
@@ -294,52 +295,81 @@ export default function ButtonsComponent({
                     <SelectTrigger className="col-span-4" id="SelectTypeButton">
                       <SelectValue placeholder="Selecione o tipo de Botão" />
                     </SelectTrigger>
-                    {isMobile ? (
-                      <SelectContent position="popper">
-                        <SelectItem value="alarm">
-                          {texts[language].alarm}
-                        </SelectItem>
-                        <SelectItem value="sensor">
-                          {texts[language].sensor}
-                        </SelectItem>
-                      </SelectContent>
-                    ) : (
-                      <SelectContent position="popper">
-                        <SelectItem value="alarm">
-                          {texts[language].alarm}
-                        </SelectItem>
-                        <SelectItem value="flic">
-                          {texts[language].flic}
-                        </SelectItem>
-                        <SelectItem value="google_calendar">
-                          {texts[language].googleCalendar}
-                        </SelectItem>
-                        <SelectItem value="microsoft_calendar">
-                          {texts[language].microsoftCalendar}
-                        </SelectItem>
-                        <SelectItem value="number">
-                          {texts[language].number}
-                        </SelectItem>
-                        <SelectItem value="user">
-                          {texts[language].user}
-                        </SelectItem>
-                        <SelectItem value="sensor">
-                          {texts[language].sensor}
-                        </SelectItem>
-                        <SelectItem value="command">
-                          {texts[language].command}
-                        </SelectItem>
-                        <SelectItem value="clock">
-                          {texts[language].clock}
-                        </SelectItem>
-                        <SelectItem value="cronometer">
-                          {texts[language].cronometer}
-                        </SelectItem>
-                        <SelectItem value="conference">
-                          {texts[language].conference}
-                        </SelectItem>
-                      </SelectContent>
-                    )}
+                    <SelectContent position="popper">
+                      <SelectItem value="alarm">
+                        {texts[language].alarm}
+                      </SelectItem>
+                      <SelectItem value="flic">
+                        {texts[language].flic}
+                      </SelectItem>
+                      <SelectItem value="google_calendar">
+                        {texts[language].googleCalendar}
+                      </SelectItem>
+                      <SelectItem value="microsoft_calendar">
+                        {texts[language].microsoftCalendar}
+                      </SelectItem>
+                      <SelectItem value="number">
+                        {texts[language].number}
+                      </SelectItem>
+                      <SelectItem value="user">
+                        {texts[language].user}
+                      </SelectItem>
+                      <SelectItem value="sensor">
+                        {texts[language].sensor}
+                      </SelectItem>
+                      <SelectItem value="command">
+                        {texts[language].command}
+                      </SelectItem>
+                      <SelectItem value="clock">
+                        {texts[language].clock}
+                      </SelectItem>
+                      <SelectItem value="cronometer">
+                        {texts[language].cronometer}
+                      </SelectItem>
+                      <SelectItem value="conference">
+                        {texts[language].conference}
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Card className="space-y-6 min-h-[250px] flex flex-col content-between p-0">
+                  {renderModalByType()}
+                </Card>
+              </CardContent>
+            </Card>
+          </div>
+        );
+      case clickedPosition && isMobile == true:
+        return (
+          <div className="">
+            <Card className="border-none bg-transparent min-w-[500px]">
+              <CardHeader>
+                <CardTitle>{texts[language].createButton}</CardTitle>
+                <CardDescription>
+                  {texts[language].selectButtonType}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="gap-4">
+                <div className=" grid grid-cols-5 items-center gap-4 mt-3 mb-6">
+                  <Label
+                    className="text-end"
+                    htmlFor="framework"
+                    id="typeButton"
+                  >
+                    {texts[language].buttonType}
+                  </Label>
+                  <Select onValueChange={handleTypeSelected}>
+                    <SelectTrigger className="col-span-4" id="SelectTypeButton">
+                      <SelectValue placeholder="Selecione o tipo de Botão" />
+                    </SelectTrigger>
+                    <SelectContent position="popper">
+                      <SelectItem value="alarm">
+                        {texts[language].alarm}
+                      </SelectItem>
+                      <SelectItem value="sensor">
+                        {texts[language].sensor}
+                      </SelectItem>
+                    </SelectContent>
                   </Select>
                 </div>
                 <Card className="space-y-6 min-h-[250px] flex flex-col content-between p-0">
@@ -374,6 +404,7 @@ export default function ButtonsComponent({
                       clickedPosition={clickedPosition}
                       existingButton={button}
                       isUpdate={true}
+                      mobile={isMobile}
                       onClose={() => setIsDialogOpen(false)}
                     />
                   }
@@ -559,6 +590,7 @@ export default function ButtonsComponent({
                       clickedPosition={clickedPosition}
                       existingButton={button}
                       isUpdate={true}
+                      mobile={isMobile}
                       onClose={() => setIsDialogOpen(false)}
                     />
                   </DialogContent>

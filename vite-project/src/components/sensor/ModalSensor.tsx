@@ -50,6 +50,7 @@ interface ButtonProps {
   selectedPage: string;
   existingButton?: ButtonInterface;
   isUpdate?: boolean;
+  mobile?: boolean;
   onClose?: () => void;
 }
 
@@ -59,6 +60,7 @@ export default function ModalSensor({
   clickedPosition,
   existingButton,
   isUpdate = false,
+  mobile,
   onClose,
 }: ButtonProps) {
   const [nameSensor, setNameSensor] = useState(
@@ -98,6 +100,13 @@ export default function ModalSensor({
     setNameSensor(deveui); // Atualiza o estado do sensor clicado
     setTypeMeasure("");
   };
+  const [isMobile, setIsMobile ] = useState(false)
+  //drop
+
+  useEffect(() => {
+    console.log("ModalAlarm:isMobile", mobile);
+    setIsMobile(mobile);
+  }, [isMobile]);
 
   const handlePressValue = (event: ChangeEvent<HTMLInputElement>) => {
     setPressValue(event.target.value);
@@ -168,6 +177,7 @@ export default function ModalSensor({
           page: selectedPage,
           x: clickedPosition?.j,
           y: clickedPosition?.i,
+          isMobile: isMobile,
         };
         wss?.sendMessage(message);
         setIsCreating(false);
