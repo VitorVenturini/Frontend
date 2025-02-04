@@ -32,7 +32,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, ChangeEvent, useEffect } from "react";
 import { Loader2, CircleAlert } from "lucide-react";
 import { useWebSocketData } from "@/components/websocket/WebSocketProvider";
 import { ButtonInterface } from "@/components/buttons/buttonContext/ButtonsContext";
@@ -47,6 +47,7 @@ interface ButtonProps {
   selectedPage: string;
   existingButton?: ButtonInterface;
   isUpdate?: boolean;
+  mobile?: boolean;
   onClose?: () => void;
 }
 
@@ -56,6 +57,7 @@ export default function ModalAlarm({
   clickedPosition,
   existingButton,
   isUpdate = false,
+  mobile,
   onClose,
 }: ButtonProps) {
   const [numberAlarm, setNumberAlarm] = useState(
@@ -76,6 +78,13 @@ export default function ModalAlarm({
   const handleNumberAlarm = (event: ChangeEvent<HTMLInputElement>) => {
     setNumberAlarm(event.target.value);
   };
+  const [isMobile, setIsMobile ] = useState(false)
+  //drop
+
+  useEffect(() => {
+    console.log("ModalAlarm:isMobile", mobile);
+    setIsMobile(mobile);
+  }, [isMobile]);
 
   const handleCreateButton = () => {
     try {
@@ -92,6 +101,7 @@ export default function ModalAlarm({
           page: selectedPage,
           x: clickedPosition?.j,
           y: clickedPosition?.i,
+          isMobile: isMobile,
         };
         wss?.sendMessage(message);
         setIsCreating(false);

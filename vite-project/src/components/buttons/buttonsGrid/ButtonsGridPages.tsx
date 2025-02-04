@@ -49,13 +49,16 @@ export default function ButtonsGridPages({
   const [currentPage, setCurrentPage] = useState(0);
   const [isMobile, setIsMobile] = useState(mobile);
   const pagesPerPage = isMobile ? 1 : 5;
-  const buttonsInSelectedPage = buttonsGrid.filter(
-    (buttonsGrid) => buttonsGrid.page.toString() === selectedPage
+  const buttonsInSelectedPageDesktop = buttonsGrid.filter(
+    (buttonsGrid) => buttonsGrid.page.toString() === selectedPage && buttonsGrid.is_mobile === false
+  ); // Filtrar botões com base na página selecionada.
+  const buttonsInSelectedPageMobile = buttonsGrid.filter(
+    (buttonsGrid) => buttonsGrid.page.toString() === selectedPage && buttonsGrid.is_mobile === true
   ); // Filtrar botões com base na página selecionada.
   const { isAdmin, guid } = useContext(AccountContext);
   const wss = useWebSocketData();
   const { toast } = useToast();
-
+  console.log("ButtonsGridPages: buttonsPage", buttonsGrid)
   useEffect(() => {
     console.log(isMobile);
   }, [isMobile]);
@@ -218,13 +221,13 @@ export default function ButtonsGridPages({
       <div className="w-full space-y-1 ">
         {isMobile ? (
           <ButtonsGridMobile
-            buttons={buttonsInSelectedPage}
+            buttons={buttonsInSelectedPageMobile}
             selectedUser={selectedUser}
             selectedPage={selectedPage}
           />
         ) : (
           <ButtonsGridConsole
-            buttons={buttonsInSelectedPage}
+            buttons={buttonsInSelectedPageDesktop}
             selectedUser={selectedUser}
             selectedPage={selectedPage}
           />

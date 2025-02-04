@@ -48,6 +48,7 @@ export interface ButtonInterface {
   time?: number;
   num?: string;
   callId?: number;
+  is_mobile?: boolean;
 }
 
 interface ButtonContextType {

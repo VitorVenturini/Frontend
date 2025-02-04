@@ -40,7 +40,7 @@ import ModalNumber from "./number/ModalNumber";
 import NumberButton from "./number/NumberButton";
 import ModalClock from "./Clock/ModalClock";
 import ClockButton from "./Clock/ClockButton";
-import ModalGoogleCalendar from "./googleCalendar/ModalGoogleCalendar"
+import ModalGoogleCalendar from "./googleCalendar/ModalGoogleCalendar";
 import { useSearchParams } from "react-router-dom";
 import { useSensors } from "../sensor/SensorContext";
 import { UserInterface } from "../users/usersCore/UserContext";
@@ -55,11 +55,11 @@ import texts from "@/_data/texts.json";
 import GoogleCalendarButton from "./googleCalendar/GoogleCalendarButton";
 import ModalMicrosoftCalendar from "./microsoftCalendar/ModalMicrosoftCalendar";
 import MicrosoftCalendarButton from "./microsoftCalendar/MicrosoftCalendarButton";
-
+import { isMobile } from "react-device-detect";
 
 interface ButtonProps {
   button: ButtonInterface;
-  mobile: boolean
+  mobile: boolean;
   onClickPosition: () => void; // Adicione esta linha
   clickedPosition: { i: number; j: number } | null;
   selectedUser: UserInterface | null;
@@ -88,7 +88,13 @@ export default function ButtonsComponent({
   const [selectedType, setSelectedType] = useState<string>("");
   const wss = useWebSocketData();
   const { language } = useLanguage();
+  const [isMobile, setIsMobile ] = useState(false)
   //drop
+
+  useEffect(() => {
+    setIsMobile(mobile);
+  }, [isMobile]);
+
   const useDropWithButtonId = (btn_id: number | null, isEnabled: boolean) => {
     return useDrop(
       () => ({
@@ -126,7 +132,7 @@ export default function ButtonsComponent({
     }
     setIsClicked(!isClicked);
   };
-  
+
   const handleTypeSelected = (value: string) => {
     setSelectedType(value);
   };
@@ -140,6 +146,7 @@ export default function ButtonsComponent({
             selectedUser={selectedUser}
             clickedPosition={clickedPosition}
             onClose={() => setIsDialogOpen(false)}
+            mobile={isMobile}
           />
         );
       case "flic":
@@ -196,28 +203,28 @@ export default function ButtonsComponent({
             onClose={() => setIsDialogOpen(false)}
           />
         );
-        case "google_calendar":
-          return (
-            <ModalGoogleCalendar
-              selectedPage={selectedPage}
-              selectedUser={selectedUser}
-              clickedPosition={clickedPosition}
-              onClose={() => {
-                setIsDialogOpen(false);
-              }}
-            />
-          );
-        case "microsoft_calendar":
-            return (
-              <ModalMicrosoftCalendar
-                selectedPage={selectedPage}
-                selectedUser={selectedUser}
-                clickedPosition={clickedPosition}
-                onClose={() => {
-                  setIsDialogOpen(false);
-                }}
-              />
-            );
+      case "google_calendar":
+        return (
+          <ModalGoogleCalendar
+            selectedPage={selectedPage}
+            selectedUser={selectedUser}
+            clickedPosition={clickedPosition}
+            onClose={() => {
+              setIsDialogOpen(false);
+            }}
+          />
+        );
+      case "microsoft_calendar":
+        return (
+          <ModalMicrosoftCalendar
+            selectedPage={selectedPage}
+            selectedUser={selectedUser}
+            clickedPosition={clickedPosition}
+            onClose={() => {
+              setIsDialogOpen(false);
+            }}
+          />
+        );
       case "clock":
         return (
           <ModalClock
@@ -270,7 +277,9 @@ export default function ButtonsComponent({
             <Card className="border-none bg-transparent min-w-[500px]">
               <CardHeader>
                 <CardTitle>{texts[language].createButton}</CardTitle>
-                <CardDescription>{texts[language].selectButtonType}</CardDescription>
+                <CardDescription>
+                  {texts[language].selectButtonType}
+                </CardDescription>
               </CardHeader>
               <CardContent className="gap-4">
                 <div className=" grid grid-cols-5 items-center gap-4 mt-3 mb-6">
@@ -278,25 +287,59 @@ export default function ButtonsComponent({
                     className="text-end"
                     htmlFor="framework"
                     id="typeButton"
-                  >{texts[language].buttonType}
+                  >
+                    {texts[language].buttonType}
                   </Label>
                   <Select onValueChange={handleTypeSelected}>
                     <SelectTrigger className="col-span-4" id="SelectTypeButton">
                       <SelectValue placeholder="Selecione o tipo de Botão" />
                     </SelectTrigger>
-                    <SelectContent position="popper">
-                      <SelectItem value="alarm">{texts[language].alarm}</SelectItem>
-                      <SelectItem value="flic">{texts[language].flic}</SelectItem>
-                      <SelectItem value="google_calendar">{texts[language].googleCalendar}</SelectItem>
-                      <SelectItem value="microsoft_calendar">{texts[language].microsoftCalendar}</SelectItem>
-                      <SelectItem value="number">{texts[language].number}</SelectItem>
-                      <SelectItem value="user">{texts[language].user}</SelectItem>
-                      <SelectItem value="sensor">{texts[language].sensor}</SelectItem>
-                      <SelectItem value="command">{texts[language].command}</SelectItem>
-                      <SelectItem value="clock">{texts[language].clock}</SelectItem>
-                      <SelectItem value="cronometer">{texts[language].cronometer}</SelectItem>
-                      <SelectItem value="conference">{texts[language].conference}</SelectItem>
-                    </SelectContent>
+                    {isMobile ? (
+                      <SelectContent position="popper">
+                        <SelectItem value="alarm">
+                          {texts[language].alarm}
+                        </SelectItem>
+                        <SelectItem value="sensor">
+                          {texts[language].sensor}
+                        </SelectItem>
+                      </SelectContent>
+                    ) : (
+                      <SelectContent position="popper">
+                        <SelectItem value="alarm">
+                          {texts[language].alarm}
+                        </SelectItem>
+                        <SelectItem value="flic">
+                          {texts[language].flic}
+                        </SelectItem>
+                        <SelectItem value="google_calendar">
+                          {texts[language].googleCalendar}
+                        </SelectItem>
+                        <SelectItem value="microsoft_calendar">
+                          {texts[language].microsoftCalendar}
+                        </SelectItem>
+                        <SelectItem value="number">
+                          {texts[language].number}
+                        </SelectItem>
+                        <SelectItem value="user">
+                          {texts[language].user}
+                        </SelectItem>
+                        <SelectItem value="sensor">
+                          {texts[language].sensor}
+                        </SelectItem>
+                        <SelectItem value="command">
+                          {texts[language].command}
+                        </SelectItem>
+                        <SelectItem value="clock">
+                          {texts[language].clock}
+                        </SelectItem>
+                        <SelectItem value="cronometer">
+                          {texts[language].cronometer}
+                        </SelectItem>
+                        <SelectItem value="conference">
+                          {texts[language].conference}
+                        </SelectItem>
+                      </SelectContent>
+                    )}
                   </Select>
                 </div>
                 <Card className="space-y-6 min-h-[250px] flex flex-col content-between p-0">
@@ -418,38 +461,41 @@ export default function ButtonsComponent({
           </div>
         );
       case "google_calendar":
-          return (
-            <div>
-              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogTrigger asChild>
-                  <div>
-                    <GoogleCalendarButton button={button} onClick={handleClick} />
-                  </div>
-                </DialogTrigger>
-                {isAdmin && (
-                  <DialogContent className="space-y-6 min-h-[250px] flex flex-col content-between p-0 min-w-[900px]">
-                    {
-                      <ModalGoogleCalendar
-                        selectedPage={selectedPage}
-                        selectedUser={selectedUser}
-                        clickedPosition={clickedPosition}
-                        existingButton={button}
-                        isUpdate={true}
-                        onClose={() => setIsDialogOpen(false)}
-                      />
-                    }
-                  </DialogContent>
-                )}
-              </Dialog>
-            </div>
-          );  
+        return (
+          <div>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <div>
+                  <GoogleCalendarButton button={button} onClick={handleClick} />
+                </div>
+              </DialogTrigger>
+              {isAdmin && (
+                <DialogContent className="space-y-6 min-h-[250px] flex flex-col content-between p-0 min-w-[900px]">
+                  {
+                    <ModalGoogleCalendar
+                      selectedPage={selectedPage}
+                      selectedUser={selectedUser}
+                      clickedPosition={clickedPosition}
+                      existingButton={button}
+                      isUpdate={true}
+                      onClose={() => setIsDialogOpen(false)}
+                    />
+                  }
+                </DialogContent>
+              )}
+            </Dialog>
+          </div>
+        );
       case "microsoft_calendar":
         return (
           <div>
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <div>
-                  <MicrosoftCalendarButton button={button} onClick={handleClick} />
+                  <MicrosoftCalendarButton
+                    button={button}
+                    onClick={handleClick}
+                  />
                 </div>
               </DialogTrigger>
               {isAdmin && (
@@ -468,8 +514,8 @@ export default function ButtonsComponent({
               )}
             </Dialog>
           </div>
-        );  
-        case "combo":
+        );
+      case "combo":
         return (
           <div>
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>

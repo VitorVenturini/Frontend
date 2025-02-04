@@ -900,9 +900,6 @@ function UserLayout() {
         token={account.accessToken}
         onMessage={handleWebSocketMessage}
       >
-        {/* {isLoading ? (
-              <Loader />
-            ) : ( */}
         <>
           <DndProvider backend={isMobile ? TouchBackend : HTML5Backend}>
             <div className="flex justify-center items-center min-h-screen">
@@ -932,6 +929,7 @@ function UserLayout() {
                   <ButtonsGridPage
                     buttonsGrid={buttons}
                     selectedUser={account as any}
+                    mobile={false}
                     // selectedOpt={selectedOpt}
                     // onOptChange={handleOptChange}
                     // clickedUser={clickedUser}
