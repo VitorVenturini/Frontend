@@ -69,8 +69,9 @@ export default function ButtonsGridPages({
   })[0];
   const userPages = (filteredUser?.userPreferences?.pages || []).filter(page => page.isMobile === mobile);
   const totalPages = (filteredUser?.userPreferences?.pages || []).length;
+  console.log("ButtonsGridPages: filtredPages", filteredUser?.userPreferences?.pages)
   console.log("ButtonsGridPages: userPages", userPages)
-
+  console.log("ButtonsGridPages: mobile", mobile)
   const displayedPages = userPages.slice(
     currentPage * pagesPerPage,
     (currentPage + 1) * pagesPerPage
@@ -250,7 +251,7 @@ export default function ButtonsGridPages({
           className="w-full "
         >
           <TabsList className="w-full flex justify-center ">
-            {displayedPages.map(({ pageNumber, pageName, isMobile }, index) => (
+            {displayedPages.map(({ pageNumber, pageName }, index) => (
               <TabsTrigger
                 key={String(pageNumber)} // Garante que cada chave seja única
                 value={String(pageNumber)}

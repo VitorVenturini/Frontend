@@ -177,9 +177,10 @@ function UserLayout() {
     switch (message.mt) {
       case "SelectUserPreferencesResult":
         if (message.result && Array.isArray(message.result) && message.result.length > 0) {
-          const pages = message.result.map((page: { pageNumber: number; pageName: string | null }) => ({
+          const pages = message.result.map((page: { pageNumber: number; pageName: string | null; isMobile: Boolean }) => ({
             pageNumber: page.pageNumber,
             pageName: page.pageName ?? page.pageNumber, // Nome padrão se `pageName` for `null`
+            isMobile: page.isMobile
           }));
       
           console.log("UserPreferences Pages:", pages);
