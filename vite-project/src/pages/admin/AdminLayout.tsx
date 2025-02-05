@@ -128,9 +128,10 @@ function AdminLayout() {
           message.result.length > 0
         ) {
           const pages = message.result.map(
-            (page: { pageNumber: number; pageName: string | null }) => ({
+            (page: { pageNumber: number; pageName: string | null; isMobile: Boolean }) => ({
               pageNumber: page.pageNumber,
               pageName: page.pageName ?? page.pageNumber, // Nome padrão se `pageName` for `null`
+              isMobile: page.isMobile
             })
           );
 

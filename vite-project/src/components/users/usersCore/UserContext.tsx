@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, ReactNode } from "react";
+import { isMobile } from "react-device-detect";
 
 export interface UserPreferencesInterface {
   guid: string;
@@ -7,6 +8,7 @@ export interface UserPreferencesInterface {
 export interface userPages {
   pageNumber: number;
   pageName: string | null;
+  isMobile: boolean;
 }
 export interface UserInterface {
   id: number;

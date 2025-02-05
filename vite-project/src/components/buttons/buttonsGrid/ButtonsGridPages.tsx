@@ -59,9 +59,6 @@ export default function ButtonsGridPages({
   const wss = useWebSocketData();
   const { toast } = useToast();
   console.log("ButtonsGridPages: buttonsPage", buttonsGrid)
-  useEffect(() => {
-    console.log(isMobile);
-  }, [isMobile]);
 
   const filteredUser = users.filter((u) => {
     if (isAdmin) {
@@ -70,7 +67,9 @@ export default function ButtonsGridPages({
       return u.guid === guid;
     }
   })[0];
-  const userPages = filteredUser?.userPreferences?.pages || [];
+  const userPages = (filteredUser?.userPreferences?.pages || []).filter(page => page.isMobile === mobile);
+  const totalPages = (filteredUser?.userPreferences?.pages || []).length;
+  console.log("ButtonsGridPages: userPages", userPages)
 
   const displayedPages = userPages.slice(
     currentPage * pagesPerPage,
@@ -149,6 +148,7 @@ export default function ButtonsGridPages({
       guid: selectedUser?.guid,
       pageName: pageName,
       pageNumber: parseInt(pageNumber),
+      isMobile: isMobile,
     });
     setPageName("");
   };
@@ -167,6 +167,7 @@ export default function ButtonsGridPages({
       guid: selectedUser?.guid,
       pageName: pageName,
       pageNumber: parseInt(pageNumber),
+      isMobile: isMobile,
     });
     setPageName("");
   };
@@ -249,7 +250,7 @@ export default function ButtonsGridPages({
           className="w-full "
         >
           <TabsList className="w-full flex justify-center ">
-            {displayedPages.map(({ pageNumber, pageName }, index) => (
+            {displayedPages.map(({ pageNumber, pageName, isMobile }, index) => (
               <TabsTrigger
                 key={String(pageNumber)} // Garante que cada chave seja única
                 value={String(pageNumber)}
@@ -344,7 +345,7 @@ export default function ButtonsGridPages({
                   <Button
                     size="icon"
                     onClick={() => {
-                      handleAddPage(String(userPages.length + 1), pageName);
+                      handleAddPage(String(totalPages + 1), pageName);
                     }}
                   >
                     <Check />
