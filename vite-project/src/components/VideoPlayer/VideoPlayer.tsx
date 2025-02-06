@@ -67,18 +67,15 @@ export default function VideoPlayer({ url, open }: VideoPlayerProps) {
             window.URL.revokeObjectURL(url);
           }
         } catch (error) {
-          
           console.error("Erro ao receber o MP4:", error);
         }
         setIsDownloading(false);
         setBlobMedia([]);
         setFileName("");
       } else {
-        
         console.error("Erro ao enviar o arquivo .ts.");
       }
     } catch (error) {
-      
       console.error("Erro ao enviar o arquivo .ts:", error);
     }
   };
@@ -166,7 +163,6 @@ export default function VideoPlayer({ url, open }: VideoPlayerProps) {
           width="100%"
           height="100%"
           src={`https://www.youtube.com/embed/${youTubeId}?autoplay=1`}
-          frameBorder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
           title="YouTube video player"
@@ -188,41 +184,38 @@ export default function VideoPlayer({ url, open }: VideoPlayerProps) {
           return (
             <div className="relative">
               <div className="absolute top-2 right-2 flex gap-2 z-10">
-                
-            
-                  <Button
-                    className="flex gap-2"
-                    /* @ts-ignore */
-                    variant={recordingState === "idle" ? "" : "destructive"}
-                    onClick={() => {
-                      if (recordingState === "idle") {
-                        setIsRecording(true);
-                        setRecordingState("recording");
-                      } else if (recordingState === "recording") {
-                        setIsRecording(false);
-                        setRecordingState("idle");
-                      }
-                    }}
-                  >
-                    {recordingState === "idle" ? <PlayIcon /> : <Pause />}
-                    {recordingState === "idle"
-                      ? "Iniciar Gravação"
-                      : "Parar Gravação"}
-                  </Button>
-                  <Button
-                    className="flex gap-2"
-                    variant="secondary"
-                    size="icon"
-                    onClick={handleDownloadData}
-                    disabled={recordingState !== "idle" || isDownloading}
-                  >
-                    {isDownloading ? (
-                      <Loader2 className="animate-spin" />
-                    ) : (
-                      <ArrowDownToLine />
-                    )}
-                  </Button>
-                
+                <Button
+                  className="flex gap-2"
+                  /* @ts-ignore */
+                  variant={recordingState === "idle" ? "" : "destructive"}
+                  onClick={() => {
+                    if (recordingState === "idle") {
+                      setIsRecording(true);
+                      setRecordingState("recording");
+                    } else if (recordingState === "recording") {
+                      setIsRecording(false);
+                      setRecordingState("idle");
+                    }
+                  }}
+                >
+                  {recordingState === "idle" ? <PlayIcon /> : <Pause />}
+                  {recordingState === "idle"
+                    ? "Iniciar Gravação"
+                    : "Parar Gravação"}
+                </Button>
+                <Button
+                  className="flex gap-2"
+                  variant="secondary"
+                  size="icon"
+                  onClick={handleDownloadData}
+                  disabled={recordingState !== "idle" || isDownloading}
+                >
+                  {isDownloading ? (
+                    <Loader2 className="animate-spin" />
+                  ) : (
+                    <ArrowDownToLine />
+                  )}
+                </Button>
               </div>
 
               <video
@@ -237,7 +230,17 @@ export default function VideoPlayer({ url, open }: VideoPlayerProps) {
             </div>
           );
         default:
-          return <p>Unsupported video format</p>;
+          return (
+            <iframe
+              width="100%"
+              height="100%"
+              src={`http://${url}`}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              title="Iframe URL"
+              className="lg:h-[267px] xl:h-[295px] xl2:h-[350px] xl3:h-[410px] xl4:h-[500px]"
+            ></iframe>
+          );
       }
     }
   };
