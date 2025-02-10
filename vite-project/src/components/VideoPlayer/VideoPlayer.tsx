@@ -234,9 +234,10 @@ export default function VideoPlayer({ url, open }: VideoPlayerProps) {
             <iframe
               width="100%"
               height="100%"
-              src={`http://${url}`}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              src={url}
+              allow="camera; display-capture; microphone; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen; speaker"
               allowFullScreen
+              allowUserMedia
               title="Iframe URL"
               className="lg:h-[267px] xl:h-[295px] xl2:h-[350px] xl3:h-[410px] xl4:h-[500px]"
             ></iframe>
