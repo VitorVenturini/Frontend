@@ -72,6 +72,15 @@ export default function CardLogin() {
   const [open, setOpen] = useState(false);
   const disconnected = localStorage.getItem("disconnected");
   //const ws = useWebSocketData();
+  const [isCapsLockOn, setIsCapsLockOn] = useState(false);
+
+  const handleCapsLock = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.getModifierState("CapsLock")) {
+      setIsCapsLockOn(true);
+    } else {
+      setIsCapsLockOn(false);
+    }
+  };
   const handleEmailChange = (event: ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
   };
@@ -98,8 +107,7 @@ export default function CardLogin() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData), 
-
+        body: JSON.stringify(formData),
       });
       //{"error":"incorrectPassword"}
       // emailNotFound
@@ -166,7 +174,7 @@ export default function CardLogin() {
             });
             break;
         }
-        
+
         setIsLoading(false);
       }
     } catch (error) {
@@ -278,7 +286,13 @@ export default function CardLogin() {
                     placeholder={texts[language].enterPassword}
                     value={password}
                     onChange={handlePasswordChange}
+                    onKeyUp={handleCapsLock}
                   />
+                  {isCapsLockOn && (
+                    <Label className="text-red-500 col-span-3 text-center">
+                      {texts[language].capsLockOn}
+                    </Label>
+                  )}
                 </div>
               </div>
             </div>

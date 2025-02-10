@@ -429,6 +429,7 @@
     "microsoftCalendar": "Calendário Microsoft",
     "noTranscription": "Não foi possível transcrever essa chamada",
     "transcript": "Transcrever",
-    "callNoTalk": "Chamada sem diálogo ou inaudível"
+    "callNoTalk": "Chamada sem diálogo ou inaudível",
+    "capsLockOn": "Caps Lock está ativado"
   }
 }
