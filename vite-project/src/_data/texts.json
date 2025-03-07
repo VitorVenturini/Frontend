@@ -430,6 +430,17 @@
     "noTranscription": "Não foi possível transcrever essa chamada",
     "transcript": "Transcrever",
     "callNoTalk": "Chamada sem diálogo ou inaudível",
-    "capsLockOn": "Caps Lock está ativado"
+    "capsLockOn": "Caps Lock está ativado",
+    "userCall": "Chamada para Usuário",
+    "callButtonNameLabel": "Nome do Botão de Chamada",
+    "callButtonNamePlaceholder": "Digite o nome do botão de chamada",
+    "callButtonRequired": "Nome do botão de chamada é obrigatório.",
+    "callButtonUserRequired": "Usuário é obrigatório.",
+    "createCallButton": "Criar Botão de Chamada",
+    "updateCallButton": "Atualizar Botão de Chamada",
+    "updatingCallButton": "Atualizando Botão de Chamada",
+    "creatingCallButton": "Criando Botão de Chamada",
+    "createCallButtonDescription": "Preencha os campos abaixo para criar um botão de chamada",
+    "updateCallButtonDescription": "Atualize o botão de chamada"
   }
 }

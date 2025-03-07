@@ -54,7 +54,8 @@ import GoogleCalendarButton from "./googleCalendar/GoogleCalendarButton";
 import ModalMicrosoftCalendar from "./microsoftCalendar/ModalMicrosoftCalendar";
 import MicrosoftCalendarButton from "./microsoftCalendar/MicrosoftCalendarButton";
 import { isMobile } from "react-device-detect";
-
+import ModalMobileCall from "../calls/ModalMobileCall";
+import CallButton from "../calls/CallButton";
 interface ButtonProps {
   button: ButtonInterface;
   mobile: boolean;
@@ -242,6 +243,16 @@ export default function ButtonsComponent({
             onClose={() => setIsDialogOpen(false)}
           />
         );
+        case "call":
+          return (
+            <ModalMobileCall
+              selectedPage={selectedPage}
+              selectedUser={selectedUser}
+              clickedPosition={clickedPosition}
+              mobile={isMobile}
+              onClose={() => setIsDialogOpen(false)}
+            />
+          );
       // Add other cases here as needed
       default:
         return (
@@ -368,6 +379,9 @@ export default function ButtonsComponent({
                       </SelectItem>
                       <SelectItem value="sensor">
                         {texts[language].sensor}
+                      </SelectItem>
+                      <SelectItem value="call">
+                        {texts[language].userCall}
                       </SelectItem>
                     </SelectContent>
                   </Select>
@@ -708,6 +722,33 @@ export default function ButtonsComponent({
             </Dialog>
           </div>
         );
+        case "call":
+          return (
+            <div>
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogTrigger asChild>
+                  <div>
+                    <CallButton button={button} handleClick={handleClick} />
+                  </div>
+                </DialogTrigger>
+                {isAdmin && (
+                  <DialogContent className="space-y-6 min-h-[250px] flex flex-col content-between p-0 min-w-[600px]">
+                    {
+                      <ModalMobileCall
+                        selectedPage={selectedPage}
+                        selectedUser={selectedUser}
+                        clickedPosition={clickedPosition}
+                        existingButton={button}
+                        isUpdate={true}
+                        mobile={isMobile}
+                        onClose={() => setIsDialogOpen(false)}
+                      />
+                    }
+                  </DialogContent>
+                )}
+              </Dialog>
+            </div>
+          );
       default:
         if (isAdmin) {
           return (

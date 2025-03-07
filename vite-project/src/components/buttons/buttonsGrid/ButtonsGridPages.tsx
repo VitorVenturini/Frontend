@@ -68,7 +68,7 @@ export default function ButtonsGridPages({
     }
   })[0];
   const userPages = (filteredUser?.userPreferences?.pages || []).filter(page => page.isMobile === mobile);
-  const totalPages = (filteredUser?.userPreferences?.pages || []).length;
+  const totalPages = Math.max(...userPages.map(page => page.pageNumber));
   console.log("ButtonsGridPages: filtredPages", filteredUser?.userPreferences?.pages)
   console.log("ButtonsGridPages: userPages", userPages)
   console.log("ButtonsGridPages: mobile", mobile)
@@ -246,7 +246,7 @@ export default function ButtonsGridPages({
           <ChevronLeft size="15px" />
         </Button>
         <Tabs
-          defaultValue={isMobile ? currentPage.toString() : "1"}
+          defaultValue={"1"}
           onValueChange={handlePageChange}
           className="w-full "
         >
